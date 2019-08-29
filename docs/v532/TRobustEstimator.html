@@ -1,0 +1,556 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:30 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TRobustEstimator</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TRobustEstimator','libPhysics','TRobustEstimator.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TRobustEstimator.h.html">header file</a>
+<a class="descrheadentry" href="src/TRobustEstimator.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/physics/inc/TRobustEstimator.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/physics/src/TRobustEstimator.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TRobustEstimator:description">class description</a> 
+<a class="descrheadentry" href="#TRobustEstimator:Function_Members">function members</a>
+<a class="descrheadentry" href="#TRobustEstimator:Data_Members">data members</a>
+<a class="descrheadentry" href="#TRobustEstimator:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_PHYSICS_Index.html">PHYSICS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TRobustEstimator</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TRobustEstimator:description"></a>class TRobustEstimator: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+  <a href="./TRobustEstimator.html">TRobustEstimator</a>
+
+ Minimum Covariance Determinant Estimator - a Fast Algorithm
+ invented by Peter J.Rousseeuw and Katrien Van Dreissen
+ <span class="string">"A Fast Algorithm for the Minimum covariance Determinant Estimator"</span>
+ Technometrics, August 1999, Vol.41, NO.3
+
+ What are robust estimators?
+ <span class="string">"An important property of an estimator is its robustness. An estimator</span>
+ is called robust if it is insensitive to measurements that deviate
+ from the expected behaviour. There are 2 ways to treat such deviating
+ measurements: one may either try to recongize them and then remove
+ them from the data sample; or one may leave them in the sample, taking
+ care that they do not influence the estimate unduly. In both cases robust
+ estimators are needed...Robust procedures compensate for systematic errors
+ as much as possible, and indicate any situation in which a danger of not being
+ able to operate reliably is detected.<span class="string">"</span>
+ R.Fruhwirth, M.Regler, R.K.Bock, H.Grote, D.Notz
+ <span class="string">"Data Analysis Techniques for High-Energy Physics"</span>, 2nd edition
+
+ What does this algorithm do?
+ It computes a highly robust estimator of multivariate location and scatter.
+ Then, it takes those estimates to compute robust distances of all the
+ data vectors. Those with large robust distances are considered outliers.
+ Robust distances can then be plotted for better visualization of the data.
+
+ How does this algorithm do it?
+ The MCD objective is to find h observations(out of n) whose classical
+ covariance matrix has the lowest determinant. The MCD estimator of location
+ is then the average of those h points and the MCD estimate of scatter
+ is their covariance matrix. The minimum(and default) h = (n+nvariables+1)/2
+ so the algorithm is effective when less than (n+nvar+1)/2 variables are outliers.
+ The algorithm also allows for exact fit situations - that is, when h or more
+ observations lie on a hyperplane. Then the algorithm still yields the MCD location T
+ and scatter matrix S, the latter being singular as it should be. From (T,S) the
+ program then computes the equation of the hyperplane.
+
+ How can this algorithm be used?
+ In any case, when contamination of data is suspected, that might influence
+ the classical estimates.
+ Also, robust estimation of location and scatter is a tool to robustify
+ other multivariate techniques such as, for example, principal-component analysis
+ and discriminant analysis.
+
+
+
+
+ Technical details of the algorithm:
+ 0.The default h = (n+nvariables+1)/2, but the user may choose any interger h with
+   (n+nvariables+1)/2&lt;=h&lt;=n. The program then reports the MCD's breakdown value
+   (n-h+1)/n. If you are sure that the dataset contains less than 25% contamination
+   which is usually the case, a good compromise between breakdown value and
+  efficiency is obtained by putting h=[.75*n].
+ 1.If h=n,the MCD location estimate is the average of the whole dataset, and
+   the MCD scatter estimate is its covariance matrix. Report this and stop
+ 2.If nvariables=1 (univariate data), compute the MCD estimate by the exact
+   algorithm of Rousseeuw and Leroy (1987, pp.171-172) in O(nlogn)time and stop
+ 3.From here on, h&lt;n and nvariables&gt;=2.
+   3a.If n is small:
+    - repeat (say) 500 times:
+    -- construct an initial h-subset, starting from a random (nvar+1)-subset
+    -- carry out 2 C-steps (described in the comments of <a href="./TRobustEstimator.html#TRobustEstimator:CStep" title="Double_t TRobustEstimator::CStep(Int_t ntotal,Int_t htotal,Int_t* index,TMatrixD&amp; data,TMatrixD&amp; sscp,Double_t* ndist)">CStep</a> function)
+    - for the 10 results with lowest det(S):
+    -- carry out C-steps until convergence
+    - report the solution (T, S) with the lowest det(S)
+   3b.If n is larger (say, n&gt;600), then
+    - construct up to 5 disjoint random subsets of size nsub (say, nsub=300)
+    - inside each subset repeat 500/5 times:
+    -- construct an initial subset of size hsub=[nsub*h/n]
+    -- carry out 2 C-steps
+    -- keep the best 10 results (Tsub, Ssub)
+    - pool the subsets, yielding the merged set (say, of size nmerged=1500)
+    - in the merged set, repeat for each of the 50 solutions (Tsub, Ssub)
+    -- carry out 2 C-steps
+    -- keep the 10 best results
+    - in the full dataset, repeat for those best results:
+    -- take several C-steps, using n and h
+    -- report the best final result (T, S)
+ 4.To obtain consistency when the data comes from a multivariate normal
+   distribution, covariance matrix is multiplied by a correction factor
+ 5.Robust distances for all elements, using the final (T, S) are calculated
+   Then the very final mean and covariance estimates are calculated only for
+   values, whose robust distances are less than a cutoff value (0.975 quantile
+   of chi2 distribution with nvariables degrees of freedom)
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TRobustEstimator:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:TRobustEstimator">TRobustEstimator</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:TRobustEstimator%2">TRobustEstimator</a>(<span class="keyword">const</span> <a href="./TRobustEstimator.html">TRobustEstimator</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:TRobustEstimator%1">TRobustEstimator</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nvectors, <a href="./ListOfTypes.html#Int_t">Int_t</a> nvariables, <a href="./ListOfTypes.html#Int_t">Int_t</a> hh = 0)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:_TRobustEstimator">~TRobustEstimator</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:AddColumn">AddColumn</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* col)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:AddRow">AddRow</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* row)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Evaluate">Evaluate</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:EvaluateUni">EvaluateUni</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nvectors, <a href="./ListOfTypes.html#Double_t">Double_t</a>* data, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mean, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sigma, <a href="./ListOfTypes.html#Int_t">Int_t</a> hh = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetBDPoint">GetBDPoint</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetChiQuant">GetChiQuant</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMatrixDSym.html">TMatrixDSym</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetCorrelation%1">GetCorrelation</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetCorrelation">GetCorrelation</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMatrixDSym.html">TMatrixDSym</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetCovariance%1">GetCovariance</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetCovariance">GetCovariance</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetHyperplane%1">GetHyperplane</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetHyperplane">GetHyperplane</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vec)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetMean%1">GetMean</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetMean">GetMean</a>(<a href="./TVectorD.html">TVectorD</a>&amp; means)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetNHyp">GetNHyp</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetNOut">GetNOut</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetNumberObservations">GetNumberObservations</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetNvar">GetNvar</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TArrayI.html">TArrayI</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetOuliers">GetOuliers</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetRDistances%1">GetRDistances</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:GetRDistances">GetRDistances</a>(<a href="./TVectorD.html">TVectorD</a>&amp; rdist)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TRobustEstimator.html">TRobustEstimator</a>&amp;</td><td class="funcname"><a class="funcname" href="#TRobustEstimator:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TRobustEstimator.html">TRobustEstimator</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:AddToSscp">AddToSscp</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Classic">Classic</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:ClearSscp">ClearSscp</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Correl">Correl</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Covar">Covar</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./TVectorD.html">TVectorD</a>&amp; m, <a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; cov, <a href="./TVectorD.html">TVectorD</a>&amp; sd, <a href="./ListOfTypes.html#Int_t">Int_t</a> nvec)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:CreateOrtSubset">CreateOrtSubset</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; dat, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./ListOfTypes.html#Int_t">Int_t</a> hmerged, <a href="./ListOfTypes.html#Int_t">Int_t</a> nmerged, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:CreateSubset">CreateSubset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> htotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> p, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./TMatrixD.html">TMatrixD</a>&amp; data, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:CStep">CStep</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> htotal, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./TMatrixD.html">TMatrixD</a>&amp; data, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Exact">Exact</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Exact2">Exact2</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; mstockbig, <a href="./TMatrixD.html">TMatrixD</a>&amp; cstockbig, <a href="./TMatrixD.html">TMatrixD</a>&amp; hyperplane, <a href="./ListOfTypes.html#Double_t">Double_t</a>* deti, <a href="./ListOfTypes.html#Int_t">Int_t</a> nbest, <a href="./ListOfTypes.html#Int_t">Int_t</a> kgroup, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:KOrdStat">KOrdStat</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Double_t">Double_t</a>* arr, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./ListOfTypes.html#Int_t">Int_t</a>* work)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:Partition">Partition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nmini, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:RDist">RDist</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRobustEstimator:RDraw">RDraw</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a> ngroup, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TRobustEstimator:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TRobustEstimator:fCorrelation"></a>fCorrelation</td><td class="datadesc">correlation matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TRobustEstimator:fCovariance"></a>fCovariance</td><td class="datadesc">covariance matrix estimate</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TRobustEstimator:fData"></a>fData</td><td class="datadesc">the original data</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fExact"></a>fExact</td><td class="datadesc">if there was an exact fit, stores the number of points on a hyperplane </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fH"></a>fH</td><td class="datadesc">algorithm parameter, determining the subsample size</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TRobustEstimator:fHyperplane"></a>fHyperplane</td><td class="datadesc">in case more than fH observations lie on a hyperplane</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TRobustEstimator:fInvcovariance"></a>fInvcovariance</td><td class="datadesc">inverse of the covariance matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TRobustEstimator:fMean"></a>fMean</td><td class="datadesc">location estimate (mean values)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fN"></a>fN</td><td class="datadesc">number of observations</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fNvar"></a>fNvar</td><td class="datadesc">number of variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./TArrayI.html">TArrayI</a></td><td class="dataname"><a name="TRobustEstimator:fOut"></a>fOut</td><td class="datadesc">array of indexes of ouliers, size &lt;0.5*n</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TRobustEstimator:fRd"></a>fRd</td><td class="datadesc">array of robust distances, size n</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TRobustEstimator:fSd"></a>fSd</td><td class="datadesc">array of standard deviations</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fVarTemp"></a>fVarTemp</td><td class="datadesc">number of variables already added to the data matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRobustEstimator:fVecTemp"></a>fVecTemp</td><td class="datadesc">number of observations already added to the data matrix</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TRobustEstimator:Class_Charts"></a>Class Charts</h2>
+<map name="MapTRobustEstimator_Inh" id="MapTRobustEstimator_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="56,16,180,53"/>
+</map>
+<map name="MapTRobustEstimator_InhMem" id="MapTRobustEstimator_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTRobustEstimator_Lib" id="MapTRobustEstimator_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="476,121,604,169"/>
+</map>
+<div class="tabs">
+<a id="imgTRobustEstimator_Inh" class="tabsel" href="inh/TRobustEstimator_Inh.png" onclick="javascript:return SetImg('Charts','inh/TRobustEstimator_Inh.png');">Inheritance</a>
+<a id="imgTRobustEstimator_InhMem" class="tab" href="inhmem/TRobustEstimator_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TRobustEstimator_InhMem.png');">Inherited Members</a>
+<a id="imgTRobustEstimator_Incl" class="tab" href="incl/TRobustEstimator_Incl.png" onclick="javascript:return SetImg('Charts','incl/TRobustEstimator_Incl.png');">Includes</a>
+<a id="imgTRobustEstimator_Lib" class="tab" href="lib/TRobustEstimator_Lib.png" onclick="javascript:return SetImg('Charts','lib/TRobustEstimator_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTRobustEstimator_Inh" src="inh/TRobustEstimator_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRobustEstimator:TRobustEstimator" href="src/TRobustEstimator.cxx.html#nmPsyE">TRobustEstimator</a>()</span><br />
+<div class="funccomm"><pre>this constructor should be used in a univariate case:
+first call this constructor, then - the <a href="./TRobustEstimator.html#TRobustEstimator:EvaluateUni" title="void TRobustEstimator::EvaluateUni(Int_t nvectors,Double_t* data,Double_t&amp; mean,Double_t&amp; sigma,Int_t hh=0)">EvaluateUni</a>(..) function
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRobustEstimator:TRobustEstimator%1" href="src/TRobustEstimator.cxx.html#ZczjpB">TRobustEstimator</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nvectors, <a href="./ListOfTypes.html#Int_t">Int_t</a> nvariables, <a href="./ListOfTypes.html#Int_t">Int_t</a> hh = 0)</span><br />
+<div class="funccomm"><pre>constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:AddColumn" href="src/TRobustEstimator.cxx.html#Qvh4u">AddColumn</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* col)</span><br />
+<div class="funccomm"><pre>adds a column to the data matrix
+it is assumed that the column has size <a href="./TRobustEstimator.html#TRobustEstimator:fN" title="Int_t TRobustEstimator::fN">fN</a>
+variable <a href="./TRobustEstimator.html#TRobustEstimator:fVarTemp" title="Int_t TRobustEstimator::fVarTemp">fVarTemp</a> keeps the number of columns l
+already added
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:AddRow" href="src/TRobustEstimator.cxx.html#xq.9dE">AddRow</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* row)</span><br />
+<div class="funccomm"><pre>adds a vector to the data matrix
+it is supposed that the vector is of size <a href="./TRobustEstimator.html#TRobustEstimator:fNvar" title="Int_t TRobustEstimator::fNvar">fNvar</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:Evaluate" href="src/TRobustEstimator.cxx.html#rcxPcD">Evaluate</a>()</span><br />
+<div class="funccomm"><pre>Finds the estimate of multivariate mean and variance
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:EvaluateUni" href="src/TRobustEstimator.cxx.html#HsR6rD">EvaluateUni</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nvectors, <a href="./ListOfTypes.html#Double_t">Double_t</a>* data, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mean, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sigma, <a href="./ListOfTypes.html#Int_t">Int_t</a> hh = 0)</span><br />
+<div class="funccomm"><pre>for the univariate case
+estimates of location and scatter are returned in mean and sigma parameters
+the algorithm works on the same principle as in multivariate case -
+it finds a subset of size hh with smallest sigma, and then returns mean and
+sigma of this subset
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:GetBDPoint" href="src/TRobustEstimator.cxx.html#hneldE">GetBDPoint</a>()</span><br />
+<div class="funccomm"><pre>returns the breakdown point of the algorithm
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRobustEstimator:GetChiQuant" href="src/TRobustEstimator.cxx.html#zsEekD">GetChiQuant</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) const</span><br />
+<div class="funccomm"><pre>returns the chi2 quantiles
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetCovariance" href="src/TRobustEstimator.cxx.html#LHeta">GetCovariance</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</span><br />
+<div class="funccomm"><pre>returns the covariance matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetCorrelation" href="src/TRobustEstimator.cxx.html#xcR2wB">GetCorrelation</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</span><br />
+<div class="funccomm"><pre>returns the correlation matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TRobustEstimator:GetHyperplane%1" href="src/TRobustEstimator.cxx.html#WjCLg">GetHyperplane</a>() const</span><br />
+<div class="funccomm"><pre>if the points are on a hyperplane, returns this hyperplane
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetHyperplane" href="src/TRobustEstimator.cxx.html#RVKA.C">GetHyperplane</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vec)</span><br />
+<div class="funccomm"><pre>if the points are on a hyperplane, returns this hyperplane
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetMean" href="src/TRobustEstimator.cxx.html#jhoOZB">GetMean</a>(<a href="./TVectorD.html">TVectorD</a>&amp; means)</span><br />
+<div class="funccomm"><pre>return the estimate of the mean
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetRDistances" href="src/TRobustEstimator.cxx.html#HotDeB">GetRDistances</a>(<a href="./TVectorD.html">TVectorD</a>&amp; rdist)</span><br />
+<div class="funccomm"><pre>returns the robust distances (helps to find outliers)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:GetNOut" href="src/TRobustEstimator.cxx.html#CUTfWE">GetNOut</a>()</span><br />
+<div class="funccomm"><pre>returns the number of outliers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:AddToSscp" href="src/TRobustEstimator.cxx.html#DJfVCC">AddToSscp</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</span><br />
+<div class="funccomm"><pre>update the sscp matrix with vector vec
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:ClearSscp" href="src/TRobustEstimator.cxx.html#W52qfD">ClearSscp</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp)</span><br />
+<div class="funccomm"><pre>clear the sscp matrix, used for covariance and mean calculation
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:Classic" href="src/TRobustEstimator.cxx.html#HQ8WrB">Classic</a>()</span><br />
+<div class="funccomm"><pre>called when h=n. Returns classic covariance matrix
+and mean
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:Covar" href="src/TRobustEstimator.cxx.html#ti8EfD">Covar</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./TVectorD.html">TVectorD</a>&amp; m, <a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; cov, <a href="./TVectorD.html">TVectorD</a>&amp; sd, <a href="./ListOfTypes.html#Int_t">Int_t</a> nvec)</span><br />
+<div class="funccomm"><pre>calculates mean and covariance
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:Correl" href="src/TRobustEstimator.cxx.html#ZfpSqD">Correl</a>()</span><br />
+<div class="funccomm"><pre>transforms covariance matrix into correlation matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:CreateSubset" href="src/TRobustEstimator.cxx.html#M_Nfp">CreateSubset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> htotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> p, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./TMatrixD.html">TMatrixD</a>&amp; data, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</span><br />
+<div class="funccomm"><pre>creates a subset of htotal elements from ntotal elements
+first, p+1 elements are drawn randomly(without repetitions)
+if their covariance matrix is singular, more elements are
+added one by one, until their covariance matrix becomes regular
+or it becomes clear that htotal observations lie on a hyperplane
+If covariance matrix determinant!=0, distances of all ntotal elements
+are calculated, using formula d_i=Sqrt((x_i-M)*S_inv*(x_i-M)), where
+M is mean and S_inv is the inverse of the covariance matrix
+htotal points with smallest distances are included in the returned subset.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:CreateOrtSubset" href="src/TRobustEstimator.cxx.html#kfXQTC">CreateOrtSubset</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; dat, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./ListOfTypes.html#Int_t">Int_t</a> hmerged, <a href="./ListOfTypes.html#Int_t">Int_t</a> nmerged, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</span><br />
+<div class="funccomm"><pre>creates a subset of hmerged vectors with smallest orthogonal distances to the hyperplane
+hyp[1]*(x1-mean[1])+...+hyp[nvar]*(xnvar-mean[nvar])=0
+This function is called in case when less than <a href="./TRobustEstimator.html#TRobustEstimator:fH" title="Int_t TRobustEstimator::fH">fH</a> samples lie on a hyperplane.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRobustEstimator:CStep" href="src/TRobustEstimator.cxx.html#LGdXmB">CStep</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> htotal, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./TMatrixD.html">TMatrixD</a>&amp; data, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</span><br />
+<div class="funccomm"><pre>from the input htotal-subset constructs another htotal subset with lower determinant
+
+As proven by Peter J.Rousseeuw and Katrien Van Driessen, if distances for all elements
+are calculated, using the formula:d_i=Sqrt((x_i-M)*S_inv*(x_i-M)), where M is the mean
+of the input htotal-subset, and S_inv - the inverse of its covariance matrix, then
+htotal elements with smallest distances will have covariance matrix with determinant
+less or equal to the determinant of the input subset covariance matrix.
+
+determinant for this htotal-subset with smallest distances is returned
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:Exact" href="src/TRobustEstimator.cxx.html#c6k3w">Exact</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</span><br />
+<div class="funccomm"><pre>for the exact fit situaions
+returns number of observations on the hyperplane
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:Exact2" href="src/TRobustEstimator.cxx.html#BG.AL">Exact2</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; mstockbig, <a href="./TMatrixD.html">TMatrixD</a>&amp; cstockbig, <a href="./TMatrixD.html">TMatrixD</a>&amp; hyperplane, <a href="./ListOfTypes.html#Double_t">Double_t</a>* deti, <a href="./ListOfTypes.html#Int_t">Int_t</a> nbest, <a href="./ListOfTypes.html#Int_t">Int_t</a> kgroup, <a href="./TMatrixD.html">TMatrixD</a>&amp; sscp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ndist)</span><br />
+<div class="funccomm"><pre>This function is called if determinant of the covariance matrix of a subset=0.
+
+If there are more then <a href="./TRobustEstimator.html#TRobustEstimator:fH" title="Int_t TRobustEstimator::fH">fH</a> vectors on a hyperplane,
+returns this hyperplane and stops
+else stores the hyperplane coordinates in hyperplane matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:Partition" href="src/TRobustEstimator.cxx.html#Ym.GIE">Partition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nmini, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</span><br />
+<div class="funccomm"><pre>divides the elements into approximately equal subgroups
+number of elements in each subgroup is stored in indsubdat
+number of subgroups is returned
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:RDist" href="src/TRobustEstimator.cxx.html#fdRTmB">RDist</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; sscp)</span><br />
+<div class="funccomm"><pre>Calculates robust distances.Then the samples with robust distances
+greater than a cutoff value (0.975 quantile of chi2 distribution with
+<a href="./TRobustEstimator.html#TRobustEstimator:fNvar" title="Int_t TRobustEstimator::fNvar">fNvar</a> degrees of freedom, multiplied by a correction factor), are given
+weiht=0, and new, reweighted estimates of location and scatter are calculated
+The function returns the number of outliers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:RDraw" href="src/TRobustEstimator.cxx.html#t4qcP">RDraw</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a> ngroup, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</span><br />
+<div class="funccomm"><pre>Draws ngroup nonoverlapping subdatasets out of a dataset of size n
+such that the selected case numbers are uniformly distributed from 1 to n
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRobustEstimator:KOrdStat" href="src/TRobustEstimator.cxx.html#mH0JM">KOrdStat</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Double_t">Double_t</a>* arr, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./ListOfTypes.html#Int_t">Int_t</a>* work)</span><br />
+<div class="funccomm"><pre>because I need an <a href="./ListOfTypes.html#Int_t">Int_t</a> work array
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRobustEstimator:TRobustEstimator" href="src/TRobustEstimator.h.html#PYImDE">TRobustEstimator</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TRobustEstimator:_TRobustEstimator" href="src/TRobustEstimator.h.html#ojfo7D">~TRobustEstimator</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetCovariance" href="src/TRobustEstimator.h.html#xBH.OD">GetCovariance</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetCorrelation" href="src/TRobustEstimator.h.html#RGmX7B">GetCorrelation</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; matr)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:GetNHyp" href="src/TRobustEstimator.h.html#z11fFB">GetNHyp</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRobustEstimator.html#TRobustEstimator:fExact" title="Int_t TRobustEstimator::fExact">fExact</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetMean" href="src/TRobustEstimator.h.html#PKgTpC">GetMean</a>(<a href="./TVectorD.html">TVectorD</a>&amp; means)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRobustEstimator:GetRDistances" href="src/TRobustEstimator.h.html#gnaYTD">GetRDistances</a>(<a href="./TVectorD.html">TVectorD</a>&amp; rdist)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:GetNumberObservations" href="src/TRobustEstimator.h.html#Cj7gAD">GetNumberObservations</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRobustEstimator.html#TRobustEstimator:fN" title="Int_t TRobustEstimator::fN">fN</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRobustEstimator:GetNvar" href="src/TRobustEstimator.h.html#U_N0l">GetNvar</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRobustEstimator.html#TRobustEstimator:fNvar" title="Int_t TRobustEstimator::fNvar">fNvar</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span>   <a href="./TArrayI.html">TArrayI</a>* <a class="funcname" name="TRobustEstimator:GetOuliers" href="src/TRobustEstimator.h.html#OPpO5E">GetOuliers</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> &amp;<a href="./TRobustEstimator.html#TRobustEstimator:fOut" title="TArrayI TRobustEstimator::fOut">fOut</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/physics:$Id: TRobustEstimator.h 22727 2008-03-19 09:54:16Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

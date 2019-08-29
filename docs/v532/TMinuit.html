@@ -1,0 +1,1614 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:20:34 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMinuit</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMinuit','libMinuit','TMinuit.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMinuit.h.html">header file</a>
+<a class="descrheadentry" href="src/TMinuit.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/minuit/inc/TMinuit.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/minuit/src/TMinuit.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMinuit:description">class description</a> 
+<a class="descrheadentry" href="#TMinuit:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMinuit:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMinuit:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MINUIT_Index.html">MINUIT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMinuit</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMinuit:description"></a>class TMinuit: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+The Minimization package*-
+-*                    ========================                         
+-*                                                                     
+-*   This package was originally written in Fortran by Fred James      
+-*   and part of PACKLIB (patch D506)                                  
+-*                                                                     
+-*   It has been converted to a C++ class  by R.Brun                   
+-*   The current implementation in C++ is a straightforward conversion 
+-*   of the original Fortran version: The main changes are:            
+-*                                                                     
+-*   - The variables in the various Minuit labelled common blocks      
+-*     have been changed to the <a href="./TMinuit.html">TMinuit</a> class data members.            
+-*   - The internal arrays with a maximum dimension depending on the   
+-*     maximum number of parameters are now data members arrays with   
+-*     a dynamic dimension such that one can fit very large problems   
+-*     by simply initialising the <a href="./TMinuit.html">TMinuit</a> constructor with the maximum 
+-*     number of parameters.                                           
+-*   - The include file Minuit.h has been commented as much as possible
+-*     using existing comments in the code or the printed documentation
+-*   - The original Minuit subroutines are now member functions.       
+-*   - Constructors and destructor have been added.                    
+-*   - Instead of passing the FCN  function in the argument            
+-*     list, the addresses of this function is stored as pointer       
+-*     in the data members of the class. This is by far more elegant   
+-*     and flexible in an interactive environment.                     
+-*     The member function <a href="./TMinuit.html#TMinuit:SetFCN" title="void TMinuit::SetFCN(void* fcn) or overloads">SetFCN</a> can be used to define this pointer.  
+-*   - The <a href="./ROOT.html">ROOT</a> static function Printf is provided to replace all      
+-*     format statements and to print on currently defined output file.
+-*   - The functions <a href="./TMinuit.html#TMinuit:SetObjectFit" title="void TMinuit::SetObjectFit(TObject* obj)">SetObjectFit</a>(<a href="./TObject.html">TObject</a> *obj)/<a href="./TMinuit.html#TMinuit:GetObjectFit" title="TObject* TMinuit::GetObjectFit()">GetObjectFit</a>() can be  
+-*     used inside the FCN function to set/get a referenced object     
+-*     instead of using global variables.                              
+*
+
+</pre><!-- TDocHtmlDirective start --> <!--
+/* -->
+<P>
+<H2><A NAME=H2Basic-concepts-of-MINUIT.html>Basic concepts of MINUIT</A></H2>
+<P>
+The <A HREF="http://wwwinfo.cern.ch/asdoc/minuit/minmain.html"> MINUIT</A> package acts on a multiparameter Fortran function to which one
+must give the generic name <TT>FCN</TT>. In the ROOT implementation,
+the function <TT>FCN</TT> is defined via the MINUIT SetFCN member function
+when an Histogram.Fit command is invoked.
+The value of <TT>FCN</TT> will in general depend on one
+or more variable parameters.
+<P>
+To take a simple example, in case of ROOT histograms (classes TH1C,TH1S,TH1F,TH1D)
+the Fit function defines the Minuit fitting function as being H1FitChisquare
+or H1FitLikelihood depending on the options selected.
+H1FitChisquare
+calculates the chisquare between the user fitting function (gaussian, polynomial,
+user defined,etc) and the data for given values of the parameters.
+It is the task of MINUIT to find those values of the parameters
+which give the lowest value of chisquare.
+<P>
+<H3>Basic concepts - The transformation for parameters with limits.</H3>
+<P>
+For variable parameters with limits, MINUIT uses the following
+transformation:
+<P>
+<PRE>
+  P   = arcsin(2((P   -a)/(b- a))-1)                P    = a+((b- a)/(2))(sinP    +1)
+   int             ext                               ext                      int
+</PRE>
+<P>
+so that the internal value P    can take on any value, while the external
+                            int
+value P    can take on values only between the lower limit a and the
+       ext
+upper limit b. Since the transformation is necessarily non-linear, it
+would transform a nice linear problem into a nasty non-linear one, which
+is the reason why limits should be avoided if not necessary. In addition,
+the transformation does require some computer time, so it slows down the
+computation a little bit, and more importantly, it introduces additional
+numerical inaccuracy into the problem in addition to what is introduced in
+the numerical calculation of the <TT>FCN</TT> value. The effects of
+non-linearity and numerical roundoff both become more important as the
+external value gets closer to one of the limits (expressed as the distance
+to nearest limit divided by distance between limits). The user must
+therefore be aware of the fact that, for example, if he puts limits of
+(0,10^10  ) on a parameter, then the values 0.0 and 1. 0 will be
+indistinguishable to the accuracy of most machines.
+<P>
+The transformation also affects the parameter error matrix, of course, so
+MINUIT does a transformation of the error matrix (and the ``parabolic''
+parameter errors) when there are parameter limits. Users should however
+realize that the transformation is only a linear approximation, and that
+it cannot give a meaningful result if one or more parameters is very close
+to a limit, where partial Pext /partial Pint  #0. Therefore, it is
+recommended that:
+<P>
+<OL>
+<LI>Limits on variable parameters should be used only when needed in order
+to prevent the parameter from taking on unphysical values.
+<LI>When a satisfactory minimum has been found using limits, the limits
+should then be removed if possible, in order to perform or re-perform the
+error analysis without limits.
+</OL>
+<P>
+<H3>How to get the right answer from MINUIT.</H3>
+<P>
+MINUIT offers the user a choice of several minimization algorithms. The
+MIGRAD algorithm is in general the best minimizer for
+nearly all functions. It is a variable-metric method with inexact line
+search, a stable metric updating scheme, and checks for
+positive-definiteness. Its main weakness is that it depends heavily on
+knowledge of the first derivatives, and fails miserably if they are very
+inaccurate.
+<P>
+If parameter limits are needed, in spite of the side effects, then the
+user should be aware of the following techniques to alleviate problems
+caused by limits:
+<P>
+<H4>Getting the right minimum with limits.</H4>
+<P>
+If MIGRAD converges normally to a point where no parameter is near one of
+its limits, then the existence of limits has probably not prevented MINUIT
+from finding the right minimum. On the other hand, if one or more
+parameters is near its limit at the minimum, this may be because the true
+minimum is indeed at a limit, or it may be because the minimizer has
+become ``blocked'' at a limit. This may normally happen only if the
+parameter is so close to a limit (internal value at an odd multiple of #((pi)/(2))
+that MINUIT prints a warning to this effect when it prints
+the parameter values.
+The minimizer can become blocked at a limit, because at a limit the
+derivative seen by the minimizer partial F/partial Pint  is zero no matter
+what the real derivative partial F/partial Pext  is.
+<P>
+<P>
+<PRE>
+((partial F)/(partial P   ))= ((partial F)/(partial P   ))((partial P    )/(partial P   )) =((partial F)/(partial P    ))= 0
+                       int                           ext             ext             int                           ext
+</PRE>
+<P>
+<P>
+<H4>Getting the right parameter errors with limits.</H4>
+<P>
+In the best case, where the minimum is far from any limits, MINUIT will
+correctly transform the error matrix, and the parameter errors it reports
+should be accurate and very close to those you would have got without
+limits. In other cases (which should be more common, since otherwise you
+wouldn't need limits), the very meaning of parameter errors becomes
+problematic. Mathematically, since the limit is an absolute constraint on
+the parameter, a parameter at its limit has no error, at least in one
+direction. The error matrix, which can assign only symmetric errors, then
+becomes essentially meaningless.
+<P>
+<H3>Interpretation of Parameter Errors:</H3>
+<P>
+There are two kinds of problems that can arise: the reliability of
+MINUIT's error estimates, and their statistical interpretation, assuming
+they are accurate.
+<P>
+<H3>Statistical interpretation:</H3>
+<P>
+For discussuion of basic concepts, such as the meaning of the elements of
+the error matrix, or setting of exact confidence levels see:
+<ol>
+  <li>F.James.
+     Determining the statistical Significance of experimental Results.
+     Technical Report DD/81/02 and CERN Report 81-03, CERN, 1981.</li>
+  <li>W.T.Eadie, D.Drijard, F.James, M.Roos, and B.Sadoulet.
+     Statistical Methods in Experimental Physics.
+     North-Holland, 1971.</li>
+</ol>
+<P>
+<H3>Reliability of MINUIT error estimates.</H3>
+<P>
+MINUIT always carries around its own current estimates of the parameter
+errors, which it will print out on request, no matter how accurate they
+are at any given point in the execution. For example, at initialization,
+these estimates are just the starting step sizes as specified by the user.
+After a HESSE step, the errors are usually quite accurate,
+unless there has been a problem. MINUIT, when it prints out error values,
+also gives some indication of how reliable it thinks they are. For
+example, those marked <TT>CURRENT GUESS ERROR</TT> are only working values
+not to be believed, and <TT>APPROXIMATE ERROR</TT> means that they have
+been calculated but there is reason to believe that they may not be
+accurate.
+<P>
+If no mitigating adjective is given, then at least MINUIT believes the
+errors are accurate, although there is always a small chance that MINUIT
+has been fooled. Some visible signs that MINUIT may have been fooled are:
+<P>
+<OL>
+<LI>Warning messages produced during the minimization or error analysis.
+<LI>Failure to find new minimum.
+<LI>Value of <TT>EDM</TT> too big (estimated Distance to Minimum).
+<LI>Correlation coefficients exactly equal to zero, unless some parameters
+are known to be uncorrelated with the others.
+<LI>Correlation coefficients very close to one (greater than 0.99). This
+indicates both an exceptionally difficult problem, and one which has been
+badly parameterized so that individual errors are not very meaningful
+because they are so highly correlated.
+<LI>Parameter at limit. This condition, signalled by a MINUIT warning
+message, may make both the function minimum and parameter errors
+unreliable. See the discussion above ``Getting the right parameter errors
+with limits''.
+</OL>
+<P>
+The best way to be absolutely sure of the errors, is to use
+``independent'' calculations and compare them, or compare the calculated
+errors with a picture of the function. Theoretically, the covariance
+matrix for a ``physical'' function must be positive-definite at the
+minimum, although it may not be so for all points far away from the
+minimum, even for a well-determined physical problem. Therefore, if MIGRAD
+reports that it has found a non-positive-definite covariance matrix, this
+may be a sign of one or more of the following:
+<P>
+<H5>A non-physical region:</H5>
+<P>
+On its way to the minimum, MIGRAD may have traversed a region which has
+unphysical behaviour, which is of course not a serious problem as long as
+it recovers and leaves such a region.
+<P>
+<H5>An underdetermined problem:</H5>
+<P>
+If the matrix is not positive-definite even at the minimum, this may mean
+that the solution is not well-defined, for example that there are more
+unknowns than there are data points, or that the parameterization of the
+fit contains a linear dependence. If this is the case, then MINUIT (or any
+other program) cannot solve your problem uniquely, and the error matrix
+will necessarily be largely meaningless, so the user must remove the
+underdeterminedness by reformulating the parameterization. MINUIT cannot
+do this itself.
+<P>
+<H5>Numerical inaccuracies:</H5>
+<P>
+It is possible that the apparent lack of positive-definiteness is in fact
+only due to excessive roundoff errors in numerical calculations in the
+user function or not enough precision. This is unlikely in general, but
+becomes more likely if the number of free parameters is very large, or if
+
+the parameters are badly scaled (not all of the same order of magnitude),
+and correlations are also large. In any case, whether the
+non-positive-definiteness is real or only numerical is largely irrelevant,
+since in both cases the error matrix will be unreliable and the minimum
+suspicious.
+<P>
+<H5>An ill-posed problem:</H5>
+<P>
+For questions of parameter dependence, see the discussion above on
+positive-definiteness.
+<P>
+Possible other mathematical problems are the following:
+<P>
+<H5>Excessive numerical roundoff:</H5>
+<P>
+Be especially careful of exponential and factorial functions which get big
+very quickly and lose accuracy.
+<P>
+<H5>Starting too far from the solution:</H5>
+<P>
+The function may have unphysical local minima, especially at infinity in
+some variables.
+<H5>Minuit parameter errors in the presence of limits</H5>
+This concerns the way Minuit reports the symmetric (or parabolic)  errors
+on parameters.  It does not apply to the errors reported from Minos, which
+are in general asymmetric.
+<P>
+The symmetric errors reported by Minuit are always calculated from
+the covariance matrix, assuming that this matrix has been calculated,
+usually as the result of a Migrad minimization or a direct
+calculation by Hesse which inverts the second derivative matrix.
+<P>
+When there are no limits on the parameter in question, the error reported
+by Minuit should therefore be exactly equal to the square root of the
+corresponding diagonal element of the error matrix reported by Minuit.
+<P>
+However, when there are limits on the parameter, there is a transformation
+between the internal parameter values seen by Minuit (which are unbounded)
+and the external parameter values seen by the user in FCN (which remain
+inside the desired limits).  Therefore the internal error matrix kept by
+Minuit must be transformed to an external error matrix for the user.
+This is done by multiplying the (I,J)th element by DEXDIN(I)*DEXDIN(J),
+where DEXDIN is the derivative of the external value with respect to the
+internal value at the minimum.  This is a linearization of the
+transformation, and is the only way to produce an error matrix in external
+coordinates meaningful to the user.  But when reporting the individual
+parabolic errors for limited parameters, Minuit can do a little better, so
+it does.  In this case, Minuit actually transforms the ends of the
+internal "error bar" to external coordinates and reports the length of
+this transformed interval.  Strictly speaking, it is now asymmetric, but
+since the origin of the asymmetry is only an artificial transformation it
+does not make much sense, so the transformed errors are symmetrized.
+<P>
+The result of all the above is that for parameters with limits, the error
+reported by Minuit is not exactly equal to the square root of the diagonal
+element of the error matrix.  The difference is a measure of how much the
+limits deform the problem.  If possible, it is suggested not to use limits
+on parameters, and the problem goes away.  If for some reason limits are
+necessary, and you are sensitive to the difference between the two ways of
+calculating the errors, it is suggested to use Minos errors which take
+into account the non-linearities much more precisely.
+<!--*/
+ -->
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMinuit:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMinuit:TMinuit%1">TMinuit</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMinuit:TMinuit%2">TMinuit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMinuit:_TMinuit">~TMinuit</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:BuildArrays">BuildArrays</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 15)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:Clone">Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:Command">Command</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:Contour">Contour</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints = 10, <a href="./ListOfTypes.html#Int_t">Int_t</a> pa1 = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> pa2 = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:DefineParameter">DefineParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> initVal, <a href="./ListOfTypes.html#Double_t">Double_t</a> initErr, <a href="./ListOfTypes.html#Double_t">Double_t</a> lowerLimit, <a href="./ListOfTypes.html#Double_t">Double_t</a> upperLimit)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:DeleteArrays">DeleteArrays</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:Eval">Eval</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npar, <a href="./ListOfTypes.html#Double_t">Double_t</a>* grad, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fval, <a href="./ListOfTypes.html#Double_t">Double_t</a>* par, <a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:FixParameter">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetMaxIterations">GetMaxIterations</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:GetMethodCall">GetMethodCall</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetNumFixedPars">GetNumFixedPars</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetNumFreePars">GetNumFreePars</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetNumPars">GetNumPars</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:GetObjectFit">GetObjectFit</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetParameter">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; currentValue, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; currentError) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:GetPlot">GetPlot</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:GetStatus">GetStatus</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMinuit:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:Migrad">Migrad</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnamin">mnamin</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnbins">mnbins</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> a1, <a href="./ListOfTypes.html#Double_t">Double_t</a> a2, <a href="./ListOfTypes.html#Int_t">Int_t</a> naa, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bl, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bh, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nb, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bwid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncalf">mncalf</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pvec, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; ycalf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncler">mncler</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncntr">mncntr</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ke1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ke2, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierrf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncomd">mncomd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* crdbin, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; icondn)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncont">mncont</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ke1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ke2, <a href="./ListOfTypes.html#Int_t">Int_t</a> nptu, <a href="./ListOfTypes.html#Double_t">Double_t</a>* xptu, <a href="./ListOfTypes.html#Double_t">Double_t</a>* yptu, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierrf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncrck">mncrck</a>(<a href="./TString.html">TString</a> crdbuf, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxcwd, <a href="./TString.html">TString</a>&amp; comand, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; lnc, <a href="./ListOfTypes.html#Int_t">Int_t</a> mxp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* plist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; llist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierr, <a href="./ListOfTypes.html#Int_t">Int_t</a> isyswr)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncros">mncros</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; aopt, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iercr)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mncuve">mncuve</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnderi">mnderi</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mndxdi">mndxdi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> pint, <a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dxdi)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mneig">mneig</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* a, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndima, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> mits, <a href="./ListOfTypes.html#Double_t">Double_t</a>* work, <a href="./ListOfTypes.html#Double_t">Double_t</a> precis, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ifault)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnemat">mnemat</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* emat, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndim)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnerrs">mnerrs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eplus, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eminus, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eparab, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; gcc)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mneval">mneval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> anext, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fnext, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierev)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnexcm">mnexcm</a>(<span class="keyword">const</span> <span class="keyword">char</span>* comand, <a href="./ListOfTypes.html#Double_t">Double_t</a>* plist, <a href="./ListOfTypes.html#Int_t">Int_t</a> llist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierflg)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnexin">mnexin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pint)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnfixp">mnfixp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iint, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierr)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnfree">mnfree</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> k)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mngrad">mngrad</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnhelp">mnhelp</a>(<a href="./TString.html">TString</a> comd)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnhelp%1">mnhelp</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnhes1">mnhes1</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnhess">mnhess</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnimpr">mnimpr</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mninex">mninex</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pint)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mninit">mninit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Int_t">Int_t</a> i3)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnlims">mnlims</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnline">mnline</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* start, <a href="./ListOfTypes.html#Double_t">Double_t</a> fstart, <a href="./ListOfTypes.html#Double_t">Double_t</a>* step, <a href="./ListOfTypes.html#Double_t">Double_t</a> slope, <a href="./ListOfTypes.html#Double_t">Double_t</a> toler)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnmatu">mnmatu</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> kode)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnmigr">mnmigr</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnmnos">mnmnos</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnmnot">mnmnot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ilax, <a href="./ListOfTypes.html#Int_t">Int_t</a> ilax2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val2pl, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val2mi)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnparm">mnparm</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./TString.html">TString</a> cnamj, <a href="./ListOfTypes.html#Double_t">Double_t</a> uk, <a href="./ListOfTypes.html#Double_t">Double_t</a> wk, <a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Double_t">Double_t</a> b, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierflg)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnpars">mnpars</a>(<a href="./TString.html">TString</a>&amp; crdbuf, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; icondn)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnpfit">mnpfit</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* parx2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>* pary2p, <a href="./ListOfTypes.html#Int_t">Int_t</a> npar2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>* coef2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sdev2p)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnpint">mnpint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; pexti, <a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; pinti)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnplot">mnplot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* xpt, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ypt, <span class="keyword">char</span>* chpt, <a href="./ListOfTypes.html#Int_t">Int_t</a> nxypt, <a href="./ListOfTypes.html#Int_t">Int_t</a> npagwd, <a href="./ListOfTypes.html#Int_t">Int_t</a> npagln)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnpout">mnpout</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iuext, <a href="./TString.html">TString</a>&amp; chnam, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xlolim, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xuplim, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iuint) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnprin">mnprin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inkode, <a href="./ListOfTypes.html#Double_t">Double_t</a> fval)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnpsdf">mnpsdf</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnrazz">mnrazz</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ynew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* pnew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; jh, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; jl)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnrn15">mnrn15</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; inseed)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnrset">mnrset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iopt)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnsave">mnsave</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnscan">mnscan</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnseek">mnseek</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnset">mnset</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnsimp">mnsimp</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnstat">mnstat</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fmin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fedm, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; errdef, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npari, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nparx, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; istat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mntiny">mntiny</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> epsp1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; epsbak)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:mnunpt">mnunpt</a>(<a href="./TString.html">TString</a>&amp; cfname)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnvert">mnvert</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* a, <a href="./ListOfTypes.html#Int_t">Int_t</a> l, <a href="./ListOfTypes.html#Int_t">Int_t</a> m, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ifail)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnwarn">mnwarn</a>(<span class="keyword">const</span> <span class="keyword">char</span>* copt, <span class="keyword">const</span> <span class="keyword">char</span>* corg, <span class="keyword">const</span> <span class="keyword">char</span>* cmes)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:mnwerr">mnwerr</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:Release">Release</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:SetErrorDef">SetErrorDef</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> up)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:SetFCN">SetFCN</a>(<span class="keyword">void</span>* fcn)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:SetFCN%1">SetFCN</a>(<span class="keyword">void</span> (*)(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;f, <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>) fcn)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:SetGraphicsMode">SetGraphicsMode</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:SetMaxIterations">SetMaxIterations</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxiter = 500)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:SetObjectFit">SetObjectFit</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMinuit:SetPrintLevel">SetPrintLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> printLevel = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMinuit:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMinuit:TMinuit">TMinuit</a>(<span class="keyword">const</span> <a href="./TMinuit.html">TMinuit</a>&amp; m)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMinuit.html">TMinuit</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMinuit:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TMinuit.html">TMinuit</a>&amp; m)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMinuit:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TMinuit:kMAXWARN"></a>kMAXWARN</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapubl"><b>public:</b>
+<table class="data" id="tabdatapubl" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fAlim"></a>fAlim</td><td class="datadesc">[fMaxpar2] Lower limits for parameters. If zero no limits</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fAmin"></a>fAmin</td><td class="datadesc">Minimum value found for FCN</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fApsi"></a>fApsi</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fBigedm"></a>fBigedm</td><td class="datadesc">Big EDM = 123456</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fBlim"></a>fBlim</td><td class="datadesc">[fMaxpar2] Upper limits for parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fCOMDplist"></a>fCOMDplist</td><td class="datadesc">[fMaxpar] array used in mncomd</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fCONTgcc"></a>fCONTgcc</td><td class="datadesc">[fMaxpar] array used in mncont</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fCONTw"></a>fCONTw</td><td class="datadesc">[fMaxpar] array used in mncont</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCfrom"></a>fCfrom</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TMinuit:fChpt"></a>fChpt</td><td class="datadesc">!Character to be plotted at the X,Y contour positions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCovmes"></a>fCovmes[4]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a>*</td><td class="dataname"><a name="TMinuit:fCpnam"></a>fCpnam</td><td class="datadesc">[fMaxpar2] Array of parameters names</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCstatu"></a>fCstatu</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCtitl"></a>fCtitl</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCundef"></a>fCundef</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCvrsn"></a>fCvrsn</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fCword"></a>fCword</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fDcovar"></a>fDcovar</td><td class="datadesc">Relative change in covariance matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fDgrd"></a>fDgrd</td><td class="datadesc">[fMaxpar] Uncertainties</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fDirin"></a>fDirin</td><td class="datadesc">[fMaxpar] (Internal) step sizes for current step</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fDirins"></a>fDirins</td><td class="datadesc">[fMaxpar] (Internal) step sizes for current step for fixed params</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fEDM"></a>fEDM</td><td class="datadesc">Estimated vertical distance to the minimum</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fEmpty"></a>fEmpty</td><td class="datadesc">Initialization flag (1 = Minuit initialized)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fEpsi"></a>fEpsi</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fEpsma2"></a>fEpsma2</td><td class="datadesc">sqrt(fEpsmac)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fEpsmac"></a>fEpsmac</td><td class="datadesc">machine precision for floating points:</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fErn"></a>fErn</td><td class="datadesc">[fMaxpar] Negative Minos errors if calculated</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fErp"></a>fErp</td><td class="datadesc">[fMaxpar] Positive Minos errors if calculated</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">void</span></td><td class="dataname"><a name="TMinuit:fFCN"></a>fFCN</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fFIXPyy"></a>fFIXPyy</td><td class="datadesc">[fMaxpar] array used in mnfixp</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fFval3"></a>fFval3</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fG2"></a>fG2</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fG2s"></a>fG2s</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGRADgf"></a>fGRADgf</td><td class="datadesc">[fMaxpar] array used in mngrad</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGin"></a>fGin</td><td class="datadesc">[fMaxpar2] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGlobcc"></a>fGlobcc</td><td class="datadesc">[fMaxpar] Global Correlation Coefficients</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fGraphicsMode"></a>fGraphicsMode</td><td class="datadesc">true if graphics mode on (default)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGrd"></a>fGrd</td><td class="datadesc">[fMaxpar] First derivatives</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGrds"></a>fGrds</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGstep"></a>fGstep</td><td class="datadesc">[fMaxpar] Step sizes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fGsteps"></a>fGsteps</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fHESSyy"></a>fHESSyy</td><td class="datadesc">[fMaxpar] array used in mnhess</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fIMPRdsav"></a>fIMPRdsav</td><td class="datadesc">[fMaxpar] array used in mnimpr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fIMPRy"></a>fIMPRy</td><td class="datadesc">[fMaxpar] array used in mnimpr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fISW"></a>fISW[7]</td><td class="datadesc">Array of switches</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIcirc"></a>fIcirc[2]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIcomnd"></a>fIcomnd</td><td class="datadesc">Number of commands</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIdbg"></a>fIdbg[11]</td><td class="datadesc">Array of internal debug switches</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMinuit:fIpfix"></a>fIpfix</td><td class="datadesc">[fMaxpar] List of fixed parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIstkrd"></a>fIstkrd[10]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIstkwr"></a>fIstkwr[10]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIstrat"></a>fIstrat</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIsysrd"></a>fIsysrd</td><td class="datadesc">standardInput unit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIsyssa"></a>fIsyssa</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fIsyswr"></a>fIsyswr</td><td class="datadesc">standard output unit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fItaur"></a>fItaur</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fKe1cr"></a>fKe1cr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fKe2cr"></a>fKe2cr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLimset"></a>fLimset</td><td class="datadesc">true if a parameter is up against limits (for MINOS)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLnewmn"></a>fLnewmn</td><td class="datadesc">true if the previous process has unexpectedly improved FCN</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLnolim"></a>fLnolim</td><td class="datadesc">true if there are no limits on any parameters (not yet used)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLphead"></a>fLphead</td><td class="datadesc">true if a heading should be put out for the next parameter definition</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLrepor"></a>fLrepor</td><td class="datadesc">true if exceptional conditions are put out (default=false)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMinuit:fLwarn"></a>fLwarn</td><td class="datadesc">true if warning messges are to be put out (default=true)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMATUvline"></a>fMATUvline</td><td class="datadesc">[fMaxpar] array used in mnmatu</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMIGRflnu"></a>fMIGRflnu</td><td class="datadesc">[fMaxpar] array used in mnmigr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMIGRgs"></a>fMIGRgs</td><td class="datadesc">[fMaxpar] array used in mnmigr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMIGRstep"></a>fMIGRstep</td><td class="datadesc">[fMaxpar] array used in mnmigr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMIGRvg"></a>fMIGRvg</td><td class="datadesc">[fMaxpar] array used in mnmigr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMIGRxxs"></a>fMIGRxxs</td><td class="datadesc">[fMaxpar] array used in mnmigr</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMNOTgcc"></a>fMNOTgcc</td><td class="datadesc">[fMaxpar] array used in mnmnot</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMNOTw"></a>fMNOTw</td><td class="datadesc">[fMaxpar] array used in mnmnot</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fMNOTxdev"></a>fMNOTxdev</td><td class="datadesc">[fMaxpar] array used in mnmnot</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxIterations"></a>fMaxIterations</td><td class="datadesc">Maximum number of iterations</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxcpt"></a>fMaxcpt</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxext"></a>fMaxext</td><td class="datadesc">Maximum number of external parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxint"></a>fMaxint</td><td class="datadesc">Maximum number of internal parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxpar"></a>fMaxpar</td><td class="datadesc">Maximum number of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxpar1"></a>fMaxpar1</td><td class="datadesc">fMaxpar*(fMaxpar+1)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxpar2"></a>fMaxpar2</td><td class="datadesc">fMaxpar*fMaxpar</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fMaxpar5"></a>fMaxpar5</td><td class="datadesc">fMaxpar*(fMaxpar+1)/2</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="dataname"><a name="TMinuit:fMethodCall"></a>fMethodCall</td><td class="datadesc">Pointer to MethodCall in case of interpreted function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNblock"></a>fNblock</td><td class="datadesc">Number of Minuit data blocks</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNewpag"></a>fNewpag</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMinuit:fNexofi"></a>fNexofi</td><td class="datadesc">[fMaxpar] External parameters number for currently variable parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNfcn"></a>fNfcn</td><td class="datadesc">Number of calls to FCN</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNfcnfr"></a>fNfcnfr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNfcnlc"></a>fNfcnlc</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNfcnmx"></a>fNfcnmx</td><td class="datadesc">Maximum number of calls to FCN</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNfcwar"></a>fNfcwar[20]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMinuit:fNiofex"></a>fNiofex</td><td class="datadesc">[fMaxpar2] Internal parameters number, or zero if not currently variable</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNpagln"></a>fNpagln</td><td class="datadesc">Number of lines per page</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNpagwd"></a>fNpagwd</td><td class="datadesc">Page width</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNpar"></a>fNpar</td><td class="datadesc">Number of free parameters (total number of pars = fNpar + fNfix)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNpfix"></a>fNpfix</td><td class="datadesc">Number of fixed parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNstkrd"></a>fNstkrd</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNstkwr"></a>fNstkwr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNu"></a>fNu</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMinuit:fNvarl"></a>fNvarl</td><td class="datadesc">[fMaxpar2] parameters flag (-1=undefined, 0=constant..)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fNwrmes"></a>fNwrmes[2]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TMinuit:fObjectFit"></a>fObjectFit</td><td class="datadesc">Pointer to object being fitted</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fOrigin"></a>fOrigin[100]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fP"></a>fP</td><td class="datadesc">[fMaxpar1] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPARSplist"></a>fPARSplist</td><td class="datadesc">[fMaxpar] array used in mnpars</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPSDFs"></a>fPSDFs</td><td class="datadesc">[fMaxpar] array used in mnpsdf</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPbar"></a>fPbar</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TMinuit:fPlot"></a>fPlot</td><td class="datadesc">Pointer to TGraph object created by mncont</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPrho"></a>fPrho</td><td class="datadesc">[fMaxpar] Minimum point of parabola</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPstar"></a>fPstar</td><td class="datadesc">[fMaxpar2] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fPstst"></a>fPstst</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fSEEKxbest"></a>fSEEKxbest</td><td class="datadesc">[fMaxpar] array used in mnseek</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fSEEKxmid"></a>fSEEKxmid</td><td class="datadesc">[fMaxpar] array used in mnseek</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fSIMPy"></a>fSIMPy</td><td class="datadesc">[fMaxpar] array used in mnsimp</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMinuit:fStatus"></a>fStatus</td><td class="datadesc">Status flag for the last called Minuit function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fU"></a>fU</td><td class="datadesc">[fMaxpar2] External (visible to user in FCN) value of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fUndefi"></a>fUndefi</td><td class="datadesc">Undefined number = -54321</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fUp"></a>fUp</td><td class="datadesc">FCN+-UP defines errors (for chisquare fits UP=1)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fUpdflt"></a>fUpdflt</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fVERTpp"></a>fVERTpp</td><td class="datadesc">[fMaxpar] array used in mnvert</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fVERTq"></a>fVERTq</td><td class="datadesc">[fMaxpar] array used in mnvert</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fVERTs"></a>fVERTs</td><td class="datadesc">[fMaxpar] array used in mnvert</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fVhmat"></a>fVhmat</td><td class="datadesc">[fMaxpar5] (Internal) error matrix stored as Half MATrix, since it is symmetric</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fVlimhi"></a>fVlimhi</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fVlimlo"></a>fVlimlo</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fVthmat"></a>fVthmat</td><td class="datadesc">[fMaxpar5] VHMAT is sometimes saved in VTHMAT, especially in MNMNOT</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMinuit:fWarmes"></a>fWarmes[100]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fWerr"></a>fWerr</td><td class="datadesc">[fMaxpar] External parameters error (standard deviation, defined by UP)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fWord7"></a>fWord7</td><td class="datadesc">[fMaxpar] </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fX"></a>fX</td><td class="datadesc">[fMaxpar] Internal parameters values</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fXdircr"></a>fXdircr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fXmidcr"></a>fXmidcr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fXpt"></a>fXpt</td><td class="datadesc">[fMaxcpt] X array of points for contours</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fXs"></a>fXs</td><td class="datadesc">[fMaxpar] Internal parameters values saved for fixed params</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fXt"></a>fXt</td><td class="datadesc">[fMaxpar] Internal parameters values X saved as Xt</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fXts"></a>fXts</td><td class="datadesc">[fMaxpar] Internal parameters values X saved as Xt for fixed params</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fYdircr"></a>fYdircr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMinuit:fYmidcr"></a>fYmidcr</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TMinuit:fYpt"></a>fYpt</td><td class="datadesc">[fMaxcpt] Y array of points for contours</td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMinuit:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMinuit_Inh" id="MapTMinuit_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="218,9,291,29"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="31,9,99,29"/>
+<area shape="rect" href="./TMVA__MinuitWrapper.html" title="TMVA::MinuitWrapper" alt="" coords="574,9,763,29"/>
+</map>
+<map name="MapTMinuit_InhMem" id="MapTMinuit_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTMinuit_Lib" id="MapTMinuit_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="463,199,591,247"/>
+</map>
+<div class="tabs">
+<a id="imgTMinuit_Inh" class="tabsel" href="inh/TMinuit_Inh.png" onclick="javascript:return SetImg('Charts','inh/TMinuit_Inh.png');">Inheritance</a>
+<a id="imgTMinuit_InhMem" class="tab" href="inhmem/TMinuit_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMinuit_InhMem.png');">Inherited Members</a>
+<a id="imgTMinuit_Incl" class="tab" href="incl/TMinuit_Incl.png" onclick="javascript:return SetImg('Charts','incl/TMinuit_Incl.png');">Includes</a>
+<a id="imgTMinuit_Lib" class="tab" href="lib/TMinuit_Lib.png" onclick="javascript:return SetImg('Charts','lib/TMinuit_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMinuit_Inh" src="inh/TMinuit_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMinuit:TMinuit%1" href="src/TMinuit.cxx.html#T5YruE">TMinuit</a>()</span><br />
+<div class="funccomm"><pre>Minuit normal constructor*-*-*-*-
+*-*                  ========================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMinuit:TMinuit%2" href="src/TMinuit.cxx.html#CnLQQ">TMinuit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar)</span><br />
+<div class="funccomm"><pre>Minuit normal constructor*-*-*-*-
+*-*                  ========================
+
+  maxpar is the maximum number of parameters used with this <a href="./TMinuit.html">TMinuit</a> object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMinuit:TMinuit" href="src/TMinuit.cxx.html#mGn52C">TMinuit</a>(<span class="keyword">const</span> <a href="./TMinuit.html">TMinuit</a>&amp; m)</span><br />
+<div class="funccomm"><pre> Private <a href="./TMinuit.html">TMinuit</a> copy ctor. <a href="./TMinuit.html">TMinuit</a> can not be copied.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMinuit:_TMinuit" href="src/TMinuit.cxx.html#XqrhjD">~TMinuit</a>()</span><br />
+<div class="funccomm"><pre>Minuit default destructor*-*-*-*-
+*-*                  =========================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:BuildArrays" href="src/TMinuit.cxx.html#o.vxVE">BuildArrays</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 15)</span><br />
+<div class="funccomm"><pre>-*-*-*Create internal Minuit arrays for the maxpar parameters
+*-*          =======================================================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMinuit:Clone" href="src/TMinuit.cxx.html#NCDVNC">Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Make a clone of an object using the <a href="./TMinuit.html#TMinuit:Streamer" title="void TMinuit::Streamer(TBuffer&amp; b)">Streamer</a> facility.
+ Function pointer is copied to <a href="./TMinuit.html#TMinuit:Clone" title="TObject* TMinuit::Clone(const char* newname=&quot;&quot;)">Clone</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:Command" href="src/TMinuit.cxx.html#UJ1_W">Command</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command)</span><br />
+<div class="funccomm"><pre> execute a Minuit command
+     Equivalent to MNEXCM except that the command is given as a
+     character string.
+ See <a href="./TMinuit.html">TMinuit</a>::<a href="./TMinuit.html#TMinuit:mnhelp" title="void TMinuit::mnhelp(TString comd) or overloads">mnhelp</a> for the full list of available commands
+ See also http://wwwasdoc.web.cern.ch/wwwasdoc/minuit/node18.html for
+  a complete documentation of all the available commands
+
+ Returns the status of the execution:
+   = 0: command executed normally
+     1: command is blank, ignored
+     2: command line unreadable, ignored
+     3: unknown command, ignored
+     4: abnormal termination (e.g., MIGRAD not converged)
+     5: command is a request to read PARAMETER definitions
+     6: 'SET INPUT' command
+     7: 'SET TITLE' command
+     8: 'SET COVAR' command
+     9: reserved
+    10: END command
+    11: EXIT or STOP command
+    12: RETURN command
+
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMinuit:Contour" href="src/TMinuit.cxx.html#b6O5jC">Contour</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints = 10, <a href="./ListOfTypes.html#Int_t">Int_t</a> pa1 = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> pa2 = 1)</span><br />
+<div class="funccomm"><pre> Creates a <a href="./TGraph.html">TGraph</a> object describing the n-sigma contour of a
+ <a href="./TMinuit.html">TMinuit</a> fit. The contour of the parameters pa1 and pa2 is calculated
+ unsing npoints (&gt;=4) points. The <a href="./TMinuit.html">TMinuit</a> status will be
+  0   on success and
+ -1   if errors in the calling sequence (pa1, pa2 not variable)
+  1   if less than four points can be found
+  2   if npoints&lt;4
+  n&gt;3 if only n points can be found (n &lt; npoints)
+ The status can be obtained via <a href="./TMinuit.html">TMinuit</a>::<a href="./TMinuit.html#TMinuit:GetStatus" title="Int_t TMinuit::GetStatus()">GetStatus</a>().
+
+ To get the n-sigma contour the ERRDEF parameter in Minuit has to set
+ to n^2. The fcn function has to be set before the routine is called.
+
+ The <a href="./TGraph.html">TGraph</a> object is created via the interpreter. The user must cast it
+ to a <a href="./TGraph.html">TGraph</a>*. Note that the <a href="./TGraph.html">TGraph</a> is created with npoints+1 in order to
+ close the contour (setting last point equal to first point).
+
+ You can find an example in $ROOTSYS/tutorials/fit/fitcont.C
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:DefineParameter" href="src/TMinuit.cxx.html#jViSH">DefineParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> initVal, <a href="./ListOfTypes.html#Double_t">Double_t</a> initErr, <a href="./ListOfTypes.html#Double_t">Double_t</a> lowerLimit, <a href="./ListOfTypes.html#Double_t">Double_t</a> upperLimit)</span><br />
+<div class="funccomm"><pre> Define a parameter
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:DeleteArrays" href="src/TMinuit.cxx.html#kLxnUB">DeleteArrays</a>()</span><br />
+<div class="funccomm"><pre>-*-*-*<a href="./TObject.html#TObject:Delete" title="void TObject::Delete(Option_t* option=&quot;&quot;)">Delete</a> internal Minuit arrays
+*-*                    =============================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:Eval" href="src/TMinuit.cxx.html#QMfgH">Eval</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npar, <a href="./ListOfTypes.html#Double_t">Double_t</a>* grad, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fval, <a href="./ListOfTypes.html#Double_t">Double_t</a>* par, <a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</span><br />
+<div class="funccomm"><pre> Evaluate the minimisation function
+  Input parameters:
+    npar:    number of currently variable parameters
+    par:     array of (constant and variable) parameters
+    flag:    Indicates what is to be calculated (see example below)
+    grad:    array of gradients
+  Output parameters:
+    fval:    The calculated function value.
+    grad:    The (optional) vector of first derivatives).
+
+ The meaning of the parameters par is of course defined by the user,
+ who uses the values of those parameters to calculate his function value.
+ The starting values must be specified by the user.
+ Later values are determined by Minuit as it searches for the minimum
+ or performs whatever analysis is requested by the user.
+
+ Note that this virtual function may be redefined in a class derived from <a href="./TMinuit.html">TMinuit</a>.
+ The default function calls the function specified in <a href="./TMinuit.html#TMinuit:SetFCN" title="void TMinuit::SetFCN(void* fcn) or overloads">SetFCN</a>
+
+ Example of Minimisation function:
+
+   if (flag == 1) {
+      read input data,
+      calculate any necessary constants, etc.
+   }
+   if (flag == 2) {
+      calculate GRAD, the first derivatives of FVAL
+     (this is optional)
+   }
+   Always calculate the value of the function, FVAL,
+   which is usually a chisquare or log likelihood.
+   if (iflag == 3) {
+      will come here only after the fit is finished.
+      Perform any final calculations, output fitted data, etc.
+   }
+
+  See concrete examples in <a href="./TH1.html">TH1</a>::H1FitChisquare, H1FitLikelihood
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:FixParameter" href="src/TMinuit.cxx.html#VSP94D">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo)</span><br />
+<div class="funccomm"><pre> fix a parameter
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetParameter" href="src/TMinuit.cxx.html#FtTjb">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; currentValue, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; currentError) const</span><br />
+<div class="funccomm"><pre> return parameter value and error
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetNumFixedPars" href="src/TMinuit.cxx.html#gzBXLC">GetNumFixedPars</a>() const</span><br />
+<div class="funccomm"><pre> returns the number of currently fixed parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetNumFreePars" href="src/TMinuit.cxx.html#X70lgB">GetNumFreePars</a>() const</span><br />
+<div class="funccomm"><pre> returns the number of currently free parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetNumPars" href="src/TMinuit.cxx.html#mGjLrC">GetNumPars</a>() const</span><br />
+<div class="funccomm"><pre> returns the total number of parameters that have been defined.
+ (fixed and free)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:Migrad" href="src/TMinuit.cxx.html#cxfYs">Migrad</a>()</span><br />
+<div class="funccomm"><pre> invokes the MIGRAD minimizer
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:Release" href="src/TMinuit.cxx.html#Wr21uC">Release</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parNo)</span><br />
+<div class="funccomm"><pre> release a parameter
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:SetErrorDef" href="src/TMinuit.cxx.html#vKL9SE">SetErrorDef</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> up)</span><br />
+<div class="funccomm"><pre> To get the n-sigma contour the error def parameter <span class="string">"up"</span> has to set to n^2.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:SetFCN" href="src/TMinuit.cxx.html#UJ25JD">SetFCN</a>(<span class="keyword">void</span> (*fcn)(<a href="./ListOfTypes.html#Int_t">Int_t</a> &amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a> *, <a href="./ListOfTypes.html#Double_t">Double_t</a> &amp;f, <a href="./ListOfTypes.html#Double_t">Double_t</a> *, <a href="./ListOfTypes.html#Int_t">Int_t</a>))</span><br />
+<div class="funccomm"><pre>To set the address of the minimization function*-
+*-*          ===============================================
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:SetFCN" href="src/TMinuit.cxx.html#zUG8BD">SetFCN</a>(<span class="keyword">void</span>* fcn)</span><br />
+<div class="funccomm"><pre>To set the address of the minimization function*-
+*-*          ===============================================
+     this function is called by CINT instead of the function above
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:SetPrintLevel" href="src/TMinuit.cxx.html#aN1PoB">SetPrintLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> printLevel = 0)</span><br />
+<div class="funccomm"><pre>set Minuit print level
+ printlevel = -1  quiet (also suppresse all warnings)
+            =  0  normal
+            =  1  verbose
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnamin" href="src/TMinuit.cxx.html#XMLmkE">mnamin</a>()</span><br />
+<div class="funccomm"><pre>Initialize AMIN*-*-*-*-
+*-*                      ===============
+*-*C        Called  from many places.  Initializes the value of AMIN by
+*-*C        calling the user function. Prints out the function value and
+*-*C        parameter values if <a href="./TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a> Flag value is high enough.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnbins" href="src/TMinuit.cxx.html#RlI1y">mnbins</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> a1, <a href="./ListOfTypes.html#Double_t">Double_t</a> a2, <a href="./ListOfTypes.html#Int_t">Int_t</a> naa, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bl, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bh, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nb, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bwid)</span><br />
+<div class="funccomm"><pre>-*-*Compute reasonable histogram intervals
+*-*                  ======================================
+*-*        Function TO DETERMINE REASONABLE HISTOGRAM INTERVALS
+*-*        GIVEN ABSOLUTE UPPER AND LOWER BOUNDS  A1 AND A2
+*-*        AND DESIRED MAXIMUM NUMBER OF BINS NAA
+*-*        PROGRAM MAKES REASONABLE BINNING FROM BL TO BH OF WIDTH BWID
+*-*        F. JAMES,   AUGUST, 1974 , stolen for Minuit, 1988
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncalf" href="src/TMinuit.cxx.html#W9CxKE">mncalf</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pvec, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; ycalf)</span><br />
+<div class="funccomm"><pre>Transform FCN to find further minima
+*-*                ====================================
+*-*        Called only from MNIMPR.  Transforms the function FCN
+*-*        by dividing out the quadratic part in order to find further
+*-*        minima.    Calculates  ycalf = (f-fmin)/(x-xmin)*v*(x-xmin)
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncler" href="src/TMinuit.cxx.html#cSmNFC">mncler</a>()</span><br />
+<div class="funccomm"><pre>-*-*-*Resets the parameter list to UNDEFINED
+*-*                  ======================================
+*-*        Called from MINUIT and by option from MNEXCM
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncntr" href="src/TMinuit.cxx.html#stqYk">mncntr</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ke1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ke2, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierrf)</span><br />
+<div class="funccomm"><pre><a href="./TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a> function contours in two variables, on line printer
+*-*      =========================================================
+-
+*-*                input arguments: parx, pary, devs, ngrid
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncomd" href="src/TMinuit.cxx.html#lNVudE">mncomd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* crdbin, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; icondn)</span><br />
+<div class="funccomm"><pre>-*Reads a command string and executes
+*-*                  ===================================
+*-*        Called by user.  'Reads' a command string and executes.
+*-*     Equivalent to MNEXCM except that the command is given as a
+*-*          character string.
+-
+*-*     ICONDN = 0: command executed normally
+*-*              1: command is blank, ignored
+*-*              2: command line unreadable, ignored
+*-*              3: unknown command, ignored
+*-*              4: abnormal termination (e.g., MIGRAD not converged)
+*-*              5: command is a request to read PARAMETER definitions
+*-*              6: 'SET INPUT' command
+*-*              7: 'SET TITLE' command
+*-*              8: 'SET COVAR' command
+*-*              9: reserved
+*-*             10: END command
+*-*             11: EXIT or STOP command
+*-*             12: RETURN command
+-
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncont" href="src/TMinuit.cxx.html#hENh9B">mncont</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ke1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ke2, <a href="./ListOfTypes.html#Int_t">Int_t</a> nptu, <a href="./ListOfTypes.html#Double_t">Double_t</a>* xptu, <a href="./ListOfTypes.html#Double_t">Double_t</a>* yptu, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierrf)</span><br />
+<div class="funccomm"><pre>Find points along a contour where FCN is minimum
+*-*          ================================================
+*-*       Find NPTU points along a contour where the function
+*-*             FMIN (X(KE1),X(KE2)) =  AMIN+UP
+*-*       where FMIN is the minimum of FCN with respect to all
+*-*       the other NPAR-2 variable parameters (if any).
+*-*   IERRF on return will be equal to the number of points found:
+*-*     NPTU if normal termination with NPTU points found
+*-*     -1   if errors in the calling sequence (KE1, KE2 not variable)
+*-*      0   if less than four points can be found (using MNMNOT)
+*-*     n&gt;3  if only n points can be found (n &lt; NPTU)
+-
+*-*                 input arguments: parx, pary, devs, ngrid
+*
+System generated locals
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncrck" href="src/TMinuit.cxx.html#JdFfFB">mncrck</a>(<a href="./TString.html">TString</a> crdbuf, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxcwd, <a href="./TString.html">TString</a>&amp; comand, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; lnc, <a href="./ListOfTypes.html#Int_t">Int_t</a> mxp, <a href="./ListOfTypes.html#Double_t">Double_t</a>* plist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; llist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierr, <a href="./ListOfTypes.html#Int_t">Int_t</a> isyswr)</span><br />
+<div class="funccomm"><pre>Cracks the free-format input*-
+*-*                    ============================
+*-*       Cracks the free-format input, expecting zero or more
+*-*         alphanumeric fields (which it joins into COMAND(1:LNC))
+*-*         followed by one or more numeric fields separated by
+*-*         blanks and/or one comma.  The numeric fields are put into
+*-*         the LLIST (but at most MXP) elements of PLIST.
+*-*      IERR = 0 if no errors,
+*-*           = 1 if error(s).
+-
+*
+Initialized data
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncros" href="src/TMinuit.cxx.html#YrbxMC">mncros</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; aopt, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iercr)</span><br />
+<div class="funccomm"><pre>Find point where MNEVAL=AMIN+UP*-
+*-*                  ===============================
+*-*       Find point where MNEVAL=AMIN+UP, along the line through
+*-*       XMIDCR,YMIDCR with direction XDIRCR,YDIRCR,   where X and Y
+*-*       are parameters KE1CR and KE2CR.  If KE2CR=0 (from MINOS),
+*-*       only KE1CR is varied.  From MNCONT, both are varied.
+*-*       Crossing point is at
+*-*        (U(KE1),U(KE2)) = (XMID,YMID) + AOPT*(XDIR,YDIR)
+-
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mncuve" href="src/TMinuit.cxx.html#y5eOvC">mncuve</a>()</span><br />
+<div class="funccomm"><pre>-*-*-*Makes sure that the current point is a local minimum
+*-*            ====================================================
+*-*        Makes sure that the current point is a local
+*-*        minimum and that the error matrix exists,
+*-*        or at least something good enough for MINOS and MNCONT
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnderi" href="src/TMinuit.cxx.html#LjySS">mnderi</a>()</span><br />
+<div class="funccomm"><pre>Calculates the first derivatives of FCN (GRD)
+*-*            =============================================
+*-*        Calculates the first derivatives of FCN (GRD),
+*-*        either by finite differences or by transforming the user-
+*-*        supplied derivatives to internal coordinates,
+*-*        according to whether <a href="./TMinuit.html#TMinuit:fISW" title="Int_t TMinuit::fISW">fISW</a>[2] is zero or one.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mndxdi" href="src/TMinuit.cxx.html#rwupwE">mndxdi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> pint, <a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dxdi)</span><br />
+<div class="funccomm"><pre>-*-*Calculates the transformation factor between ext/internal values
+*-*    =====================================================================
+*-*        calculates the transformation factor between external and
+*-*        internal parameter values.     this factor is one for
+*-*        parameters which are not limited.     called from MNEMAT.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mneig" href="src/TMinuit.cxx.html#uiIheC">mneig</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* a, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndima, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> mits, <a href="./ListOfTypes.html#Double_t">Double_t</a>* work, <a href="./ListOfTypes.html#Double_t">Double_t</a> precis, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ifault)</span><br />
+<div class="funccomm"><pre>Compute matrix eigen values*-
+*-*                    ===========================
+System generated locals
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnemat" href="src/TMinuit.cxx.html#jG1caD">mnemat</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* emat, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndim)</span><br />
+<div class="funccomm"><pre> Calculates the external error matrix from the internal matrix
+
+ Note that if the matrix is declared like <a href="./ListOfTypes.html#Double_t">Double_t</a> matrix[5][5]
+ in the calling program, one has to call <a href="./TMinuit.html#TMinuit:mnemat" title="void TMinuit::mnemat(Double_t* emat,Int_t ndim)">mnemat</a> with, eg
+     <a href="./TMinuit.html">gMinuit</a>-><a href="./TMinuit.html#TMinuit:mnemat" title="void TMinuit::mnemat(Double_t* emat,Int_t ndim)">mnemat</a>(&amp;matrix[0][0],5);
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnerrs" href="src/TMinuit.cxx.html#Pv6waE">mnerrs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eplus, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eminus, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; eparab, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; gcc)</span><br />
+<div class="funccomm"><pre>Utility routine to get MINOS errors*-
+*-*                ===================================
+*-*    Called by user.
+*-*    NUMBER is the parameter number
+*-*    values returned by MNERRS:
+*-*       EPLUS, EMINUS are MINOS errors of parameter NUMBER,
+*-*       EPARAB is 'parabolic' error (from error matrix).
+*-*                 (Errors not calculated are set = 0)
+*-*       GCC is global correlation coefficient from error matrix
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mneval" href="src/TMinuit.cxx.html#MOTbcE">mneval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> anext, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fnext, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierev)</span><br />
+<div class="funccomm"><pre>Evaluates the function being analyzed by MNCROS*-
+*-*          ===============================================
+*-*      Evaluates the function being analyzed by MNCROS, which is
+*-*      generally the minimum of FCN with respect to all remaining
+*-*      variable parameters.  The class data members contains the
+*-*      data necessary to know the values of U(KE1CR) and U(KE2CR)
+*-*      to be used, namely     U(KE1CR) = XMIDCR + ANEXT*XDIRCR
+*-*      and (if KE2CR .NE. 0)  U(KE2CR) = YMIDCR + ANEXT*YDIRCR
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnexcm" href="src/TMinuit.cxx.html#sLGJVE">mnexcm</a>(<span class="keyword">const</span> <span class="keyword">char</span>* comand, <a href="./ListOfTypes.html#Double_t">Double_t</a>* plist, <a href="./ListOfTypes.html#Int_t">Int_t</a> llist, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierflg)</span><br />
+<div class="funccomm"><pre>Interprets a command and takes appropriate action*-*-
+*-*        =================================================
+*-*        either directly by skipping to the corresponding code in
+*-*        MNEXCM, or by setting up a call to a function
+-
+*-*  recognized MINUIT commands:
+*-*  obsolete commands:
+*-*      IERFLG is now (94.5) defined the same as ICONDN in MNCOMD
+*-*            = 0: command executed normally
+*-*              1: command is blank, ignored
+*-*              2: command line unreadable, ignored
+*-*              3: unknown command, ignored
+*-*              4: abnormal termination (e.g., MIGRAD not converged)
+*-*              9: reserved
+*-*             10: END command
+*-*             11: EXIT or STOP command
+*-*             12: RETURN command
+-
+*-*     see also http://wwwasdoc.web.cern.ch/wwwasdoc/minuit/node18.html for the possible list
+*-*     of all Minuit commands
+-
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnexin" href="src/TMinuit.cxx.html#KibGrB">mnexin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pint)</span><br />
+<div class="funccomm"><pre>-*-*Transforms the external parameter values U to internal values
+*-*      =============================================================
+*-*        Transforms the external parameter values U to internal
+*-*        values in the dense array PINT.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnfixp" href="src/TMinuit.cxx.html#WYu0hC">mnfixp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iint, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierr)</span><br />
+<div class="funccomm"><pre>-*-*-*-*Removes parameter IINT from the internal parameter list
+*-*          =======================================================
+*-*        and arranges the rest of the list to fill the hole.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnfree" href="src/TMinuit.cxx.html#p7fOq">mnfree</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> k)</span><br />
+<div class="funccomm"><pre>Restores one or more fixed parameter(s) to variable status*-*-
+*-*    ==========================================================
+*-*        Restores one or more fixed parameter(s) to variable status
+*-*        by inserting it into the internal parameter list at the
+*-*        appropriate place.
+-
+*-*        K = 0 means restore all parameters
+*-*        K = 1 means restore the last parameter fixed
+*-*        K = -I means restore external parameter I (if possible)
+*-*        IQ = fix-location where internal parameters were stored
+*-*        IR = external number of parameter being restored
+*-*        IS = internal number of parameter being restored
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mngrad" href="src/TMinuit.cxx.html#ueXnUD">mngrad</a>()</span><br />
+<div class="funccomm"><pre>Interprets the SET GRAD command*-*-*-
+*-*                ===============================
+*-*       Called from MNSET
+*-*       Interprets the SET GRAD command, which informs MINUIT whether
+*-*       the first derivatives of FCN will be calculated by the user
+*-*       inside FCN.  It can check the user derivative calculation
+*-*       by comparing it with a finite difference approximation.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnhelp%1" href="src/TMinuit.cxx.html#h_OGX">mnhelp</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>interface to Minuit help
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnhelp" href="src/TMinuit.cxx.html#CjW.p">mnhelp</a>(<a href="./TString.html">TString</a> comd)</span><br />
+<div class="funccomm"><pre>HELP routine for MINUIT interactive commands*-
+*-*            ============================================
+-
+*-*      COMD =<span class="string">'*'</span> or <span class="string">""</span> prints a global help for all commands
+*-*      COMD =Command_name: print detailed help for one command.
+*-*         Note that at least 3 characters must be given for the command
+*-*         name.
+-
+*-*     Author: Rene Brun
+*-*             comments extracted from the MINUIT documentation file.
+-
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnhess" href="src/TMinuit.cxx.html#ob3NhB">mnhess</a>()</span><br />
+<div class="funccomm"><pre>Calculates the full second-derivative matrix of FCN*-*-
+*-*        ===================================================
+*-*        by taking finite differences. When calculating diagonal
+*-*        elements, it may iterate so that step size is nearly that
+*-*        which gives function change= UP/10. The first derivatives
+*-*        of course come as a free side effect, but with a smaller
+*-*        step size in order to obtain a known accuracy.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnhes1" href="src/TMinuit.cxx.html#kqocS">mnhes1</a>()</span><br />
+<div class="funccomm"><pre>Calculate first derivatives (GRD) and uncertainties (DGRD)*-*-
+*-*    ==========================================================
+*-*         and appropriate step sizes GSTEP
+*-*      Called from MNHESS and MNGRAD
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnimpr" href="src/TMinuit.cxx.html#wpoIIC">mnimpr</a>()</span><br />
+<div class="funccomm"><pre>Attempts to improve on a good local minimum*-*-*-
+*-*          ===========================================
+*-*        Attempts to improve on a good local minimum by finding a
+*-*        better one.   The quadratic part of FCN is removed by MNCALF
+*-*        and this transformed function is minimized using the simplex
+*-*        method from several random starting points.
+*-*        ref. -- Goldstein and Price, Math.Comp. 25, 569 (1971)
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mninex" href="src/TMinuit.cxx.html#jUFpEB">mninex</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* pint)</span><br />
+<div class="funccomm"><pre>-*Transforms from internal coordinates (PINT) to external (U)
+*-*      ===========================================================
+*-*        The minimizing routines which work in
+*-*        internal coordinates call this routine before calling FCN.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mninit" href="src/TMinuit.cxx.html#Wr.a8C">mninit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Int_t">Int_t</a> i3)</span><br />
+<div class="funccomm"><pre>Main initialization member function for MINUIT*-*-*-
+*-*        ==============================================
+*-*     It initializes some constants
+*-*                (including the logical I/O unit nos.),
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnlims" href="src/TMinuit.cxx.html#QZ3DfB">mnlims</a>()</span><br />
+<div class="funccomm"><pre>Interprets the SET LIM command, to reset the parameter limits
+*-*    =============================================================
+*-*       Called from MNSET
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnline" href="src/TMinuit.cxx.html#g_cIW">mnline</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* start, <a href="./ListOfTypes.html#Double_t">Double_t</a> fstart, <a href="./ListOfTypes.html#Double_t">Double_t</a>* step, <a href="./ListOfTypes.html#Double_t">Double_t</a> slope, <a href="./ListOfTypes.html#Double_t">Double_t</a> toler)</span><br />
+<div class="funccomm"><pre>-*-*Perform a line search from position START
+*-*                =========================================
+*-*        along direction STEP, where the length of vector STEP
+*-*                   gives the expected position of minimum.
+*-*        FSTART is value of function at START
+*-*        SLOPE (if non-zero) is df/dx along STEP at START
+*-*        TOLER is initial tolerance of minimum in direction STEP
+-
+*-* SLAMBG and ALPHA control the maximum individual steps allowed.
+*-* The first step is always =1. The max length of second step is SLAMBG.
+*-* The max size of subsequent steps is the maximum previous successful
+*-*   step multiplied by ALPHA + the size of most recent successful step,
+*-*   but cannot be smaller than SLAMBG.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnmatu" href="src/TMinuit.cxx.html#DCG2gC">mnmatu</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> kode)</span><br />
+<div class="funccomm"><pre>Prints the covariance matrix v when KODE=1*-
+*-*            ==========================================
+*-*        always prints the global correlations, and
+*-*        calculates and prints the individual correlation coefficients
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnmigr" href="src/TMinuit.cxx.html#M2ZhFC">mnmigr</a>()</span><br />
+<div class="funccomm"><pre>Performs a local function minimization*-
+*-*              ======================================
+*-*        Performs a local function minimization using basically the
+*-*        method of Davidon-Fletcher-Powell as modified by Fletcher
+*-*        ref. -- Fletcher, Comp.J. 13,317 (1970)   <span class="string">"switching method"</span>
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnmnos" href="src/TMinuit.cxx.html#sOhXfB">mnmnos</a>()</span><br />
+<div class="funccomm"><pre>Performs a MINOS error analysis*-
+*-*                  ===============================
+*-*        Performs a MINOS error analysis on those parameters for
+*-*        which it is requested on the MINOS command by calling
+*-*        MNMNOT for each parameter requested.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnmnot" href="src/TMinuit.cxx.html#GtiV1">mnmnot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ilax, <a href="./ListOfTypes.html#Int_t">Int_t</a> ilax2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val2pl, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val2mi)</span><br />
+<div class="funccomm"><pre>Performs a MINOS error analysis on one parameter*-*-*-
+*-*        ================================================
+*-*        The parameter ILAX is varied, and the minimum of the
+*-*        function with respect to the other parameters is followed
+*-*        until it crosses the value FMIN+UP.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnparm" href="src/TMinuit.cxx.html#P_culC">mnparm</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./TString.html">TString</a> cnamj, <a href="./ListOfTypes.html#Double_t">Double_t</a> uk, <a href="./ListOfTypes.html#Double_t">Double_t</a> wk, <a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Double_t">Double_t</a> b, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ierflg)</span><br />
+<div class="funccomm"><pre>Implements one parameter definition*-*-*-
+*-*              ===================================
+*-*        Called from MNPARS and user-callable
+*-*    Implements one parameter definition, that is:
+*-*          K     (external) parameter number
+*-*          CNAMK parameter name
+*-*          UK    starting value
+*-*          WK    starting step size or uncertainty
+*-*          A, B  lower and upper physical parameter limits
+*-*    and sets up (updates) the parameter lists.
+*-*    Output: IERFLG=0 if no problems
+*-*                  &gt;0 if MNPARM unable to implement definition
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnpars" href="src/TMinuit.cxx.html#dUR4XD">mnpars</a>(<a href="./TString.html">TString</a>&amp; crdbuf, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; icondn)</span><br />
+<div class="funccomm"><pre>Implements one parameter definition*-*-*-*-*-
+*-*            =========== =======================
+*-*        Called from MNREAD and user-callable
+*-*    Implements one parameter definition, that is:
+*-*       parses the string CRDBUF and calls MNPARM
+-
+*-* output conditions:
+*-*        ICONDN = 0    all OK
+*-*        ICONDN = 1    error, attempt to define parameter is ignored
+*-*        ICONDN = 2    end of parameter definitions
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnpfit" href="src/TMinuit.cxx.html#ueiB4D">mnpfit</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* parx2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>* pary2p, <a href="./ListOfTypes.html#Int_t">Int_t</a> npar2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>* coef2p, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sdev2p)</span><br />
+<div class="funccomm"><pre>To fit a parabola to npar2p points*-
+*-*                ==================================
+*-*   npar2p   no. of points
+*-*   parx2p(i)   x value of point i
+*-*   pary2p(i)   y value of point i
+-
+*-*   coef2p(1...3)  coefficients of the fitted parabola
+*-*   y=coef2p(1) + coef2p(2)*x + coef2p(3)*x**2
+*-*   sdev2p= variance
+*-*   method : chi**2 = min equation solved explicitly
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnpint" href="src/TMinuit.cxx.html#i9KGc">mnpint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; pexti, <a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; pinti)</span><br />
+<div class="funccomm"><pre>Calculates the internal parameter value PINTI*-
+*-*          =============================================
+*-*        corresponding  to the external value PEXTI for parameter I.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnplot" href="src/TMinuit.cxx.html#c_KDeE">mnplot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* xpt, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ypt, <span class="keyword">char</span>* chpt, <a href="./ListOfTypes.html#Int_t">Int_t</a> nxypt, <a href="./ListOfTypes.html#Int_t">Int_t</a> npagwd, <a href="./ListOfTypes.html#Int_t">Int_t</a> npagln)</span><br />
+<div class="funccomm"><pre>Plots points in array xypt onto one page with labelled axes*-
+*-*    ===========================================================
+*-*        NXYPT is the number of points to be plotted
+*-*        XPT(I) = x-coord. of ith point
+*-*        YPT(I) = y-coord. of ith point
+*-*        CHPT(I) = character to be plotted at this position
+*-*        the input point arrays XPT, YPT, CHPT are destroyed.
+-
+-
+*-*   If fGraphicsmode is <a href="./ListOfTypes.html#bool">true</a> (default), a <a href="./TGraph.html">TGraph</a> object is produced
+*-*   via the Plug-in handler. To get the plot, you can do:
+*-*       <a href="./TGraph.html">TGraph</a> *gr = (<a href="./TGraph.html">TGraph</a>*)<a href="./TMinuit.html">gMinuit</a>-><a href="./TMinuit.html#TMinuit:GetPlot" title="TObject* TMinuit::GetPlot()">GetPlot</a>();
+*-*       gr-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"al"</span>);
+-
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnpout" href="src/TMinuit.cxx.html#vf0eFB">mnpout</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iuext, <a href="./TString.html">TString</a>&amp; chnam, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xlolim, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xuplim, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iuint) const</span><br />
+<div class="funccomm"><pre>-*Provides the user with information concerning the current status
+*-*    ================================================================
+*-*          of parameter number IUEXT. Namely, it returns:
+*-*        CHNAM: the name of the parameter
+*-*        VAL: the current (external) value of the parameter
+*-*        ERR: the current estimate of the parameter uncertainty
+*-*        XLOLIM: the lower bound (or zero if no limits)
+*-*        XUPLIM: the upper bound (or zero if no limits)
+*-*        IUINT: the internal parameter number (or zero if not variable,
+*-*           or negative if undefined).
+*-*  Note also:  If IUEXT is negative, then it is -internal parameter
+*-*           number, and IUINT is returned as the EXTERNAL number.
+*-*     Except for IUINT, this is exactly the inverse of MNPARM
+*-*     User-called
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnprin" href="src/TMinuit.cxx.html#xr6ICC">mnprin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inkode, <a href="./ListOfTypes.html#Double_t">Double_t</a> fval)</span><br />
+<div class="funccomm"><pre>Prints the values of the parameters at the time of the call*-
+*-*    ===========================================================
+*-*        also prints other relevant information such as function value,
+*-*        estimated distance to minimum, parameter errors, step sizes.
+-
+*-*         According to the value of IKODE, the printout is:
+*-*    IKODE=INKODE= 0    only info about function value
+*-*                  1    parameter values, errors, limits
+*-*                  2    values, errors, step sizes, internal values
+*-*                  3    values, errors, step sizes, first derivs.
+*-*                  4    values, parabolic errors, MINOS errors
+*-*    when INKODE=5, MNPRIN chooses IKODE=1,2, or 3, according to <a href="./TMinuit.html#TMinuit:fISW" title="Int_t TMinuit::fISW">fISW</a>[1]
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnpsdf" href="src/TMinuit.cxx.html#CNVniE">mnpsdf</a>()</span><br />
+<div class="funccomm"><pre>-*Calculates the eigenvalues of v to see if positive-def
+*-*        ======================================================
+*-*        if not, adds constant along diagonal to make positive.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnrazz" href="src/TMinuit.cxx.html#E1tEKD">mnrazz</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ynew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* pnew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; jh, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; jl)</span><br />
+<div class="funccomm"><pre>Called only by MNSIMP (and MNIMPR) to add a new point*-*-
+*-*      =====================================================
+*-*        and remove an old one from the current simplex, and get the
+*-*        estimated distance to minimum.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnrn15" href="src/TMinuit.cxx.html#OBRLt">mnrn15</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; val, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; inseed)</span><br />
+<div class="funccomm"><pre>This is a super-portable random number generator
+*-*          ================================================
+*-*         It should not overflow on any 32-bit machine.
+*-*         The cycle is only ~10**9, so use with care!
+*-*         Note especially that VAL must not be undefined on input.
+*-*                    Set Default Starting Seed
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnrset" href="src/TMinuit.cxx.html#f1QKdB">mnrset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iopt)</span><br />
+<div class="funccomm"><pre>Resets function value and errors to UNDEFINED
+*-*            =============================================
+*-*    If IOPT=1,
+*-*    If IOPT=0, sets only MINOS errors to undefined
+*-*        Called from MNCLER and whenever problem changes, for example
+*-*        after SET LIMITS, SET PARAM, CALL FCN 6
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnsave" href="src/TMinuit.cxx.html#ShBOvC">mnsave</a>()</span><br />
+<div class="funccomm"><pre>-*Writes current parameter values and step sizes onto file ISYSSA
+*-*    ===============================================================
+*-*          in format which can be reread by Minuit for restarting.
+*-*       The covariance matrix is also output if it exists.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnscan" href="src/TMinuit.cxx.html#Pm8XjE">mnscan</a>()</span><br />
+<div class="funccomm"><pre>Scans the values of FCN as a function of one parameter*-
+*-*      ======================================================
+*-*        and plots the resulting values as a curve using MNPLOT.
+*-*        It may be called to scan one parameter or all parameters.
+*-*        retains the best function and parameter values found.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnseek" href="src/TMinuit.cxx.html#fSQ1dB">mnseek</a>()</span><br />
+<div class="funccomm"><pre>-*-*Performs a rough (but global) minimization by monte carlo search
+*-*    ================================================================
+*-*        Each time a new minimum is found, the search area is shifted
+*-*        to be centered at the best value.  Random points are chosen
+*-*        uniformly over a hypercube determined by current step sizes.
+*-*   The Metropolis algorithm accepts a worse point with probability
+*-*      exp(-d/UP), where d is the degradation.  Improved points
+*-*      are of course always accepted.  Actual steps are random
+*-*      multiples of the nominal steps (DIRIN).
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnset" href="src/TMinuit.cxx.html#XmEElE">mnset</a>()</span><br />
+<div class="funccomm"><pre>Interprets the commands that start with SET and SHOW*-*-
+*-*      ====================================================
+*-*        Called from MNEXCM
+*-*        file characteristics for SET INPUT
+*-*       'SET ' or 'SHOW',  'ON ' or 'OFF', 'SUPPRESSED' or 'REPORTED  '
+*-*        explanation of print level numbers -1:3  and strategies 0:2
+*-*        identification of debug options
+*-*        things that can be set or shown
+*-*        options not intended for normal users
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnsimp" href="src/TMinuit.cxx.html#cSQr3">mnsimp</a>()</span><br />
+<div class="funccomm"><pre>Minimization using the simplex method of Nelder and Mead
+*-*      ========================================================
+*-*        Performs a minimization using the simplex method of Nelder
+*-*        and Mead (ref. -- Comp. J. 7,308 (1965)).
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnstat" href="src/TMinuit.cxx.html#bwlS4">mnstat</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fmin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; fedm, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; errdef, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npari, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nparx, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; istat)</span><br />
+<div class="funccomm"><pre>Returns concerning the current status of the minimization
+*-*      =========================================================
+*-*       User-called
+*-*          Namely, it returns:
+*-*        FMIN: the best function value found so far
+*-*        FEDM: the estimated vertical distance remaining to minimum
+*-*        ERRDEF: the value of UP defining parameter uncertainties
+*-*        NPARI: the number of currently variable parameters
+*-*        NPARX: the highest (external) parameter number defined by user
+*-*        ISTAT: a status integer indicating how good is the covariance
+*-*           matrix:  0= not calculated at all
+*-*                    1= approximation only, not accurate
+*-*                    2= full matrix, but forced positive-definite
+*-*                    3= full accurate covariance matrix
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mntiny" href="src/TMinuit.cxx.html#UfK1MC">mntiny</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> epsp1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; epsbak)</span><br />
+<div class="funccomm"><pre>To find the machine precision*-*-*-*-*-*-*-
+*-*            =============================
+*-*        Compares its argument with the value 1.0, and returns
+*-*        the value .TRUE. if they are equal.  To find EPSMAC
+*-*        safely by foiling the Fortran optimizer
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMinuit:mnunpt" href="src/TMinuit.cxx.html#bbPUr">mnunpt</a>(<a href="./TString.html">TString</a>&amp; cfname)</span><br />
+<div class="funccomm"><pre>-*-*Returns .TRUE. if CFNAME contains unprintable characters
+*-*        ========================================================
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnvert" href="src/TMinuit.cxx.html#Efhl8">mnvert</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* a, <a href="./ListOfTypes.html#Int_t">Int_t</a> l, <a href="./ListOfTypes.html#Int_t">Int_t</a> m, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ifail)</span><br />
+<div class="funccomm"><pre>Inverts a symmetric matrix*-
+*-*                    ==========================
+*-*        inverts a symmetric matrix.   matrix is first scaled to
+*-*        have all ones on the diagonal (equivalent to change of units)
+*-*        but no pivoting is done since matrix is positive-definite.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnwarn" href="src/TMinuit.cxx.html#QTNu3">mnwarn</a>(<span class="keyword">const</span> <span class="keyword">char</span>* copt, <span class="keyword">const</span> <span class="keyword">char</span>* corg, <span class="keyword">const</span> <span class="keyword">char</span>* cmes)</span><br />
+<div class="funccomm"><pre>Prints <a href="./TObject.html#TObject:Warning" title="void TObject::Warning(const char* method,const char* msgfmt)">Warning</a> messages*-*-
+*-*                    =======================
+*-*     If COPT=<span class="string">'W'</span>, CMES is a WARning message from CORG.
+*-*     If COPT=<span class="string">'D'</span>, CMES is a DEBug message from CORG.
+*-*         If SET WARnings is in effect (the default), this routine
+*-*             prints the warning message CMES coming from CORG.
+*-*         If SET NOWarnings is in effect, the warning message is
+*-*             stored in a circular buffer of length kMAXMES.
+*-*         If called with CORG=CMES='SHO', it prints the messages in
+*-*             the circular buffer, FIFO, and empties the buffer.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:mnwerr" href="src/TMinuit.cxx.html#Y3ocIC">mnwerr</a>()</span><br />
+<div class="funccomm"><pre>-*Calculates the WERR, external parameter errors
+*-*            ==============================================
+*-*      and the global correlation coefficients, to be called
+*-*      whenever a new covariance matrix is available.
+*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMinuit.html">TMinuit</a>&amp; <a class="funcname" name="TMinuit:operator_" href="src/TMinuit.h.html#ejnZFD">operator=</a>(<span class="keyword">const</span> <a href="./TMinuit.html">TMinuit</a>&amp; m)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMethodCall.html">TMethodCall</a>   * <a class="funcname" name="TMinuit:GetMethodCall" href="src/TMinuit.h.html#thhWCD">GetMethodCall</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMinuit.html#TMinuit:fMethodCall" title="TMethodCall* TMinuit::fMethodCall">fMethodCall</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>       * <a class="funcname" name="TMinuit:GetObjectFit" href="src/TMinuit.h.html#ecMCYC">GetObjectFit</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMinuit.html#TMinuit:fObjectFit" title="TObject* TMinuit::fObjectFit">fObjectFit</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetMaxIterations" href="src/TMinuit.h.html#t6I7lC">GetMaxIterations</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMinuit.html#TMinuit:fMaxIterations" title="Int_t TMinuit::fMaxIterations">fMaxIterations</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMinuit:GetPlot" href="src/TMinuit.h.html#LI58J">GetPlot</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMinuit.html#TMinuit:fPlot" title="TObject* TMinuit::fPlot">fPlot</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMinuit:GetStatus" href="src/TMinuit.h.html#BgM4uC">GetStatus</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMinuit.html#TMinuit:fStatus" title="Int_t TMinuit::fStatus">fStatus</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:SetGraphicsMode" href="src/TMinuit.h.html#qvf2bB">SetGraphicsMode</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TMinuit.html#TMinuit:fGraphicsMode" title="Bool_t TMinuit::fGraphicsMode">fGraphicsMode</a> = mode;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:SetMaxIterations" href="src/TMinuit.h.html#MfyYZB">SetMaxIterations</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxiter = 500)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TMinuit.html#TMinuit:fMaxIterations" title="Int_t TMinuit::fMaxIterations">fMaxIterations</a> = maxiter;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMinuit:SetObjectFit" href="src/TMinuit.h.html#y.bN6D">SetObjectFit</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TMinuit.html#TMinuit:fObjectFit" title="TObject* TMinuit::fObjectFit">fObjectFit</a>=obj;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun</a>, <a href="http://consult.cern.ch/xwho/people?Frederick+James"> Frederick James   12/08/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/minuit:$Id: TMinuit.h 20882 2007-11-19 11:31:26Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:20</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

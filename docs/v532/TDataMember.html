@@ -1,0 +1,550 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:11:09 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TDataMember</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TDataMember','libCore','TDataMember.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TDataMember.h.html">header file</a>
+<a class="descrheadentry" href="src/TDataMember.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/meta/inc/TDataMember.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/meta/src/TDataMember.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TDataMember:description">class description</a> 
+<a class="descrheadentry" href="#TDataMember:Function_Members">function members</a>
+<a class="descrheadentry" href="#TDataMember:Data_Members">data members</a>
+<a class="descrheadentry" href="#TDataMember:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_META_Index.html">META</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TDataMember</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TDataMember:description"></a>class TDataMember: public <a href="./TDictionary.html">TDictionary</a></h1>
+<div class="classdescr">
+<pre>
+
+  <a href="./TDataMember.html">TDataMember</a>.
+
+ All <a href="./ROOT.html">ROOT</a> classes may have RTTI (run time type identification) support
+ added. The data is stored in so called DICTIONARY (look at <a href="./TDictionary.html">TDictionary</a>).
+ Information about a class is stored in <a href="./TClass.html">TClass</a>.
+ This information may be obtained via the CINT api - see class <a href="./TCint.html">TCint</a>.
+ <a href="./TClass.html">TClass</a> has a list of <a href="./TDataMember.html">TDataMember</a> objects providing information about all
+ data members of described class.
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img align=center src="gif/classinfo.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+ <a href="./TDataMember.html">TDataMember</a> provides information about name of data member, its type,
+ and comment field string. It also tries to find the <a href="./TMethodCall.html">TMethodCall</a> objects
+ responsible for getting/setting a value of it, and gives you pointers
+ to these methods. This gives you a unique possibility to access
+ protected and private (!) data members if only methods for doing that
+ are defined.
+ These methods could either be specified in a comment field, or found
+ out automatically by <a href="./ROOT.html">ROOT</a>: here's an example:
+ suppose you have a class definition:
+
+</pre><!-- TDocHtmlDirective start --> <pre>
+/*
+        class MyClass{
+            private:
+                Float_t fX1;
+                    ...
+            public:
+                void    SetX1(Float_t x) {fX1 = x;};
+                Float_t GetX1()          {return fX1;};
+                    ...
+        }
+*/
+</pre>
+<!-- TDocHtmlDirective end --><pre>
+ Look at the data member name and method names: a data member name has
+ a prefix letter (f) and has a base name X1 . The methods for getting and
+ setting this value have names which consist of string Get/Set and the
+ same base name. This convention of naming data fields and methods which
+ access them allows <a href="./TDataMember.html">TDataMember</a> find this methods by itself completely
+ automatically. To make this description complete, one should know,
+ that names that are automatically recognized may be also:
+ for data fields: either fXXX or fIsXXX; and for getter function
+ GetXXX() or IsXXX() [where XXX is base name].
+
+ As an example of using it let's analyse a few lines which get and set
+ a fEditable field in <a href="./TCanvas.html">TCanvas</a>:
+
+</pre><!-- TDocHtmlDirective start --> <pre>
+/*
+    TCanvas     *c  = new TCanvas("c");   // create a canvas
+    TClass      *cl = c-&gt;IsA();            // get its class description object.
+    TDataMember *dm = cl-&gt;GetDataMember("fEditable"); //This is our data member
+    TMethodCall *getter = dm-&gt;GetterMethod(c); //find a method that gets value!
+    Long_t l;   // declare a storage for this value;
+    getter-&gt;Execute(c,"",l);  // Get this Value !!!! It will appear in l !!!
+    TMethodCall *setter = dm-&gt;SetterMethod(c);
+    setter-&gt;Execute(c,"0",);   // Set Value 0 !!!
+*/
+</pre>
+<!-- TDocHtmlDirective end --><pre>
+
+ This trick is widely used in <a href="./ROOT.html">ROOT</a> <a href="./TContextMenu.html">TContextMenu</a> and dialogs for obtaining
+ current values and put them as initial values in dialog fields.
+
+ If you don't want to follow the convention of naming used by <a href="./ROOT.html">ROOT</a>
+ you still could benefit from Getter/Setter method support: the solution
+ is to instruct <a href="./ROOT.html">ROOT</a> what the names of these routines are.
+ The way to do it is putting this information in a comment string to a data
+ field in your class declaration:
+
+
+</pre><!-- TDocHtmlDirective start --> <pre>
+/*
+    class MyClass{
+        Int_t mydata;  // <em> *OPTIONS={GetMethod="Get";SetMethod="Set"} </em>
+         ...
+        Int_t Get() const { return mydata;};
+        void  Set(Int_t i) {mydata=i;};
+        }
+*/
+</pre>
+<!-- TDocHtmlDirective end --><pre>
+
+ However, this getting/setting functions are not the only feature of
+ this class. The next point is providing lists of possible settings
+ for the concerned data member. The idea is to have a list of possible
+ options for this data member, with strings identifying them. This
+ is used in dialogs with parameters to set - for details see
+ <a href="./TMethodArg.html">TMethodArg</a>, <a href="./TRootContextMenu.html">TRootContextMenu</a>, <a href="./TContextMenu.html">TContextMenu</a>. This list not only specifies
+ the allowed value, but also provides strings naming the options.
+ Options are managed via <a href="./TList.html">TList</a> of TOptionListItem objects. This list
+ is also  created automatically: if a data type is an enum tynpe,
+ the list will have items describing every enum value, and named
+ according to enum name. If type is <a href="./ListOfTypes.html#Bool_t">Bool_t</a>, two options <span class="string">"On"</span> and <span class="string">"Off"</span>
+ with values 0 and 1 are created. For other types you need to instruct
+ <a href="./ROOT.html">ROOT</a> about possible options. The way to do it is the same as in case of
+ specifying getter/setter method: a comment string to a data field in
+ Your header file with class definition.
+ The most general format of this string is:
+
+</pre><!-- TDocHtmlDirective start --> <pre>
+/*
+<em>*OPTIONS={GetMethod="</em>getter<em>";SetMethod="</em>setter<em>";Items=(</em>it1<em>="</em>title1<em>",</em>it2<em>="</em>title2<em>", ... ) } </em>
+*/
+</pre>
+<!-- TDocHtmlDirective end --><pre>
+
+ While parsing this string <a href="./ROOT.html">ROOT</a> firstly looks for command-tokens:
+ GetMethod, SetMethod, Items; They must be preceded by string
+ *OPTIONS= , enclosed by {} and separated by semicolons <span class="string">";"</span>.
+ All command token should have a form TOKEN=VALUE.
+ All tokens are optional.
+ The names of getter and setter method must be enclosed by <a href="./ListOfTypes.html#double">double</a>-quote
+ marks (<span class="string">") .</span>
+ Specifications of Items is slightly more complicated: you need to
+ put token ITEMS= and then enclose all options in curly brackets <span class="string">"()"</span>.
+ You separate options by comas <span class="string">","</span>.
+ Each option item may have one of the following forms:
+
+</pre><!-- TDocHtmlDirective start --> <pre>
+/*
+         IntegerValue<em>  = "</em>Text Label<em>"</em>
+         EnumValue   <em>  = "</em>Text Label<em>"</em>
+        <em>"</em>TextValue<em>" = </em>Text Label<em>"</em>
+*/
+</pre>
+<!-- TDocHtmlDirective end --><pre>
+
+ One can sepcify values as Integers or Enums - when data field is an
+ Integer, Float or Enum type; as texts - for <a href="./ListOfTypes.html#char">char</a> (more precisely:
+ <a href="./ListOfTypes.html#Option_t">Option_t</a>).
+
+ As mentioned above - this information are mainly used by contextmenu,
+ but also in <a href="./TObject.html#TObject:Dump" title="void TObject::Dump()">Dump</a>() and <a href="./TObject.html#TObject:Inspect" title="void TObject::Inspect()">Inspect</a>() methods and by the <a href="./THtml.html">THtml</a> class.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TDataMember:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TDataMember:TDataMember%1">TDataMember</a>(<a href="./ListOfTypes.html#DataMemberInfo_t">DataMemberInfo_t</a>* info = 0, <a href="./TClass.html">TClass</a>* cl = 0)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TDataMember:_TDataMember">~TDataMember</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:GetArrayDim">GetArrayDim</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetArrayIndex">GetArrayIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetClass">GetClass</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TDataType.html">TDataType</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetDataType">GetDataType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TDictionary.html">TDictionary</a>*</td><td class="funcname"><a class="funcname" href="./TDictionary.html#TDictionary:GetDictionary"><span class="baseclass">TDictionary::</span>GetDictionary</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TDictionary.html">TDictionary</a>*</td><td class="funcname"><a class="funcname" href="./TDictionary.html#TDictionary:GetDictionary%1"><span class="baseclass">TDictionary::</span>GetDictionary</a>(<span class="keyword">const</span> type_info&amp; typeinfo)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetFullTypeName">GetFullTypeName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:GetMaxIndex">GetMaxIndex</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:GetOffset">GetOffset</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:GetOffsetCint">GetOffsetCint</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetOptions">GetOptions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetterMethod">GetterMethod</a>(<a href="./TClass.html">TClass</a>* cl = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetTrueTypeName">GetTrueTypeName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TDataMember:GetTypeName">GetTypeName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:GetUnitSize">GetUnitSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:IsaPointer">IsaPointer</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:IsBasic">IsBasic</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:IsEnum">IsEnum</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:IsPersistent">IsPersistent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:IsSTLContainer">IsSTLContainer</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="#TDataMember:Property">Property</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="funcname"><a class="funcname" href="#TDataMember:SetterMethod">SetterMethod</a>(<a href="./TClass.html">TClass</a>* cl)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDataMember:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDataMember:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDataMember:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TDataMember:TDataMember">TDataMember</a>(<span class="keyword">const</span> <a href="./TDataMember.html">TDataMember</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDataMember.html">TDataMember</a>&amp;</td><td class="funcname"><a class="funcname" href="#TDataMember:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TDataMember.html">TDataMember</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TDataMember:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TDataMember:kObjIsPersistent"></a>kObjIsPersistent</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TDictionary::</span>ESTLType { </td><td class="dataname"><a href="./TDictionary.html#TDictionary:kNone">kNone</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kVector">kVector</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kList">kList</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kDeque">kDeque</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kMap">kMap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kMultimap">kMultimap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kSet">kSet</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TDictionary.html#TDictionary:kMultiset">kMultiset</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TClass.html">TClass</a>*</td><td class="dataname"><a name="TDataMember:fClass"></a>fClass</td><td class="datadesc">pointer to the class</td></tr>
+<tr class="data"><td class="datatype"><a href="./TDataType.html">TDataType</a>*</td><td class="dataname"><a name="TDataMember:fDataType"></a>fDataType</td><td class="datadesc">pointer to data basic type descriptor</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TDataMember:fFullTypeName"></a>fFullTypeName</td><td class="datadesc">full type description of data member, e,g.: "class TDirectory*".</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#DataMemberInfo_t">DataMemberInfo_t</a>*</td><td class="dataname"><a name="TDataMember:fInfo"></a>fInfo</td><td class="datadesc">pointer to CINT data member info</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a name="TDataMember:fOffset"></a>fOffset</td><td class="datadesc">offset </td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TDataMember:fOptions"></a>fOptions</td><td class="datadesc">list of possible values 0=no restrictions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a name="TDataMember:fProperty"></a>fProperty</td><td class="datadesc">Property</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TDataMember:fSTLCont"></a>fSTLCont</td><td class="datadesc">STL type </td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TDataMember:fTrueTypeName"></a>fTrueTypeName</td><td class="datadesc">full type description with no typedef</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TDataMember:fTypeName"></a>fTypeName</td><td class="datadesc">data member type, e,g.: "class TDirectory*" -&gt; "TDirectory".</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="dataname"><a name="TDataMember:fValueGetter"></a>fValueGetter</td><td class="datadesc">method that returns a value;</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="dataname"><a name="TDataMember:fValueSetter"></a>fValueSetter</td><td class="datadesc">method which sets value;</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TDataMember:Class_Charts"></a>Class Charts</h2>
+<map name="MapTDataMember_Inh" id="MapTDataMember_Inh">
+<area shape="rect" href="./TDictionary.html" title="TDictionary" alt="" coords="399,9,500,30"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="221,9,295,30"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="31,9,100,30"/>
+</map>
+<map name="MapTDataMember_InhMem" id="MapTDataMember_InhMem">
+<area shape="rect" href="./TDictionary.html" alt="" coords="859,60,947,139"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="760,60,848,139"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="661,60,749,139"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="891,149,915,184"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="859,195,947,284"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="760,165,848,284"/>
+<area shape="rect" href="./TDictionary.html" alt="" coords="661,165,749,284"/>
+<area shape="rect" href="./TDictionary.html" title="TDictionary" alt="" coords="651,16,957,295"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTDataMember_Lib" id="MapTDataMember_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTDataMember_Inh" class="tabsel" href="inh/TDataMember_Inh.png" onclick="javascript:return SetImg('Charts','inh/TDataMember_Inh.png');">Inheritance</a>
+<a id="imgTDataMember_InhMem" class="tab" href="inhmem/TDataMember_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TDataMember_InhMem.png');">Inherited Members</a>
+<a id="imgTDataMember_Incl" class="tab" href="incl/TDataMember_Incl.png" onclick="javascript:return SetImg('Charts','incl/TDataMember_Incl.png');">Includes</a>
+<a id="imgTDataMember_Lib" class="tab" href="lib/TDataMember_Lib.png" onclick="javascript:return SetImg('Charts','lib/TDataMember_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTDataMember_Inh" src="inh/TDataMember_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TDataMember:TDataMember%1" href="src/TDataMember.cxx.html#OLCFRC">TDataMember</a>(<a href="./ListOfTypes.html#DataMemberInfo_t">DataMemberInfo_t</a>* info = 0, <a href="./TClass.html">TClass</a>* cl = 0)</span><br />
+<div class="funccomm"><pre> Default <a href="./TDataMember.html">TDataMember</a> ctor. TDataMembers are constructed in <a href="./TClass.html">TClass</a>
+ via a call to <a href="./TCint.html">TCint</a>::<a href="./TCint.html#TCint:CreateListOfDataMembers" title="void TCint::CreateListOfDataMembers(TClass* cl)">CreateListOfDataMembers</a>(). It parses the comment
+ string, initializes optionlist and getter/setter methods.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TDataMember:TDataMember" href="src/TDataMember.cxx.html#uJgPpE">TDataMember</a>(<span class="keyword">const</span> <a href="./TDataMember.html">TDataMember</a>&amp; )</span><br />
+<div class="funccomm"><pre>copy constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDataMember.html">TDataMember</a>&amp; <a class="funcname" name="TDataMember:operator_" href="src/TDataMember.cxx.html#C1aXQD">operator=</a>(<span class="keyword">const</span> <a href="./TDataMember.html">TDataMember</a>&amp; )</span><br />
+<div class="funccomm"><pre>assignement operator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TDataMember:_TDataMember" href="src/TDataMember.cxx.html#zm4xDD">~TDataMember</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TDataMember.html">TDataMember</a> dtor deletes adopted CINT DataMemberInfo object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDataMember:GetArrayDim" href="src/TDataMember.cxx.html#b4Hh3C">GetArrayDim</a>() const</span><br />
+<div class="funccomm"><pre> Return number of array dimensions.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TDataMember:GetArrayIndex" href="src/TDataMember.cxx.html#Zg.9RB">GetArrayIndex</a>() const</span><br />
+<div class="funccomm"><pre> If the data member is pointer and has a valid array size in its comments
+ <a href="./TDataMember.html#TDataMember:GetArrayIndex" title="const char* TDataMember::GetArrayIndex()">GetArrayIndex</a> returns a string pointing to it;
+ otherwise it returns an empty string.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDataMember:GetMaxIndex" href="src/TDataMember.cxx.html#p6bm3E">GetMaxIndex</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) const</span><br />
+<div class="funccomm"><pre> Return maximum index for array dimension <span class="string">"dim"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TDataMember:GetTypeName" href="src/TDataMember.cxx.html#wlXWGB">GetTypeName</a>() const</span><br />
+<div class="funccomm"><pre> Get type of data member, e,g.: <span class="string">"class TDirectory*"</span> -&gt; <span class="string">"TDirectory"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TDataMember:GetFullTypeName" href="src/TDataMember.cxx.html#IJ4sD">GetFullTypeName</a>() const</span><br />
+<div class="funccomm"><pre> Get full type description of data member, e,g.: <span class="string">"class TDirectory*"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TDataMember:GetTrueTypeName" href="src/TDataMember.cxx.html#ot7dMC">GetTrueTypeName</a>() const</span><br />
+<div class="funccomm"><pre> Get full type description of data member, e,g.: <span class="string">"class TDirectory*"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long_t">Long_t</a> <a class="funcname" name="TDataMember:GetOffset" href="src/TDataMember.cxx.html#Y8FTvB">GetOffset</a>() const</span><br />
+<div class="funccomm"><pre> Get offset from <span class="string">"this"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long_t">Long_t</a> <a class="funcname" name="TDataMember:GetOffsetCint" href="src/TDataMember.cxx.html#IxI7R">GetOffsetCint</a>() const</span><br />
+<div class="funccomm"><pre> Get offset from <span class="string">"this"</span> using the information in CINT only.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDataMember:GetUnitSize" href="src/TDataMember.cxx.html#W_1kED">GetUnitSize</a>() const</span><br />
+<div class="funccomm"><pre> Get the sizeof the underlying type of the data member
+ (i.e. if the member is an array sizeof(member)/length)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDataMember:IsBasic" href="src/TDataMember.cxx.html#DsvW_">IsBasic</a>() const</span><br />
+<div class="funccomm"><pre> Return <a href="./ListOfTypes.html#bool">true</a> if data member is a basic type, e.g. <a href="./ListOfTypes.html#char">char</a>, <a href="./ListOfTypes.html#int">int</a>, <a href="./ListOfTypes.html#long">long</a>...
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDataMember:IsEnum" href="src/TDataMember.cxx.html#tyXirD">IsEnum</a>() const</span><br />
+<div class="funccomm"><pre> Return <a href="./ListOfTypes.html#bool">true</a> if data member is an enum.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDataMember:IsaPointer" href="src/TDataMember.cxx.html#AcZTFB">IsaPointer</a>() const</span><br />
+<div class="funccomm"><pre> Return <a href="./ListOfTypes.html#bool">true</a> if data member is a pointer.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">int</span> <a class="funcname" name="TDataMember:IsSTLContainer" href="src/TDataMember.cxx.html#B.sOvE">IsSTLContainer</a>()</span><br />
+<div class="funccomm"><pre> The return type is defined in <a href="./TDictionary.html">TDictionary</a> (kVector, kList, etc.)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long_t">Long_t</a> <a class="funcname" name="TDataMember:Property" href="src/TDataMember.cxx.html#QANpX">Property</a>() const</span><br />
+<div class="funccomm"><pre> Get property description word. For meaning of bits see EProperty.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a> * <a class="funcname" name="TDataMember:GetOptions" href="src/TDataMember.cxx.html#Gbhod">GetOptions</a>() const</span><br />
+<div class="funccomm"><pre> Returns list of options - list of TOptionListItems
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMethodCall.html">TMethodCall</a> * <a class="funcname" name="TDataMember:GetterMethod" href="src/TDataMember.cxx.html#BXemVE">GetterMethod</a>(<a href="./TClass.html">TClass</a>* cl = 0)</span><br />
+<div class="funccomm"><pre> Return a <a href="./TMethodCall.html">TMethodCall</a> method responsible for getting the value
+ of data member. The cl argument specifies the class of the object
+ which will be used to call this method (in case of multiple
+ inheritance <a href="./TMethodCall.html">TMethodCall</a> needs to know this to calculate the proper
+ offset).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMethodCall.html">TMethodCall</a> * <a class="funcname" name="TDataMember:SetterMethod" href="src/TDataMember.cxx.html#Z57kVE">SetterMethod</a>(<a href="./TClass.html">TClass</a>* cl)</span><br />
+<div class="funccomm"><pre> Return a <a href="./TMethodCall.html">TMethodCall</a> method responsible for setting the value
+ of data member. The cl argument specifies the class of the object
+ which will be used to call this method (in case of multiple
+ inheritance <a href="./TMethodCall.html">TMethodCall</a> needs to know this to calculate the proper
+ offset).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TClass.html">TClass</a>        * <a class="funcname" name="TDataMember:GetClass" href="src/TDataMember.h.html#Yz51WE">GetClass</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDataMember.html#TDataMember:fClass" title="TClass* TDataMember::fClass">fClass</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDataType.html">TDataType</a>     * <a class="funcname" name="TDataMember:GetDataType" href="src/TDataMember.h.html#FtLt3B">GetDataType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDataMember.html#TDataMember:fDataType" title="TDataType* TDataMember::fDataType">fDataType</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDataMember:IsPersistent" href="src/TDataMember.h.html#q7YjjC">IsPersistent</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TDataMember.html#TDataMember:kObjIsPersistent" title="const enum TDataMember:: TDataMember::kObjIsPersistent">kObjIsPersistent</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Fons+Rademakers"> Fons Rademakers   04/02/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/meta:$Id: TDataMember.h 24077 2008-05-31 19:39:09Z brun $ </em><em>&raquo; Last generated: 2011-11-03 20:11</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

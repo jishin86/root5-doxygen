@@ -1,0 +1,1285 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:19:33 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMVA::MethodBase</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMVA::MethodBase','libTMVA','TMVA/MethodBase.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMVA__MethodBase.h.html">header file</a>
+<a class="descrheadentry" href="src/TMVA__MethodBase.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tmva/inc/MethodBase.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tmva/src/MethodBase.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMVA__MethodBase:description">class description</a> 
+<a class="descrheadentry" href="#TMVA__MethodBase:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMVA__MethodBase:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMVA__MethodBase:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./TMVA_Index.html">TMVA</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMVA::MethodBase</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMVA__MethodBase:description"></a>class TMVA::MethodBase: public <a href="./TMVA__IMethod.html">TMVA::IMethod</a>, public <a href="./TMVA__Configurable.html">TMVA::Configurable</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start -->   Virtual base Class for all MVA method
+   MethodBase hosts several specific evaluation methods.
+   The kind of MVA that provides optimal performance in an analysis strongly
+   depends on the particular application. The evaluation factory provides a
+   number of numerical benchmark results to directly assess the performance
+   of the MVA training on the independent test sample. These are:
+   <ul>
+   <li> The <i>signal efficiency</i> at three representative background efficiencies
+   (which is 1 &minus; rejection).</li>
+   <li> The <i>significance</I> of an MVA estimator, defined by the difference
+   between the MVA mean values for signal and background, divided by the
+   quadratic sum of their root mean squares.</li>
+   <li> The <i>separation</i> of an MVA <i>x</i>, defined by the integral
+   &frac12;&int;(S(x) &minus; B(x))<sup>2</sup>/(S(x) + B(x))dx, where
+   S(x) and B(x) are the signal and background distributions, respectively.
+   The separation is zero for identical signal and background MVA shapes,
+   and it is one for disjunctive shapes.
+   <li> <a name="mu_transform">
+   The average, &int;x &mu;(S(x))dx, of the signal &mu;-transform.
+   The &mu;-transform of an MVA denotes the transformation that yields
+   a uniform background distribution. In this way, the signal distributions
+   S(x) can be directly compared among the various MVAs. The stronger S(x)
+   peaks towards one, the better is the discrimination of the MVA. The
+   &mu;-transform is
+   <a href=http://tel.ccsd.cnrs.fr/documents/archives0/00/00/29/91/index_fr.html>documented here</a>.
+   </ul>
+   The MVA standard output also prints the linear correlation coefficients between
+   signal and background, which can be useful to eliminate variables that exhibit too
+   strong correlations.
+   
+<!-- TDocHtmlDirective end --><pre> 
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMVA__MethodBase:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="MethodBase.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:_MethodBase">~MethodBase</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:AddOptionsXMLTo"><span class="baseclass">TMVA::Configurable::</span>AddOptionsXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddOutput">AddOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType analysisType)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:BaseDir">BaseDir</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:CheckForUnusedOptions"><span class="baseclass">TMVA::Configurable::</span>CheckForUnusedOptions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:CheckSetup">CheckSetup</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Configurable.html">Configurable</a></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:Configurable"><span class="baseclass">TMVA::Configurable::</span>Configurable</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; theOption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Ranking.html">Ranking</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:CreateRanking">CreateRanking</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::DataSet*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Data">Data</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::DataSetInfo&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DataInfo">DataInfo</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DeclareCompatibilityOptions">DeclareCompatibilityOptions</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DeclareOptions">DeclareOptions</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DisableWriting">DisableWriting</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> setter)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DoMulticlass">DoMulticlass</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DoRegression">DoRegression</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetAnalysisType">GetAnalysisType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:GetConfigDescription"><span class="baseclass">TMVA::Configurable::</span>GetConfigDescription</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:GetConfigName"><span class="baseclass">TMVA::Configurable::</span>GetConfigName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEfficiency">GetEfficiency</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEvent">GetEvent</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEvent%1">GetEvent</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* ev) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEvent%2">GetEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEvent%3">GetEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> vector&lt;<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEventCollection">GetEventCollection</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetInputLabel">GetInputLabel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetInputTitle">GetInputTitle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetInputVar">GetInputVar</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetJobName">GetJobName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMaximumSignificance">GetMaximumSignificance</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> SignalEvents, <a href="./ListOfTypes.html#Double_t">Double_t</a> BackgroundEvents, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; optimal_significance_value) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMean">GetMean</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMethodName">GetMethodName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EMVA</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMethodType">GetMethodType</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMethodTypeName">GetMethodTypeName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMulticlassEfficiency">GetMulticlassEfficiency</a>(vector&lt;std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; &gt;&amp; purity)</td></tr>
+<tr class="func"><td class="funcret">virtual vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMulticlassTrainingEfficiency">GetMulticlassTrainingEfficiency</a>(vector&lt;std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; &gt;&amp; purity)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMulticlassValues">GetMulticlassValues</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMvaValue">GetMvaValue</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* errLower = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a>* errUpper = 0)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetMvaValue%1">GetMvaValue</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a> *<span class="keyword">const</span> ev, <a href="./ListOfTypes.html#Double_t">Double_t</a>* err = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a>* errUpper = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetName">GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetNEvents">GetNEvents</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetNTargets">GetNTargets</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetNvar">GetNvar</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetNVariables">GetNVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:GetOptions"><span class="baseclass">TMVA::Configurable::</span>GetOptions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetProba">GetProba</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal, <a href="./ListOfTypes.html#Double_t">Double_t</a> ap_sig)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetProbaName">GetProbaName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetRarity">GetRarity</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ESBType reftype = Types::kBackground) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetRegressionDeviation">GetRegressionDeviation</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> tgtNum, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; stddev, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; stddev90Percent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetRegressionValues">GetRegressionValues</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetRMS">GetRMS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetROCIntegral">GetROCIntegral</a>(<a href="./TH1F.html">TH1F</a>* histS, <a href="./TH1F.html">TH1F</a>* histB) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetROCIntegral%1">GetROCIntegral</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfS = 0, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfB = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetSeparation">GetSeparation</a>(<a href="./TH1.html">TH1</a>*, <a href="./TH1.html">TH1</a>*) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetSeparation%1">GetSeparation</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfS = 0, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfB = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetSignalReferenceCut">GetSignalReferenceCut</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetSignalReferenceCutOrientation">GetSignalReferenceCutOrientation</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetSignificance">GetSignificance</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTestingEvent">GetTestingEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTestTime">GetTestTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTestvarName">GetTestvarName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingEfficiency">GetTrainingEfficiency</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingEvent">GetTrainingEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingROOTVersionCode">GetTrainingROOTVersionCode</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingROOTVersionString">GetTrainingROOTVersionString</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingTMVAVersionCode">GetTrainingTMVAVersionCode</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainingTMVAVersionString">GetTrainingTMVAVersionString</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTrainTime">GetTrainTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::TransformationHandler&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTransformationHandler">GetTransformationHandler</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> takeReroutedIfAvailable = <span class="keyword">true</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::TransformationHandler&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTransformationHandler%1">GetTransformationHandler</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> takeReroutedIfAvailable = <span class="keyword">true</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetWeightFileName">GetWeightFileName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetXmax">GetXmax</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetXmin">GetXmin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMVA__IMethod.html#TMVA__IMethod:HasAnalysisType"><span class="baseclass">TMVA::IMethod::</span>HasAnalysisType</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType type, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> numberClasses, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> numberTargets)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:HasMVAPdfs">HasMVAPdfs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Init">Init</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IsSignalLike">IsSignalLike</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IsSignalLike%1">IsSignalLike</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:MakeClass">MakeClass</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; classFileName = <a href="./TString.html">TString</a>(<span class="string">""</span>)) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:MethodBaseDir">MethodBaseDir</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:MonitorBoost">MonitorBoost</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBoost.html">MethodBoost</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__IMethod.html">IMethod</a>&amp;</td><td class="funcname"><a class="funcname" href="./TMVA__IMethod.html#TMVA__IMethod:operator_"><span class="baseclass">TMVA::IMethod::</span>operator=</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__IMethod.html">IMethod</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual map&lt;<a href="./TString.html">TString</a>,<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:OptimizeTuningParameters">OptimizeTuningParameters</a>(<a href="./TString.html">TString</a> fomType = <span class="string">"ROCIntegral"</span>, <a href="./TString.html">TString</a> fitType = <span class="string">"FitGA"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:ParseOptions"><span class="baseclass">TMVA::Configurable::</span>ParseOptions</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:PrintHelpMessage">PrintHelpMessage</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:PrintOptions"><span class="baseclass">TMVA::Configurable::</span>PrintOptions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ProcessOptions">ProcessOptions</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ProcessSetup">ProcessSetup</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:ReadOptionsFromStream"><span class="baseclass">TMVA::Configurable::</span>ReadOptionsFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; istr)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:ReadOptionsFromXML"><span class="baseclass">TMVA::Configurable::</span>ReadOptionsFromXML</a>(<span class="keyword">void</span>* node)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadStateFromFile">ReadStateFromFile</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadStateFromStream">ReadStateFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; tf)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadStateFromStream%1">ReadStateFromStream</a>(<a href="./TFile.html">TFile</a>&amp; rf)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadStateFromXMLString">ReadStateFromXMLString</a>(<span class="keyword">const</span> <span class="keyword">char</span>* xmlstr)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:RerouteTransformationHandler">RerouteTransformationHandler</a>(<a href="./TMVA.html">TMVA</a>::TransformationHandler* fTargetTransformation)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Reset">Reset</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetAnalysisType">SetAnalysisType</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType type)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetBaseDir">SetBaseDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:SetConfigDescription"><span class="baseclass">TMVA::Configurable::</span>SetConfigDescription</a>(<span class="keyword">const</span> <span class="keyword">char</span>* d)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:SetConfigName"><span class="baseclass">TMVA::Configurable::</span>SetConfigName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* n)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetCurrentEvent">SetCurrentEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetMethodBaseDir">SetMethodBaseDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetMethodDir">SetMethodDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:SetMsgType"><span class="baseclass">TMVA::Configurable::</span>SetMsgType</a>(<a href="./TMVA.html">TMVA</a>::EMsgType t)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:SetOptions"><span class="baseclass">TMVA::Configurable::</span>SetOptions</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; s)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetSignalReferenceCut">SetSignalReferenceCut</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cut)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetSignalReferenceCutOrientation">SetSignalReferenceCutOrientation</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cutOrientation)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetTestTime">SetTestTime</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> testTime)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetTestvarName">SetTestvarName</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; v = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetTrainTime">SetTrainTime</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> trainTime)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetTuneParameters">SetTuneParameters</a>(map&lt;<a href="./TString.html">TString</a>,<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt; tuneParameters)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetupMethod">SetupMethod</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:TestClassification">TestClassification</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:TestMulticlass">TestMulticlass</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:TestRegression">TestRegression</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bias, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; biasT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dev, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; devT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rms, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rmsT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mInf, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mInfT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; corr, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Train">Train</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:TrainMethod">TrainMethod</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteEvaluationHistosToFile">WriteEvaluationHistosToFile</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType treetype)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteMonitoringHistosToFile">WriteMonitoringHistosToFile</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:WriteOptionsToStream"><span class="baseclass">TMVA::Configurable::</span>WriteOptionsToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; o, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; prefix) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteStateToFile">WriteStateToFile</a>() <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddWeightsXMLTo">AddWeightsXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:EnableLooseOptions"><span class="baseclass">TMVA::Configurable::</span>EnableLooseOptions</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__IMethod.html#TMVA__IMethod:GetHelpMessage"><span class="baseclass">TMVA::IMethod::</span>GetHelpMessage</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetInternalVarName">GetInternalVarName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetOriginalVarName">GetOriginalVarName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:GetReferenceFile"><span class="baseclass">TMVA::Configurable::</span>GetReferenceFile</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBase.html">MethodBase</a>*</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetThisBase">GetThisBase</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetTWeight">GetTWeight</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* ev) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetWeightFileDir">GetWeightFileDir</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:HasTrainingTree">HasTrainingTree</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Help">Help</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IgnoreEventsWithNegWeightsInTraining">IgnoreEventsWithNegWeightsInTraining</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IsConstructedFromWeightFile">IsConstructedFromWeightFile</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IsNormalised">IsNormalised</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MsgLogger.html">MsgLogger</a>&amp;</td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:Log"><span class="baseclass">TMVA::Configurable::</span>Log</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:LooseOptionCheckingEnabled"><span class="baseclass">TMVA::Configurable::</span>LooseOptionCheckingEnabled</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:MakeClassSpecific">MakeClassSpecific</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp;, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:MakeClassSpecificHeader">MakeClassSpecificHeader</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp;, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:NoErrorCalc">NoErrorCalc</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *<span class="keyword">const</span> err, <a href="./ListOfTypes.html#Double_t">Double_t</a> *<span class="keyword">const</span> errUpper)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadWeightsFromStream">ReadWeightsFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadWeightsFromStream%1">ReadWeightsFromStream</a>(<a href="./TFile.html">TFile</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadWeightsFromXML">ReadWeightsFromXML</a>(<span class="keyword">void</span>* wghtnode)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:ResetSetFlag"><span class="baseclass">TMVA::Configurable::</span>ResetSetFlag</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetNormalised">SetNormalised</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> norm)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetWeightFileDir">SetWeightFileDir</a>(<a href="./TString.html">TString</a> fileDir)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:SetWeightFileName">SetWeightFileName</a>(<a href="./TString.html">TString</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Statistics">Statistics</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType treeType, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; theVarName, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:TxtWeightsOnly">TxtWeightsOnly</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:Verbose">Verbose</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMVA__Configurable.html#TMVA__Configurable:WriteOptionsReferenceToFile"><span class="baseclass">TMVA::Configurable::</span>WriteOptionsReferenceToFile</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddClassesXMLTo">AddClassesXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddClassifierOutput">AddClassifierOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddClassifierOutputProb">AddClassifierOutputProb</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddInfoItem">AddInfoItem</a>(<span class="keyword">void</span>* gi, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; name, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; value) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddMulticlassOutput">AddMulticlassOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddRegressionOutput">AddRegressionOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddSpectatorsXMLTo">AddSpectatorsXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddTargetsXMLTo">AddTargetsXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:AddVarsXMLTo">AddVarsXMLTo</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:CreateMVAPdfs">CreateMVAPdfs</a>()</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:CreateVariableTransforms">CreateVariableTransforms</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; trafoDefinition, <a href="./TMVA.html">TMVA</a>::DataSetInfo&amp; dataInfo, <a href="./TMVA.html">TMVA</a>::TransformationHandler&amp; transformationHandler, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MsgLogger.html">MsgLogger</a>&amp; log)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:DeclareBaseOptions">DeclareBaseOptions</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBase.html">MethodBase</a>::ECutOrientation</td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetCutOrientation">GetCutOrientation</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetEffForRoot">GetEffForRoot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:GetLine">GetLine</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; fin, <span class="keyword">char</span>* buf)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:IGetEffForRoot">IGetEffForRoot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:InitBase">InitBase</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ProcessBaseOptions">ProcessBaseOptions</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadClassesFromXML">ReadClassesFromXML</a>(<span class="keyword">void</span>* clsnode)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadSpectatorsFromXML">ReadSpectatorsFromXML</a>(<span class="keyword">void</span>* specnode)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadStateFromXML">ReadStateFromXML</a>(<span class="keyword">void</span>* parent)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadTargetsFromXML">ReadTargetsFromXML</a>(<span class="keyword">void</span>* tarnode)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadVariablesFromXML">ReadVariablesFromXML</a>(<span class="keyword">void</span>* varnode)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ReadVarsFromStream">ReadVarsFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; istr)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:ResetThisBase">ResetThisBase</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteStateToStream">WriteStateToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; tf) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteStateToXML">WriteStateToXML</a>(<span class="keyword">void</span>* parent) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMVA__MethodBase:WriteVarsToStream">WriteVarsToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; tf, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; prefix = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMVA__MethodBase:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EWeightFileType { </td><td class="dataname"><a name="TMVA__MethodBase:kROOT"></a>kROOT</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMVA__MethodBase:kTEXT"></a>kTEXT</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="data"><td class="datatype">enum ECutOrientation { </td><td class="dataname"><a name="TMVA__MethodBase:kNegative"></a>kNegative</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMVA__MethodBase:kPositive"></a>kPositive</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapubl"><b>public:</b>
+<table class="data" id="tabdatapubl" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fSetupCompleted"></a>fSetupCompleted</td><td class="datadesc">is method setup</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fTmpEvent"></a>fTmpEvent</td><td class="datadesc">! temporary event when testing on a different DataSet than the own one</td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType</td><td class="dataname"><a name="TMVA__MethodBase:fAnalysisType"></a>fAnalysisType</td><td class="datadesc">method-mode : true --&gt; regression, false --&gt; classification</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fBackgroundClass"></a>fBackgroundClass</td><td class="datadesc">index of the Background-class</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<a href="./TString.html">TString</a>&gt;*</td><td class="dataname"><a name="TMVA__MethodBase:fInputVars"></a>fInputVars</td><td class="datadesc">vector of input variables used in MVA</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;*</td><td class="dataname"><a name="TMVA__MethodBase:fMulticlassReturnVal"></a>fMulticlassReturnVal</td><td class="datadesc">holds the return-values for the multiclass classification</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNbins"></a>fNbins</td><td class="datadesc">number of bins in input variable histograms</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNbinsH"></a>fNbinsH</td><td class="datadesc">number of bins in evaluation histograms</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNbinsMVAoutput"></a>fNbinsMVAoutput</td><td class="datadesc">number of bins in MVA output histograms</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Ranking.html">Ranking</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fRanking"></a>fRanking</td><td class="datadesc">pointer to ranking object (created by derived classifiers)</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;*</td><td class="dataname"><a name="TMVA__MethodBase:fRegressionReturnVal"></a>fRegressionReturnVal</td><td class="datadesc">holds the return-values for the regression</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fSignalClass"></a>fSignalClass</td><td class="datadesc">index of the Signal-class</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fBaseDir"></a>fBaseDir</td><td class="datadesc">base directory for the instance, needed to know where to jump back from localDir</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fConstructedFromWeightFile"></a>fConstructedFromWeightFile</td><td class="datadesc">is it obtained from weight file?</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBase.html">MethodBase</a>::ECutOrientation</td><td class="dataname"><a name="TMVA__MethodBase:fCutOrientation"></a>fCutOrientation</td><td class="datadesc">+1 if Sig&gt;Bkg, -1 otherwise</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::DataSetInfo&amp;</td><td class="dataname"><a name="TMVA__MethodBase:fDataSetInfo"></a>fDataSetInfo</td><td class="datadesc">! the data set information (sometimes needed)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fDefaultPDF"></a>fDefaultPDF</td><td class="datadesc">default PDF definitions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fDisableWriting"></a>fDisableWriting</td><td class="datadesc">! set to true in order to suppress writing to XML</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1.html">TH1</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fEffS"></a>fEffS</td><td class="datadesc">efficiency histogram for rootfinder</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<span class="keyword">const</span> std::vector&lt;<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*&gt;*&gt;</td><td class="dataname"><a name="TMVA__MethodBase:fEventCollections"></a>fEventCollections</td><td class="datadesc">if the method needs the complete event-collection, the transformed event coll. ist stored here.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fFileDir"></a>fFileDir</td><td class="datadesc">unix sub-directory for weight files (default: "weights")</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fHasMVAPdfs"></a>fHasMVAPdfs</td><td class="datadesc">MVA Pdfs are created for this classifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fHelp"></a>fHelp</td><td class="datadesc">help flag</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fIgnoreNegWeightsInTraining"></a>fIgnoreNegWeightsInTraining</td><td class="datadesc">If true, events with negative weights are not used in training</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fJobName"></a>fJobName</td><td class="datadesc">name of job -&gt; user defined, appears in weight files</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fMVAPdfB"></a>fMVAPdfB</td><td class="datadesc">background MVA PDF</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fMVAPdfS"></a>fMVAPdfS</td><td class="datadesc">signal MVA PDF</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fMeanB"></a>fMeanB</td><td class="datadesc">mean (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fMeanS"></a>fMeanS</td><td class="datadesc">mean (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fMethodBaseDir"></a>fMethodBaseDir</td><td class="datadesc">base directory for the method</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fMethodName"></a>fMethodName</td><td class="datadesc">name of the method (set in derived class)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EMVA</td><td class="dataname"><a name="TMVA__MethodBase:fMethodType"></a>fMethodType</td><td class="datadesc">type of method (set in derived class)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNbinsMVAPdf"></a>fNbinsMVAPdf</td><td class="datadesc">number of bins used in histogram that creates PDF</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNormalise"></a>fNormalise</td><td class="datadesc">normalise input variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fNsmoothMVAPdf"></a>fNsmoothMVAPdf</td><td class="datadesc">number of times a histogram is smoothed before creating the PDF</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fParentDir"></a>fParentDir</td><td class="datadesc">method parent name, like booster name</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fROOTTrainingVersion"></a>fROOTTrainingVersion</td><td class="datadesc">ROOT version used for training</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fRmsB"></a>fRmsB</td><td class="datadesc">RMS (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fRmsS"></a>fRmsS</td><td class="datadesc">RMS (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fSignalReferenceCut"></a>fSignalReferenceCut</td><td class="datadesc">minimum requirement on the MVA output to declare an event signal-like</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fSignalReferenceCutOrientation"></a>fSignalReferenceCutOrientation</td><td class="datadesc">minimum requirement on the MVA output to declare an event signal-like</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplB"></a>fSplB</td><td class="datadesc">PDFs of MVA distribution (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__TSpline1.html">TSpline1</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplRefB"></a>fSplRefB</td><td class="datadesc">helper splines for RootFinder (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__TSpline1.html">TSpline1</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplRefS"></a>fSplRefS</td><td class="datadesc">helper splines for RootFinder (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplS"></a>fSplS</td><td class="datadesc">PDFs of MVA distribution (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplTrainB"></a>fSplTrainB</td><td class="datadesc">PDFs of training MVA distribution (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSpline.html">TSpline</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplTrainEffBvsS"></a>fSplTrainEffBvsS</td><td class="datadesc">splines for training signal eff. versus background eff.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__TSpline1.html">TSpline1</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplTrainRefB"></a>fSplTrainRefB</td><td class="datadesc">helper splines for RootFinder (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__TSpline1.html">TSpline1</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplTrainRefS"></a>fSplTrainRefS</td><td class="datadesc">helper splines for RootFinder (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSplTrainS"></a>fSplTrainS</td><td class="datadesc">PDFs of training MVA distribution (signal)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSpline.html">TSpline</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fSpleffBvsS"></a>fSpleffBvsS</td><td class="datadesc">splines for signal eff. versus background eff.</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fTMVATrainingVersion"></a>fTMVATrainingVersion</td><td class="datadesc">TMVA version used for training</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fTestTime"></a>fTestTime</td><td class="datadesc">for timing measurements</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fTestvar"></a>fTestvar</td><td class="datadesc">variable used in evaluation, etc (mostly the MVA)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fTrainTime"></a>fTrainTime</td><td class="datadesc">for timing measurements</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::TransformationHandler</td><td class="dataname"><a name="TMVA__MethodBase:fTransformation"></a>fTransformation</td><td class="datadesc">the list of transformations</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::TransformationHandler*</td><td class="dataname"><a name="TMVA__MethodBase:fTransformationPointer"></a>fTransformationPointer</td><td class="datadesc">pointer to the rest of transformations</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fTxtWeightsOnly"></a>fTxtWeightsOnly</td><td class="datadesc">if TRUE, write weights only to text files </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fUseDecorr"></a>fUseDecorr</td><td class="datadesc">synonymous for decorrelation</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fVarTransformString"></a>fVarTransformString</td><td class="datadesc">labels variable transform method</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ESBType</td><td class="dataname"><a name="TMVA__MethodBase:fVariableTransformType"></a>fVariableTransformType</td><td class="datadesc">this is the event type (sig or bgd) assumed for variable transform</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fVariableTransformTypeString"></a>fVariableTransformTypeString</td><td class="datadesc">labels variable transform type</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fVerbose"></a>fVerbose</td><td class="datadesc">verbose flag</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMVA.html">TMVA</a>::EMsgType</td><td class="dataname"><a name="TMVA__MethodBase:fVerbosityLevel"></a>fVerbosityLevel</td><td class="datadesc">verbosity level</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fVerbosityLevelString"></a>fVerbosityLevelString</td><td class="datadesc">verbosity level (user input string)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMVA__MethodBase:fWeightFile"></a>fWeightFile</td><td class="datadesc">weight file name</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fXmax"></a>fXmax</td><td class="datadesc">maximum (signal and background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMVA__MethodBase:fXmin"></a>fXmin</td><td class="datadesc">minimum (signal and background)</td></tr>
+<tr class="data"><td class="datatype">static <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBase.html">MethodBase</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fgThisBase"></a>fgThisBase</td><td class="datadesc">this pointer</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1F.html">TH1F</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fmvaB"></a>fmvaB</td><td class="datadesc">PDFs of MVA distribution (background)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1F.html">TH1F</a>*</td><td class="dataname"><a name="TMVA__MethodBase:fmvaS"></a>fmvaS</td><td class="datadesc">PDFs of MVA distribution (signal)</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMVA__MethodBase:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMVA__MethodBase_Inh" id="MapTMVA__MethodBase_Inh">
+<area shape="rect" href="./TMVA__IMethod.html" title="TMVA::IMethod" alt="" coords="128,124,206,136"/>
+<area shape="rect" href="./TMVA__Configurable.html" title="TMVA::Configurable" alt="" coords="116,138,218,151"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="18,138,59,151"/>
+<area shape="rect" href="./TMVA__MethodANNBase.html" title="TMVA::MethodANNBase" alt="" coords="462,2,584,14"/>
+<area shape="rect" href="./TMVA__MethodBDT.html" title="TMVA::MethodBDT" alt="" coords="475,16,571,29"/>
+<area shape="rect" href="./TMVA__MethodBayesClassifier.html" title="TMVA::MethodBayesClassifier" alt="" coords="446,31,600,43"/>
+<area shape="rect" href="./TMVA__MethodCompositeBase.html" title="TMVA::MethodCompositeBase" alt="" coords="445,45,601,57"/>
+<area shape="rect" href="./TMVA__MethodCFMlpANN.html" title="TMVA::MethodCFMlpANN" alt="" coords="458,59,588,72"/>
+<area shape="rect" href="./TMVA__MethodCommittee.html" title="TMVA::MethodCommittee" alt="" coords="456,74,589,86"/>
+<area shape="rect" href="./TMVA__MethodCuts.html" title="TMVA::MethodCuts" alt="" coords="474,88,572,100"/>
+<area shape="rect" href="./TMVA__MethodDT.html" title="TMVA::MethodDT" alt="" coords="478,103,568,115"/>
+<area shape="rect" href="./TMVA__MethodFDA.html" title="TMVA::MethodFDA" alt="" coords="475,117,571,129"/>
+<area shape="rect" href="./TMVA__MethodFisher.html" title="TMVA::MethodFisher" alt="" coords="470,131,576,144"/>
+<area shape="rect" href="./TMVA__MethodHMatrix.html" title="TMVA::MethodHMatrix" alt="" coords="465,146,581,158"/>
+<area shape="rect" href="./TMVA__MethodKNN.html" title="TMVA::MethodKNN" alt="" coords="474,160,572,172"/>
+<area shape="rect" href="./TMVA__MethodLD.html" title="TMVA::MethodLD" alt="" coords="479,174,567,187"/>
+<area shape="rect" href="./TMVA__MethodLikelihood.html" title="TMVA::MethodLikelihood" alt="" coords="459,189,587,201"/>
+<area shape="rect" href="./TMVA__MethodPDEFoam.html" title="TMVA::MethodPDEFoam" alt="" coords="461,203,585,215"/>
+<area shape="rect" href="./TMVA__MethodPDERS.html" title="TMVA::MethodPDERS" alt="" coords="468,217,578,230"/>
+<area shape="rect" href="./TMVA__MethodRuleFit.html" title="TMVA::MethodRuleFit" alt="" coords="468,232,578,244"/>
+<area shape="rect" href="./TMVA__MethodSVM.html" title="TMVA::MethodSVM" alt="" coords="474,246,572,258"/>
+<area shape="rect" href="./TMVA__MethodTMlpANN.html" title="TMVA::MethodTMlpANN" alt="" coords="462,261,584,273"/>
+<area shape="rect" href="./TMVA__MethodBoost.html" title="TMVA::MethodBoost" alt="" coords="652,38,756,50"/>
+<area shape="rect" href="./TMVA__MethodCategory.html" title="TMVA::MethodCategory" alt="" coords="643,52,765,64"/>
+<area shape="rect" href="./TMVA__MethodMLP.html" title="TMVA::MethodMLP" alt="" coords="656,2,752,14"/>
+</map>
+<map name="MapTMVA__MethodBase_InhMem" id="MapTMVA__MethodBase_InhMem">
+<area shape="rect" href="./TMVA__IMethod.html" alt="" coords="376,60,629,109"/>
+<area shape="rect" href="./TMVA__IMethod.html" alt="" coords="541,120,629,283"/>
+<area shape="rect" href="./TMVA__IMethod.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TMVA__IMethod.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TMVA__IMethod.html" title="TMVA::IMethod" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="541,527,629,605"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="443,527,531,605"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="344,527,432,605"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="573,616,597,651"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="541,661,629,868"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="443,661,531,868"/>
+<area shape="rect" href="./TMVA__Configurable.html" alt="" coords="344,661,432,868"/>
+<area shape="rect" href="./TMVA__Configurable.html" title="TMVA::Configurable" alt="" coords="333,483,640,879"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,527,312,649"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,527,213,664"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,527,115,664"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,660,280,695"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,705,312,1132"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,691,213,1132"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,691,115,1132"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,483,323,1143"/>
+</map>
+<map name="MapTMVA__MethodBase_Lib" id="MapTMVA__MethodBase_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="364,365,464,403"/>
+</map>
+<div class="tabs">
+<a id="imgTMVA__MethodBase_Inh" class="tabsel" href="inh/TMVA__MethodBase_Inh.png" onclick="javascript:return SetImg('Charts','inh/TMVA__MethodBase_Inh.png');">Inheritance</a>
+<a id="imgTMVA__MethodBase_InhMem" class="tab" href="inhmem/TMVA__MethodBase_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMVA__MethodBase_InhMem.png');">Inherited Members</a>
+<a id="imgTMVA__MethodBase_Incl" class="tab" href="incl/TMVA__MethodBase_Incl.png" onclick="javascript:return SetImg('Charts','incl/TMVA__MethodBase_Incl.png');">Includes</a>
+<a id="imgTMVA__MethodBase_Lib" class="tab" href="lib/TMVA__MethodBase_Lib.png" onclick="javascript:return SetImg('Charts','lib/TMVA__MethodBase_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMVA__MethodBase_Inh" src="inh/TMVA__MethodBase_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMVA__MethodBase:_MethodBase" href="src/TMVA__MethodBase.cxx.html#e.uxp">~MethodBase</a>( <span class="keyword">void</span> )</span><br />
+<div class="funccomm"><pre> destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetupMethod" href="src/TMVA__MethodBase.cxx.html#cWyxrC">SetupMethod</a>()</span><br />
+<div class="funccomm"><pre> setup of methods
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ProcessSetup" href="src/TMVA__MethodBase.cxx.html#jVrS3D">ProcessSetup</a>()</span><br />
+<div class="funccomm"><pre> process all options
+ the <span class="string">"CheckForUnusedOptions"</span> is done in an independent call, since it may be overridden by derived class
+ (sometimes, eg, fitters are used which can only be implemented during training phase)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:CheckSetup" href="src/TMVA__MethodBase.cxx.html#tkucvB">CheckSetup</a>()</span><br />
+<div class="funccomm"><pre> check may be overridden by derived class
+ (sometimes, eg, fitters are used which can only be implemented during training phase)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:InitBase" href="src/TMVA__MethodBase.cxx.html#Kq_.KD">InitBase</a>()</span><br />
+<div class="funccomm"><pre> default initialization called by all constructors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:DeclareBaseOptions" href="src/TMVA__MethodBase.cxx.html#VEwd3B">DeclareBaseOptions</a>()</span><br />
+<div class="funccomm"><pre> define the options (their key words) that can be set in the option string
+ here the options valid for ALL MVA methods are declared.
+ know options: VariableTransform=None,Decorrelated,PCA  to use transformed variables
+                                                        instead of the original ones
+               VariableTransformType=Signal,Background  which decorrelation matrix to use
+                                                        in the method. Only the Likelihood
+                                                        Method can make proper use of independent
+                                                        transformations of signal and background
+               <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fNbinsMVAPdf" title="Int_t TMVA::MethodBase::fNbinsMVAPdf">fNbinsMVAPdf</a>   = 50 Number of bins used to create a PDF of MVA
+               <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fNsmoothMVAPdf" title="Int_t TMVA::MethodBase::fNsmoothMVAPdf">fNsmoothMVAPdf</a> =  2 Number of times a histogram is smoothed before creating the PDF
+               <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fHasMVAPdfs" title="Bool_t TMVA::MethodBase::fHasMVAPdfs">fHasMVAPdfs</a>         create PDFs for the MVA outputs
+               V                   for <a href="./TMVA__MethodBase.html#TMVA__MethodBase:Verbose" title="Bool_t TMVA::MethodBase::Verbose()">Verbose</a> output (!V) for non verbos
+               H                   for <a href="./TMVA__MethodBase.html#TMVA__MethodBase:Help" title="Bool_t TMVA::MethodBase::Help()">Help</a> message
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ProcessBaseOptions" href="src/TMVA__MethodBase.cxx.html#Z70zSD">ProcessBaseOptions</a>()</span><br />
+<div class="funccomm"><pre> the option string is decoded, for availabel options see <span class="string">"DeclareOptions"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:CreateVariableTransforms" href="src/TMVA__MethodBase.cxx.html#WlL2vD">CreateVariableTransforms</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; trafoDefinition, <a href="./TMVA.html">TMVA</a>::DataSetInfo&amp; dataInfo, <a href="./TMVA.html">TMVA</a>::TransformationHandler&amp; transformationHandler, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MsgLogger.html">MsgLogger</a>&amp; log)</span><br />
+<div class="funccomm"><pre> create variable transformations
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:DeclareCompatibilityOptions" href="src/TMVA__MethodBase.cxx.html#L7M41E">DeclareCompatibilityOptions</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">std::map&lt;<a href="./TString.html">TString</a>,<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt; <a class="funcname" name="TMVA__MethodBase:OptimizeTuningParameters" href="src/TMVA__MethodBase.cxx.html#kQIAqE">OptimizeTuningParameters</a>(<a href="./TString.html">TString</a> fomType = <span class="string">"ROCIntegral"</span>, <a href="./TString.html">TString</a> fitType = <span class="string">"FitGA"</span>)</span><br />
+<div class="funccomm"><pre> call the Optimzier with the set of paremeters and ranges that
+ are meant to be tuned.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetTuneParameters" href="src/TMVA__MethodBase.cxx.html#nAeYJD">SetTuneParameters</a>(map&lt;<a href="./TString.html">TString</a>,<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt; tuneParameters)</span><br />
+<div class="funccomm"><pre> set the tuning parameters accoding to the argument
+ This is just a dummy .. have a look at the MethodBDT how you could
+ perhaps implment the same thing for the other Classifiers..
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:TrainMethod" href="src/TMVA__MethodBase.cxx.html#gf331E">TrainMethod</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:GetRegressionDeviation" href="src/TMVA__MethodBase.cxx.html#GRGTOB">GetRegressionDeviation</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> tgtNum, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; stddev, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; stddev90Percent) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddRegressionOutput" href="src/TMVA__MethodBase.cxx.html#Bs2GgD">AddRegressionOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+<div class="funccomm"><pre> prepare tree branch with the method's discriminating variable
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddMulticlassOutput" href="src/TMVA__MethodBase.cxx.html#NlEx0">AddMulticlassOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+<div class="funccomm"><pre> prepare tree branch with the method's discriminating variable
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:NoErrorCalc" href="src/TMVA__MethodBase.cxx.html#MaGA3C">NoErrorCalc</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *<span class="keyword">const</span> err, <a href="./ListOfTypes.html#Double_t">Double_t</a> *<span class="keyword">const</span> errUpper)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetMvaValue%1" href="src/TMVA__MethodBase.cxx.html#ZGe_lD">GetMvaValue</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a> *<span class="keyword">const</span> ev, <a href="./ListOfTypes.html#Double_t">Double_t</a>* err = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a>* errUpper = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:IsSignalLike" href="src/TMVA__MethodBase.cxx.html#ZFfk6C">IsSignalLike</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:IsSignalLike%1" href="src/TMVA__MethodBase.cxx.html#VdcsSD">IsSignalLike</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddClassifierOutput" href="src/TMVA__MethodBase.cxx.html#vs5ztD">AddClassifierOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+<div class="funccomm"><pre> prepare tree branch with the method's discriminating variable
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddClassifierOutputProb" href="src/TMVA__MethodBase.cxx.html#rxHXi">AddClassifierOutputProb</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+<div class="funccomm"><pre> prepare tree branch with the method's discriminating variable
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:TestRegression" href="src/TMVA__MethodBase.cxx.html#URCpnB">TestRegression</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; bias, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; biasT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dev, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; devT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rms, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rmsT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mInf, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; mInfT, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; corr, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+<div class="funccomm"><pre> calculate &lt;sum-of-deviation-squared&gt; of regression output versus <span class="string">"true"</span> value from test sample
+
+   bias = average deviation
+   dev  = average absolute deviation
+   rms  = rms of deviation
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:TestMulticlass" href="src/TMVA__MethodBase.cxx.html#DhrZjD">TestMulticlass</a>()</span><br />
+<div class="funccomm"><pre> test multiclass classification
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:TestClassification" href="src/TMVA__MethodBase.cxx.html#A0oJxB">TestClassification</a>()</span><br />
+<div class="funccomm"><pre> initialization
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteStateToStream" href="src/TMVA__MethodBase.cxx.html#mqWSPB">WriteStateToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; tf) const</span><br />
+<div class="funccomm"><pre> general method used in writing the header of the weight files where
+ the used variables, variable transformation type etc. is specified
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddInfoItem" href="src/TMVA__MethodBase.cxx.html#MSZBQE">AddInfoItem</a>(<span class="keyword">void</span>* gi, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; name, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; value) const</span><br />
+<div class="funccomm"><pre> xml writing
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddOutput" href="src/TMVA__MethodBase.cxx.html#L1vPTC">AddOutput</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType analysisType)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteStateToXML" href="src/TMVA__MethodBase.cxx.html#WcAFsC">WriteStateToXML</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> general method used in writing the header of the weight files where
+ the used variables, variable transformation type etc. is specified
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadStateFromStream%1" href="src/TMVA__MethodBase.cxx.html#KMY5bD">ReadStateFromStream</a>(<a href="./TFile.html">TFile</a>&amp; rf)</span><br />
+<div class="funccomm"><pre> write reference MVA distributions (and other information)
+ to a <a href="./ROOT.html">ROOT</a> type weight file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteStateToFile" href="src/TMVA__MethodBase.cxx.html#IsHsnC">WriteStateToFile</a>() const</span><br />
+<div class="funccomm"><pre> write options and weights to file
+ note that each one text file for the main configuration information
+ and one <a href="./ROOT.html">ROOT</a> file for <a href="./ROOT.html">ROOT</a> objects are created
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadStateFromFile" href="src/TMVA__MethodBase.cxx.html#jyOyJD">ReadStateFromFile</a>()</span><br />
+<div class="funccomm"><pre> Function to write options and weights to file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadStateFromXMLString" href="src/TMVA__MethodBase.cxx.html#UyNYf">ReadStateFromXMLString</a>(<span class="keyword">const</span> <span class="keyword">char</span>* xmlstr)</span><br />
+<div class="funccomm"><pre> for reading from memory
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadStateFromXML" href="src/TMVA__MethodBase.cxx.html#Rs59VE">ReadStateFromXML</a>(<span class="keyword">void</span>* parent)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadStateFromStream" href="src/TMVA__MethodBase.cxx.html#sBAVk">ReadStateFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; tf)</span><br />
+<div class="funccomm"><pre> read the header from the weight files of the different MVA methods
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteVarsToStream" href="src/TMVA__MethodBase.cxx.html#IbMe3B">WriteVarsToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; tf, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; prefix = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> write the list of variables (name, min, max) for a given data
+ transformation method to the stream
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadVarsFromStream" href="src/TMVA__MethodBase.cxx.html#MQfM3">ReadVarsFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; istr)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> the variables (name, min, max) for a given data
+ transformation method from the stream. In the stream we only
+ expect the limits which will be set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddVarsXMLTo" href="src/TMVA__MethodBase.cxx.html#DQrSbC">AddVarsXMLTo</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> write variable info to XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddSpectatorsXMLTo" href="src/TMVA__MethodBase.cxx.html#vX2S3C">AddSpectatorsXMLTo</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> write spectator info to XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddClassesXMLTo" href="src/TMVA__MethodBase.cxx.html#IJSkhC">AddClassesXMLTo</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> write class info to XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddTargetsXMLTo" href="src/TMVA__MethodBase.cxx.html#d3Apj">AddTargetsXMLTo</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> write target info to XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadVariablesFromXML" href="src/TMVA__MethodBase.cxx.html#aXCurC">ReadVariablesFromXML</a>(<span class="keyword">void</span>* varnode)</span><br />
+<div class="funccomm"><pre> read variable info from XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadSpectatorsFromXML" href="src/TMVA__MethodBase.cxx.html#H5CCnD">ReadSpectatorsFromXML</a>(<span class="keyword">void</span>* specnode)</span><br />
+<div class="funccomm"><pre> read spectator info from XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadClassesFromXML" href="src/TMVA__MethodBase.cxx.html#iDcbS">ReadClassesFromXML</a>(<span class="keyword">void</span>* clsnode)</span><br />
+<div class="funccomm"><pre> read number of classes from XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadTargetsFromXML" href="src/TMVA__MethodBase.cxx.html#p_Ip4D">ReadTargetsFromXML</a>(<span class="keyword">void</span>* tarnode)</span><br />
+<div class="funccomm"><pre> read target info from XML
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDirectory.html">TDirectory</a>* <a class="funcname" name="TMVA__MethodBase:BaseDir" href="src/TMVA__MethodBase.cxx.html#iAwyeC">BaseDir</a>() const</span><br />
+<div class="funccomm"><pre> returns the <a href="./ROOT.html">ROOT</a> directory where info/histograms etc of the
+ corresponding MVA method instance are stored
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDirectory.html">TDirectory</a>* <a class="funcname" name="TMVA__MethodBase:MethodBaseDir" href="src/TMVA__MethodBase.cxx.html#MmoIZB">MethodBaseDir</a>() const</span><br />
+<div class="funccomm"><pre> returns the <a href="./ROOT.html">ROOT</a> directory where all instances of the
+ corresponding MVA method are stored
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetWeightFileDir" href="src/TMVA__MethodBase.cxx.html#EmDcLD">SetWeightFileDir</a>(<a href="./TString.html">TString</a> fileDir)</span><br />
+<div class="funccomm"><pre> set directory of weight file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetWeightFileName" href="src/TMVA__MethodBase.cxx.html#E6lGmE">SetWeightFileName</a>(<a href="./TString.html">TString</a> )</span><br />
+<div class="funccomm"><pre> set the weight file name (depreciated)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TMVA__MethodBase:GetWeightFileName" href="src/TMVA__MethodBase.cxx.html#nSEdBD">GetWeightFileName</a>() const</span><br />
+<div class="funccomm"><pre> retrieve weight file name
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteEvaluationHistosToFile" href="src/TMVA__MethodBase.cxx.html#X7EWp">WriteEvaluationHistosToFile</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType treetype)</span><br />
+<div class="funccomm"><pre> writes all MVA evaluation histograms to file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:WriteMonitoringHistosToFile" href="src/TMVA__MethodBase.cxx.html#O3RHDE">WriteMonitoringHistosToFile</a>( <span class="keyword">void</span> )</span><br />
+<div class="funccomm"><pre> write special monitoring histograms to file
+ dummy implementation here -----------------
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:GetLine" href="src/TMVA__MethodBase.cxx.html#jFlm7">GetLine</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; fin, <span class="keyword">char</span>* buf)</span><br />
+<div class="funccomm"><pre> reads one line from the input stream
+ checks for certain keywords and interprets
+ the line if keywords are found
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:CreateMVAPdfs" href="src/TMVA__MethodBase.cxx.html#x.fNnD">CreateMVAPdfs</a>()</span><br />
+<div class="funccomm"><pre> Create PDFs of the MVA output variables
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetProba" href="src/TMVA__MethodBase.cxx.html#UefdAB">GetProba</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal, <a href="./ListOfTypes.html#Double_t">Double_t</a> ap_sig)</span><br />
+<div class="funccomm"><pre> compute likelihood ratio
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetRarity" href="src/TMVA__MethodBase.cxx.html#h5gvXB">GetRarity</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mvaVal, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ESBType reftype = Types::kBackground) const</span><br />
+<div class="funccomm"><pre> compute rarity:
+ R(x) = Integrate_[-oo..x] { PDF(x') dx' }
+ where PDF(x) is the PDF of the classifier's signal or background distribution
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetEfficiency" href="src/TMVA__MethodBase.cxx.html#K9k9nB">GetEfficiency</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; , <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err)</span><br />
+<div class="funccomm"><pre> fill background efficiency (resp. rejection) versus signal efficiency plots
+ returns signal efficiency at background efficiency indicated in theString
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetTrainingEfficiency" href="src/TMVA__MethodBase.cxx.html#Ple4V">GetTrainingEfficiency</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; <a class="funcname" name="TMVA__MethodBase:GetMulticlassEfficiency" href="src/TMVA__MethodBase.cxx.html#oV8IJD">GetMulticlassEfficiency</a>(vector&lt;std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; &gt;&amp; purity)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; <a class="funcname" name="TMVA__MethodBase:GetMulticlassTrainingEfficiency" href="src/TMVA__MethodBase.cxx.html#FjBIjD">GetMulticlassTrainingEfficiency</a>(vector&lt;std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt; &gt;&amp; purity)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetSignificance" href="src/TMVA__MethodBase.cxx.html#tsnvpC">GetSignificance</a>( <span class="keyword">void</span> )</span><br />
+<div class="funccomm"><pre> compute significance of mean difference
+ significance = |&lt;S&gt; - &lt;B&gt;|/Sqrt(RMS_S2 + RMS_B2)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetSeparation" href="src/TMVA__MethodBase.cxx.html#ph5FT">GetSeparation</a>(<a href="./TH1.html">TH1</a>* , <a href="./TH1.html">TH1</a>* ) const</span><br />
+<div class="funccomm"><pre> compute <span class="string">"separation"</span> defined as
+ &lt;s2&gt; = (1/2) Int_-oo..+oo { (S(x) - B(x))^2/(S(x) + B(x)) dx }
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetSeparation%1" href="src/TMVA__MethodBase.cxx.html#dBQ6sD">GetSeparation</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfS = 0, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfB = 0) const</span><br />
+<div class="funccomm"><pre> compute <span class="string">"separation"</span> defined as
+ &lt;s2&gt; = (1/2) Int_-oo..+oo { (S(x)2 - B(x)2)/(S(x) + B(x)) dx }
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetROCIntegral" href="src/TMVA__MethodBase.cxx.html#LLcPyB">GetROCIntegral</a>(<a href="./TH1F.html">TH1F</a>* histS, <a href="./TH1F.html">TH1F</a>* histB) const</span><br />
+<div class="funccomm"><pre> calculate the area (integral) under the ROC curve as a
+ overall quality measure of the classification
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetROCIntegral%1" href="src/TMVA__MethodBase.cxx.html#WKmjGE">GetROCIntegral</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfS = 0, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__PDF.html">PDF</a>* pdfB = 0) const</span><br />
+<div class="funccomm"><pre> calculate the area (integral) under the ROC curve as a
+ overall quality measure of the classification
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetMaximumSignificance" href="src/TMVA__MethodBase.cxx.html#iKrCOD">GetMaximumSignificance</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> SignalEvents, <a href="./ListOfTypes.html#Double_t">Double_t</a> BackgroundEvents, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; optimal_significance_value) const</span><br />
+<div class="funccomm"><pre> plot significance, S/Sqrt(S^2 + B^2), curve for given number
+ of signal and background events; returns cut for maximum significance
+ also returned via reference is the maximum significance
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:Statistics" href="src/TMVA__MethodBase.cxx.html#geIvOE">Statistics</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType treeType, <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; theVarName, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; )</span><br />
+<div class="funccomm"><pre> calculates rms,mean, xmin, xmax of the event variable
+ this can be either done for the variables as they are or for
+ normalised variables (in the range of 0-1) if <span class="string">"norm"</span> is set to <a href="./ListOfTypes.html#Bool_t">kTRUE</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:MakeClass" href="src/TMVA__MethodBase.cxx.html#JHAy_C">MakeClass</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; classFileName = <a href="./TString.html">TString</a>(<span class="string">""</span>)) const</span><br />
+<div class="funccomm"><pre> create reader class for method (classification only at present)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:PrintHelpMessage" href="src/TMVA__MethodBase.cxx.html#ngDkeC">PrintHelpMessage</a>() const</span><br />
+<div class="funccomm"><pre> prints out method-specific help method
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:IGetEffForRoot" href="src/TMVA__MethodBase.cxx.html#Dk3blE">IGetEffForRoot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+<div class="funccomm"><pre> interface for RootFinder
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetEffForRoot" href="src/TMVA__MethodBase.cxx.html#KMZWiC">GetEffForRoot</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+<div class="funccomm"><pre> returns efficiency as function of cut
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> std::vector&lt;<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>*&gt;&amp; <a class="funcname" name="TMVA__MethodBase:GetEventCollection" href="src/TMVA__MethodBase.cxx.html#qS8VUC">GetEventCollection</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TMVA__MethodBase:GetTrainingTMVAVersionString" href="src/TMVA__MethodBase.cxx.html#Q7rrjB">GetTrainingTMVAVersionString</a>() const</span><br />
+<div class="funccomm"><pre> calculates the <a href="./TMVA.html">TMVA</a> version string from the training version code on the fly
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TMVA__MethodBase:GetTrainingROOTVersionString" href="src/TMVA__MethodBase.cxx.html#s4rhZC">GetTrainingROOTVersionString</a>() const</span><br />
+<div class="funccomm"><pre> calculates the <a href="./ROOT.html">ROOT</a> version string from the training version code on the fly
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBase.html">MethodBase</a>* <a class="funcname" name="TMVA__MethodBase:GetThisBase" href="src/TMVA__MethodBase.cxx.html#jN0z8">GetThisBase</a>()</span><br />
+<div class="funccomm"><pre> return a pointer the base class of this method
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ResetThisBase" href="src/TMVA__MethodBase.cxx.html#pfv3vC">ResetThisBase</a>()</span><br />
+<div class="funccomm"><pre> reset required for RootFinder
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetEvent%1" href="src/TMVA__MethodBase.h.html#uVXs9C">GetEvent</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* ev) const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetEvent" href="src/TMVA__MethodBase.h.html#qLao0C">GetEvent</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetEvent%2" href="src/TMVA__MethodBase.h.html#kYlbkB">GetEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetEvent%3" href="src/TMVA__MethodBase.h.html#egnVX">GetEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt, <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::ETreeType type) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetTrainingEvent" href="src/TMVA__MethodBase.h.html#KWEvnE">GetTrainingEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* <a class="funcname" name="TMVA__MethodBase:GetTestingEvent" href="src/TMVA__MethodBase.h.html#sWO3TC">GetTestingEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:Train" href="src/TMVA__MethodBase.h.html#mn__qC">Train</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetTrainTime" href="src/TMVA__MethodBase.h.html#R.KQoB">SetTrainTime</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> trainTime)</span><br />
+<div class="funccomm"><pre> store and retrieve time used for training
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTrainTime" title="Double_t TMVA::MethodBase::fTrainTime">fTrainTime</a> = trainTime; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetTrainTime" href="src/TMVA__MethodBase.h.html#AnrVKB">GetTrainTime</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTrainTime" title="Double_t TMVA::MethodBase::fTrainTime">fTrainTime</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetTestTime" href="src/TMVA__MethodBase.h.html#wbhV.">SetTestTime</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> testTime)</span><br />
+<div class="funccomm"><pre> store and retrieve time used for testing
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTestTime" title="Double_t TMVA::MethodBase::fTestTime">fTestTime</a> = testTime; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetTestTime" href="src/TMVA__MethodBase.h.html#X320hB">GetTestTime</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTestTime" title="Double_t TMVA::MethodBase::fTestTime">fTestTime</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:Init" href="src/TMVA__MethodBase.h.html#uvNAvB">Init</a>()</span><br />
+<div class="funccomm"><pre> options treatment
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:DeclareOptions" href="src/TMVA__MethodBase.h.html#Drg.WD">DeclareOptions</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ProcessOptions" href="src/TMVA__MethodBase.h.html#fC_QlE">ProcessOptions</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:Reset" href="src/TMVA__MethodBase.h.html#yu2GZB">Reset</a>()</span><br />
+<div class="funccomm"><pre> reset the Method --&gt; As if it was not yet trained, just instantiated
+      virtual <a href="./ListOfTypes.html#void">void</a>     <a href="./TMVA__MethodBase.html#TMVA__MethodBase:Reset" title="void TMVA::MethodBase::Reset()">Reset</a>()          = 0;
+for the moment, I provide a dummy (that would not work) default, just to make
+ compilation/running w/o parameter optimisation still possible
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetMvaValue" href="src/TMVA__MethodBase.h.html#Dt47l">GetMvaValue</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* errLower = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a>* errUpper = 0)</span><br />
+<div class="funccomm"><pre> classifier response:
+ some methods may return a per-event error estimate
+ error calculation is skipped if err==0
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;&amp; <a class="funcname" name="TMVA__MethodBase:GetRegressionValues" href="src/TMVA__MethodBase.h.html#fvH3cB">GetRegressionValues</a>()</span><br />
+<div class="funccomm"><pre> regression response
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> std::vector&lt;<a href="./ListOfTypes.html#Float_t">Float_t</a>&gt;&amp; <a class="funcname" name="TMVA__MethodBase:GetMulticlassValues" href="src/TMVA__MethodBase.h.html#vIRfuE">GetMulticlassValues</a>()</span><br />
+<div class="funccomm"><pre> multiclass classification response
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> Ranking* <a class="funcname" name="TMVA__MethodBase:CreateRanking" href="src/TMVA__MethodBase.h.html#MUK7kE">CreateRanking</a>()</span><br />
+<div class="funccomm"><pre> create ranking
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:MonitorBoost" href="src/TMVA__MethodBase.h.html#BoxxvB">MonitorBoost</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__MethodBoost.html">MethodBoost</a>* )</span><br />
+<div class="funccomm"><pre> perfrom extra actions during the boosting at different stages
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:AddWeightsXMLTo" href="src/TMVA__MethodBase.h.html#mg6sEE">AddWeightsXMLTo</a>(<span class="keyword">void</span>* parent) const</span><br />
+<div class="funccomm"><pre> the actual <span class="string">"weights"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadWeightsFromXML" href="src/TMVA__MethodBase.h.html#UYOI_D">ReadWeightsFromXML</a>(<span class="keyword">void</span>* wghtnode)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadWeightsFromStream" href="src/TMVA__MethodBase.h.html#cafTME">ReadWeightsFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:ReadWeightsFromStream%1" href="src/TMVA__MethodBase.h.html#vzFqbB">ReadWeightsFromStream</a>(<a href="./TFile.html">TFile</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetJobName" href="src/TMVA__MethodBase.h.html#SHrId">GetJobName</a>() const</span><br />
+<div class="funccomm"><pre> ---------- public accessors -----------------------------------------------
+ classifier naming (a lot of names ... aren't they ;-)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fJobName" title="TString TMVA::MethodBase::fJobName">fJobName</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetMethodName" href="src/TMVA__MethodBase.h.html#EBwt8C">GetMethodName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodName" title="TString TMVA::MethodBase::fMethodName">fMethodName</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TMVA__MethodBase:GetMethodTypeName" href="src/TMVA__MethodBase.h.html#teGu">GetMethodTypeName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> Types::Instance().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetMethodName" title="const TString&amp; TMVA::MethodBase::GetMethodName()">GetMethodName</a>(<a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodType" title="TMVA::Types::EMVA TMVA::MethodBase::fMethodType">fMethodType</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Types::EMVA <a class="funcname" name="TMVA__MethodBase:GetMethodType" href="src/TMVA__MethodBase.h.html#Aai5QC">GetMethodType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodType" title="TMVA::Types::EMVA TMVA::MethodBase::fMethodType">fMethodType</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>* <a class="funcname" name="TMVA__MethodBase:GetName" href="src/TMVA__MethodBase.h.html#rhGudB">GetName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodName" title="TString TMVA::MethodBase::fMethodName">fMethodName</a>.<a href="./TString.html#TString:Data" title="const char* TString::Data()">Data</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetTestvarName" href="src/TMVA__MethodBase.h.html#uEfAmB">GetTestvarName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTestvar" title="TString TMVA::MethodBase::fTestvar">fTestvar</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a> <a class="funcname" name="TMVA__MethodBase:GetProbaName" href="src/TMVA__MethodBase.h.html#blwGpD">GetProbaName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTestvar" title="TString TMVA::MethodBase::fTestvar">fTestvar</a> + <span class="string">"_Proba"</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetTestvarName" href="src/TMVA__MethodBase.h.html#UH3SiC">SetTestvarName</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; v = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> build classifier name in Test tree
+ MVA prefix (e.g., <span class="string">"TMVA_"</span>)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTestvar" title="TString TMVA::MethodBase::fTestvar">fTestvar</a> = (v==<span class="string">""</span>) ? (<span class="string">"MVA_"</span> + <a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetMethodName" title="const TString&amp; TMVA::MethodBase::GetMethodName()">GetMethodName</a>()) : v; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetNvar" href="src/TMVA__MethodBase.h.html#CW854E">GetNvar</a>() const</span><br />
+<div class="funccomm"><pre> number of input variable used by classifier
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetNVariables" title="UInt_t TMVA::MethodBase::GetNVariables()">GetNVariables</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetNVariables" href="src/TMVA__MethodBase.h.html#A.dnCB">GetNVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetNVariables" title="UInt_t TMVA::MethodBase::GetNVariables()">GetNVariables</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetNTargets" href="src/TMVA__MethodBase.h.html#QWUAKD">GetNTargets</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetNTargets" title="UInt_t TMVA::MethodBase::GetNTargets()">GetNTargets</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetInputVar" href="src/TMVA__MethodBase.h.html#dQUKx">GetInputVar</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) const</span><br />
+<div class="funccomm"><pre> internal names and expressions of input variables
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().GetVariableInfo(i).GetInternalName(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetInputLabel" href="src/TMVA__MethodBase.h.html#GuHiC">GetInputLabel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().GetVariableInfo(i).GetLabel(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetInputTitle" href="src/TMVA__MethodBase.h.html#HO0pRB">GetInputTitle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().GetVariableInfo(i).<a href="./TObject.html#TObject:GetTitle" title="const char* TObject::GetTitle()">GetTitle</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetMean" href="src/TMVA__MethodBase.h.html#u6WH8B">GetMean</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+<div class="funccomm"><pre> normalisation and limit accessors
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTransformationHandler" title="TMVA::TransformationHandler&amp; TMVA::MethodBase::GetTransformationHandler(Bool_t takeReroutedIfAvailable=true) or overloads">GetTransformationHandler</a>().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetMean" title="Double_t TMVA::MethodBase::GetMean(Int_t ivar)">GetMean</a>(ivar); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetRMS" href="src/TMVA__MethodBase.h.html#p90VAE">GetRMS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTransformationHandler" title="TMVA::TransformationHandler&amp; TMVA::MethodBase::GetTransformationHandler(Bool_t takeReroutedIfAvailable=true) or overloads">GetTransformationHandler</a>().<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetRMS" title="Double_t TMVA::MethodBase::GetRMS(Int_t ivar)">GetRMS</a>(ivar); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetXmin" href="src/TMVA__MethodBase.h.html#pdWJR">GetXmin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTransformationHandler" title="TMVA::TransformationHandler&amp; TMVA::MethodBase::GetTransformationHandler(Bool_t takeReroutedIfAvailable=true) or overloads">GetTransformationHandler</a>().GetMin(ivar); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetXmax" href="src/TMVA__MethodBase.h.html#dsnVpB">GetXmax</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTransformationHandler" title="TMVA::TransformationHandler&amp; TMVA::MethodBase::GetTransformationHandler(Bool_t takeReroutedIfAvailable=true) or overloads">GetTransformationHandler</a>().GetMax(ivar); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetSignalReferenceCut" href="src/TMVA__MethodBase.h.html#y6XBKC">GetSignalReferenceCut</a>() const</span><br />
+<div class="funccomm"><pre> sets the minimum requirement on the MVA output to declare an event signal-like
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fSignalReferenceCut" title="Double_t TMVA::MethodBase::fSignalReferenceCut">fSignalReferenceCut</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMVA__MethodBase:GetSignalReferenceCutOrientation" href="src/TMVA__MethodBase.h.html#Q1ylED">GetSignalReferenceCutOrientation</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fSignalReferenceCutOrientation" title="Double_t TMVA::MethodBase::fSignalReferenceCutOrientation">fSignalReferenceCutOrientation</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetSignalReferenceCut" href="src/TMVA__MethodBase.h.html#xy55QD">SetSignalReferenceCut</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cut)</span><br />
+<div class="funccomm"><pre> sets the minimum requirement on the MVA output to declare an event signal-like
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fSignalReferenceCut" title="Double_t TMVA::MethodBase::fSignalReferenceCut">fSignalReferenceCut</a> = cut; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetSignalReferenceCutOrientation" href="src/TMVA__MethodBase.h.html#MtAISC">SetSignalReferenceCutOrientation</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cutOrientation)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fSignalReferenceCutOrientation" title="Double_t TMVA::MethodBase::fSignalReferenceCutOrientation">fSignalReferenceCutOrientation</a> = cutOrientation; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetMethodDir" href="src/TMVA__MethodBase.h.html#RRl49">SetMethodDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fBaseDir" title="TDirectory* TMVA::MethodBase::fBaseDir">fBaseDir</a> = <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodBaseDir" title="TDirectory* TMVA::MethodBase::fMethodBaseDir">fMethodBaseDir</a>  = methodDir; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetBaseDir" href="src/TMVA__MethodBase.h.html#M4hJlB">SetBaseDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fBaseDir" title="TDirectory* TMVA::MethodBase::fBaseDir">fBaseDir</a> = methodDir; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetMethodBaseDir" href="src/TMVA__MethodBase.h.html#cp_WtB">SetMethodBaseDir</a>(<a href="./TDirectory.html">TDirectory</a>* methodDir)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fMethodBaseDir" title="TDirectory* TMVA::MethodBase::fMethodBaseDir">fMethodBaseDir</a> = methodDir; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetTrainingTMVAVersionCode" href="src/TMVA__MethodBase.h.html#XOfSID">GetTrainingTMVAVersionCode</a>() const</span><br />
+<div class="funccomm"><pre> the <a href="./TMVA.html">TMVA</a> version can be obtained and checked using
+    if (<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTrainingTMVAVersionCode" title="UInt_t TMVA::MethodBase::GetTrainingTMVAVersionCode()">GetTrainingTMVAVersionCode</a>()&gt;TMVA_VERSION(3,7,2)) {...}
+ or
+    if (<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetTrainingROOTVersionCode" title="UInt_t TMVA::MethodBase::GetTrainingROOTVersionCode()">GetTrainingROOTVersionCode</a>()&gt;ROOT_VERSION(5,15,5)) {...}
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTMVATrainingVersion" title="UInt_t TMVA::MethodBase::fTMVATrainingVersion">fTMVATrainingVersion</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetTrainingROOTVersionCode" href="src/TMVA__MethodBase.h.html#ifgkeE">GetTrainingROOTVersionCode</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fROOTTrainingVersion" title="UInt_t TMVA::MethodBase::fROOTTrainingVersion">fROOTTrainingVersion</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TransformationHandler&amp; <a class="funcname" name="TMVA__MethodBase:GetTransformationHandler" href="src/TMVA__MethodBase.h.html#iWiKT">GetTransformationHandler</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> takeReroutedIfAvailable = <span class="keyword">true</span>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> TransformationHandler&amp; <a class="funcname" name="TMVA__MethodBase:GetTransformationHandler%1" href="src/TMVA__MethodBase.h.html#MgsQHB">GetTransformationHandler</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> takeReroutedIfAvailable = <span class="keyword">true</span>) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:RerouteTransformationHandler" href="src/TMVA__MethodBase.h.html#IQCjH">RerouteTransformationHandler</a>(<a href="./TMVA.html">TMVA</a>::TransformationHandler* fTargetTransformation)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fTransformationPointer" title="TMVA::TransformationHandler* TMVA::MethodBase::fTransformationPointer">fTransformationPointer</a>=fTargetTransformation; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">DataSetInfo&amp; <a class="funcname" name="TMVA__MethodBase:DataInfo" href="src/TMVA__MethodBase.h.html#j33zBE">DataInfo</a>() const</span><br />
+<div class="funccomm"><pre> ---------- event accessors ------------------------------------------------
+ returns reference to data set
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fDataSetInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::fDataSetInfo">fDataSetInfo</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TMVA__MethodBase:GetNEvents" href="src/TMVA__MethodBase.h.html#sf1EF">GetNEvents</a>() const</span><br />
+<div class="funccomm"><pre> event reference and update
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:Data" title="TMVA::DataSet* TMVA::MethodBase::Data()">Data</a>()-&gt;<a href="./TMVA__MethodBase.html#TMVA__MethodBase:GetNEvents" title="UInt_t TMVA::MethodBase::GetNEvents()">GetNEvents</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:HasMVAPdfs" href="src/TMVA__MethodBase.h.html#wD8OtB">HasMVAPdfs</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fHasMVAPdfs" title="Bool_t TMVA::MethodBase::fHasMVAPdfs">fHasMVAPdfs</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetAnalysisType" href="src/TMVA__MethodBase.h.html#E2OKeC">SetAnalysisType</a>(<a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Types.html">Types</a>::EAnalysisType type)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fAnalysisType" title="TMVA::Types::EAnalysisType TMVA::MethodBase::fAnalysisType">fAnalysisType</a> = type; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Types::EAnalysisType <a class="funcname" name="TMVA__MethodBase:GetAnalysisType" href="src/TMVA__MethodBase.h.html#R5sq3B">GetAnalysisType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fAnalysisType" title="TMVA::Types::EAnalysisType TMVA::MethodBase::fAnalysisType">fAnalysisType</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:DoRegression" href="src/TMVA__MethodBase.h.html#AQ79eC">DoRegression</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fAnalysisType" title="TMVA::Types::EAnalysisType TMVA::MethodBase::fAnalysisType">fAnalysisType</a> == Types::kRegression; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:DoMulticlass" href="src/TMVA__MethodBase.h.html#fYnUu">DoMulticlass</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fAnalysisType" title="TMVA::Types::EAnalysisType TMVA::MethodBase::fAnalysisType">fAnalysisType</a> == Types::kMulticlass; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:DisableWriting" href="src/TMVA__MethodBase.h.html#ClaG9">DisableWriting</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> setter)</span><br />
+<div class="funccomm"><pre> setter method for suppressing writing to XML and writing of standalone classes
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fDisableWriting" title="Bool_t TMVA::MethodBase::fDisableWriting">fDisableWriting</a> = setter; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetWeightFileDir" href="src/TMVA__MethodBase.h.html#uawQQ">GetWeightFileDir</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fFileDir" title="TString TMVA::MethodBase::fFileDir">fFileDir</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:IsNormalised" href="src/TMVA__MethodBase.h.html#HDTPKB">IsNormalised</a>() const</span><br />
+<div class="funccomm"><pre> are input variables normalised ?
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fNormalise" title="Bool_t TMVA::MethodBase::fNormalise">fNormalise</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetNormalised" href="src/TMVA__MethodBase.h.html#QPAlAE">SetNormalised</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> norm)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fNormalise" title="Bool_t TMVA::MethodBase::fNormalise">fNormalise</a> = norm; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:Verbose" href="src/TMVA__MethodBase.h.html#K.FmOB">Verbose</a>() const</span><br />
+<div class="funccomm"><pre> set number of input variables (only used by MethodCuts, could perhaps be removed)
+      <a href="./ListOfTypes.html#void">void</a> SetNvar( <a href="./ListOfTypes.html#Int_t">Int_t</a> n ) { fNvar = n; }
+ verbose and help flags
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fVerbose" title="Bool_t TMVA::MethodBase::fVerbose">fVerbose</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:Help" href="src/TMVA__MethodBase.h.html#bWbPBE">Help</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fHelp" title="Bool_t TMVA::MethodBase::fHelp">fHelp</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetInternalVarName" href="src/TMVA__MethodBase.h.html#wguHiB">GetInternalVarName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+<div class="funccomm"><pre> ---------- protected event and tree accessors -----------------------------
+ names of input variables (if the original names are expressions, they are
+ transformed into regexps)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (*<a href="./TMVA__MethodBase.html#TMVA__MethodBase:fInputVars" title="vector&lt;TString&gt;* TMVA::MethodBase::fInputVars">fInputVars</a>)[ivar]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; <a class="funcname" name="TMVA__MethodBase:GetOriginalVarName" href="src/TMVA__MethodBase.h.html#byHaGC">GetOriginalVarName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ivar) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:DataInfo" title="TMVA::DataSetInfo&amp; TMVA::MethodBase::DataInfo()">DataInfo</a>().GetVariableInfo(ivar).GetExpression(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:HasTrainingTree" href="src/TMVA__MethodBase.h.html#VFawED">HasTrainingTree</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:Data" title="TMVA::DataSet* TMVA::MethodBase::Data()">Data</a>()-&gt;GetNTrainingEvents() != 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:MakeClassSpecific" href="src/TMVA__MethodBase.h.html#WaBaSC">MakeClassSpecific</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; , <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;  = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> ---------- protected auxiliary methods ------------------------------------
+ make <a href="./ROOT.html">ROOT</a>-independent C++ class for classifier response (classifier-specific implementation)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:MakeClassSpecificHeader" href="src/TMVA__MethodBase.h.html#WORB5C">MakeClassSpecificHeader</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; , <span class="keyword">const</span> <a href="./TString.html">TString</a>&amp;  = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> header and auxiliary classes
+</pre></div>
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:TxtWeightsOnly" href="src/TMVA__MethodBase.h.html#qG2IfE">TxtWeightsOnly</a>() const</span><br />
+<div class="funccomm"><pre> if TRUE, write weights only to text files
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Float_t">Float_t</a> <a class="funcname" name="TMVA__MethodBase:GetTWeight" href="src/TMVA__MethodBase.h.html#WZFkK">GetTWeight</a>(<span class="keyword">const</span> <a href="./TMVA.html">TMVA</a>::<a href="./TMVA__Event.html">Event</a>* ev) const</span><br />
+<div class="funccomm"><pre> access to event information that needs method-specific information
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:IsConstructedFromWeightFile" href="src/TMVA__MethodBase.h.html#D3cYEE">IsConstructedFromWeightFile</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fConstructedFromWeightFile" title="Bool_t TMVA::MethodBase::fConstructedFromWeightFile">fConstructedFromWeightFile</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMVA__MethodBase:SetCurrentEvent" href="src/TMVA__MethodBase.h.html#GJ13mE">SetCurrentEvent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ievt) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMVA__MethodBase:Data" href="src/TMVA__MethodBase.h.html#udUD3B">Data</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">ECutOrientation <a class="funcname" name="TMVA__MethodBase:GetCutOrientation" href="src/TMVA__MethodBase.h.html#ZRY5LE">GetCutOrientation</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fCutOrientation" title="TMVA::MethodBase::ECutOrientation TMVA::MethodBase::fCutOrientation">fCutOrientation</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMVA__MethodBase:IgnoreEventsWithNegWeightsInTraining" href="src/TMVA__MethodBase.h.html#Ck_gN">IgnoreEventsWithNegWeightsInTraining</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMVA__MethodBase.html#TMVA__MethodBase:fIgnoreNegWeightsInTraining" title="Bool_t TMVA::MethodBase::fIgnoreNegWeightsInTraining">fIgnoreNegWeightsInTraining</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Andreas+Hoecker"> Andreas Hoecker</a>, <a href="http://consult.cern.ch/xwho/people?Peter+Speckmayer"> Peter Speckmayer</a>, <a href="http://consult.cern.ch/xwho/people?Joerg+Stelzer"> Joerg Stelzer</a>, <a href="http://consult.cern.ch/xwho/people?Helge+Voss"> Helge Voss</a>, <a href="http://consult.cern.ch/xwho/people?Kai+Voss"> Kai Voss</a>, <a href="http://consult.cern.ch/xwho/people?Eckhard+von+Toerne"> Eckhard von Toerne</a>, <a href="http://consult.cern.ch/xwho/people?Jan+Therhaag"> Jan Therhaag</a> </em><em>&raquo; Copyright   (c) 2005-2011:                                                       *</em><br />
+<em>&raquo; Last changed: root/tmva $Id: MethodBase.h 40005 2011-06-27 15:29:10Z stelzer $ </em><em>&raquo; Last generated: 2011-11-03 20:19</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

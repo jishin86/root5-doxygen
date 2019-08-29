@@ -1,0 +1,203 @@
+<pre>IFDEF(1)                                                   IFDEF(1)
+
+
+NAME
+       ifdef - #ifdef/#else/#endif symbolic resolver
+
+
+DESCRIPTION
+        <span class="string">"ifdef"</span> selectively resolves #ifdef,#ifndef,#if,#elif,
+       #else and #endif in C/C++ source code. Macros that are 
+       explicitly defined/undefined by -D/-U option are resolved
+       and eliminated from the source code. Other #ifdefs remain
+       unchanged. #if statements with multiple conditions and
+       &amp;&amp;,|| operators will be resolved by a symbolic resolver.
+       <span class="string">"ifdef"</span> can be also used as a #ifdef nesting hierarchy
+       analyzer.
+
+SYNOPSIS
+       ifdef &lt;-dgmqrsuvV&gt; &lt;-f[deffile]&gt; &lt;-o[outfile]&gt; 
+             &lt;-D[defined]&lt;=[value]&gt;&gt; &lt;-U[undefined]&gt; &lt;-o[outfile]&gt; [source.c]
+
+Option:
+       [options] 
+            -D [macro]&lt;=[value]&gt;:resolve '#ifdef [macro]' as <a href="../ListOfTypes.html#bool">true</a>
+            -U [macro]          :resolve '#ifdef [macro]' as <a href="../ListOfTypes.html#bool">false</a>
+            -f [deffile]        :define/undef macros by file
+                                    #define [macro]&lt;=[value]&gt;
+                                    #undef  [macro]
+            -o [outfile]        :specify output file (default - stdout)
+            -m                  :no output
+          debug  . . . . . . . . . . . . . . . . . . . . . . . . .
+            -q                  :quiet mode
+            -g                  :preview all #ifdef (no output)
+            -G                  :preview resolved #ifdef (no output)
+            -d                  :display deleted lines
+            -r                  :display resolved conditions
+            -u                  :display unresolved conditions
+
+EXAMPLE
+            $ ifdef -D ONLINE -D MAX=1024 -U DEBUG -o newsource.c source.c
+            $ ifdef -g source.c
+            $ ifdef -G -d -DDEBUG1 source.c
+
+
+EXAMPLE1 - #ifdef/#endif analyzer
+
+        <span class="string">"ifdef"</span> can be used as a #ifdef analyzer by using -g 
+       option. Location and nesting hierarchy of all the #if,
+       #ifdef,#ifndef,#elif,#endif statements will be displayed.
+       For example, let's analyze #ifdef structure in 
+       $CINTSYSDIR/G__ci.h. 
+
+            $ cd $CINTSYSDIR
+            $ ifdef -g G__ci.h
+
+   21: #ifndef G__CI_H  unresolved
+   54: | #ifndef G__CONSTNESSFLAG  unresolved
+   58: | #endif  unresolved
+   89: | #ifdef G__OLDIMPLEMENTATION1073  unresolved
+   91: | #endif  unresolved
+  114: | #ifndef G__OLDIMPLEMENTATION1231  unresolved
+  120: | | #ifdef G__CPPIF_EXTERNC  unresolved
+  121: | | | #ifndef G__CPPIF_PROJNAME  unresolved
+  123: | | | #endif  unresolved
+  124: | | | #ifdef G__CPPIF_STATIC  unresolved
+  126: | | | #endif  unresolved
+  127: | | #endif  unresolved
+  129: | | #ifndef G__CPPIF_PROJNAME  unresolved
+  130: | | | #ifndef G__CPPIF_STATIC  unresolved
+  132: | | | #endif  unresolved
+  133: | | #endif  unresolved
+  135: | #endif  unresolved
+  142: | #if (!defined(__MAKECINT__)) || defined(G__API) 0,4 unresolved
+  145: | | #ifdef __cplusplus  unresolved
+  146: | | | #ifndef G__ANSIHEADER  unresolved
+             .
+             .
+
+
+EXAMPLE2 - #ifdef/#endif partial symbolic resolution
+
+        The most powerful feature of <span class="string">"ifdef"</span> is that it resolves
+       selected macro in order to simplify C/C++ source code. For
+       example, we have following source.
+
+            /* source.c /////////////////////////////// */</span>
+            #ifdef A
+            <a href="../ListOfTypes.html#int">int</a> f() { return A; }
+            #else
+            <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#int">int</a> f() { return 0; }
+            #endif
+
+            #ifdef B
+            <a href="../ListOfTypes.html#int">int</a> g() { return B; }
+            #else
+            <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#int">int</a> g() { return 0; }
+            #endif
+
+            #if defined(A) &amp;&amp; defined(B)
+            <a href="../ListOfTypes.html#int">int</a> x;
+            #endif
+
+            #if !defined(A) || defined(B)
+            <a href="../ListOfTypes.html#int">int</a> y;
+            #endif
+            /* end source.c /////////////////////////// */</span>
+
+
+       Suppose macro A is always defined, so we want to eliminate
+       '#ifdef A' from the source. Use '-DA' option to specify that
+       we want to eliminate '#ifdef A'.  Note that complex conditions,
+       such as '!defined(A) || defined(B)' , are partially resolved.
+       Also note that if A is referred as a value, it remains unchanged
+       for readability.
+      
+
+            $ ifdef -DA source.c &gt; tmp
+            $ cat tmp
+
+            /* source.c /////////////////////////////// */</span>
+            <a href="../ListOfTypes.html#int">int</a> f() { return A; }
+
+            #ifdef B
+            <a href="../ListOfTypes.html#int">int</a> g() { return B; }
+            #else
+            <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#int">int</a> g() { return 0; }
+            #endif
+
+            #if  defined(B)
+            <a href="../ListOfTypes.html#int">int</a> x;
+            #endif
+
+            #if  defined(B)
+            <a href="../ListOfTypes.html#int">int</a> y;
+            #endif
+            /* end source.c /////////////////////////// */</span>
+
+
+       Now, suppose macro A is always undefined, so we want to eliminate
+       '#ifdef A' in the other way. Use '-UA' option in this case. 
+
+            $ ifdef -UA source.c &gt; tmp
+            $ cat tmp
+
+            /* source.c /////////////////////////////// */</span>
+            <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#int">int</a> f() { return 0; }
+            
+            #ifdef B
+            <a href="../ListOfTypes.html#int">int</a> g() { return B; }
+            #else
+            <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#int">int</a> g() { return 0; }
+            #endif
+            
+            
+            <a href="../ListOfTypes.html#int">int</a> y;
+            /* end source.c /////////////////////////// */</span>
+
+
+        You can define multiple -D, -U options. If you have many such
+        definitions, you can specify them in a file. Prepare a file
+        like below.
+
+            // macros.def  - define/undef definition file
+            #define A
+            #undef B
+            #define C
+            #define D
+
+        Then, give this file by -f option.
+
+            $ ifdef -f macros.def source.c &gt; tmp
+
+
+EXAMPLE3 - #ifdef/#endif partial symbolic resolution preview
+
+         You may want to make sure #ifdefs are resolved correctly.
+        -G option will give you detailed information about which 
+        macros and resolved.  If you add -d option, eliminated lines 
+        are also displayed.
+
+            $ ifdef -G -d -UA source.c 
+
+            #undef  A
+                2: #ifdef A  ALWAYS FALSE
+            D   3: <a href="../ListOfTypes.html#int">int</a> f() { return A; }
+                4: #else   ALWAYS TRUE
+                6: #endif END ALWAYS
+               14: #if defined(A) &amp;&amp; defined(B) -&gt; 0 ALWAYS FALSE
+            D  15: <a href="../ListOfTypes.html#int">int</a> x;
+               16: #endif END ALWAYS
+               18: #if !defined(A) || defined(B) -&gt; 1 ALWAYS TRUE
+               20: #endif END ALWAYS
+
+
+COMMENT
+         Although included in CINT package, ifdef is an independent
+        software productivity tool.
+
+
+AUTHOR
+       Masaharu Goto (cint@pcroot.cern.ch)
+       Copyright (c) 1994~2001 Masaharu Goto
+</pre>

@@ -1,0 +1,544 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:20 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooStats::BayesianCalculator</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooStats::BayesianCalculator','libRooStats','RooStats/BayesianCalculator.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooStats__BayesianCalculator.h.html">header file</a>
+<a class="descrheadentry" href="src/RooStats__BayesianCalculator.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/inc/RooStats/BayesianCalculator.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/src/BayesianCalculator.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooStats__BayesianCalculator:description">class description</a> 
+<a class="descrheadentry" href="#RooStats__BayesianCalculator:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooStats__BayesianCalculator:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooStats__BayesianCalculator:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOSTATS_Index.html">ROOSTATS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooStats::BayesianCalculator</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooStats__BayesianCalculator:description"></a>class RooStats::BayesianCalculator: public <a href="./RooStats__IntervalCalculator.html">RooStats::IntervalCalculator</a>, public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><p>
+BayesianCalculator is a concrete implementation of IntervalCalculator, providing the computation 
+of a credible interval using a Bayesian method. 
+The class works only for one single parameter of interest and it integrates the likelihood function with the given prior
+probability density function to compute the posterior probability. The result of the class is a one dimensional interval 
+(class SimpleInterval ), which is obtained from inverting the cumulative posterior distribution. 
+</p>
+<p>
+The interface allows one to construct the class by passing the data set, probability density function for the model, the prior
+functions and then the parameter of interest to scan. The nuisance parameters can also be passed to be marginalized when 
+computing the posterior. Alternatively, the class can be constructed by passing the data and the ModelConfig containing
+all the needed information (model pdf, prior pdf, parameter of interest, nuisance parameters, etc..)
+</p>
+<p>
+After configuring the calculator, one only needs to ask GetInterval(), which
+will return an SimpleInterval object. By default the extrem of the integral are obtained by inverting directly the
+cumulative posterior distribution. By using the method <tt>SetScanOfPosterior(nbins)</tt> the interval is then obtained by 
+scanning  the posterior function in the given number of points. The firts method is in general faster but it requires an
+integration one extra dimension  ( in the poi in addition to the nuisance parameters), therefore in some case it can be
+less robust.   
+</p>
+The class can also return the posterior function (method <tt>GetPosteriorFunction</tt>) or if needed the normalized
+posterior function (the posterior pdf) (method <tt>GetPosteriorPdf</tt>). A posterior plot is also obtained using 
+the <tt>GetPosteriorPlot</tt> method.
+<p>
+The class allows to use different integration methods for integrating in the nuisances and in the poi. All the numerical 
+integration methods of ROOT can be used via the method <tt>SetIntegrationType</tt> (see more in the documentation of
+this method).
+<!-- TDocHtmlDirective end --><pre>
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooStats__BayesianCalculator:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:_BayesianCalculator">~BayesianCalculator</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:BayesianCalculator">BayesianCalculator</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:BayesianCalculator%3">BayesianCalculator</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:BayesianCalculator%2">BayesianCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:BayesianCalculator%1">BayesianCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; POI, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; priorPOI, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisanceParameters = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ConfidenceLevel">ConfidenceLevel</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ForceNuisancePdf">ForceNuisancePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__SimpleInterval.html">SimpleInterval</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:GetInterval">GetInterval</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:GetMode">GetMode</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsReal.html">RooAbsReal</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:GetPosteriorFunction">GetPosteriorFunction</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:GetPosteriorPdf">GetPosteriorPdf</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooPlot.html">RooPlot</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:GetPosteriorPlot">GetPosteriorPlot</a>(<span class="keyword">bool</span> norm = <span class="keyword">false</span>, <span class="keyword">double</span> precision = 0.01) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:operator_">operator=</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BayesianCalculator.html">BayesianCalculator</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetBrfPrecision">SetBrfPrecision</a>(<span class="keyword">double</span> precision)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetConfidenceLevel">SetConfidenceLevel</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cl)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetData">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetIntegrationType">SetIntegrationType</a>(<span class="keyword">const</span> <span class="keyword">char</span>* type)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetLeftSideTailFraction">SetLeftSideTailFraction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> leftSideFraction)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetModel">SetModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetNumIters">SetNumIters</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numIters)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetScanOfPosterior">SetScanOfPosterior</a>(<span class="keyword">int</span> nbin = 100)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetShortestInterval">SetShortestInterval</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:SetTestSize">SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:Size">Size</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ApproximatePosterior">ApproximatePosterior</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ClearAll">ClearAll</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ComputeIntervalFromApproxPosterior">ComputeIntervalFromApproxPosterior</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ComputeIntervalFromCdf">ComputeIntervalFromCdf</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ComputeIntervalUsingRooFit">ComputeIntervalUsingRooFit</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BayesianCalculator:ComputeShortestInterval">ComputeShortestInterval</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooStats__BayesianCalculator:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TF1.html">TF1</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fApproxPosterior"></a>fApproxPosterior</td><td class="datadesc">TF1 representing the scanned posterior function</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span></td><td class="dataname"><a name="RooStats__BayesianCalculator:fBrfPrecision"></a>fBrfPrecision</td><td class="datadesc">root finder precision</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsData.html">RooAbsData</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fData"></a>fData</td><td class="datadesc">data set </td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsReal.html">RooAbsReal</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fIntegratedLikelihood"></a>fIntegratedLikelihood</td><td class="datadesc">integrated likelihood function, i.e - unnormalized posterior function  </td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fIntegrationType"></a>fIntegrationType</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span></td><td class="dataname"><a name="RooStats__BayesianCalculator:fLeftSideFraction"></a>fLeftSideFraction</td><td class="datadesc">fraction of probability content on left side of interval</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsReal.html">RooAbsReal</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fLikelihood"></a>fLikelihood</td><td class="datadesc">internal pointer to likelihood function </td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsReal.html">RooAbsReal</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fLogLike"></a>fLogLike</td><td class="datadesc">internal pointer to log likelihood function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fLower"></a>fLower</td><td class="datadesc">computer lower interval bound</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fNLLMin"></a>fNLLMin</td><td class="datadesc">minimum value of Nll </td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="RooStats__BayesianCalculator:fNScanBins"></a>fNScanBins</td><td class="datadesc">number of bins to scan, if = -1 no scan is done (default)</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fNuisanceParameters"></a>fNuisanceParameters</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fNuisancePdf"></a>fNuisancePdf</td><td class="datadesc">nuisance pdf (needed when using nuisance sampling technique)</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="RooStats__BayesianCalculator:fNumIterations"></a>fNumIterations</td><td class="datadesc">number of iterations (when using ToyMC)</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fPOI"></a>fPOI</td><td class="datadesc">POI</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fPdf"></a>fPdf</td><td class="datadesc">model pdf  (could contain the nuisance pdf as constraint term)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ROOT.html">ROOT</a>::<a href="./ROOT__Math.html">Math</a>::<a href="./ROOT__Math__IBaseFunctionOneDim.html">IBaseFunctionOneDim</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fPosteriorFunction"></a>fPosteriorFunction</td><td class="datadesc">function representing the posterior</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fPosteriorPdf"></a>fPosteriorPdf</td><td class="datadesc">normalized (on the poi) posterior pdf </td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fPriorPOI"></a>fPriorPOI</td><td class="datadesc">prior pdf for POI</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__BayesianCalculator:fProductPdf"></a>fProductPdf</td><td class="datadesc">internal pointer to model * prior</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span></td><td class="dataname"><a name="RooStats__BayesianCalculator:fSize"></a>fSize</td><td class="datadesc">size used for getting the interval</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fUpper"></a>fUpper</td><td class="datadesc">upper interval bound</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="RooStats__BayesianCalculator:fValidInterval"></a>fValidInterval</td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooStats__BayesianCalculator:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooStats__BayesianCalculator_Inh" id="MapRooStats__BayesianCalculator_Inh">
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="170,3,383,21"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="244,24,308,42"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="27,24,86,42"/>
+</map>
+<map name="MapRooStats__BayesianCalculator_InhMem" id="MapRooStats__BayesianCalculator_InhMem">
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="376,60,629,109"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="541,120,629,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="443,120,531,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="344,120,432,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="333,16,640,264"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,319,629,368"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,379,629,556"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,379,531,556"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,379,432,556"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,275,640,567"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,319,312,441"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,319,213,456"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,319,115,456"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,452,280,487"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,497,312,924"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,483,213,924"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,483,115,924"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,275,323,935"/>
+</map>
+<map name="MapRooStats__BayesianCalculator_Lib" id="MapRooStats__BayesianCalculator_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="371,367,463,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooStats__BayesianCalculator_Inh" class="tabsel" href="inh/RooStats__BayesianCalculator_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooStats__BayesianCalculator_Inh.png');">Inheritance</a>
+<a id="imgRooStats__BayesianCalculator_InhMem" class="tab" href="inhmem/RooStats__BayesianCalculator_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooStats__BayesianCalculator_InhMem.png');">Inherited Members</a>
+<a id="imgRooStats__BayesianCalculator_Incl" class="tab" href="incl/RooStats__BayesianCalculator_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooStats__BayesianCalculator_Incl.png');">Includes</a>
+<a id="imgRooStats__BayesianCalculator_Lib" class="tab" href="lib/RooStats__BayesianCalculator_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooStats__BayesianCalculator_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooStats__BayesianCalculator_Inh" src="inh/RooStats__BayesianCalculator_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BayesianCalculator:BayesianCalculator" href="src/RooStats__BayesianCalculator.cxx.html#KPusNB">BayesianCalculator</a>()</span><br />
+<div class="funccomm"><pre> default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BayesianCalculator:BayesianCalculator" href="src/RooStats__BayesianCalculator.cxx.html#xiSnkE">BayesianCalculator</a>( <span class="comment">/* const <a href="./ListOfTypes.html#char">char</a>* name,  const <a href="./ListOfTypes.html#char">char</a>* title, */</span>						   						    <a href="./RooAbsData.html">RooAbsData</a>&amp; data,                                                    <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf,						    <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; POI,						    <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; priorPOI,						    <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisanceParameters )</span><br />
+<div class="funccomm"><pre> Constructor from data set, model pdf, parameter of interests and prior pdf
+ If nuisance parameters are given they will be integrated according either to the prior or
+ their constraint term included in the model
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BayesianCalculator:BayesianCalculator%2" href="src/RooStats__BayesianCalculator.cxx.html#PpIJfE">BayesianCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</span><br />
+<div class="funccomm"><pre> Constructor from a data set and a ModelConfig
+ model pdf, poi and nuisances will be taken from the ModelConfig
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BayesianCalculator:_BayesianCalculator" href="src/RooStats__BayesianCalculator.cxx.html#Q4iMCC">~BayesianCalculator</a>()</span><br />
+<div class="funccomm"><pre> destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ClearAll" href="src/RooStats__BayesianCalculator.cxx.html#AHUazE">ClearAll</a>() const</span><br />
+<div class="funccomm"><pre> clear all cached pdf objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetModel" href="src/RooStats__BayesianCalculator.cxx.html#xKbOnC">SetModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</span><br />
+<div class="funccomm"><pre> set the model to use
+ The model pdf, prior pdf, parameter of interest and nuisances
+ will be taken according to the model
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooAbsReal.html">RooAbsReal</a>* <a class="funcname" name="RooStats__BayesianCalculator:GetPosteriorFunction" href="src/RooStats__BayesianCalculator.cxx.html#rw2jaD">GetPosteriorFunction</a>() const</span><br />
+<div class="funccomm"><pre> Build and return the posterior function (not normalized) as a <a href="./RooAbsReal.html">RooAbsReal</a>
+ the posterior is obtained from the product of the likelihood function and the
+ prior pdf which is then intergated in the nuisance parameters (if existing).
+ A prior function for the nuisance can be specified either in the prior pdf object
+ or in the model itself. If no prior nuisance is specified, but prior parameters are then
+ the integration is performed assuming a flat prior for the nuisance parameters.
+ NOTE: the return object is managed by the class, users do not need to delete it
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooAbsPdf.html">RooAbsPdf</a>* <a class="funcname" name="RooStats__BayesianCalculator:GetPosteriorPdf" href="src/RooStats__BayesianCalculator.cxx.html#qFXNVE">GetPosteriorPdf</a>() const</span><br />
+<div class="funccomm"><pre> Build and return the posterior pdf (i.e posterior function normalized to all range of poi)
+ Note that an extra integration in the POI is required for the normalization
+ NOTE: user must delete the returned object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooPlot.html">RooPlot</a>* <a class="funcname" name="RooStats__BayesianCalculator:GetPosteriorPlot" href="src/RooStats__BayesianCalculator.cxx.html#yOlyqB">GetPosteriorPlot</a>(<span class="keyword">bool</span> norm = <span class="keyword">false</span>, <span class="keyword">double</span> precision = 0.01) const</span><br />
+<div class="funccomm"><pre> return a <a href="./RooPlot.html">RooPlot</a> with the posterior  and the credibility region
+ NOTE: User takes ownership of the returned object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetIntegrationType" href="src/RooStats__BayesianCalculator.cxx.html#Wm1DNC">SetIntegrationType</a>(<span class="keyword">const</span> <span class="keyword">char</span>* type)</span><br />
+<div class="funccomm"><pre> set the integration type (possible type are) :
+ 1D integration ( used when only one nuisance and when the posterior is scanned):
+    adaptive , gauss, nonadaptive
+ multidim:
+       ADAPTIVE,   adaptive numerical integration
+                    The parameter numIters (settable with <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetNumIters" title="void RooStats::BayesianCalculator::SetNumIters(Int_t numIters)">SetNumIters</a>) is  the max number of function calls.
+                    It can be reduced to make teh integration faster but it will be difficult to reach the required tolerance
+       VEGAS   MC integration method based on importance sampling - numIters is number of function calls
+                Extra Vegas parameter can be set using  IntegratorMultiDimOptions class
+       MISER    MC integration method based on stratified sampling
+                See also http://en.wikipedia.org/wiki/Monte_Carlo_integration for VEGAS and MISER description
+       PLAIN    simple MC integration method, where the max  number of calls can be specified using <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetNumIters" title="void RooStats::BayesianCalculator::SetNumIters(Int_t numIters)">SetNumIters</a>(numIters)
+
+ Extra integration types are:
+
+    TOYMC:
+       evaluate posterior by generating toy MC for the nuisance parameters. It is a MC
+       integration, where the function is sampled according to the nuisance. It is convenient to use when all
+       the nuisance are uncorrelated and it is efficient to generate them
+       The toy are generated by default for each  poi values
+       (this method has been proposed and provided by J.P Chou)
+    1-TOYMC  : same method as before but in this case the toys are generated only one time and then used for
+       each poi value. It can be convenient when the generation time is much larger than the evaluation time,
+       otherwise it is recoomended to re-generate the toy for each poi scanned point of the posterior function
+
+
+    ROOFIT:
+       use roofit default integration methods which will produce a nested integral (not reccomended for more
+       than 1 nuisance parameters)
+
+ if type = 0 use default specified via class IntegratorMultiDimOptions::SetDefaultIntegrator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">SimpleInterval* <a class="funcname" name="RooStats__BayesianCalculator:GetInterval" href="src/RooStats__BayesianCalculator.cxx.html#kY5UcB">GetInterval</a>() const</span><br />
+<div class="funccomm"><pre> Compute the interval. By Default a central interval is computed
+ and the result is a SimpleInterval object.
+ Using the method (to be called before SetInterval) <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetLeftSideTailFraction" title="void RooStats::BayesianCalculator::SetLeftSideTailFraction(Double_t leftSideFraction)">SetLeftSideTailFraction</a> the user can choose the type of interval.
+ By default the returned interval is a central interval with the confidence level specified
+ previously in the constructor ( LeftSideTailFraction = 0.5).
+  For lower limit use <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetLeftSideTailFraction" title="void RooStats::BayesianCalculator::SetLeftSideTailFraction(Double_t leftSideFraction)">SetLeftSideTailFraction</a> = 1
+  For upper limit use <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetLeftSideTailFraction" title="void RooStats::BayesianCalculator::SetLeftSideTailFraction(Double_t leftSideFraction)">SetLeftSideTailFraction</a> = 0
+  for shortest intervals use <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetLeftSideTailFraction" title="void RooStats::BayesianCalculator::SetLeftSideTailFraction(Double_t leftSideFraction)">SetLeftSideTailFraction</a> = -1 or call the method <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetShortestInterval" title="void RooStats::BayesianCalculator::SetShortestInterval()">SetShortestInterval</a>()
+ NOTE: The <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:BayesianCalculator" title="RooStats::BayesianCalculator RooStats::BayesianCalculator::BayesianCalculator() or overloads">BayesianCalculator</a> covers only the case with one
+ single parameter of interest
+ NOTE: User takes ownership of the returned object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">double</span> <a class="funcname" name="RooStats__BayesianCalculator:GetMode" href="src/RooStats__BayesianCalculator.cxx.html#plpErB">GetMode</a>() const</span><br />
+<div class="funccomm"><pre> Returns the value of the parameter for the point in
+ parameter-space that is the most likely.
+  How do we do if there are points that are equi-probable?
+ use approximate posterior
+ t.b.d use real function to find the mode
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ComputeIntervalUsingRooFit" href="src/RooStats__BayesianCalculator.cxx.html#DEfYPB">ComputeIntervalUsingRooFit</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) const</span><br />
+<div class="funccomm"><pre> internal function compute the interval using <a href="./RooFit.html">RooFit</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ComputeIntervalFromCdf" href="src/RooStats__BayesianCalculator.cxx.html#D7WyYB">ComputeIntervalFromCdf</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) const</span><br />
+<div class="funccomm"><pre> internal function compute the interval using Cdf integration
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ApproximatePosterior" href="src/RooStats__BayesianCalculator.cxx.html#jTVf5D">ApproximatePosterior</a>() const</span><br />
+<div class="funccomm"><pre> approximate posterior in nbins using a <a href="./TF1.html">TF1</a>
+ scan the poi values and evaluate the posterior at each point
+ and save the result in a cloned <a href="./TF1.html">TF1</a>
+ For each point the posterior is evaluated by integrating the nuisance
+ parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ComputeIntervalFromApproxPosterior" href="src/RooStats__BayesianCalculator.cxx.html#l8coOC">ComputeIntervalFromApproxPosterior</a>(<span class="keyword">double</span> c1, <span class="keyword">double</span> c2) const</span><br />
+<div class="funccomm"><pre> compute the interval using the approximate posterior function
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ComputeShortestInterval" href="src/RooStats__BayesianCalculator.cxx.html#eVAiTC">ComputeShortestInterval</a>() const</span><br />
+<div class="funccomm"><pre> compute the shortest interval
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BayesianCalculator:BayesianCalculator" href="src/RooStats__BayesianCalculator.h.html#xGfKs">BayesianCalculator</a>()</span><br />
+<div class="funccomm"><pre> constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetData" href="src/RooStats__BayesianCalculator.h.html#f1PNZ">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetTestSize" href="src/RooStats__BayesianCalculator.h.html#byzJrE">SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size)</span><br />
+<div class="funccomm"><pre> set the size of the test (rate of Type I error) ( Eg. 0.05 for a 95% Confidence Interval)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetConfidenceLevel" href="src/RooStats__BayesianCalculator.h.html#z5FjSC">SetConfidenceLevel</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cl)</span><br />
+<div class="funccomm"><pre> set the confidence level for the interval (eg. 0.95 for a 95% Confidence Interval)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetTestSize" title="void RooStats::BayesianCalculator::SetTestSize(Double_t size)">SetTestSize</a>(1.-cl); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="RooStats__BayesianCalculator:Size" href="src/RooStats__BayesianCalculator.h.html#oENUXC">Size</a>() const</span><br />
+<div class="funccomm"><pre> Get the size of the test (eg. rate of Type I error)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fSize" title="double RooStats::BayesianCalculator::fSize">fSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="RooStats__BayesianCalculator:ConfidenceLevel" href="src/RooStats__BayesianCalculator.h.html#snIvIC">ConfidenceLevel</a>() const</span><br />
+<div class="funccomm"><pre> Get the Confidence level for the test
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 1.-<a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fSize" title="double RooStats::BayesianCalculator::fSize">fSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetLeftSideTailFraction" href="src/RooStats__BayesianCalculator.h.html#NBo33E">SetLeftSideTailFraction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> leftSideFraction)</span><br />
+<div class="funccomm"><pre> set the fraction of probability content on the left tail
+ Central limits use 0.5 (default case)
+ for upper limits it is 0 and 1 for lower limit
+ For shortest intervals a negative value (i.e. -1) must be given
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fLeftSideFraction" title="double RooStats::BayesianCalculator::fLeftSideFraction">fLeftSideFraction</a> = leftSideFraction;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetShortestInterval" href="src/RooStats__BayesianCalculator.h.html#oHbMY">SetShortestInterval</a>()</span><br />
+<div class="funccomm"><pre> set the Bayesian calculator to compute the shorest interval (default is central interval)
+ to switch off <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:SetLeftSideTailFraction" title="void RooStats::BayesianCalculator::SetLeftSideTailFraction(Double_t leftSideFraction)">SetLeftSideTailFraction</a> to the rght value
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fLeftSideFraction" title="double RooStats::BayesianCalculator::fLeftSideFraction">fLeftSideFraction</a> = -1; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetBrfPrecision" href="src/RooStats__BayesianCalculator.h.html#peuZYD">SetBrfPrecision</a>(<span class="keyword">double</span> precision)</span><br />
+<div class="funccomm"><pre> set the precision of the Root Finder
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fBrfPrecision" title="double RooStats::BayesianCalculator::fBrfPrecision">fBrfPrecision</a> = precision; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetScanOfPosterior" href="src/RooStats__BayesianCalculator.h.html#h4GEiC">SetScanOfPosterior</a>(<span class="keyword">int</span> nbin = 100)</span><br />
+<div class="funccomm"><pre> use directly the approximate posterior function obtained by binning it in nbins
+ by default the cdf is used by integrating the posterior
+ if a value of nbin &lt;= 0 the cdf function will be used
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fNScanBins" title="int RooStats::BayesianCalculator::fNScanBins">fNScanBins</a> = nbin; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:SetNumIters" href="src/RooStats__BayesianCalculator.h.html#Df4t4B">SetNumIters</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numIters)</span><br />
+<div class="funccomm"><pre> set the number of iterations when running a MC integration algorithm
+ If not set use default algorithmic values
+ In case of ToyMC sampling of the nuisance the value is 100
+ In case of using the GSL MCintegrations types the default value is
+ defined in <a href="./ROOT.html">ROOT</a>::<a href="./ROOT__Math.html">Math</a>::<a href="./ROOT__Math__IntegratorMultiDimOptions.html">IntegratorMultiDimOptions</a>::<a href="./ROOT__Math__IntegratorMultiDimOptions.html#ROOT__Math__IntegratorMultiDimOptions:DefaultNCalls" title="unsigned int ROOT::Math::IntegratorMultiDimOptions::DefaultNCalls()">DefaultNCalls</a>()
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fNumIterations" title="int RooStats::BayesianCalculator::fNumIterations">fNumIterations</a> = numIters; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BayesianCalculator:ForceNuisancePdf" href="src/RooStats__BayesianCalculator.h.html#ZG1cmB">ForceNuisancePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</span><br />
+<div class="funccomm"><pre> force the nuisance pdf when using the toy mc sampling
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__BayesianCalculator.html#RooStats__BayesianCalculator:fNuisancePdf" title="RooAbsPdf* RooStats::BayesianCalculator::fNuisancePdf">fNuisancePdf</a> = &amp;pdf; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Kyle+Cranmer"> Kyle Cranmer</a>, <a href="http://consult.cern.ch/xwho/people?Lorenzo+Moneta"> Lorenzo Moneta</a>, <a href="http://consult.cern.ch/xwho/people?Gregory+Schott"> Gregory Schott</a>, <a href="http://consult.cern.ch/xwho/people?Wouter+Verkerke"> Wouter Verkerke</a> </em><em>&raquo; Copyright   (C) 1995-2008, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/roostats:$Id: BayesianCalculator.h 39975 2011-06-26 22:49:46Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

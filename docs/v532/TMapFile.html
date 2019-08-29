@@ -1,0 +1,583 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:20:12 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMapFile</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMapFile','libRIO','TMapFile.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMapFile.h.html">header file</a>
+<a class="descrheadentry" href="src/TMapFile.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/io/io/inc/TMapFile.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/io/io/src/TMapFile.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMapFile:description">class description</a> 
+<a class="descrheadentry" href="#TMapFile:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMapFile:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMapFile:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./IO_Index.html">IO</a>
+ &#187; <a class="locationlevel" href="./IO_IO_Index.html">IO</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMapFile</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMapFile:description"></a>class TMapFile: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TMapFile.html">TMapFile</a>
+
+This class implements a shared memory region mapped to a file.
+Objects can be placed into this shared memory area using the <a href="./TMapFile.html#TMapFile:Add" title="void TMapFile::Add(const TObject* obj,const char* name=&quot;&quot;)">Add</a>()
+member function. To actually place a copy of the object is shared
+memory call <a href="./TMapFile.html#TMapFile:Update" title="void TMapFile::Update(TObject* obj=0)">Update</a>() also whenever the mapped object(s) change(s)
+call <a href="./TMapFile.html#TMapFile:Update" title="void TMapFile::Update(TObject* obj=0)">Update</a>() to put a fresh copy in the shared memory. This extra
+step is necessary since it is not possible to share objects with
+virtual pointers between processes (the vtbl ptr points to the
+originators unique address space and can not be used by the
+consumer process(es)). Consumer processes can map the memory region
+from this file and access the objects stored in it via the <a href="./TMapFile.html#TMapFile:Get" title="TObject* TMapFile::Get(const char* name,TObject* retObj=0)">Get</a>()
+method (which returns a copy of the object stored in the shared
+memory with correct vtbl ptr set). Only objects of classes with a
+<a href="./TMapFile.html#TMapFile:Streamer" title="void TMapFile::Streamer(TBuffer&amp; b)">Streamer</a>() member function defined can be shared.
+
+I know the current implementation is not ideal (you need to copy to
+and from the shared memory file) but the main problem is with the
+class' virtual_table pointer. This pointer points to a table unique
+for every process. Therefore, different options are:
+1) One could allocate an object directly in shared memory in the
+producer, but the consumer still has to copy the object from
+shared memory into a local object which has the correct vtbl
+pointer for that process (copy ctor's can be used for creating
+the local copy).
+2) Another possibility is to only allow objects without virtual
+functions in shared memory (like simple C structs), or to
+forbid (how?) the consumer from calling any virtual functions
+of the objects in shared memory.
+3) A last option is to copy the object internals to shared memory
+and copy them again from there. This is what is done in the
+<a href="./TMapFile.html">TMapFile</a> (using the object <a href="./TMapFile.html#TMapFile:Streamer" title="void TMapFile::Streamer(TBuffer&amp; b)">Streamer</a>() to make a deep copy).
+Option 1) saves one copy, but requires solid copy ctor's (along the
+full inheritance chain) to rebuild the object in the consumer. Most
+classes don't provide these copy ctor's, especially not when objects
+contain collections, etc. 2) is too limiting or dangerous (calling
+accidentally a virtual function will segv). So since we have a
+robust <a href="./TMapFile.html#TMapFile:Streamer" title="void TMapFile::Streamer(TBuffer&amp; b)">Streamer</a> mechanism I opted for 3).
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMapFile:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMapFile:_TMapFile">~TMapFile</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Add">Add</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Browse">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:cd">cd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path = 0)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Close">Close</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TMapFile.html">TMapFile</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Create">Create</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"READ"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> size = <a href="./TMapFile.html#TMapFile:kDefaultMapSize" title="const enum TMapFile:: TMapFile::kDefaultMapSize">kDefaultMapSize</a>, <span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Get">Get</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./TObject.html">TObject</a>* retObj = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetBaseAddr">GetBaseAddr</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetBreakval">GetBreakval</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetDirectory">GetDirectory</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:GetFd">GetFd</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMapRec.html">TMapRec</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetFirst">GetFirst</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMapRec.html">TMapRec</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetLast">GetLast</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetMmallocDesc">GetMmallocDesc</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetName">GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetOption">GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:GetSize">GetSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:GetTitle">GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:IsFolder">IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:IsWritable">IsWritable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:ls">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:operator_delete">operator delete</a>(<span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:OrgAddress">OrgAddress</a>(<span class="keyword">void</span>* addr) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Remove%2">Remove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Remove%3">Remove</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:RemoveAll">RemoveAll</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:SetMapAddress">SetMapAddress</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> addr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:Update">Update</a>(<a href="./TObject.html">TObject</a>* obj = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TMapFile.html">TMapFile</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:WhichMapFile">WhichMapFile</a>(<span class="keyword">void</span>* addr)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMapFile:TMapFile">TMapFile</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMapFile:TMapFile%2">TMapFile</a>(<span class="keyword">const</span> <a href="./TMapFile.html">TMapFile</a>&amp; f, <a href="./ListOfTypes.html#Long_t">Long_t</a> offset = 0)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMapFile:TMapFile%1">TMapFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> size, <a href="./TMapFile.html">TMapFile</a>*&amp; newMapFile)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:AcquireSemaphore">AcquireSemaphore</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:CreateSemaphore">CreateSemaphore</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:DeleteSemaphore">DeleteSemaphore</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMapFile.html">TMapFile</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:FindShadowMapFile">FindShadowMapFile</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:GetBestBuffer">GetBestBuffer</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:InitDirectory">InitDirectory</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TMapFile:MapToAddress">MapToAddress</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TMapFile.html">TMapFile</a>&amp; rhs)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMapFile:ReleaseSemaphore">ReleaseSemaphore</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Remove">Remove</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TMapFile:Remove%1">Remove</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMapFile:SumBuffer">SumBuffer</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMapFile:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TMapFile:kDefaultMapSize"></a>kDefaultMapSize</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="dataname"><a name="TMapFile:fBaseAddr"></a>fBaseAddr</td><td class="datadesc">Base address of mapped memory region</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TMapFile:fBrowseList"></a>fBrowseList</td><td class="datadesc">List of KeyMapFile objects</td></tr>
+<tr class="data"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a name="TMapFile:fDirectory"></a>fDirectory</td><td class="datadesc">Pointer to directory associated to this mapfile</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMapFile:fFd"></a>fFd</td><td class="datadesc">Descriptor of mapped file</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMapRec.html">TMapRec</a>*</td><td class="dataname"><a name="TMapFile:fFirst"></a>fFirst</td><td class="datadesc">List of streamed objects is shared memory</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TMapFile:fGetting"></a>fGetting</td><td class="datadesc">Don't deadlock in update mode, when from Get() Add() is called</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMapRec.html">TMapRec</a>*</td><td class="dataname"><a name="TMapFile:fLast"></a>fLast</td><td class="datadesc">Last object in list of shared objects</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">void</span>*</td><td class="dataname"><a name="TMapFile:fMmallocDesc"></a>fMmallocDesc</td><td class="datadesc">Pointer to mmalloc descriptor</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TMapFile:fName"></a>fName</td><td class="datadesc">Name of mapped file</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a name="TMapFile:fOffset"></a>fOffset</td><td class="datadesc">Offset in bytes for region mapped by reader</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TMapFile:fOption"></a>fOption</td><td class="datadesc">Directory creation options</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMapFile:fSemaphore"></a>fSemaphore</td><td class="datadesc">Modification semaphore (or getpid() for WIN32)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMapFile:fSize"></a>fSize</td><td class="datadesc">Original start size of memory mapped region</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMapFile:fSum2Buffer"></a>fSum2Buffer</td><td class="datadesc">Sum of squares of buffer sizes of objects written so far</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMapFile:fSumBuffer"></a>fSumBuffer</td><td class="datadesc">Sum of buffer sizes of objects written sofar</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TMapFile:fTitle"></a>fTitle</td><td class="datadesc">Title of mapped file</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMapFile:fVersion"></a>fVersion</td><td class="datadesc">ROOT version (or -1 for shadow map file)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMapFile:fWritable"></a>fWritable</td><td class="datadesc">TRUE if mapped file opened in RDWR mode</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMapFile:fWritten"></a>fWritten</td><td class="datadesc">Number of objects written sofar</td></tr>
+<tr class="data"><td class="datatype">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a name="TMapFile:fgMapAddress"></a>fgMapAddress</td><td class="datadesc">Map to this address, set address via SetMapAddress()</td></tr>
+<tr class="data"><td class="datatype">static <span class="keyword">void</span>*</td><td class="dataname"><a name="TMapFile:fgMmallocDesc"></a>fgMmallocDesc</td><td class="datadesc">Used in Close() and operator delete()</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="dataname"><a name="TMapFile:fhSemaphore"></a>fhSemaphore</td><td class="datadesc">HANDLE of WIN32 Mutex object to implement semaphore</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMapFile:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMapFile_Inh" id="MapTMapFile_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="74,21,238,70"/>
+</map>
+<map name="MapTMapFile_InhMem" id="MapTMapFile_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTMapFile_Lib" id="MapTMapFile_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="399,83,527,131"/>
+</map>
+<div class="tabs">
+<a id="imgTMapFile_Inh" class="tabsel" href="inh/TMapFile_Inh.png" onclick="javascript:return SetImg('Charts','inh/TMapFile_Inh.png');">Inheritance</a>
+<a id="imgTMapFile_InhMem" class="tab" href="inhmem/TMapFile_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMapFile_InhMem.png');">Inherited Members</a>
+<a id="imgTMapFile_Incl" class="tab" href="incl/TMapFile_Incl.png" onclick="javascript:return SetImg('Charts','incl/TMapFile_Incl.png');">Includes</a>
+<a id="imgTMapFile_Lib" class="tab" href="lib/TMapFile_Lib.png" onclick="javascript:return SetImg('Charts','lib/TMapFile_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMapFile_Inh" src="inh/TMapFile_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMapFile:TMapFile" href="src/TMapFile.cxx.html#K.IN8C">TMapFile</a>()</span><br />
+<div class="funccomm"><pre> Default ctor. Does not much except setting some basic values.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMapFile:TMapFile%1" href="src/TMapFile.cxx.html#EEdjU">TMapFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> size, <a href="./TMapFile.html">TMapFile</a>*&amp; newMapFile)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a> a memory mapped file. This opens a file (to which the
+ memory will be mapped) and attaches a memory region to it.
+ Option can be either: <span class="string">"NEW"</span>, <span class="string">"CREATE"</span>, <span class="string">"RECREATE"</span>, <span class="string">"UPDATE"</span> or
+ <span class="string">"READ"</span> (see <a href="./TFile.html">TFile</a>). The default open mode is <span class="string">"READ"</span>. The size
+ argument specifies the maximum size of shared memory file in bytes.
+ This protected ctor is called via the static <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a>() method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMapFile:TMapFile%2" href="src/TMapFile.cxx.html#oDDVwC">TMapFile</a>(<span class="keyword">const</span> <a href="./TMapFile.html">TMapFile</a>&amp; f, <a href="./ListOfTypes.html#Long_t">Long_t</a> offset = 0)</span><br />
+<div class="funccomm"><pre> Private copy ctor. Used by the the ctor to create a new version
+ of <a href="./TMapFile.html">TMapFile</a> in the memory mapped heap. It's main purpose is to
+ correctly create the string data members.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMapFile:_TMapFile" href="src/TMapFile.cxx.html#HHZjUD">~TMapFile</a>()</span><br />
+<div class="funccomm"><pre> TMapFiles may not be deleted, since we want to keep the complete
+ <a href="./TMapFile.html">TMapFile</a> object in the mapped file for later re-use. To enforce this
+ the delete operator has been made private. Use <a href="./TMapFile.html#TMapFile:Close" title="void TMapFile::Close(Option_t* option=&quot;&quot;)">Close</a>() to properly
+ terminate a <a href="./TMapFile.html">TMapFile</a> (also done via the <a href="./TROOT.html">TROOT</a> dtor).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:InitDirectory" href="src/TMapFile.cxx.html#VMmpqE">InitDirectory</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a> the directory associated to this mapfile
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:Add" href="src/TMapFile.cxx.html#DCCE1C">Add</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Add" title="void TMapFile::Add(const TObject* obj,const char* name=&quot;&quot;)">Add</a> an object to the list of objects to be stored in shared memory.
+ To place the object actually into shared memory call <a href="./TMapFile.html#TMapFile:Update" title="void TMapFile::Update(TObject* obj=0)">Update</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:Update" href="src/TMapFile.cxx.html#OPHhyC">Update</a>(<a href="./TObject.html">TObject</a>* obj = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Update" title="void TMapFile::Update(TObject* obj=0)">Update</a> an object (or all objects, if obj == 0) in shared memory.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMapFile:Remove" href="src/TMapFile.cxx.html#DtacZD">Remove</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Remove" title="TObject* TMapFile::Remove(TObject* obj,Bool_t lock) or overloads">Remove</a> object from shared memory. Returns pointer to removed
+ object if successful, 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMapFile:Remove%1" href="src/TMapFile.cxx.html#zZrDd">Remove</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Remove" title="TObject* TMapFile::Remove(TObject* obj,Bool_t lock) or overloads">Remove</a> object by name from shared memory. Returns pointer to removed
+ object if successful, 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:RemoveAll" href="src/TMapFile.cxx.html#lfd71C">RemoveAll</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Remove" title="TObject* TMapFile::Remove(TObject* obj,Bool_t lock) or overloads">Remove</a> all objects from shared memory.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TMapFile:Get" href="src/TMapFile.cxx.html#A2K1UD">Get</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./TObject.html">TObject</a>* retObj = 0)</span><br />
+<div class="funccomm"><pre> Return pointer to object retrieved from shared memory. The object must
+ be deleted after use. If delObj is a pointer to a previously allocated
+ object it will be deleted. Returns 0 in case object with the given
+ name does not exist.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:CreateSemaphore" href="src/TMapFile.cxx.html#WTi_2D">CreateSemaphore</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a> semaphore used for synchronizing access to shared memory.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:DeleteSemaphore" href="src/TMapFile.cxx.html#QLzh_C">DeleteSemaphore</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Delete" title="void TObject::Delete(Option_t* option=&quot;&quot;)">Delete</a> the semaphore.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMapFile:AcquireSemaphore" href="src/TMapFile.cxx.html#L9ApHB">AcquireSemaphore</a>()</span><br />
+<div class="funccomm"><pre> Acquire semaphore. Returns 0 if OK, -1 on error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMapFile:ReleaseSemaphore" href="src/TMapFile.cxx.html#HmenwB">ReleaseSemaphore</a>()</span><br />
+<div class="funccomm"><pre> Release semaphore. Returns 0 if OK, -1 on error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:Close" href="src/TMapFile.cxx.html#vJcsO">Close</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Close" title="void TMapFile::Close(Option_t* option=&quot;&quot;)">Close</a> a mapped file. First detach mapped memory then close file.
+ No member functions of a <a href="./TMapFile.html">TMapFile</a> that was opened in write mode
+ may be called after <a href="./TMapFile.html#TMapFile:Close" title="void TMapFile::Close(Option_t* option=&quot;&quot;)">Close</a>() (this includes, of course, <span class="string">"delete"</span> which
+ would call the dtors). The option=<span class="string">"dtor"</span> is only used when called
+ via the <a href="./TMapFile.html#TMapFile:_TMapFile" title="void TMapFile::~TMapFile()">~TMapFile</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMapFile.html">TMapFile</a> * <a class="funcname" name="TMapFile:FindShadowMapFile" href="src/TMapFile.cxx.html#uIRQBB">FindShadowMapFile</a>()</span><br />
+<div class="funccomm"><pre> Returns shadow map file.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:Print" href="src/TMapFile.cxx.html#e3zYY">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Print" title="void TMapFile::Print(Option_t* option=&quot;&quot;)">Print</a> some info about the mapped file.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMapFile:IsFolder" href="src/TMapFile.cxx.html#BAvOp">IsFolder</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> in case object is a folder (i.e. contains browsable lists).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:Browse" href="src/TMapFile.cxx.html#Kqnb2D">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Browse" title="void TMapFile::Browse(TBrowser* b)">Browse</a> contents of <a href="./TMapFile.html">TMapFile</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMapFile:cd" href="src/TMapFile.cxx.html#ABvb3">cd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path = 0)</span><br />
+<div class="funccomm"><pre> Cd to associated directory,
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:ls" href="src/TMapFile.cxx.html#r0lLjE">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> List contents of <a href="./TMapFile.html">TMapFile</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:SumBuffer" href="src/TMapFile.cxx.html#dtuDjB">SumBuffer</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize)</span><br />
+<div class="funccomm"><pre> Increment statistics for buffer sizes of objects in this file.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMapFile:GetBestBuffer" href="src/TMapFile.cxx.html#jlVC.">GetBestBuffer</a>()</span><br />
+<div class="funccomm"><pre> Return the best buffer size for objects in this file.
+
+ The best buffer size is estimated based on the current mean value
+ and standard deviation of all objects written so far to this file.
+ Returns mean value + one standard deviation.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMapFile.html">TMapFile</a> * <a class="funcname" name="TMapFile:Create" href="src/TMapFile.cxx.html#jXzmuC">Create</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"READ"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> size = <a href="./TMapFile.html#TMapFile:kDefaultMapSize" title="const enum TMapFile:: TMapFile::kDefaultMapSize">kDefaultMapSize</a>, <span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a> a memory mapped file. This opens a file (to which the
+ memory will be mapped) and attaches a memory region to it.
+ Option can be either: <span class="string">"NEW"</span>, <span class="string">"CREATE"</span>, <span class="string">"RECREATE"</span>, <span class="string">"UPDATE"</span>
+ or <span class="string">"READ"</span> (see <a href="./TFile.html">TFile</a>). The default open mode is <span class="string">"READ"</span>. The size
+ argument specifies the maximum size of shared memory file in bytes.
+ <a href="./TMapFile.html">TMapFile</a>'s can only be created via this method. <a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a>() enforces that
+ a <a href="./TMapFile.html">TMapFile</a> is always on the memory mapped heap (when <span class="string">"NEW"</span>, <span class="string">"CREATE"</span>
+ or <span class="string">"RECREATE"</span> are used).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:SetMapAddress" href="src/TMapFile.cxx.html#emEGw">SetMapAddress</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> addr)</span><br />
+<div class="funccomm"><pre> Set preferred map address. Find out preferred map address as follows:
+ 1) Run consumer program to find the preferred map address:
+       $ root
+       root [0] m = <a href="./TMapFile.html">TMapFile</a>::<a href="./TMapFile.html#TMapFile:Create" title="TMapFile* TMapFile::Create(const char* name,Option_t* option=&quot;READ&quot;,Int_t size=kDefaultMapSize,const char* title=&quot;&quot;)">Create</a>(<span class="string">"dummy.map"</span>, <span class="string">"recreate"</span>, 10000000);
+       root [1] m.<a href="./TMapFile.html#TMapFile:Print" title="void TMapFile::Print(Option_t* option=&quot;&quot;)">Print</a>()
+       Memory mapped file:   dummy.map
+       Title:
+       Option:               CREATE
+       Mapped Memory region: 0x40b4c000 - 0x40d95f00 (2.29 MB)
+       Current breakval:     0x40b53000
+       root [2] .q
+       $ rm dummy.map
+    Remember begin of mapped region, i.e. 0x40b4c000
+
+ 2) <a href="./TMapFile.html#TMapFile:Add" title="void TMapFile::Add(const TObject* obj,const char* name=&quot;&quot;)">Add</a> to producer program, just before creating the <a href="./TMapFile.html">TMapFile</a>:
+       <a href="./TMapFile.html">TMapFile</a>::<a href="./TMapFile.html#TMapFile:SetMapAddress" title="void TMapFile::SetMapAddress(Long_t addr)">SetMapAddress</a>(0x40b4c000);
+
+ Repeat this if more than one map file is being used.
+
+ The above procedure allow programs using, e.g., different number of
+ shared libraries (that cause the default mapping address to be
+ different) to create shared memory regions in the same location
+ without overwriting a shared library. The above assumes the consumer
+ program is larger (i.e. has more shared memory occupied) than the
+ producer. If this is not <a href="./ListOfTypes.html#bool">true</a> inverse the procedure.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> * <a class="funcname" name="TMapFile:MapToAddress" href="src/TMapFile.cxx.html#nvonEC">MapToAddress</a>()</span><br />
+<div class="funccomm"><pre> Return the base address at which we would like the next <a href="./TMapFile.html">TMapFile</a>'s
+ mapped data to start.
+
+ For now, we let the system decide (start address 0). There are
+ a lot of issues to deal with here to make this work reasonably,
+ including:
+
+ - Avoid memory collisions with existing mapped address spaces
+
+ - Reclaim address spaces when their mmalloc heaps are unmapped
+
+ - When mmalloc heaps are shared between processes they have to be
+   mapped at the same addresses in each
+
+ Once created, a mmalloc heap that is to be mapped back in must be
+ mapped at the original address.  I.E. each <a href="./TMapFile.html">TMapFile</a> will expect
+ to be remapped at it's original address. This becomes a problem if
+ the desired address is already in use.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:operator_delete" href="src/TMapFile.cxx.html#JRk7sB">operator delete</a>(<span class="keyword">void</span>* vp)</span><br />
+<div class="funccomm"><pre> Need special <span class="string">"operator delete"</span> in which we close the shared memory.
+ This has to be done after the dtor chain has been finished.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> * <a class="funcname" name="TMapFile:GetBreakval" href="src/TMapFile.h.html#Jee4jC">GetBreakval</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMapFile.html">TMapFile</a> * <a class="funcname" name="TMapFile:WhichMapFile" href="src/TMapFile.h.html#q3Hly">WhichMapFile</a>(<span class="keyword">void</span>* addr)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMapFile:operator_" href="src/TMapFile.h.html#vYNRgE">operator=</a>(<span class="keyword">const</span> <a href="./TMapFile.html">TMapFile</a>&amp; rhs)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>   * <a class="funcname" name="TMapFile:Remove" href="src/TMapFile.h.html#KIJFEC">Remove</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>   * <a class="funcname" name="TMapFile:Remove%1" href="src/TMapFile.h.html#inMQx">Remove</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lock)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>         * <a class="funcname" name="TMapFile:GetBaseAddr" href="src/TMapFile.h.html#WJAkdE">GetBaseAddr</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<span class="keyword">void</span> *)<a href="./TMapFile.html#TMapFile:fBaseAddr" title="ULong_t TMapFile::fBaseAddr">fBaseAddr</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDirectory.html">TDirectory</a>   * <a class="funcname" name="TMapFile:GetDirectory" href="src/TMapFile.h.html#JBs0XD">GetDirectory</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fDirectory" title="TDirectory* TMapFile::fDirectory">fDirectory</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMapFile:GetFd" href="src/TMapFile.h.html#JZy4BD">GetFd</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fFd" title="Int_t TMapFile::fFd">fFd</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>         * <a class="funcname" name="TMapFile:GetMmallocDesc" href="src/TMapFile.h.html#Eu9cc">GetMmallocDesc</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fMmallocDesc" title="void* TMapFile::fMmallocDesc">fMmallocDesc</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>   * <a class="funcname" name="TMapFile:GetName" href="src/TMapFile.h.html#BDySQC">GetName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fName" title="char* TMapFile::fName">fName</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMapFile:GetSize" href="src/TMapFile.h.html#F3qbjB">GetSize</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fSize" title="Int_t TMapFile::fSize">fSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>   * <a class="funcname" name="TMapFile:GetOption" href="src/TMapFile.h.html#uN9esB">GetOption</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fOption" title="char* TMapFile::fOption">fOption</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>   * <a class="funcname" name="TMapFile:GetTitle" href="src/TMapFile.h.html#cB2zVB">GetTitle</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fTitle" title="char* TMapFile::fTitle">fTitle</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMapRec.html">TMapRec</a>      * <a class="funcname" name="TMapFile:GetFirst" href="src/TMapFile.h.html#MHCwGE">GetFirst</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<a href="./TMapRec.html">TMapRec</a>*)((<a href="./ListOfTypes.html#Long_t">Long_t</a>) <a href="./TMapFile.html#TMapFile:fFirst" title="TMapRec* TMapFile::fFirst">fFirst</a> + <a href="./TMapFile.html#TMapFile:fOffset" title="Long_t TMapFile::fOffset">fOffset</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMapRec.html">TMapRec</a>      * <a class="funcname" name="TMapFile:GetLast" href="src/TMapFile.h.html#d.9hY">GetLast</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<a href="./TMapRec.html">TMapRec</a>*)((<a href="./ListOfTypes.html#Long_t">Long_t</a>) <a href="./TMapFile.html#TMapFile:fLast" title="TMapRec* TMapFile::fLast">fLast</a> + <a href="./TMapFile.html#TMapFile:fOffset" title="Long_t TMapFile::fOffset">fOffset</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMapFile:IsWritable" href="src/TMapFile.h.html#AiTB7C">IsWritable</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMapFile.html#TMapFile:fWritable" title="Bool_t TMapFile::fWritable">fWritable</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>         * <a class="funcname" name="TMapFile:OrgAddress" href="src/TMapFile.h.html#DTbJmC">OrgAddress</a>(<span class="keyword">void</span>* addr) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<span class="keyword">void</span> *)((<a href="./ListOfTypes.html#Long_t">Long_t</a>)addr - <a href="./TMapFile.html#TMapFile:fOffset" title="Long_t TMapFile::fOffset">fOffset</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Fons+Rademakers"> Fons Rademakers   08/07/97</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/io:$Id: TMapFile.h 23122 2008-04-10 14:56:30Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:20</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:11:05 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TCutG</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TCutG','libGraf','TCutG.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TCutG.h.html">header file</a>
+<a class="descrheadentry" href="src/TCutG.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf2d/graf/inc/TCutG.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf2d/graf/src/TCutG.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TCutG:description">class description</a> 
+<a class="descrheadentry" href="#TCutG:Function_Members">function members</a>
+<a class="descrheadentry" href="#TCutG:Data_Members">data members</a>
+<a class="descrheadentry" href="#TCutG:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GRAF2D_Index.html">GRAF2D</a>
+ &#187; <a class="locationlevel" href="./GRAF2D_GRAF_Index.html">GRAF</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TCutG</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TCutG:description"></a>class TCutG: public <a href="./TGraph.html">TGraph</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>Graphical cut class</h2></center>
+A Graphical cut.
+<p>
+A TCutG object is a closed polygon defining a closed region in a x,y plot.
+It can be created via the graphics editor option "CutG" or directly by
+invoking its constructor. The first and last points should be the same.
+<p>
+To create a TCutG via the graphics editor, use the left button to select the
+points building the contour of the cut. Click on the right button to close the
+TCutG. When it is created via the graphics editor, the TCutG object is named
+"CUTG". It is recommended to immediatly change the name by using the context
+menu item "SetName". When the graphics editor is used, the names of the
+variables X,Y are automatically taken from the current pad title.
+<p>
+Example:
+<p>
+Assume a TTree object T and:
+<pre>
+     Root > T.Draw("abs(fMomemtum)%fEtot")
+</pre>
+the TCutG members fVarX, fVary will be set to:
+<pre>
+     fVarx = fEtot
+     fVary = abs(fMomemtum)
+</pre>
+A graphical cut can be used in a TTree selection expression:
+<pre>
+    Root > T.Draw("fEtot","cutg1")
+</pre>
+where "cutg1" is the name of an existing graphical cut.
+<p>
+Note that, as shown in the example above, a graphical cut may be used in a
+selection expression when drawing TTrees expressions of 1-d, 2-d or
+3-dimensions. The expressions used in TTree::Draw can reference the variables in
+the fVarX, fVarY of the graphical cut plus other variables.
+<p>
+When the TCutG object is created by TTree::Draw, it is added to the list of special objects in
+the main TROOT object pointed by gROOT. To retrieve a pointer to this object
+from the code or command line, do:
+<pre>
+    TCutG *mycutg;
+    mycutg = (TCutG*)gROOT->GetListOfSpecials()->FindObject("CUTG")
+    mycutg->SetName("mycutg");
+</pre>
+<p>
+When the TCutG is not created via TTree::Draw, one must set the variable names
+corresponding to x,y if one wants to use the cut as input to TTree::Draw,eg
+<pre>
+   TCutG *cutg = new TCutG("mycut",5);
+   cutg->SetVarX("y");
+   cutg->SetVarY("x");
+   cutg->SetPoint(0,-0.3586207,1.509534);
+   cutg->SetPoint(1,-1.894181,-0.529661);
+   cutg->SetPoint(2,0.07780173,-1.21822);
+   cutg->SetPoint(3,-1.0375,-0.07944915);
+   cutg->SetPoint(4,0.756681,0.1853814);
+   cutg->SetPoint(5,-0.3586207,1.509534);
+</pre>
+   
+Example of use of a TCutG in TTree::Draw:
+<pre>
+       tree.Draw("x:y","mycutg && z>0 %% sqrt(x)>1")
+</pre>
+<p>
+A Graphical cut may be drawn via TGraph::Draw. It can be edited like a normal
+TGraph.
+<p>
+A Graphical cut may be saved to a file via TCutG::Write.
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TCutG:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TCutG:TCutG">TCutG</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TCutG:TCutG%1">TCutG</a>(<span class="keyword">const</span> <a href="./TCutG.html">TCutG</a>&amp; cutg)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TCutG:TCutG%2">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TCutG:TCutG%3">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TCutG:TCutG%4">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TCutG:_TCutG">~TCutG</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Apply"><span class="baseclass">TGraph::</span>Apply</a>(<a href="./TF1.html">TF1</a>* f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TCutG:Area">Area</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Browse"><span class="baseclass">TGraph::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:Center">Center</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; cx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; cy) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Chisquare"><span class="baseclass">TGraph::</span>Chisquare</a>(<span class="keyword">const</span> <a href="./TF1.html">TF1</a>* f1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TCutG:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CompareArg"><span class="baseclass">TGraph::</span>CompareArg</a>(<span class="keyword">const</span> <a href="./TGraph.html">TGraph</a>* gr, <a href="./ListOfTypes.html#Int_t">Int_t</a> left, <a href="./ListOfTypes.html#Int_t">Int_t</a> right)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CompareRadius"><span class="baseclass">TGraph::</span>CompareRadius</a>(<span class="keyword">const</span> <a href="./TGraph.html">TGraph</a>* gr, <a href="./ListOfTypes.html#Int_t">Int_t</a> left, <a href="./ListOfTypes.html#Int_t">Int_t</a> right)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CompareX"><span class="baseclass">TGraph::</span>CompareX</a>(<span class="keyword">const</span> <a href="./TGraph.html">TGraph</a>* gr, <a href="./ListOfTypes.html#Int_t">Int_t</a> left, <a href="./ListOfTypes.html#Int_t">Int_t</a> right)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CompareY"><span class="baseclass">TGraph::</span>CompareY</a>(<span class="keyword">const</span> <a href="./TGraph.html">TGraph</a>* gr, <a href="./ListOfTypes.html#Int_t">Int_t</a> left, <a href="./ListOfTypes.html#Int_t">Int_t</a> right)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:ComputeRange"><span class="baseclass">TGraph::</span>ComputeRange</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xmin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; ymin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xmax, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; ymax) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:DistancetoLine"><span class="baseclass">TAttLine::</span>DistancetoLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp2, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:DistancetoPrimitive"><span class="baseclass">TGraph::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Draw"><span class="baseclass">TGraph::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:DrawGraph"><span class="baseclass">TGraph::</span>DrawGraph</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:DrawGraph%1"><span class="baseclass">TGraph::</span>DrawGraph</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:DrawGraph%2"><span class="baseclass">TGraph::</span>DrawGraph</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x = 0, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:DrawPanel"><span class="baseclass">TGraph::</span>DrawPanel</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Eval"><span class="baseclass">TGraph::</span>Eval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./TSpline.html">TSpline</a>* spline = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:ExecuteEvent"><span class="baseclass">TGraph::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Expand"><span class="baseclass">TGraph::</span>Expand</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Expand%1"><span class="baseclass">TGraph::</span>Expand</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> newsize, <a href="./ListOfTypes.html#Int_t">Int_t</a> step)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:FindObject"><span class="baseclass">TGraph::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:FindObject%1"><span class="baseclass">TGraph::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Fit"><span class="baseclass">TGraph::</span>Fit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>, <a href="./ListOfTypes.html#Axis_t">Axis_t</a> xmin = 0, <a href="./ListOfTypes.html#Axis_t">Axis_t</a> xmax = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Fit%1"><span class="baseclass">TGraph::</span>Fit</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>, <a href="./ListOfTypes.html#Axis_t">Axis_t</a> xmin = 0, <a href="./ListOfTypes.html#Axis_t">Axis_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:FitPanel"><span class="baseclass">TGraph::</span>FitPanel</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetCorrelationFactor"><span class="baseclass">TGraph::</span>GetCorrelationFactor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetCovariance"><span class="baseclass">TGraph::</span>GetCovariance</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEditable"><span class="baseclass">TGraph::</span>GetEditable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorX"><span class="baseclass">TGraph::</span>GetErrorX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorXhigh"><span class="baseclass">TGraph::</span>GetErrorXhigh</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorXlow"><span class="baseclass">TGraph::</span>GetErrorXlow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorY"><span class="baseclass">TGraph::</span>GetErrorY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorYhigh"><span class="baseclass">TGraph::</span>GetErrorYhigh</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetErrorYlow"><span class="baseclass">TGraph::</span>GetErrorYlow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEX"><span class="baseclass">TGraph::</span>GetEX</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEXhigh"><span class="baseclass">TGraph::</span>GetEXhigh</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEXhighd"><span class="baseclass">TGraph::</span>GetEXhighd</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEXlow"><span class="baseclass">TGraph::</span>GetEXlow</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEXlowd"><span class="baseclass">TGraph::</span>GetEXlowd</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEY"><span class="baseclass">TGraph::</span>GetEY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEYhigh"><span class="baseclass">TGraph::</span>GetEYhigh</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEYhighd"><span class="baseclass">TGraph::</span>GetEYhighd</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEYlow"><span class="baseclass">TGraph::</span>GetEYlow</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetEYlowd"><span class="baseclass">TGraph::</span>GetEYlowd</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillColor"><span class="baseclass">TAttFill::</span>GetFillColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillStyle"><span class="baseclass">TAttFill::</span>GetFillStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TF1.html">TF1</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetFunction"><span class="baseclass">TGraph::</span>GetFunction</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TH1F.html">TH1F</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetHistogram"><span class="baseclass">TGraph::</span>GetHistogram</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineColor"><span class="baseclass">TAttLine::</span>GetLineColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineStyle"><span class="baseclass">TAttLine::</span>GetLineStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineWidth"><span class="baseclass">TAttLine::</span>GetLineWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetListOfFunctions"><span class="baseclass">TGraph::</span>GetListOfFunctions</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerColor"><span class="baseclass">TAttMarker::</span>GetMarkerColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerSize"><span class="baseclass">TAttMarker::</span>GetMarkerSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerStyle"><span class="baseclass">TAttMarker::</span>GetMarkerStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetMaximum"><span class="baseclass">TGraph::</span>GetMaximum</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetMaxSize"><span class="baseclass">TGraph::</span>GetMaxSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetMean"><span class="baseclass">TGraph::</span>GetMean</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetMinimum"><span class="baseclass">TGraph::</span>GetMinimum</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetN"><span class="baseclass">TGraph::</span>GetN</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TCutG:GetObjectX">GetObjectX</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TCutG:GetObjectY">GetObjectY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetPoint"><span class="baseclass">TGraph::</span>GetPoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetRMS"><span class="baseclass">TGraph::</span>GetRMS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TCutG:GetVarX">GetVarX</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TCutG:GetVarY">GetVarY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetX"><span class="baseclass">TGraph::</span>GetX</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetXaxis"><span class="baseclass">TGraph::</span>GetXaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetY"><span class="baseclass">TGraph::</span>GetY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:GetYaxis"><span class="baseclass">TGraph::</span>GetYaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:InitExpo"><span class="baseclass">TGraph::</span>InitExpo</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:InitGaus"><span class="baseclass">TGraph::</span>InitGaus</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:InitPolynom"><span class="baseclass">TGraph::</span>InitPolynom</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:InsertPoint"><span class="baseclass">TGraph::</span>InsertPoint</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Integral"><span class="baseclass">TGraph::</span>Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> first = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> last = -1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TCutG:IntegralHist">IntegralHist</a>(<a href="./TH2.html">TH2</a>* h, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TCutG:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:IsEditable"><span class="baseclass">TGraph::</span>IsEditable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:IsInside"><span class="baseclass">TGraph::</span>IsInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:IsTransparent"><span class="baseclass">TAttFill::</span>IsTransparent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:LeastSquareFit"><span class="baseclass">TGraph::</span>LeastSquareFit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> m, <a href="./ListOfTypes.html#Double_t">Double_t</a>* a, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:LeastSquareLinearFit"><span class="baseclass">TGraph::</span>LeastSquareLinearFit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; a0, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; a1, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ifail, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Merge"><span class="baseclass">TGraph::</span>Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:Modify"><span class="baseclass">TAttLine::</span>Modify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TCutG.html">TCutG</a>&amp;</td><td class="funcname"><a class="funcname" href="#TCutG:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TCutG.html">TCutG</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Paint"><span class="baseclass">TGraph::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:PaintGraph"><span class="baseclass">TGraph::</span>PaintGraph</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:PaintGrapHist"><span class="baseclass">TGraph::</span>PaintGrapHist</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:PaintStats"><span class="baseclass">TGraph::</span>PaintStats</a>(<a href="./TF1.html">TF1</a>* fit)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Print"><span class="baseclass">TGraph::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:RecursiveRemove"><span class="baseclass">TGraph::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:RemovePoint"><span class="baseclass">TGraph::</span>RemovePoint</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:RemovePoint%1"><span class="baseclass">TGraph::</span>RemovePoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipoint)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:ResetAttFill"><span class="baseclass">TAttFill::</span>ResetAttFill</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:ResetAttLine"><span class="baseclass">TAttLine::</span>ResetAttLine</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:ResetAttMarker"><span class="baseclass">TAttMarker::</span>ResetAttMarker</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* toption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SaveFillAttributes"><span class="baseclass">TAttFill::</span>SaveFillAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1001)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SaveLineAttributes"><span class="baseclass">TAttLine::</span>SaveLineAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> widdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SaveMarkerAttributes"><span class="baseclass">TAttMarker::</span>SaveMarkerAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> sizdef = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:SavePrimitive">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Set"><span class="baseclass">TGraph::</span>Set</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetEditable"><span class="baseclass">TGraph::</span>SetEditable</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> editable = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use GetEditable() as getter">GETTER</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillAttributes"><span class="baseclass">TAttFill::</span>SetFillAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillColor"><span class="baseclass">TAttFill::</span>SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> fcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillStyle"><span class="baseclass">TAttFill::</span>SetFillStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> fstyle)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetHistogram"><span class="baseclass">TGraph::</span>SetHistogram</a>(<a href="./TH1F.html">TH1F</a>* h)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineAttributes"><span class="baseclass">TAttLine::</span>SetLineAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineColor"><span class="baseclass">TAttLine::</span>SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> lcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineStyle"><span class="baseclass">TAttLine::</span>SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> lstyle)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineWidth"><span class="baseclass">TAttLine::</span>SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> lwidth)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerAttributes"><span class="baseclass">TAttMarker::</span>SetMarkerAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerColor"><span class="baseclass">TAttMarker::</span>SetMarkerColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> tcolor = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerSize"><span class="baseclass">TAttMarker::</span>SetMarkerSize</a>(<a href="./ListOfTypes.html#Size_t">Size_t</a> msize = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerStyle"><span class="baseclass">TAttMarker::</span>SetMarkerStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> mstyle = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetMaximum"><span class="baseclass">TGraph::</span>SetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maximum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetMinimum"><span class="baseclass">TGraph::</span>SetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minimum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:SetObjectX">SetObjectX</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:SetObjectY">SetObjectY</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetPoint"><span class="baseclass">TGraph::</span>SetPoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SetTitle"><span class="baseclass">TGraph::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:SetVarX">SetVarX</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varx)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:SetVarY">SetVarY</a>(<span class="keyword">const</span> <span class="keyword">char</span>* vary)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Sort"><span class="baseclass">TGraph::</span>Sort</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> (*)(<span class="keyword">const</span> <a href="./TGraph.html">TGraph</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>) greater = &amp;<a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:CompareX" title="Bool_t TGraph::CompareX(const TGraph* gr,Int_t left,Int_t right)">CompareX</a>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> ascending = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a> low = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> high = -1111)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TCutG:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:UseCurrentStyle"><span class="baseclass">TGraph::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Zero"><span class="baseclass">TGraph::</span>Zero</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; k, <a href="./ListOfTypes.html#Double_t">Double_t</a> AZ, <a href="./ListOfTypes.html#Double_t">Double_t</a> BZ, <a href="./ListOfTypes.html#Double_t">Double_t</a> E2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; X, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; Y, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxiterations)</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>**</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:Allocate"><span class="baseclass">TGraph::</span>Allocate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>**</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:AllocateArrays"><span class="baseclass">TGraph::</span>AllocateArrays</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> Narrays, <a href="./ListOfTypes.html#Int_t">Int_t</a> arraySize)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CopyAndRelease"><span class="baseclass">TGraph::</span>CopyAndRelease</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>** newarrays, <a href="./ListOfTypes.html#Int_t">Int_t</a> ibegin, <a href="./ListOfTypes.html#Int_t">Int_t</a> iend, <a href="./ListOfTypes.html#Int_t">Int_t</a> obegin)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CopyPoints"><span class="baseclass">TGraph::</span>CopyPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>** newarrays, <a href="./ListOfTypes.html#Int_t">Int_t</a> ibegin, <a href="./ListOfTypes.html#Int_t">Int_t</a> iend, <a href="./ListOfTypes.html#Int_t">Int_t</a> obegin)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:CtorAllocate"><span class="baseclass">TGraph::</span>CtorAllocate</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>**</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:ExpandAndCopy"><span class="baseclass">TGraph::</span>ExpandAndCopy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> size, <a href="./ListOfTypes.html#Int_t">Int_t</a> iend)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:FillZero"><span class="baseclass">TGraph::</span>FillZero</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> begin, <a href="./ListOfTypes.html#Int_t">Int_t</a> end, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> from_ctor = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>**</td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:ShrinkAndCopy"><span class="baseclass">TGraph::</span>ShrinkAndCopy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> size, <a href="./ListOfTypes.html#Int_t">Int_t</a> iend)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SwapPoints"><span class="baseclass">TGraph::</span>SwapPoints</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pos1, <a href="./ListOfTypes.html#Int_t">Int_t</a> pos2)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGraph.html#TGraph:SwapValues"><span class="baseclass">TGraph::</span>SwapValues</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* arr, <a href="./ListOfTypes.html#Int_t">Int_t</a> pos1, <a href="./ListOfTypes.html#Int_t">Int_t</a> pos2)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TCutG:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGraph::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TGraph.html#TGraph:kClipFrame">kClipFrame</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGraph.html#TGraph:kNotEditable">kNotEditable</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillColor"><span class="baseclass">TAttFill::</span>fFillColor</a></td><td class="datadesc">fill area color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillStyle"><span class="baseclass">TAttFill::</span>fFillStyle</a></td><td class="datadesc">fill area style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TGraph.html#TGraph:fFunctions"><span class="baseclass">TGraph::</span>fFunctions</a></td><td class="datadesc">Pointer to list of functions (fits and user)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TH1F.html">TH1F</a>*</td><td class="dataname"><a href="./TGraph.html#TGraph:fHistogram"><span class="baseclass">TGraph::</span>fHistogram</a></td><td class="datadesc">Pointer to histogram used for drawing axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineColor"><span class="baseclass">TAttLine::</span>fLineColor</a></td><td class="datadesc">line color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineStyle"><span class="baseclass">TAttLine::</span>fLineStyle</a></td><td class="datadesc">line style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineWidth"><span class="baseclass">TAttLine::</span>fLineWidth</a></td><td class="datadesc">line width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerColor"><span class="baseclass">TAttMarker::</span>fMarkerColor</a></td><td class="datadesc">Marker color index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerSize"><span class="baseclass">TAttMarker::</span>fMarkerSize</a></td><td class="datadesc">Marker size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerStyle"><span class="baseclass">TAttMarker::</span>fMarkerStyle</a></td><td class="datadesc">Marker style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGraph.html#TGraph:fMaxSize"><span class="baseclass">TGraph::</span>fMaxSize</a></td><td class="datadesc">!Current dimension of arrays fX and fY</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGraph.html#TGraph:fMaximum"><span class="baseclass">TGraph::</span>fMaximum</a></td><td class="datadesc">Maximum value for plotting along y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGraph.html#TGraph:fMinimum"><span class="baseclass">TGraph::</span>fMinimum</a></td><td class="datadesc">Minimum value for plotting along y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGraph.html#TGraph:fNpoints"><span class="baseclass">TGraph::</span>fNpoints</a></td><td class="datadesc">Number of points &lt;= fMaxSize</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TCutG:fObjectX"></a>fObjectX</td><td class="datadesc">!pointer to an object corresponding to X</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TCutG:fObjectY"></a>fObjectY</td><td class="datadesc">!pointer to an object corresponding to Y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TCutG:fVarX"></a>fVarX</td><td class="datadesc">X variable</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TCutG:fVarY"></a>fVarY</td><td class="datadesc">Y variable</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a href="./TGraph.html#TGraph:fX"><span class="baseclass">TGraph::</span>fX</a></td><td class="datadesc">[fNpoints] array of X points</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a href="./TGraph.html#TGraph:fY"><span class="baseclass">TGraph::</span>fY</a></td><td class="datadesc">[fNpoints] array of Y points</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TCutG:Class_Charts"></a>Class Charts</h2>
+<map name="MapTCutG_Inh" id="MapTCutG_Inh">
+<area shape="rect" href="./TGraph.html" title="TGraph" alt="" coords="453,44,523,66"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="240,4,320,26"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="240,30,319,53"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="248,57,312,79"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="227,83,332,106"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="34,4,109,26"/>
+</map>
+<map name="MapTCutG_InhMem" id="MapTCutG_InhMem">
+<area shape="rect" href="./TGraph.html" alt="" coords="859,60,947,139"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="760,60,848,153"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="661,60,749,153"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="891,149,915,184"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="859,195,947,724"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="760,180,848,724"/>
+<area shape="rect" href="./TGraph.html" alt="" coords="661,180,749,724"/>
+<area shape="rect" href="./TGraph.html" title="TGraph" alt="" coords="651,16,957,735"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,363,629,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,363,531,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="376,363,400,397"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,437,629,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,437,531,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="344,437,432,600"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="333,319,640,611"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,665,629,715"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="541,725,629,859"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="443,725,531,888"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,725,432,888"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="333,621,640,899"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,953,629,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,953,531,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="376,953,400,988"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,1028,629,1176"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,1028,531,1191"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="344,1028,432,1191"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="333,909,640,1201"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTCutG_Lib" id="MapTCutG_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="439,199,567,247"/>
+</map>
+<div class="tabs">
+<a id="imgTCutG_Inh" class="tabsel" href="inh/TCutG_Inh.png" onclick="javascript:return SetImg('Charts','inh/TCutG_Inh.png');">Inheritance</a>
+<a id="imgTCutG_InhMem" class="tab" href="inhmem/TCutG_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TCutG_InhMem.png');">Inherited Members</a>
+<a id="imgTCutG_Incl" class="tab" href="incl/TCutG_Incl.png" onclick="javascript:return SetImg('Charts','incl/TCutG_Incl.png');">Includes</a>
+<a id="imgTCutG_Lib" class="tab" href="lib/TCutG_Lib.png" onclick="javascript:return SetImg('Charts','lib/TCutG_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTCutG_Inh" src="inh/TCutG_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:TCutG" href="src/TCutG.cxx.html#v.TXwD">TCutG</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:TCutG%1" href="src/TCutG.cxx.html#EAFFkC">TCutG</a>(<span class="keyword">const</span> <a href="./TCutG.html">TCutG</a>&amp; cutg)</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> copy constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:TCutG%2" href="src/TCutG.cxx.html#bDsq5E">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> normal constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:TCutG%3" href="src/TCutG.cxx.html#vOMkFC">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> normal constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:TCutG%4" href="src/TCutG.cxx.html#GQQgCD">TCutG</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> normal constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TCutG:_TCutG" href="src/TCutG.cxx.html#dagX1D">~TCutG</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TCutG.html">TCutG</a> destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TCutG:Area" href="src/TCutG.cxx.html#xFl4s">Area</a>() const</span><br />
+<div class="funccomm"><pre> Compute the area inside this <a href="./TCutG.html">TCutG</a>
+ The algorithm uses Stoke's theorem over the border of the closed polygon.
+ Just as a reminder: Stoke's theorem reduces a surface integral
+ to a line integral over the border of the surface integral.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:Center" href="src/TCutG.cxx.html#IsNP3C">Center</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; cx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; cy) const</span><br />
+<div class="funccomm"><pre> Compute the center x,y of this <a href="./TCutG.html">TCutG</a>
+ The algorithm uses Stoke's theorem over the border of the closed polygon.
+ Just as a reminder: Stoke's theorem reduces a surface integral
+ to a line integral over the border of the surface integral.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TCutG:IntegralHist" href="src/TCutG.cxx.html#a_baMD">IntegralHist</a>(<a href="./TH2.html">TH2</a>* h, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Compute the integral of 2-d histogram h for all bins inside the cut
+ if option <span class="string">"width"</span> is specified, the integral is the sum of
+ the bin contents multiplied by the bin width in x and in y.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:SavePrimitive" href="src/TCutG.cxx.html#Q4lJRE">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Save primitive as a C++ statement(s) on output stream out.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:SetObjectX" href="src/TCutG.cxx.html#plCPu">SetObjectX</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph.html#TGraph:Set" title="void TGraph::Set(Int_t n)">Set</a> the X object (and delete the previous one if any).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:SetObjectY" href="src/TCutG.cxx.html#V_pnt">SetObjectY</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph.html#TGraph:Set" title="void TGraph::Set(Int_t n)">Set</a> the Y object (and delete the previous one if any).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:SetVarX" href="src/TCutG.cxx.html#gkL5QB">SetVarX</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varx)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph.html#TGraph:Set" title="void TGraph::Set(Int_t n)">Set</a> X variable.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:SetVarY" href="src/TCutG.cxx.html#UzyR4B">SetVarY</a>(<span class="keyword">const</span> <span class="keyword">char</span>* vary)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph.html#TGraph:Set" title="void TGraph::Set(Int_t n)">Set</a> Y variable.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TCutG:Streamer" href="src/TCutG.cxx.html#CfHaeE">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream an object of class <a href="./TCutG.html">TCutG</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>         * <a class="funcname" name="TCutG:GetObjectX" href="src/TCutG.h.html#Ng9PoC">GetObjectX</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TCutG.html#TCutG:fObjectX" title="TObject* TCutG::fObjectX">fObjectX</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>         * <a class="funcname" name="TCutG:GetObjectY" href="src/TCutG.h.html#RbCrPD">GetObjectY</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TCutG.html#TCutG:fObjectY" title="TObject* TCutG::fObjectY">fObjectY</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>      * <a class="funcname" name="TCutG:GetVarX" href="src/TCutG.h.html#aHJ5DD">GetVarX</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TCutG.html#TCutG:fVarX" title="TString TCutG::fVarX">fVarX</a>.<a href="./TString.html#TString:Data" title="const char* TString::Data()">Data</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>      * <a class="funcname" name="TCutG:GetVarY" href="src/TCutG.h.html#n4X6DD">GetVarY</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TCutG.html#TCutG:fVarY" title="TString TCutG::fVarY">fVarY</a>.<a href="./TString.html#TString:Data" title="const char* TString::Data()">Data</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun   16/05/97</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/graf:$Id: TCutG.h 37309 2010-12-06 00:10:29Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:11</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

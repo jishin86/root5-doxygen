@@ -1,0 +1,983 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:21:24 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TPostScript</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TPostScript','libPostscript','TPostScript.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TPostScript.h.html">header file</a>
+<a class="descrheadentry" href="src/TPostScript.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf2d/postscript/inc/TPostScript.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf2d/postscript/src/TPostScript.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TPostScript:description">class description</a> 
+<a class="descrheadentry" href="#TPostScript:Function_Members">function members</a>
+<a class="descrheadentry" href="#TPostScript:Data_Members">data members</a>
+<a class="descrheadentry" href="#TPostScript:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GRAF2D_Index.html">GRAF2D</a>
+ &#187; <a class="locationlevel" href="./GRAF2D_POSTSCRIPT_Index.html">POSTSCRIPT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TPostScript</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TPostScript:description"></a>class TPostScript: public <a href="./TVirtualPS.html">TVirtualPS</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>TPostScript: Graphics interface to PostScript</h2></center>
+This code was initially developed in the context of HIGZ and PAW
+by Olivier Couet and Pierre Juillot. It has been converted to a C++ class by
+Rene Brun.
+<P>To generate a Postscript (or encapsulated ps) file corresponding to
+a single image in a canvas, you can:
+<UL>
+<LI>Select the <B>Print PostScript</B> item in the canvas <B>File</B> menu.
+By default, a Postscript file with the name of the canvas.ps is generated.
+<br>
+<LI>Click in the canvas area, near the edges, with the right mouse button
+and select the <B>Print</B> item. You can select the name of the Postscript
+file. If the file name is xxx.ps, you will generate a Postscript file named
+xxx.ps. If the file name is xxx.eps, you generate an encapsulated Postscript
+file instead.
+<br>
+<LI>In your program (or macro), you can type:
+<P><TT><B>
+c1-&gt;Print(&quot;xxx.ps&quot;)</B> or <B>c1-&gt;Print(&quot;xxx.eps&quot;)
+</B></TT>
+<P>This will generate a file corresponding to the picture in the canvas
+pointed by <tt><B>c1</B></tt>.
+<P><TT><B>pad1-&gt;Print(&quot;xxx.ps&quot;)</B></TT>
+<P>prints only the picture in the pad pointed by <tt><B>pad1</B></tt>. The size
+of the Postscript picture, by default, is computed to keep the aspect ratio
+of the picture on the screen, where the size along x is always 20cm. You
+can set the size of the PostScript picture before generating the picture
+with a command such as:
+<PRE>
+   TPostScript myps(&quot;myfile.ps&quot;,111)
+   myps.Range(xsize,ysize);
+   object-&gt;Draw();
+   myps.Close();
+</PRE>
+<P>You can set the default paper size with:
+<PRE>
+   gStyle-&gt;SetPaperSize(xsize,ysize);
+</PRE>
+<P>You can resume writing again in this file with <tt><B>myps.Open();</B></tt>.
+Note that you may have several Postscript files opened simultaneously.
+</UL>
+<H2>Output type</H2>
+The output type allows to define how the PostScript output will looks like.
+It allows to define the page format (A4, Legal etc..), the orientation
+(Portrait, Landscape) and the number of images (zones) per page.
+The output type has the following form:
+<pre>
+                        [Format][Nx][Ny][Type]
+</pre>
+Where:
+<ul>
+   <li> Format : Is an integer between 0 and 99 defining the page format.
+        Example:
+   <br> Format = 3 the paper is in the standard A3 format.
+   <br> Format = n (1<n<98) is an An format.
+   <br> Format = 4 and Format=0 are the same and define an A4 page.
+   <br> The A0 format is selected by Format=99.
+   <br> The US format Letter is selected by Format = 100.
+   <br> The US format Legal is selected by Format = 200.
+   <br> The US format Ledger is selected by Format = 300.
+   <li> Nx, Ny : Specify respectively the number of zones on the x and y axis.
+   Nx and Ny are integers between 1 and 9.
+   <li> Type : Can be equal to:
+   <ul>
+   <li> 1 : Portrait mode with a small margin at the bottom of the page.
+   <li> 2 : Landscape mode with a small margin at the bottom of the page.
+   <li> 4 : Portrait mode with a large margin at the bottom of the page.
+   <li> 5 : Landscape mode with a large margin at the bottom of the page.
+            The large margin is useful for some PostScript printers (very often
+            for the colour printers) as they need more space to grip the paper
+            for mechanical reasons. Note that some PostScript colour printers
+            can also use the so called special A4 format permitting the full
+            usage of the A4 area; in this case larger margins are not necessary
+            and Type=1 or 2 can be used.
+   <li> 3 : Encapsulated PostScript. This Type permits the generation of files
+            which can be included in other documents, for example in LaTeX
+            files.
+   </ul>
+</ul>
+<H2>Making several pictures in the same Postscript file: case 1</H2>
+<P>The following macro is an example illustrating how to open a Postscript
+file and draw several pictures. The generation of a new Postscript page
+is automatic when <tt><B>TCanvas::Clear</B></tt> is called by
+<tt><b>object-&gt;Draw()</b></tt>.
+<PRE>
+{
+   TFile f(&quot;hsimple.root&quot;);
+   TCanvas c1(&quot;c1&quot;,&quot;canvas&quot;,800,600);
+   <b>// select postscript output type</b>
+   <b>// type = 111   portrait  ps</b>
+   <b>// type = 112   landscape ps</b>
+   <b>// type = 113   eps</b>
+   Int_t type = 111;
+   <b>// create a postscript file and set the paper size</b>
+   TPostScript ps(&quot;test.ps&quot;,type);
+   ps.Range(16,24);  //set x,y of printed page
+   <b>// draw 3 histograms from file hsimple.root on separate pages</b>
+   hpx-&gt;Draw();
+   c1.Update();      //force drawing in a macro
+   hprof-&gt;Draw();
+   c1.Update();
+   hpx-&gt;Draw(&quot;lego1&quot;);
+   c1.Update();
+   ps.Close();
+}
+</PRE>
+<H2>Making several pictures in the same Postscript file: case 2</H2>
+<P>This example shows 2 pages. The canvas is divided.
+<tt><B>TPostScript::NewPage</B></tt> must be called before starting a new
+picture.<tt><b>object-&gt;Draw</b></tt> does not clear the canvas in this case
+because we clear only the pads and not the main canvas.
+Note that <tt><b>c1-&gt;Update</b></tt> must be called at the end of the first
+picture.
+<PRE>
+{
+   TFile *f1 = new TFile("hsimple.root");
+   TCanvas *c1 = new TCanvas("c1");
+   TPostScript *ps = new TPostScript("file.ps",112);
+   c1-&gt;Divide(2,1);
+<b>// picture 1</b>
+   ps-&gt;NewPage();
+   c1-&gt;cd(1);
+   hpx-&gt;Draw();
+   c1-&gt;cd(2);
+   hprof-&gt;Draw();
+   c1-&gt;Update();
+<b>// picture 2</b>
+   ps-&gt;NewPage();
+   c1-&gt;cd(1);
+   hpxpy-&gt;Draw();
+   c1-&gt;cd(2);
+   ntuple-&gt;Draw("px");
+   c1-&gt;Update();
+   ps-&gt;Close();
+<b>// invoke Postscript viewer</b>
+   gSystem-&gt;Exec("gs file.ps");
+}
+</PRE>
+<H2>Making several pictures in the same Postscript file: case 3</H2>
+<b>This is the recommended way</b>. If the Postscript file name finishes with
+"(", the file remains opened (it is not closed). If the Postscript file name
+finishes with ")" and the file has been opened with "(", the file is closed.
+<P>Example:
+<PRE>
+{
+   TCanvas c1("c1");
+   h1.Draw();
+   c1.Print("c1.ps(");  // write canvas and keep the ps file open
+   h2.Draw();
+   c1.Print("c1.ps");   // canvas is added to "c1.ps"
+   h3.Draw();
+   c1.Print("c1.ps)");  // canvas is added to "c1.ps" and ps file is closed
+}
+</PRE>
+The <tt>TCanvas::Print("file.ps(")</tt> mechanism is very useful, but it can
+be a little inconvenient to have the action of opening/closing a file being
+atomic with printing a page. Particularly if pages are being generated in some
+loop one needs to detect the special cases of first and last page and then
+munge the argument to Print() accordingly.
+<BR>The "[" and "]" can be used instead of "(" and ")" as shown below.
+<P>Example:
+<PRE>
+   c1.Print("file.ps[");        // No actual print, just open file.ps
+   for (int i=0; i<10; ++i) {
+      // fill canvas for context i
+      // ...
+      c1.Print("file.ps");      // Actually print canvas to the file
+   }
+   c1.Print("file.ps]");        // No actual print, just close the file
+</PRE>
+<H2>Color Model</H2>
+TPostScript support two color model RGB and CMYK. CMY and CMYK models are
+subtractive color models unlike RGB which is an additive. They are mainly
+used for printing purposes. CMY means Cyan Magenta Yellow to convert RGB
+to CMY it is enough to do: C=1-R, M=1-G and Y=1-B. CMYK has one more
+component K (black). The conversion from RGB to CMYK is:
+<PRE>
+ Double_t Black   = TMath::Min(TMath::Min(1-Red,1-Green),1-Blue);
+ Double_t Cyan    = (1-Red-Black)/(1-Black);
+ Double_t Magenta = (1-Green-Black)/(1-Black);
+ Double_t Yellow  = (1-Blue-Black)/(1-Black);
+</PRE>
+CMYK add the black component which allows to have a better quality for black
+printing. PostScript support the CMYK model.
+<br>
+To change the color model use gStyle->SetColorModelPS(c).
+<ul>
+<li> c = 0 means TPostScript will use RGB color model (default)
+<li> c = 1 means TPostScript will use CMYK color model
+</ul>
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TPostScript:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPostScript:TPostScript">TPostScript</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPostScript:TPostScript%1">TPostScript</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = -111)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TPostScript:_TPostScript">~TPostScript</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:CellArrayBegin">CellArrayBegin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> W, <a href="./ListOfTypes.html#Int_t">Int_t</a> H, <a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:CellArrayEnd">CellArrayEnd</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:CellArrayFill">CellArrayFill</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> r, <a href="./ListOfTypes.html#Int_t">Int_t</a> g, <a href="./ListOfTypes.html#Int_t">Int_t</a> b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPostScript:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Close">Close</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPostScript:CMtoPS">CMtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DefineMarkers">DefineMarkers</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:DistancetoLine"><span class="baseclass">TAttLine::</span>DistancetoLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp2, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawBox">DrawBox</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawFrame">DrawFrame</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xl, <a href="./ListOfTypes.html#Double_t">Double_t</a> yl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xt, <a href="./ListOfTypes.html#Double_t">Double_t</a> yt, <a href="./ListOfTypes.html#Int_t">Int_t</a> mode, <a href="./ListOfTypes.html#Int_t">Int_t</a> border, <a href="./ListOfTypes.html#Int_t">Int_t</a> dark, <a href="./ListOfTypes.html#Int_t">Int_t</a> light)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawHatch">DrawHatch</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> dy, <a href="./ListOfTypes.html#Float_t">Float_t</a> angle, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawHatch%1">DrawHatch</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> dy, <a href="./ListOfTypes.html#Float_t">Float_t</a> angle, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPolyLine">DrawPolyLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./TPoints.html">TPoints</a>* xy)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPolyLineNDC">DrawPolyLineNDC</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./TPoints.html">TPoints</a>* uv)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPolyMarker">DrawPolyMarker</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPolyMarker%1">DrawPolyMarker</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPS">DrawPS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* xw, <a href="./ListOfTypes.html#Float_t">Float_t</a>* yw)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:DrawPS%1">DrawPS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* xw, <a href="./ListOfTypes.html#Double_t">Double_t</a>* yw)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:FontEncode">FontEncode</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillColor"><span class="baseclass">TAttFill::</span>GetFillColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillStyle"><span class="baseclass">TAttFill::</span>GetFillStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineColor"><span class="baseclass">TAttLine::</span>GetLineColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineStyle"><span class="baseclass">TAttLine::</span>GetLineStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineWidth"><span class="baseclass">TAttLine::</span>GetLineWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerColor"><span class="baseclass">TAttMarker::</span>GetMarkerColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerSize"><span class="baseclass">TAttMarker::</span>GetMarkerSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerStyle"><span class="baseclass">TAttMarker::</span>GetMarkerStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:GetStream"><span class="baseclass">TVirtualPS::</span>GetStream</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:GetTextAlign"><span class="baseclass">TAttText::</span>GetTextAlign</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:GetTextAngle"><span class="baseclass">TAttText::</span>GetTextAngle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:GetTextColor"><span class="baseclass">TAttText::</span>GetTextColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Font_t">Font_t</a></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:GetTextFont"><span class="baseclass">TAttText::</span>GetTextFont</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:GetTextSize"><span class="baseclass">TAttText::</span>GetTextSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:GetType"><span class="baseclass">TVirtualPS::</span>GetType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Initialize">Initialize</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPostScript:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:IsTransparent"><span class="baseclass">TAttFill::</span>IsTransparent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:Modify"><span class="baseclass">TAttLine::</span>Modify</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:MovePS">MovePS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:NewPage">NewPage</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Off">Off</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:On">On</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Open">Open</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = -111)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TNamed.html">TNamed</a>&amp;</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:operator_"><span class="baseclass">TNamed::</span>operator=</a>(<span class="keyword">const</span> <a href="./TNamed.html">TNamed</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:PrintFast"><span class="baseclass">TVirtualPS::</span>PrintFast</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nch, <span class="keyword">const</span> <span class="keyword">char</span>* string = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:PrintStr"><span class="baseclass">TVirtualPS::</span>PrintStr</a>(<span class="keyword">const</span> <span class="keyword">char</span>* string = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Range">Range</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> xrange, <a href="./ListOfTypes.html#Float_t">Float_t</a> yrange)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:ResetAttFill"><span class="baseclass">TAttFill::</span>ResetAttFill</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:ResetAttLine"><span class="baseclass">TAttLine::</span>ResetAttLine</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:ResetAttMarker"><span class="baseclass">TAttMarker::</span>ResetAttMarker</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* toption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:ResetAttText"><span class="baseclass">TAttText::</span>ResetAttText</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* toption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SaveFillAttributes"><span class="baseclass">TAttFill::</span>SaveFillAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1001)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SaveLineAttributes"><span class="baseclass">TAttLine::</span>SaveLineAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> widdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SaveMarkerAttributes"><span class="baseclass">TAttMarker::</span>SaveMarkerAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> sizdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SaveRestore">SaveRestore</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SaveTextAttributes"><span class="baseclass">TAttText::</span>SaveTextAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> alidef = 12, <a href="./ListOfTypes.html#Float_t">Float_t</a> angdef = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> fondef = 61, <a href="./ListOfTypes.html#Float_t">Float_t</a> sizdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetColor">SetColor</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> color = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetColor%1">SetColor</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> r, <a href="./ListOfTypes.html#Float_t">Float_t</a> g, <a href="./ListOfTypes.html#Float_t">Float_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillAttributes"><span class="baseclass">TAttFill::</span>SetFillAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetFillColor">SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetFillPatterns">SetFillPatterns</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipat, <a href="./ListOfTypes.html#Int_t">Int_t</a> color)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillStyle"><span class="baseclass">TAttFill::</span>SetFillStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> fstyle)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineAttributes"><span class="baseclass">TAttLine::</span>SetLineAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetLineColor">SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetLineJoin">SetLineJoin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> linejoin = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetLineScale">SetLineScale</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> scale = 3)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetLineStyle">SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> linestyle = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetLineWidth">SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> linewidth = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerAttributes"><span class="baseclass">TAttMarker::</span>SetMarkerAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetMarkerColor">SetMarkerColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerSize"><span class="baseclass">TAttMarker::</span>SetMarkerSize</a>(<a href="./ListOfTypes.html#Size_t">Size_t</a> msize = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerStyle"><span class="baseclass">TAttMarker::</span>SetMarkerStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> mstyle = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:SetStream"><span class="baseclass">TVirtualPS::</span>SetStream</a>(<a href="./ListOfTypes.html#ofstream">ofstream</a>* os)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextAlign"><span class="baseclass">TAttText::</span>SetTextAlign</a>(<a href="./ListOfTypes.html#Short_t">Short_t</a> align = 11)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextAngle"><span class="baseclass">TAttText::</span>SetTextAngle</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> tangle = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextAttributes"><span class="baseclass">TAttText::</span>SetTextAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:SetTextColor">SetTextColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextFont"><span class="baseclass">TAttText::</span>SetTextFont</a>(<a href="./ListOfTypes.html#Font_t">Font_t</a> tfont = 62)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextSize"><span class="baseclass">TAttText::</span>SetTextSize</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> tsize = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttText.html#TAttText:SetTextSizePixels"><span class="baseclass">TAttText::</span>SetTextSizePixels</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npixels)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:SetType"><span class="baseclass">TVirtualPS::</span>SetType</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> = -111)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Text">Text</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <span class="keyword">const</span> <span class="keyword">char</span>* string)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:TextNDC">TextNDC</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u, <a href="./ListOfTypes.html#Double_t">Double_t</a> v, <span class="keyword">const</span> <span class="keyword">char</span>* string)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPostScript:UtoPS">UtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPostScript:VtoPS">VtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> v)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:WriteInteger"><span class="baseclass">TVirtualPS::</span>WriteInteger</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> space = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPS.html#TVirtualPS:WriteReal"><span class="baseclass">TVirtualPS::</span>WriteReal</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> r)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPostScript:XtoPS">XtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPostScript:YtoPS">YtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> y)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPostScript:Zone">Zone</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TPostScript:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fBlue"></a>fBlue</td><td class="datadesc">Per cent of blue</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPostScript:fBoundingBox"></a>fBoundingBox</td><td class="datadesc">True for Encapsulated PostScript</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fBuffer"><span class="baseclass">TVirtualPS::</span>fBuffer</a></td><td class="datadesc">File buffer</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPostScript:fClear"></a>fClear</td><td class="datadesc">True when page must be cleared</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fClip"></a>fClip</td><td class="datadesc">Clipping mode</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPostScript:fClipStatus"></a>fClipStatus</td><td class="datadesc">Clipping Indicator</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fCurrentColor"></a>fCurrentColor</td><td class="datadesc">current Postscript color index</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fDXC"></a>fDXC</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fDYC"></a>fDYC</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fFX"></a>fFX</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fFY"></a>fFY</td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillColor"><span class="baseclass">TAttFill::</span>fFillColor</a></td><td class="datadesc">fill area color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillStyle"><span class="baseclass">TAttFill::</span>fFillStyle</a></td><td class="datadesc">fill area style</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fGreen"></a>fGreen</td><td class="datadesc">Per cent of green</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fIXzone"></a>fIXzone</td><td class="datadesc">Current zone along X</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fIYzone"></a>fIYzone</td><td class="datadesc">Current zone along Y</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fImplicitCREsc"><span class="baseclass">TVirtualPS::</span>fImplicitCREsc</a></td><td class="datadesc">Escape symbol before enforced new line</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fLastCellBlue"></a>fLastCellBlue</td><td class="datadesc">Last blue value</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fLastCellGreen"></a>fLastCellGreen</td><td class="datadesc">Last green value</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fLastCellRed"></a>fLastCellRed</td><td class="datadesc">Last red value</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fLenBuffer"><span class="baseclass">TVirtualPS::</span>fLenBuffer</a></td><td class="datadesc">Buffer length</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineColor"><span class="baseclass">TAttLine::</span>fLineColor</a></td><td class="datadesc">line color</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fLineJoin"></a>fLineJoin</td><td class="datadesc">Appearance of joining lines</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fLineScale"></a>fLineScale</td><td class="datadesc">Line width scale factor</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineStyle"><span class="baseclass">TAttLine::</span>fLineStyle</a></td><td class="datadesc">line style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineWidth"><span class="baseclass">TAttLine::</span>fLineWidth</a></td><td class="datadesc">line width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerColor"><span class="baseclass">TAttMarker::</span>fMarkerColor</a></td><td class="datadesc">Marker color index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerSize"><span class="baseclass">TAttMarker::</span>fMarkerSize</a></td><td class="datadesc">Marker size</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fMarkerSizeCur"></a>fMarkerSizeCur</td><td class="datadesc">current transformed value of marker size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerStyle"><span class="baseclass">TAttMarker::</span>fMarkerStyle</a></td><td class="datadesc">Marker style</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fMaxLines"></a>fMaxLines</td><td class="datadesc">Maximum number of lines in a PS array</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fMaxsize"></a>fMaxsize</td><td class="datadesc">Largest dimension of X and Y</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fMode"></a>fMode</td><td class="datadesc">PostScript mode</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNBSameColorCell"></a>fNBSameColorCell</td><td class="datadesc">Number of boxes with the same color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fNByte"><span class="baseclass">TVirtualPS::</span>fNByte</a></td><td class="datadesc">Number of bytes written in the file (PDF)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNXzone"></a>fNXzone</td><td class="datadesc">Number of zones along X</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNYzone"></a>fNYzone</td><td class="datadesc">Number of zones along Y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNbCellLine"></a>fNbCellLine</td><td class="datadesc">Number of boxes in the current line</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNbCellW"></a>fNbCellW</td><td class="datadesc">Number of boxes per line</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNbinCT"></a>fNbinCT</td><td class="datadesc">Number of entries in the current Cell Array</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fNpages"></a>fNpages</td><td class="datadesc">number of pages</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span></td><td class="dataname"><a name="TPostScript:fPatterns"></a>fPatterns[32]</td><td class="datadesc">Indicate if pattern n is defined</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fPrinted"><span class="baseclass">TVirtualPS::</span>fPrinted</a></td><td class="datadesc">True when a page must be printed</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPostScript:fRange"></a>fRange</td><td class="datadesc">True when a range has been defined</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fRed"></a>fRed</td><td class="datadesc">Per cent of red</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fSave"></a>fSave</td><td class="datadesc">Number of gsave for restore</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fSizBuffer"><span class="baseclass">TVirtualPS::</span>fSizBuffer</a></td><td class="datadesc">Buffer size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#ofstream">ofstream</a>*</td><td class="dataname"><a href="./TVirtualPS.html#TVirtualPS:fStream"><span class="baseclass">TVirtualPS::</span>fStream</a></td><td class="datadesc">File stream identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="dataname"><a href="./TAttText.html#TAttText:fTextAlign"><span class="baseclass">TAttText::</span>fTextAlign</a></td><td class="datadesc">Text alignment</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TAttText.html#TAttText:fTextAngle"><span class="baseclass">TAttText::</span>fTextAngle</a></td><td class="datadesc">Text angle</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttText.html#TAttText:fTextColor"><span class="baseclass">TAttText::</span>fTextColor</a></td><td class="datadesc">Text color index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Font_t">Font_t</a></td><td class="dataname"><a href="./TAttText.html#TAttText:fTextFont"><span class="baseclass">TAttText::</span>fTextFont</a></td><td class="datadesc">Text font number</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TAttText.html#TAttText:fTextSize"><span class="baseclass">TAttText::</span>fTextSize</a></td><td class="datadesc">Text size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fType"></a>fType</td><td class="datadesc">PostScript workstation type</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fX1v"></a>fX1v</td><td class="datadesc">X bottom left corner of paper</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fX1w"></a>fX1w</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fX2v"></a>fX2v</td><td class="datadesc">X top right corner of paper</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fX2w"></a>fX2w</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXC"></a>fXC</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXVP1"></a>fXVP1</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXVP2"></a>fXVP2</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXVS1"></a>fXVS1</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXVS2"></a>fXVS2</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fXsize"></a>fXsize</td><td class="datadesc">Page size along X</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fY1v"></a>fY1v</td><td class="datadesc">Y bottom left corner of paper</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fY1w"></a>fY1w</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fY2v"></a>fY2v</td><td class="datadesc">Y top right corner of paper</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fY2w"></a>fY2w</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYC"></a>fYC</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYVP1"></a>fYVP1</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYVP2"></a>fYVP2</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYVS1"></a>fYVS1</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYVS2"></a>fYVS2</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPostScript:fYsize"></a>fYsize</td><td class="datadesc">Page size along Y</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPostScript:fZone"></a>fZone</td><td class="datadesc">Zone indicator</td></tr>
+<tr class="data"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPostScript:fgLineJoin"></a>fgLineJoin</td><td class="datadesc">Appearance of joining lines</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TPostScript:Class_Charts"></a>Class Charts</h2>
+<map name="MapTPostScript_Inh" id="MapTPostScript_Inh">
+<area shape="rect" href="./TVirtualPS.html" title="TVirtualPS" alt="" coords="425,55,520,77"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="232,4,310,25"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="233,29,309,51"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="240,55,302,77"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="220,81,322,103"/>
+<area shape="rect" href="./TAttText.html" title="TAttText" alt="" coords="234,106,308,128"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="33,4,105,25"/>
+</map>
+<map name="MapTPostScript_InhMem" id="MapTPostScript_InhMem">
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="859,60,947,124"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="760,60,848,139"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="661,60,749,139"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="891,135,915,169"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="859,180,947,357"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="760,151,848,357"/>
+<area shape="rect" href="./TVirtualPS.html" alt="" coords="661,151,749,357"/>
+<area shape="rect" href="./TVirtualPS.html" title="TVirtualPS" alt="" coords="651,16,957,368"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,363,629,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,363,531,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="376,363,400,397"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,437,629,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,437,531,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="344,437,432,600"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="333,319,640,611"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,665,629,715"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="541,725,629,859"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="443,725,531,888"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,725,432,888"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="333,621,640,899"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,953,629,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,953,531,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="376,953,400,988"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,1028,629,1176"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,1028,531,1191"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="344,1028,432,1191"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="333,909,640,1201"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="541,1256,629,1320"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="443,1256,531,1320"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="344,1256,432,1320"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="573,1331,597,1365"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="541,1376,629,1539"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="443,1347,531,1539"/>
+<area shape="rect" href="./TAttText.html" alt="" coords="344,1347,432,1539"/>
+<area shape="rect" href="./TAttText.html" title="TAttText" alt="" coords="333,1212,640,1549"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTPostScript_Lib" id="MapTPostScript_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="444,83,572,131"/>
+</map>
+<div class="tabs">
+<a id="imgTPostScript_Inh" class="tabsel" href="inh/TPostScript_Inh.png" onclick="javascript:return SetImg('Charts','inh/TPostScript_Inh.png');">Inheritance</a>
+<a id="imgTPostScript_InhMem" class="tab" href="inhmem/TPostScript_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TPostScript_InhMem.png');">Inherited Members</a>
+<a id="imgTPostScript_Incl" class="tab" href="incl/TPostScript_Incl.png" onclick="javascript:return SetImg('Charts','incl/TPostScript_Incl.png');">Includes</a>
+<a id="imgTPostScript_Lib" class="tab" href="lib/TPostScript_Lib.png" onclick="javascript:return SetImg('Charts','lib/TPostScript_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTPostScript_Inh" src="inh/TPostScript_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPostScript:TPostScript" href="src/TPostScript.cxx.html#CpM5CC">TPostScript</a>()</span><br />
+<div class="funccomm"><pre> Default PostScript constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPostScript:TPostScript%1" href="src/TPostScript.cxx.html#znTxlC">TPostScript</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = -111)</span><br />
+<div class="funccomm"><pre> <a href="./TPostScript.html#TPostScript:Initialize" title="void TPostScript::Initialize()">Initialize</a> the PostScript interface
+
+  fname : PostScript file name
+  wtype : PostScript workstation type
+
+
+  The possible workstation types are:
+     111 ps  Portrait
+     112 ps  Landscape
+     113 eps
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Open" href="src/TPostScript.cxx.html#AWMl_C">Open</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = -111)</span><br />
+<div class="funccomm"><pre> <a href="./TPostScript.html#TPostScript:Open" title="void TPostScript::Open(const char* filename,Int_t type=-111)">Open</a> a PostScript file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPostScript:_TPostScript" href="src/TPostScript.cxx.html#od2GV">~TPostScript</a>()</span><br />
+<div class="funccomm"><pre> Default PostScript destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Close" href="src/TPostScript.cxx.html#qI7kJC">Close</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TPostScript.html#TPostScript:Close" title="void TPostScript::Close(Option_t* opt=&quot;&quot;)">Close</a> a PostScript file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:On" href="src/TPostScript.cxx.html#mDw3AD">On</a>()</span><br />
+<div class="funccomm"><pre> Activate an already open PostScript file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Off" href="src/TPostScript.cxx.html#LmNyPE">Off</a>()</span><br />
+<div class="funccomm"><pre> Deactivate an already open PostScript file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:CellArrayBegin" href="src/TPostScript.cxx.html#JiIlNE">CellArrayBegin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> W, <a href="./ListOfTypes.html#Int_t">Int_t</a> H, <a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a Cell Array
+
+ Drawing a PostScript Cell Array is in fact done thanks to three
+ procedures: <a href="./TPostScript.html#TPostScript:CellArrayBegin" title="void TPostScript::CellArrayBegin(Int_t W,Int_t H,Double_t x1,Double_t x2,Double_t y1,Double_t y2)">CellArrayBegin</a>, <a href="./TPostScript.html#TPostScript:CellArrayFill" title="void TPostScript::CellArrayFill(Int_t r,Int_t g,Int_t b)">CellArrayFill</a>, and <a href="./TPostScript.html#TPostScript:CellArrayEnd" title="void TPostScript::CellArrayEnd()">CellArrayEnd</a>.
+
+ <a href="./TPostScript.html#TPostScript:CellArrayBegin" title="void TPostScript::CellArrayBegin(Int_t W,Int_t H,Double_t x1,Double_t x2,Double_t y1,Double_t y2)">CellArrayBegin</a>: Initiate the Cell Array by writing the necessary
+                 PostScript procedures and the initial values of the
+                 required parameters. The input parameters are:
+                 W: number of boxes along the width.
+                 H: number of boxes along the height
+                 x1,x2,y1,y2: First box coordinates.
+ <a href="./TPostScript.html#TPostScript:CellArrayFill" title="void TPostScript::CellArrayFill(Int_t r,Int_t g,Int_t b)">CellArrayFill</a>:  Is called for each box of the Cell Array. The first
+                 box is the top left one and the last box is the
+                 bottom right one. The input parameters are the Red,
+                 Green, and Blue components of the box colour. These
+                 Levels are between 0 and 255.
+ <a href="./TPostScript.html#TPostScript:CellArrayEnd" title="void TPostScript::CellArrayEnd()">CellArrayEnd</a>:   Finishes the Cell Array.
+
+ PostScript cannot handle arrays larger than 65535. So the Cell Array
+ is drawn in several pieces.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:CellArrayFill" href="src/TPostScript.cxx.html#j833oC">CellArrayFill</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> r, <a href="./ListOfTypes.html#Int_t">Int_t</a> g, <a href="./ListOfTypes.html#Int_t">Int_t</a> b)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Paint" title="void TObject::Paint(Option_t* option=&quot;&quot;)">Paint</a> the Cell Array
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:CellArrayEnd" href="src/TPostScript.cxx.html#XF5GsB">CellArrayEnd</a>()</span><br />
+<div class="funccomm"><pre> End the Cell Array painting
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DefineMarkers" href="src/TPostScript.cxx.html#wfLhcC">DefineMarkers</a>()</span><br />
+<div class="funccomm"><pre> Define the markers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawBox" href="src/TPostScript.cxx.html#g9LJKE">DrawBox</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a Box
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawFrame" href="src/TPostScript.cxx.html#uls2SB">DrawFrame</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xl, <a href="./ListOfTypes.html#Double_t">Double_t</a> yl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xt, <a href="./ListOfTypes.html#Double_t">Double_t</a> yt, <a href="./ListOfTypes.html#Int_t">Int_t</a> mode, <a href="./ListOfTypes.html#Int_t">Int_t</a> border, <a href="./ListOfTypes.html#Int_t">Int_t</a> dark, <a href="./ListOfTypes.html#Int_t">Int_t</a> light)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a Frame around a box
+
+ mode = -1  box looks as it is behind the screen
+ mode =  1  box looks as it is in front of the screen
+ border is the border size in already precomputed PostScript units
+ dark  is the color for the dark part of the frame
+ light is the color for the light part of the frame
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPolyLine" href="src/TPostScript.cxx.html#HwEPhD">DrawPolyLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./TPoints.html">TPoints</a>* xy)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a PolyLine
+
+  <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a polyline through  the points xy.
+  If nn=1 moves only to point x,y.
+  If nn=0 the x,y are  written  in the PostScript file
+          according to the current transformation.
+  If nn&gt;0 the line is clipped as a line.
+  If nn&lt;0 the line is clipped as a fill area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPolyLineNDC" href="src/TPostScript.cxx.html#upNFhC">DrawPolyLineNDC</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./TPoints.html">TPoints</a>* uv)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a PolyLine in NDC space
+
+  <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a polyline through the points xy.
+  If nn=1 moves only to point x,y.
+  If nn=0 the x,y are  written  in the PostScript file
+          according to the current transformation.
+  If nn&gt;0 the line is clipped as a line.
+  If nn&lt;0 the line is clipped as a fill area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPolyMarker" href="src/TPostScript.cxx.html#CE0PsD">DrawPolyMarker</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> markers at the n WC points x, y
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPolyMarker%1" href="src/TPostScript.cxx.html#JDnmnD">DrawPolyMarker</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> markers at the n WC points x, y
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPS" href="src/TPostScript.cxx.html#M5nMn">DrawPS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* xw, <a href="./ListOfTypes.html#Float_t">Float_t</a>* yw)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a PolyLine
+
+  <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a polyline through the points xw,yw.
+  If nn=1 moves only to point xw,yw.
+  If nn=0 the XW(1) and YW(1) are  written  in the PostScript file
+          according to the current NT.
+  If nn&gt;0 the line is clipped as a line.
+  If nn&lt;0 the line is clipped as a fill area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawPS%1" href="src/TPostScript.cxx.html#CWcUwE">DrawPS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* xw, <a href="./ListOfTypes.html#Double_t">Double_t</a>* yw)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a PolyLine
+
+ <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a polyline through  the points xw,yw.
+ If nn=1 moves only to point xw,yw.
+ If nn=0 the xw(1) and YW(1) are  written  in the PostScript file
+         according to the current NT.
+ If nn&gt;0 the line is clipped as a line.
+ If nn&lt;0 the line is clipped as a fill area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawHatch" href="src/TPostScript.cxx.html#CP6qhE">DrawHatch</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> dy, <a href="./ListOfTypes.html#Float_t">Float_t</a> angle, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> Fill area with hatch styles
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:DrawHatch%1" href="src/TPostScript.cxx.html#tLEIMD">DrawHatch</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> dy, <a href="./ListOfTypes.html#Float_t">Float_t</a> angle, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> Fill area with hatch styles
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:FontEncode" href="src/TPostScript.cxx.html#CK9.jE">FontEncode</a>()</span><br />
+<div class="funccomm"><pre> Font Reencoding
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Initialize" href="src/TPostScript.cxx.html#RQPdSE">Initialize</a>()</span><br />
+<div class="funccomm"><pre> PostScript Initialisation
+
+ This routine initialize the following PostScript procedures:
+
+ +------------+------------------+-----------------------------------+
+ | Macro Name | Input parameters |            Explanation            |
+ +------------+------------------+-----------------------------------+
+ |     l      | x y              | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a line to the x y position   |
+ +------------+------------------+-----------------------------------+
+ |     m      | x y              | Move to the position x y          |
+ +------------+------------------+-----------------------------------+
+ |     box    | dx dy x y        | Define a box                      |
+ +------------+------------------+-----------------------------------+
+ |     bl     | dx dy x y        | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a line box                   |
+ +------------+------------------+-----------------------------------+
+ |     bf     | dx dy x y        | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a filled box                 |
+ +------------+------------------+-----------------------------------+
+ |     t      | x y              | Translate                         |
+ +------------+------------------+-----------------------------------+
+ |     r      | angle            | Rotate                            |
+ +------------+------------------+-----------------------------------+
+ |     rl     | i j              | Roll the stack                    |
+ +------------+------------------+-----------------------------------+
+ |     d      | x y              | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a relative line to x y       |
+ +------------+------------------+-----------------------------------+
+ |     X      | x                | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a relative line to x (y=0)   |
+ +------------+------------------+-----------------------------------+
+ |     Y      | y                | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> a relative line to y (x=0)   |
+ +------------+------------------+-----------------------------------+
+ |     rm     | x y              | Move relatively to x y            |
+ +------------+------------------+-----------------------------------+
+ |     gr     |                  | Restore the graphic context       |
+ +------------+------------------+-----------------------------------+
+ |     lw     | lwidth           | Set line width to lwidth          |
+ +------------+------------------+-----------------------------------+
+ |     sd     | [] 0             | Set dash line define by []        |
+ +------------+------------------+-----------------------------------+
+ |     s      |                  | Stroke mode                       |
+ +------------+------------------+-----------------------------------+
+ |     c      | r g b            | Set rgb color to r g b            |
+ +------------+------------------+-----------------------------------+
+ |     cl     |                  | <a href="./TPostScript.html#TPostScript:Close" title="void TPostScript::Close(Option_t* opt=&quot;&quot;)">Close</a> path                        |
+ +------------+------------------+-----------------------------------+
+ |     f      |                  | Fill the last describe path       |
+ +------------+------------------+-----------------------------------+
+ |     mXX    | x y              | <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> the marker type XX at (x,y)  |
+ +------------+------------------+-----------------------------------+
+ |     <a href="./TPostScript.html#TPostScript:Zone" title="void TPostScript::Zone()">Zone</a>   | ix iy            | Define the current zone           |
+ +------------+------------------+-----------------------------------+
+ |     black  |                  | The color is black                |
+ +------------+------------------+-----------------------------------+
+ |     C      | dx dy x y        | Clipping on                       |
+ +------------+------------------+-----------------------------------+
+ |     NC     |                  | Clipping off                      |
+ +------------+------------------+-----------------------------------+
+ |     R      |                  | repeat                            |
+ +------------+------------------+-----------------------------------+
+ |     ita    |                  | Used to make the symbols italic   |
+ +------------+------------------+-----------------------------------+
+ |     K      |                  | kshow                             |
+ +------------+------------------+-----------------------------------+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:MovePS" href="src/TPostScript.cxx.html#BVdFUD">MovePS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y)</span><br />
+<div class="funccomm"><pre> Move to a new position
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:NewPage" href="src/TPostScript.cxx.html#iEnNcC">NewPage</a>()</span><br />
+<div class="funccomm"><pre> Move to a new PostScript page
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Range" href="src/TPostScript.cxx.html#MAgePE">Range</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> xrange, <a href="./ListOfTypes.html#Float_t">Float_t</a> yrange)</span><br />
+<div class="funccomm"><pre> Set the range for the paper in centimeters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SaveRestore" href="src/TPostScript.cxx.html#Ea2d4D">SaveRestore</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</span><br />
+<div class="funccomm"><pre> Compute number of gsaves for restore
+ This allows to write the correct number of grestore at the
+ end of the PS file.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetFillColor" href="src/TPostScript.cxx.html#qMWrUC">SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</span><br />
+<div class="funccomm"><pre> Set color index for fill areas
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetFillPatterns" href="src/TPostScript.cxx.html#MT52">SetFillPatterns</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipat, <a href="./ListOfTypes.html#Int_t">Int_t</a> color)</span><br />
+<div class="funccomm"><pre> Patterns definition
+
+ Define the pattern ipat in the current PS file. ipat can vary from
+ 1 to 25. Together with the pattern, the color (color) in which the
+ pattern has to be drawn is also required. A pattern is defined in the
+ current PS file only the first time it is used. Some level 2
+ Postscript functions are used, so on level 1 printers, patterns will
+ not work. This is not a big problem because patterns are
+ defined only if they are used, so if they are not used a PS level 1
+ file will not be polluted by level 2 features, and in any case the old
+ patterns used a lot of memory which made them almost unusable on old
+ level 1 printers. Finally we should say that level 1 devices are
+ becoming very rare. The official PostScript is now level 3 !
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetLineColor" href="src/TPostScript.cxx.html#CeM1CC">SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</span><br />
+<div class="funccomm"><pre> Set color index for lines
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetLineJoin" href="src/TPostScript.cxx.html#I_KkbB">SetLineJoin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> linejoin = 0)</span><br />
+<div class="funccomm"><pre> Set the value of the global parameter <a href="./TPostScript.html">TPostScript</a>::<a href="./TPostScript.html#TPostScript:fgLineJoin" title="Int_t TPostScript::fgLineJoin">fgLineJoin</a>.
+ This parameter determines the appearance of joining lines in a PostScript
+ output.
+ It takes one argument which may be:
+   - 0 (miter join)
+   - 1 (round join)
+   - 2 (bevel join)
+ The default value is 0 (miter join).
+
+
+</pre><!-- TDocHtmlDirective start -->   /*
+   <img src="gif/linejoin.gif">
+   */
+<!-- TDocHtmlDirective end --><pre>
+
+ To change the line join behaviour just do:
+ <a href="./TPostScript.html">TPostScript</a>::<a href="./TPostScript.html#TPostScript:SetLineJoin" title="void TPostScript::SetLineJoin(Int_t linejoin=0)">SetLineJoin</a>(2); // Set the PS line join to bevel.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetLineStyle" href="src/TPostScript.cxx.html#ydZp8C">SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> linestyle = 1)</span><br />
+<div class="funccomm"><pre> Change the line style
+
+   linestyle = 2 dashed
+             = 3  dotted
+             = 4  dash-dotted
+              else = solid
+
+ See <a href="./TStyle.html">TStyle</a>::<a href="./TStyle.html#TStyle:SetLineStyleString" title="void TStyle::SetLineStyleString(Int_t i,const char* text)">SetLineStyleString</a> for style definition
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetLineWidth" href="src/TPostScript.cxx.html#Q3h0PE">SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> linewidth = 1)</span><br />
+<div class="funccomm"><pre> Change the line width
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetMarkerColor" href="src/TPostScript.cxx.html#KnZ4BE">SetMarkerColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</span><br />
+<div class="funccomm"><pre> Set color index for markers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetColor" href="src/TPostScript.cxx.html#QhYMKC">SetColor</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> color = 1)</span><br />
+<div class="funccomm"><pre> Set the current color.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetColor%1" href="src/TPostScript.cxx.html#emSjxE">SetColor</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> r, <a href="./ListOfTypes.html#Float_t">Float_t</a> g, <a href="./ListOfTypes.html#Float_t">Float_t</a> b)</span><br />
+<div class="funccomm"><pre> Set directly current color (don't go via <a href="./TColor.html">TColor</a>).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetTextColor" href="src/TPostScript.cxx.html#unMxfB">SetTextColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> cindex = 1)</span><br />
+<div class="funccomm"><pre> Set color index for text
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Text" href="src/TPostScript.cxx.html#xiMG2C">Text</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <span class="keyword">const</span> <span class="keyword">char</span>* string)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> a string of characters
+
+ This routine writes the string chars into a PostScript file
+ at position xx,yy in world coordinates.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:TextNDC" href="src/TPostScript.cxx.html#RhFNZB">TextNDC</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u, <a href="./ListOfTypes.html#Double_t">Double_t</a> v, <span class="keyword">const</span> <span class="keyword">char</span>* string)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> a string of characters in NDC
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPostScript:UtoPS" href="src/TPostScript.cxx.html#XPwsP">UtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u)</span><br />
+<div class="funccomm"><pre> Convert U from NDC coordinate to PostScript
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPostScript:VtoPS" href="src/TPostScript.cxx.html#XPAtP">VtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> v)</span><br />
+<div class="funccomm"><pre> Convert V from NDC coordinate to PostScript
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPostScript:XtoPS" href="src/TPostScript.cxx.html#HjMwP">XtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x)</span><br />
+<div class="funccomm"><pre> Convert X from world coordinate to PostScript
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPostScript:YtoPS" href="src/TPostScript.cxx.html#LehwP">YtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> y)</span><br />
+<div class="funccomm"><pre> Convert Y from world coordinate to PostScript
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:Zone" href="src/TPostScript.cxx.html#WMnmc">Zone</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TPostScript.html#TPostScript:Initialize" title="void TPostScript::Initialize()">Initialize</a> the PostScript page in zones
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPostScript:CMtoPS" href="src/TPostScript.h.html#DfNdVB">CMtoPS</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> u)</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>(0.5 + 72*u/2.54);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPostScript:SetLineScale" href="src/TPostScript.h.html#q2rKCC">SetLineScale</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> scale = 3)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TPostScript.html#TPostScript:fLineScale" title="Float_t TPostScript::fLineScale">fLineScale</a> = scale;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?O.Couet"> O.Couet   16/07/99</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/postscript:$Id: TPostScript.h 23936 2008-05-20 16:00:26Z couet $ </em><em>&raquo; Last generated: 2011-11-03 20:21</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

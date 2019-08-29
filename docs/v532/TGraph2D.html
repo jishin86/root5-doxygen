@@ -1,0 +1,1158 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:17:52 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGraph2D</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGraph2D','libHist','TGraph2D.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGraph2D.h.html">header file</a>
+<a class="descrheadentry" href="src/TGraph2D.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TGraph2D.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TGraph2D.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGraph2D:description">class description</a> 
+<a class="descrheadentry" href="#TGraph2D:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGraph2D:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGraph2D:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGraph2D</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGraph2D:description"></a>class TGraph2D: public <a href="./TNamed.html">TNamed</a>, public <a href="./TAttLine.html">TAttLine</a>, public <a href="./TAttFill.html">TAttFill</a>, public <a href="./TAttMarker.html">TAttMarker</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>Graph 2D class</h2></center>
+A Graph2D is a graphics object made of three arrays X, Y and Z with the same
+number of points each.
+<p>
+This class has different constructors:
+<ol>
+<p><li> With an array's dimension and three arrays x, y, and z:
+<pre>
+   TGraph2D *g = new TGraph2D(n, x, y, z);
+</pre>
+    x, y, z arrays can be doubles, floats, or ints.
+<p><li> With an array's dimension only:
+<pre>
+   TGraph2D *g = new TGraph2D(n);
+</pre>
+   The internal arrays are then filled with SetPoint. The following line
+   fills the the internal arrays at the position "i" with the values x,y,z.
+<pre>
+   g->SetPoint(i, x, y, z);
+</pre>
+<p><li> Without parameters:
+<pre>
+   TGraph2D *g = new TGraph2D();
+</pre>
+   again SetPoint must be used to fill the internal arrays.
+<p><li> From a file:
+<pre>
+   TGraph2D *g = new TGraph2D("graph.dat");
+</pre>
+   Arrays are read from the ASCII file "graph.dat" according to a specifies
+   format. The format's default value is "%lg %lg %lg"
+</ol>
+Note that in any of these three cases, SetPoint can be used to change a data
+point or add a new one. If the data point index (i) is greater than the
+current size of the internal arrays, they are automatically extended.
+<p>
+Specific drawing options can be used to paint a TGraph2D:
+<table border=0>
+<tr><th valign=top>"TRI"</th><td>
+The Delaunay triangles are drawn using filled area.
+An hidden surface drawing technique is used. The surface is
+painted with the current fill area color. The edges of each
+triangles are painted with the current line color.
+</td></tr>
+<tr><th valign=top>"TRIW</th><td>
+The Delaunay triangles are drawn as wire frame
+</td></tr>
+<tr><th valign=top>"TRI1</th><td>
+The Delaunay triangles are painted with color levels. The edges
+of each triangles are painted with the current line color.
+</td></tr>
+<tr><th valign=top>"TRI2</th><td>
+the Delaunay triangles are painted with color levels.
+</td></tr>
+<tr><th valign=top>"P"  </th><td>
+Draw a marker at each vertex
+</td></tr>
+<tr><th valign=top>"P0" </th><td>
+Draw a circle at each vertex. Each circle background is white.
+</td></tr>
+<tr><th valign=top>"PCOL" </th><td>
+Draw a marker at each vertex. The color of each marker is
+defined according to its Z position.
+</td></tr>
+<tr><th valign=top>"CONT" </th><td>
+Draw contours.
+</td></tr>
+<tr><th valign=top>"LINE" </th><td>
+Draw a 3D polyline.
+</td></tr>
+</table>
+A TGraph2D can be also drawn with ANY options valid to draw a 2D histogram.
+<p>
+When a TGraph2D is drawn with one of the 2D histogram drawing option,
+a intermediate 2D histogram is filled using the Delaunay triangles
+technique to interpolate the data set.
+<p>
+TGraph2D linearly interpolate a Z value for any (X,Y) point given some
+existing (X,Y,Z) points. The existing (X,Y,Z) points can be randomly
+scattered. The algorithm works by joining the existing points to make
+Delaunay triangles in (X,Y). These are then used to define flat planes
+in (X,Y,Z) over which to interpolate. The interpolated surface thus takes
+the form of tessellating triangles at various angles. Output can take the
+form of a 2D histogram or a vector. The triangles found can be drawn in 3D.
+<p>
+This software cannot be guaranteed to work under all circumstances. They
+were originally written to work with a few hundred points in an XY space
+with similar X and Y ranges.
+<p>
+Example:
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraph2D_1_c_A0" class="tabsel" href="MACRO_TGraph2D_1_c.gif" onclick="javascript:return SetDiv('MACRO_TGraph2D_1_c',0);">Picture</a>
+<a id="MACRO_TGraph2D_1_c_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraph2D_1_c',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraph2D_1_c_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraph2D_1_c" title="MACRO" src="MACRO_TGraph2D_1_c.gif" /></span></div>
+<div id="MACRO_TGraph2D_1_c_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c"</span>,<span class="string">"Graph2D example"</span>,0,0,600,400);
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x, y, z, P = 6.;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> np = 200;
+   <a href="./TGraph2D.html">TGraph2D</a> *dt = <span class="keyword">new</span> <a href="./TGraph2D.html">TGraph2D</a>();
+   <a href="./TRandom.html">TRandom</a> *r = <span class="keyword">new</span> <a href="./TRandom.html">TRandom</a>();
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> N=0; N&lt;np; N++) {
+      x = 2*P*(r-&gt;Rndm(N))-P;
+      y = 2*P*(r-&gt;Rndm(N))-P;
+      z = (sin(x)/x)*(sin(y)/y)+0.2;
+      dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetPoint" title="void TGraph2D::SetPoint(Int_t point,Double_t x,Double_t y,Double_t z)">SetPoint</a>(N,x,y,z);
+   }
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetPalette" title="void TStyle::SetPalette(Int_t ncolors=0,Int_t* colors=0)">SetPalette</a>(1);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf1"</span>);
+   <span class="keyword">return</span> c;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start -->2D graphs can be fitted as shown by the following example:
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraph2D_3_c_A0" class="tabsel" href="MACRO_TGraph2D_3_c.gif" onclick="javascript:return SetDiv('MACRO_TGraph2D_3_c',0);">Picture</a>
+<a id="MACRO_TGraph2D_3_c_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraph2D_3_c',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraph2D_3_c_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraph2D_3_c" title="MACRO" src="MACRO_TGraph2D_3_c.gif" /></span></div>
+<div id="MACRO_TGraph2D_3_c_1" class="tabhidden"><div class="listing"><pre class="code"><span class="comment">//Fitting a <a href="./TGraph2D.html">TGraph2D</a></span>
+<span class="comment">//Author: Olivier Couet</span>
+
+<span class="cpp">#include &lt;<a href="./TMath.h">TMath.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TGraph2D.h">TGraph2D.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TRandom.h">TRandom.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TStyle.h">TStyle.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TCanvas.h">TCanvas.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TF2.h">TF2.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="./TH1.h">TH1.h</a>&gt;</span>
+
+<a href="./TCanvas.html">TCanvas</a>* graph2dfit()
+{
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetOptStat" title="void TStyle::SetOptStat(Int_t stat=1) or overloads">SetOptStat</a>(0);
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetOptFit" title="void TStyle::SetOptFit(Int_t fit=1)">SetOptFit</a>();
+
+   <a href="./TCanvas.html">TCanvas</a> *c = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c"</span>,<span class="string">"Graph2D example"</span>,0,0,600,800);
+   c-&gt;Divide(2,3);
+
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> rnd, x, y, z;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> e = 0.3;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> nd = 400;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> np = 10000;
+
+   <a href="./TRandom.html">TRandom</a> r;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> fl = 6;
+   <a href="./TF2.html">TF2</a>  *f2 = <span class="keyword">new</span> <a href="./TF2.html">TF2</a>(<span class="string">"f2"</span>,<span class="string">"1000*(([0]*sin(x)/x)*([1]*sin(y)/y))+200"</span>,
+      -fl,fl,-fl,fl);
+   f2-&gt;SetParameters(1,1);
+   <a href="./TGraph2D.html">TGraph2D</a> *dt = <span class="keyword">new</span> <a href="./TGraph2D.html">TGraph2D</a>();
+
+   <span class="comment">// Fill the 2D graph</span>
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> zmax = 0;
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> N=0; N&lt;nd; N++) {
+      f2-&gt;GetRandom2(x,y);
+      <span class="comment">// Generate a random number in [-e,e]</span>
+      rnd = 2*r.Rndm()*e-e;
+      z = f2-&gt;Eval(x,y)*(1+rnd);
+      <span class="keyword">if</span> (z&gt;zmax) zmax = z;
+      dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetPoint" title="void TGraph2D::SetPoint(Int_t point,Double_t x,Double_t y,Double_t z)">SetPoint</a>(N,x,y,z);
+   }
+
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> hr = 350;
+   <a href="./TH1D.html">TH1D</a> *h1 = <span class="keyword">new</span> <a href="./TH1D.html">TH1D</a>(<span class="string">"h1"</span>,
+   <span class="string">"#splitline{Difference between Original}{#splitline{function and Function}{with noise}}"</span>,
+   100, -hr, hr);
+   <a href="./TH1D.html">TH1D</a> *h2 = <span class="keyword">new</span> <a href="./TH1D.html">TH1D</a>(<span class="string">"h2"</span>,
+   <span class="string">"#splitline{Difference between Original}{#splitline{function and Delaunay triangles}{interpolation}}"</span>,
+   100, -hr, hr);
+   <a href="./TH1D.html">TH1D</a> *h3 = <span class="keyword">new</span> <a href="./TH1D.html">TH1D</a>(<span class="string">"h3"</span>,
+   <span class="string">"#splitline{Difference between Original}{function and Minuit fit}"</span>,
+   500, -hr, hr);
+
+   f2-&gt;SetParameters(0.5,1.5);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(f2);
+   <a href="./TF2.html">TF2</a> *fit2 = (<a href="./TF2.html">TF2</a>*)dt-&gt;<a href="./TGraph2D.html#TGraph2D:FindObject" title="TObject* TGraph2D::FindObject(const char* name) or overloads">FindObject</a>(<span class="string">"f2"</span>);
+
+   f2-&gt;SetParameters(1,1);
+
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> N=0; N&lt;np; N++) {
+      f2-&gt;GetRandom2(x,y);
+      <span class="comment">// Generate a random number in [-e,e]</span>
+      rnd = 2*r.Rndm()*e-e;
+      z = f2-&gt;Eval(x,y)*(1+rnd);
+      h1-&gt;Fill(f2-&gt;Eval(x,y)-z);
+      z = dt-&gt;<a href="./TGraph2D.html#TGraph2D:Interpolate" title="Double_t TGraph2D::Interpolate(Double_t x,Double_t y)">Interpolate</a>(x,y);
+      h2-&gt;Fill(f2-&gt;Eval(x,y)-z);
+      z = fit2-&gt;Eval(x,y);
+      h3-&gt;Fill(f2-&gt;Eval(x,y)-z);
+   }
+
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetPalette" title="void TStyle::SetPalette(Int_t ncolors=0,Int_t* colors=0)">SetPalette</a>(1);
+   c-&gt;cd(1);
+   f2-&gt;<a href="./TGraph2D.html#TGraph2D:SetTitle" title="void TGraph2D::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Original function with Graph2D points on top"</span>);
+   f2-&gt;<a href="./TGraph2D.html#TGraph2D:SetMaximum" title="void TGraph2D::SetMaximum(Double_t maximum=-1111)">SetMaximum</a>(zmax);
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetHistTopMargin" title="void TStyle::SetHistTopMargin(Double_t hmax=0.05)">SetHistTopMargin</a>(0);
+   f2-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf1"</span>);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"same p0"</span>);
+
+   c-&gt;cd(3);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetMargin" title="void TGraph2D::SetMargin(Double_t m=0.1)">SetMargin</a>(0.1);
+   dt-&gt;<a href="./TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(36);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetTitle" title="void TGraph2D::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Histogram produced with Delaunay interpolation"</span>);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf4"</span>);
+
+   c-&gt;cd(5);
+   fit2-&gt;<a href="./TGraph2D.html#TGraph2D:SetTitle" title="void TGraph2D::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Minuit fit result on the Graph2D points"</span>);
+   fit2-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf1"</span>);
+
+   h1-&gt;<a href="./TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(47);
+   h2-&gt;<a href="./TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(38);
+   h3-&gt;<a href="./TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(29);
+
+   c-&gt;cd(2); h1-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(<span class="string">"gaus"</span>,<span class="string">"Q"</span>) ; h1-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c-&gt;cd(4); h2-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(<span class="string">"gaus"</span>,<span class="string">"Q"</span>) ; h2-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c-&gt;cd(6); h3-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(<span class="string">"gaus"</span>,<span class="string">"Q"</span>) ; h3-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c-&gt;cd();
+   <span class="keyword">return</span> c;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start -->Example showing the PCOL option.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraph2D_5_c1_A0" class="tabsel" href="MACRO_TGraph2D_5_c1.gif" onclick="javascript:return SetDiv('MACRO_TGraph2D_5_c1',0);">Picture</a>
+<a id="MACRO_TGraph2D_5_c1_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraph2D_5_c1',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraph2D_5_c1_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraph2D_5_c1" title="MACRO" src="MACRO_TGraph2D_5_c1.gif" /></span></div>
+<div id="MACRO_TGraph2D_5_c1_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"Graph2D example"</span>,0,0,600,400);
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> P = 5.;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> npx  = 20 ;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> npy  = 20 ;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x = -P;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> y = -P;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> z;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> k = 0;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> dx = (2*P)/npx;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> dy = (2*P)/npy;
+   <a href="./TGraph2D.html">TGraph2D</a> *dt = <span class="keyword">new</span> <a href="./TGraph2D.html">TGraph2D</a>(npx*npy);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetNpy" title="void TGraph2D::SetNpy(Int_t npx=40)">SetNpy</a>(41);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetNpx" title="void TGraph2D::SetNpx(Int_t npx=40)">SetNpx</a>(40);
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0; i&lt;npx; i++) {
+      <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> j=0; j&lt;npy; j++) {
+         z = sin(sqrt(x*x+y*y))+1;
+         dt-&gt;<a href="./TGraph2D.html#TGraph2D:SetPoint" title="void TGraph2D::SetPoint(Int_t point,Double_t x,Double_t y,Double_t z)">SetPoint</a>(k,x,y,z);
+         k++;
+         y = y+dx;
+      }
+      x = x+dx;
+      y = -P;
+   }
+   <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetPalette" title="void TStyle::SetPalette(Int_t ncolors=0,Int_t* colors=0)">SetPalette</a>(1);
+   dt-&gt;<a href="./TAttMarker.html#TAttMarker:SetMarkerStyle" title="void TAttMarker::SetMarkerStyle(Style_t mstyle=1)">SetMarkerStyle</a>(20);
+   dt-&gt;<a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"pcol"</span>);
+   <span class="keyword">return</span> c1;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><h3>Definition of Delaunay triangulation (After B. Delaunay)</h3>
+For a set S of points in the Euclidean plane, the unique triangulation DT(S)
+of S such that no point in S is inside the circumcircle of any triangle in
+DT(S). DT(S) is the dual of the Voronoi diagram of S.
+If n is the number of points in S, the Voronoi diagram of S is the partitioning
+of the plane containing S points into n convex polygons such that each polygon
+contains exactly one point and every point in a given polygon is closer to its
+central point than to any other. A Voronoi diagram is sometimes also known as
+a Dirichlet tessellation.
+<img src="gif/dtvd.gif">
+<br>
+<a href="http://www.cs.cornell.edu/Info/People/chew/Delaunay.html">This applet</a>
+gives a nice practical view of Delaunay triangulation and Voronoi diagram.
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGraph2D:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D">TGraph2D</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%1">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%5">TGraph2D</a>(<a href="./TH2.html">TH2</a>* h2)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%8">TGraph2D</a>(<span class="keyword">const</span> <a href="./TGraph2D.html">TGraph2D</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%7">TGraph2D</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* format = <span class="string">"%lg %lg %lg"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%2">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Int_t">Int_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a>* z)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%3">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y, <a href="./ListOfTypes.html#Float_t">Float_t</a>* z)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%4">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraph2D:TGraph2D%6">TGraph2D</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGraph2D:_TGraph2D">~TGraph2D</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:DirectoryAutoAdd">DirectoryAutoAdd</a>(<a href="./TDirectory.html">TDirectory</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:DistancetoLine"><span class="baseclass">TAttLine::</span>DistancetoLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp2, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp2)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:DistancetoPrimitive">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:ExecuteEvent">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:FindObject">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:FindObject%1">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:Fit">Fit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:Fit%1">Fit</a>(<a href="./TF2.html">TF2</a>* f2, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:FitPanel">FitPanel</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetContourList">GetContourList</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> contour)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetDirectory">GetDirectory</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetErrorX">GetErrorX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetErrorY">GetErrorY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetErrorZ">GetErrorZ</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetEX">GetEX</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetEY">GetEY</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetEZ">GetEZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillColor"><span class="baseclass">TAttFill::</span>GetFillColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillStyle"><span class="baseclass">TAttFill::</span>GetFillStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetHistogram">GetHistogram</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineColor"><span class="baseclass">TAttLine::</span>GetLineColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineStyle"><span class="baseclass">TAttLine::</span>GetLineStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineWidth"><span class="baseclass">TAttLine::</span>GetLineWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetListOfFunctions">GetListOfFunctions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetMargin">GetMargin</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerColor"><span class="baseclass">TAttMarker::</span>GetMarkerColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerSize"><span class="baseclass">TAttMarker::</span>GetMarkerSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerStyle"><span class="baseclass">TAttMarker::</span>GetMarkerStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetN">GetN</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetNpx">GetNpx</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetNpy">GetNpy</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetX">GetX</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetXaxis">GetXaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetXmax">GetXmax</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetXmaxE">GetXmaxE</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetXmin">GetXmin</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetXminE">GetXminE</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetY">GetY</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetYaxis">GetYaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetYmax">GetYmax</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetYmaxE">GetYmaxE</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetYmin">GetYmin</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetYminE">GetYminE</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZ">GetZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZaxis">GetZaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZmax">GetZmax</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZmaxE">GetZmaxE</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZmin">GetZmin</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:GetZminE">GetZminE</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:Interpolate">Interpolate</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:IsTransparent"><span class="baseclass">TAttFill::</span>IsTransparent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:Modify"><span class="baseclass">TAttLine::</span>Modify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGraph2D.html">TGraph2D</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGraph2D:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGraph2D.html">TGraph2D</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Paint">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="#TGraph2D:Project">Project</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"x"</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraph2D:RemovePoint">RemovePoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipoint)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:ResetAttFill"><span class="baseclass">TAttFill::</span>ResetAttFill</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:ResetAttLine"><span class="baseclass">TAttLine::</span>ResetAttLine</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:ResetAttMarker"><span class="baseclass">TAttMarker::</span>ResetAttMarker</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* toption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SaveFillAttributes"><span class="baseclass">TAttFill::</span>SaveFillAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1001)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SaveLineAttributes"><span class="baseclass">TAttLine::</span>SaveLineAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> widdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SaveMarkerAttributes"><span class="baseclass">TAttMarker::</span>SaveMarkerAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> sizdef = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SavePrimitive">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Set">Set</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetDirectory">SetDirectory</a>(<a href="./TDirectory.html">TDirectory</a>* dir)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillAttributes"><span class="baseclass">TAttFill::</span>SetFillAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillColor"><span class="baseclass">TAttFill::</span>SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> fcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillStyle"><span class="baseclass">TAttFill::</span>SetFillStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> fstyle)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetHistogram">SetHistogram</a>(<a href="./TH2.html">TH2</a>* h)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineAttributes"><span class="baseclass">TAttLine::</span>SetLineAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineColor"><span class="baseclass">TAttLine::</span>SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> lcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineStyle"><span class="baseclass">TAttLine::</span>SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> lstyle)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineWidth"><span class="baseclass">TAttLine::</span>SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> lwidth)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetMargin">SetMargin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> m = 0.1)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetMarginBinsContent">SetMarginBinsContent</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0.)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerAttributes"><span class="baseclass">TAttMarker::</span>SetMarkerAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerColor"><span class="baseclass">TAttMarker::</span>SetMarkerColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> tcolor = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerSize"><span class="baseclass">TAttMarker::</span>SetMarkerSize</a>(<a href="./ListOfTypes.html#Size_t">Size_t</a> msize = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerStyle"><span class="baseclass">TAttMarker::</span>SetMarkerStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> mstyle = 1)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetMaximum">SetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maximum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetMaxIter">SetMaxIter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n = 100000)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetMinimum">SetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minimum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetName">SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetNameTitle">SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetNpx">SetNpx</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npx = 40)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetNpy">SetNpy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npx = 40)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetPoint">SetPoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> point, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:SetTitle">SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraph2D:Build">Build</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGraph2D:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a name="TGraph2D:fDirectory"></a>fDirectory</td><td class="datadesc">!Pointer to directory holding this 2D graph</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillColor"><span class="baseclass">TAttFill::</span>fFillColor</a></td><td class="datadesc">fill area color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillStyle"><span class="baseclass">TAttFill::</span>fFillStyle</a></td><td class="datadesc">fill area style</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TGraph2D:fFunctions"></a>fFunctions</td><td class="datadesc">Pointer to list of functions (fits and user)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TGraph2D:fHistogram"></a>fHistogram</td><td class="datadesc">!2D histogram of z values linearly interpolated</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineColor"><span class="baseclass">TAttLine::</span>fLineColor</a></td><td class="datadesc">line color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineStyle"><span class="baseclass">TAttLine::</span>fLineStyle</a></td><td class="datadesc">line style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineWidth"><span class="baseclass">TAttLine::</span>fLineWidth</a></td><td class="datadesc">line width</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGraph2D:fMargin"></a>fMargin</td><td class="datadesc">Extra space (in %) around interpolated area for fHistogram</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerColor"><span class="baseclass">TAttMarker::</span>fMarkerColor</a></td><td class="datadesc">Marker color index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerSize"><span class="baseclass">TAttMarker::</span>fMarkerSize</a></td><td class="datadesc">Marker size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerStyle"><span class="baseclass">TAttMarker::</span>fMarkerStyle</a></td><td class="datadesc">Marker style</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGraph2D:fMaxIter"></a>fMaxIter</td><td class="datadesc">Maximum number of iterations to find Delaunay t&gt;</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGraph2D:fMaximum"></a>fMaximum</td><td class="datadesc">Maximum value for plotting along z</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGraph2D:fMinimum"></a>fMinimum</td><td class="datadesc">Minimum value for plotting along z</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGraph2D:fNpoints"></a>fNpoints</td><td class="datadesc">Number of points in the data set</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGraph2D:fNpx"></a>fNpx</td><td class="datadesc">Number of bins along X in fHistogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGraph2D:fNpy"></a>fNpy</td><td class="datadesc">Number of bins along Y in fHistogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVirtualHistPainter.html">TVirtualHistPainter</a>*</td><td class="dataname"><a name="TGraph2D:fPainter"></a>fPainter</td><td class="datadesc">!pointer to histogram painter</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGraph2D:fSize"></a>fSize</td><td class="datadesc">!Real size of fX, fY and fZ</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TGraph2D:fX"></a>fX</td><td class="datadesc">[fNpoints]</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TGraph2D:fY"></a>fY</td><td class="datadesc">[fNpoints] Data set to be plotted</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TGraph2D:fZ"></a>fZ</td><td class="datadesc">[fNpoints]</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGraph2D:fZout"></a>fZout</td><td class="datadesc">fHistogram bin height for points lying outside the interpolated area</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TGraph2D:fUserHisto"></a>fUserHisto</td><td class="datadesc">True when SetHistogram has been called</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGraph2D:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGraph2D_Inh" id="MapTGraph2D_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="229,3,307,25"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="230,29,306,51"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="238,54,299,76"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="218,80,318,101"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="33,3,104,25"/>
+<area shape="rect" href="./TGraph2DErrors.html" title="TGraph2DErrors" alt="" coords="615,42,762,64"/>
+</map>
+<map name="MapTGraph2D_InhMem" id="MapTGraph2D_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,363,629,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,363,531,427"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="376,363,400,397"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,437,629,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,437,531,600"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="344,437,432,600"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="333,319,640,611"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,665,629,715"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="541,725,629,859"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="443,725,531,888"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,725,432,888"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="333,621,640,899"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,953,629,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,953,531,1017"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="376,953,400,988"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,1028,629,1176"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,1028,531,1191"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="344,1028,432,1191"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="333,909,640,1201"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGraph2D_Lib" id="MapTGraph2D_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTGraph2D_Inh" class="tabsel" href="inh/TGraph2D_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGraph2D_Inh.png');">Inheritance</a>
+<a id="imgTGraph2D_InhMem" class="tab" href="inhmem/TGraph2D_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGraph2D_InhMem.png');">Inherited Members</a>
+<a id="imgTGraph2D_Incl" class="tab" href="incl/TGraph2D_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGraph2D_Incl.png');">Includes</a>
+<a id="imgTGraph2D_Lib" class="tab" href="lib/TGraph2D_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGraph2D_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGraph2D_Inh" src="inh/TGraph2D_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D" href="src/TGraph2D.cxx.html#jLEyl">TGraph2D</a>()</span><br />
+<div class="funccomm"><pre> Graph2D default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%2" href="src/TGraph2D.cxx.html#WiqYzE">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Int_t">Int_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a>* z)</span><br />
+<div class="funccomm"><pre> Graph2D constructor with three vectors of ints as input.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%3" href="src/TGraph2D.cxx.html#ye5C6B">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y, <a href="./ListOfTypes.html#Float_t">Float_t</a>* z)</span><br />
+<div class="funccomm"><pre> Graph2D constructor with three vectors of floats as input.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%4" href="src/TGraph2D.cxx.html#IJm.KE">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z)</span><br />
+<div class="funccomm"><pre> Graph2D constructor with three vectors of doubles as input.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%5" href="src/TGraph2D.cxx.html#O.ipvC">TGraph2D</a>(<a href="./TH2.html">TH2</a>* h2)</span><br />
+<div class="funccomm"><pre> Graph2D constructor with a <a href="./TH2.html">TH2</a> (h2) as input.
+ Only the h2's bins within the X and Y axis ranges are used.
+ Empty bins, recognized when both content and errors are zero, are excluded.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%6" href="src/TGraph2D.cxx.html#KuYmJB">TGraph2D</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z)</span><br />
+<div class="funccomm"><pre> Graph2D constructor with name, title and three vectors of doubles as input.
+ name   : name of 2D graph (avoid blanks)
+ title  : 2D graph title
+          if title is of the form <span class="string">"stringt;stringx;stringy;stringz"</span>
+          the 2D graph title is set to stringt, the x axis title to stringx,
+          the y axis title to stringy,etc
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%1" href="src/TGraph2D.cxx.html#tGRHQB">TGraph2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre> Graph2D constructor. The arrays <a href="./TGraph2D.html#TGraph2D:fX" title="Double_t* TGraph2D::fX">fX</a>, <a href="./TGraph2D.html#TGraph2D:fY" title="Double_t* TGraph2D::fY">fY</a> and <a href="./TGraph2D.html#TGraph2D:fZ" title="Double_t* TGraph2D::fZ">fZ</a> should be filled via
+ calls to <a href="./TGraph2D.html#TGraph2D:SetPoint" title="void TGraph2D::SetPoint(Int_t point,Double_t x,Double_t y,Double_t z)">SetPoint</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%7" href="src/TGraph2D.cxx.html#IyktaE">TGraph2D</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* format = <span class="string">"%lg %lg %lg"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Graph2D constructor reading input from filename
+ filename is assumed to contain at least three columns of numbers.
+ For files separated by a specific delimiter different from <span class="string">' '</span> and '\t' (e.g. <span class="string">';'</span> in csv files)
+ you can avoid using %*s to bypass this delimiter by explicitly specify the <span class="string">"option"</span> argument,
+ e.g. option=<span class="string">" \t,;"</span> for columns of figures separated by any of these characters (<span class="string">' '</span>, '\t', <span class="string">','</span>, <span class="string">';'</span>)
+ used once (e.g. <span class="string">"1;1"</span>) or in a combined way (<span class="string">" 1;,;;  1"</span>).
+ Note in that case, the instanciation is about 2 times slower.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:TGraph2D%8" href="src/TGraph2D.cxx.html#d286hD">TGraph2D</a>(<span class="keyword">const</span> <a href="./TGraph2D.html">TGraph2D</a>&amp; )</span><br />
+<div class="funccomm"><pre> Graph2D copy constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraph2D:_TGraph2D" href="src/TGraph2D.cxx.html#HW9j6E">~TGraph2D</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TGraph2D.html">TGraph2D</a> destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGraph2D.html">TGraph2D</a>&amp; <a class="funcname" name="TGraph2D:operator_" href="src/TGraph2D.cxx.html#olI.iE">operator=</a>(<span class="keyword">const</span> <a href="./TGraph2D.html">TGraph2D</a>&amp; )</span><br />
+<div class="funccomm"><pre> Graph2D operator <span class="string">"="</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Build" href="src/TGraph2D.cxx.html#bwLNU">Build</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre> Creates the 2D graph basic data structure
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Clear" href="src/TGraph2D.cxx.html#DM924E">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Free all memory allocated by this object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:DirectoryAutoAdd" href="src/TGraph2D.cxx.html#OttjD">DirectoryAutoAdd</a>(<a href="./TDirectory.html">TDirectory</a>* )</span><br />
+<div class="funccomm"><pre> Perform the automatic addition of the graph to the given directory
+
+ Note this function is called in place when the semantic requires
+ this object to be added to a directory (I.e. when being read from
+ a <a href="./TKey.html">TKey</a> or being Cloned)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraph2D:DistancetoPrimitive" href="src/TGraph2D.cxx.html#kxlvCD">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> Computes distance from point px,py to a graph
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Draw" href="src/TGraph2D.cxx.html#II8a_D">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Specific drawing options can be used to paint a <a href="./TGraph2D.html">TGraph2D</a>:
+
+   <span class="string">"TRI"</span>  : The Delaunay triangles are drawn using filled area.
+            An hidden surface drawing technique is used. The surface is
+            painted with the current fill area color. The edges of each
+            triangles are painted with the current line color.
+   <span class="string">"TRIW"</span> : The Delaunay triangles are drawn as wire frame
+   <span class="string">"TRI1"</span> : The Delaunay triangles are painted with color levels. The edges
+            of each triangles are painted with the current line color.
+   <span class="string">"TRI2"</span> : the Delaunay triangles are painted with color levels.
+   <span class="string">"P"</span>    : <a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a> a marker at each vertex
+   <span class="string">"P0"</span>   : <a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a> a circle at each vertex. Each circle background is white.
+   <span class="string">"PCOL"</span> : <a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a> a marker at each vertex. The color of each marker is
+            defined according to its Z position.
+   <span class="string">"CONT"</span> : <a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a> contours
+   <span class="string">"LINE"</span> : <a href="./TGraph2D.html#TGraph2D:Draw" title="void TGraph2D::Draw(Option_t* option=&quot;&quot;)">Draw</a> a 3D polyline
+
+ A <a href="./TGraph2D.html">TGraph2D</a> can be also drawn with ANY options valid to draw a 2D histogram.
+
+ When a <a href="./TGraph2D.html">TGraph2D</a> is drawn with one of the 2D histogram drawing option,
+ a intermediate 2D histogram is filled using the Delaunay triangles
+ technique to interpolate the data set.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:ExecuteEvent" href="src/TGraph2D.cxx.html#e7JEt">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> Executes action corresponding to one event
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TGraph2D:FindObject" href="src/TGraph2D.cxx.html#KlCfvE">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> search object named name in the list of functions
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TGraph2D:FindObject%1" href="src/TGraph2D.cxx.html#DOUlP">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> search object obj in the list of functions
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFitResultPtr.html">TFitResultPtr</a> <a class="funcname" name="TGraph2D:Fit" href="src/TGraph2D.cxx.html#mElKG">Fit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Fits this graph with function with name fname
+ Predefined functions such as gaus, expo and poln are automatically
+ created by <a href="./ROOT.html">ROOT</a>.
+ fname can also be a formula, accepted by the linear fitter (linear parts divided
+ by <span class="string">"++"</span> sign), for example <span class="string">"x++sin(y)"</span> for fitting <span class="string">"[0]*x+[1]*sin(y)"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFitResultPtr.html">TFitResultPtr</a> <a class="funcname" name="TGraph2D:Fit%1" href="src/TGraph2D.cxx.html#P32MaB">Fit</a>(<a href="./TF2.html">TF2</a>* f2, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Fits this 2D graph with function f2
+
+  f2 is an already predefined function created by <a href="./TF2.html">TF2</a>.
+  Predefined functions such as gaus, expo and poln are automatically
+  created by <a href="./ROOT.html">ROOT</a>.
+
+  The list of fit options is given in parameter option.
+     option = <span class="string">"W"</span> <a href="./TGraph2D.html#TGraph2D:Set" title="void TGraph2D::Set(Int_t n)">Set</a> all weights to 1; ignore error bars
+            = <span class="string">"U"</span> Use a User specified fitting algorithm (via SetFCN)
+            = <span class="string">"Q"</span> Quiet mode (minimum printing)
+            = <span class="string">"V"</span> Verbose mode (default is between Q and V)
+            = <span class="string">"R"</span> Use the Range specified in the function range
+            = <span class="string">"N"</span> Do not store the graphics function, do not draw
+            = <span class="string">"0"</span> Do not plot the result of the fit. By default the fitted function
+                  is drawn unless the option <span class="string">"N"</span> above is specified.
+            = <span class="string">"+"</span> Add this new fitted function to the list of fitted functions
+                  (by default, any previous function is deleted)
+            = <span class="string">"C"</span> In case of linear fitting, not calculate the chisquare
+                  (saves time)
+            = <span class="string">"EX0"</span> When fitting a <a href="./TGraphErrors.html">TGraphErrors</a> do not consider errors in the coordinate
+            = <span class="string">"ROB"</span> In case of linear fitting, compute the LTS regression
+                     coefficients (robust (resistant) regression), using
+                     the default fraction of good points
+              <span class="string">"ROB=0.x"</span> - compute the LTS regression coefficients, using
+                           0.x as a fraction of good points
+            = <span class="string">"S"</span>  The result of the fit is returned in the <a href="./TFitResultPtr.html">TFitResultPtr</a>
+                     (see below Access to the <a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a> Result)
+
+  In order to use the Range option, one must first create a function
+  with the expression to be fitted. For example, if your graph2d
+  has a defined range between -4 and 4 and you want to fit a gaussian
+  only in the interval 1 to 3, you can do:
+       <a href="./TF2.html">TF2</a> *f2 = new <a href="./TF2.html">TF2</a>(<span class="string">"f2"</span>,<span class="string">"gaus"</span>,1,3);
+       graph2d-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(<span class="string">"f2"</span>,<span class="string">"R"</span>);
+
+
+  Setting initial conditions
+
+  Parameters must be initialized before invoking the <a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a> function.
+  The setting of the parameter initial values is automatic for the
+  predefined functions : poln, expo, gaus. One can however disable
+  this automatic computation by specifying the option <span class="string">"B"</span>.
+  You can specify boundary limits for some or all parameters via
+       f2-&gt;SetParLimits(p_number, parmin, parmax);
+  if parmin&gt;=parmax, the parameter is fixed
+  Note that you are not forced to fix the limits for all parameters.
+  For example, if you fit a function with 6 parameters, you can do:
+    func-&gt;SetParameters(0,3.1,1.e-6,0.1,-8,100);
+    func-&gt;SetParLimits(4,-10,-4);
+    func-&gt;SetParLimits(5, 1,1);
+  With this setup, parameters 0-&gt;3 can vary freely
+  Parameter 4 has boundaries [-10,-4] with initial value -8
+  Parameter 5 is fixed to 100.
+
+  <a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a> range
+
+  The fit range can be specified in two ways:
+    - specify rxmax &gt; rxmin (default is rxmin=rxmax=0)
+    - specify the option <span class="string">"R"</span>. In this case, the function will be taken
+      instead of the full graph range.
+
+  Changing the fitting function
+
+   By default a chi2 fitting function is used for fitting a <a href="./TGraph.html">TGraph</a>.
+   The function is implemented in FitUtil::EvaluateChi2.
+   In case of <a href="./TGraph2DErrors.html">TGraph2DErrors</a> an effective chi2 is used
+   (see <a href="./TGraphErrors.html">TGraphErrors</a> fit in <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a>) and is implemented in
+   FitUtil::EvaluateChi2Effective
+   To specify a User defined fitting function, specify option <span class="string">"U"</span> and
+   call the following functions:
+   <a href="./TVirtualFitter.html">TVirtualFitter</a>::<a href="./TVirtualFitter.html#TVirtualFitter:Fitter" title="TVirtualFitter* TVirtualFitter::Fitter(TObject* obj,Int_t maxpar=25)">Fitter</a>(mygraph)-><a href="./TVirtualFitter.html#TVirtualFitter:SetFCN" title="void TVirtualFitter::SetFCN(void* fcn) or overloads">SetFCN</a>(MyFittingFunction)
+   where MyFittingFunction is of type:
+   extern <a href="./ListOfTypes.html#void">void</a> MyFittingFunction(<a href="./ListOfTypes.html#Int_t">Int_t</a> &amp;npar, <a href="./ListOfTypes.html#Double_t">Double_t</a> *gin, <a href="./ListOfTypes.html#Double_t">Double_t</a> &amp;f, <a href="./ListOfTypes.html#Double_t">Double_t</a> *u, <a href="./ListOfTypes.html#Int_t">Int_t</a> flag);
+
+  Associated functions
+
+  One or more object (typically a <a href="./TF2.html">TF2</a>*) can be added to the list
+  of functions (<a href="./TGraph2D.html#TGraph2D:fFunctions" title="TList* TGraph2D::fFunctions">fFunctions</a>) associated to each graph.
+  When <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a> is invoked, the fitted function is added to this list.
+  Given a graph gr, one can retrieve an associated function
+  with:  <a href="./TF2.html">TF2</a> *myfunc = gr-&gt;GetFunction(<span class="string">"myfunc"</span>);
+
+  Access to the fit results
+
+  The function returns a <a href="./TFitResultPtr.html">TFitResultPtr</a> which can hold a  pointer to a <a href="./TFitResult.html">TFitResult</a> object.
+  By default the <a href="./TFitResultPtr.html">TFitResultPtr</a> contains only the status of the fit and it converts automatically to an
+  integer. If the option <span class="string">"S"</span> is instead used, <a href="./TFitResultPtr.html">TFitResultPtr</a> contains the <a href="./TFitResult.html">TFitResult</a> and behaves as a smart
+  pointer to it. For example one can do:
+     <a href="./TFitResultPtr.html">TFitResultPtr</a> r = graph-&gt;<a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a>(<span class="string">"myFunc"</span>,<span class="string">"S"</span>);
+     <a href="./TMatrixDSym.html">TMatrixDSym</a> cov = r-&gt;GetCovarianceMatrix();  //  to access the covariance matrix
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> par0   = r-&gt;Value(0); // retrieve the value for the parameter 0
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> err0   = r-&gt;<a href="./TObject.html#TObject:Error" title="void TObject::Error(const char* method,const char* msgfmt)">Error</a>(0); // retrieve the error for the parameter 0
+     r-&gt;<a href="./TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a>(<span class="string">"V"</span>);     // print full information of fit including covariance matrix
+     r-&gt;<a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a>();        // store the result in a file
+
+  The fit parameters, error and chi2 (but not covariance matrix) can be retrieved also
+  from the fitted function.
+  If the graph is made persistent, the list of
+  associated functions is also persistent. Given a pointer (see above)
+  to an associated function myfunc, one can retrieve the function/fit
+  parameters with calls such as:
+    <a href="./ListOfTypes.html#Double_t">Double_t</a> chi2 = myfunc-&gt;GetChisquare();
+    <a href="./ListOfTypes.html#Double_t">Double_t</a> par0 = myfunc-&gt;GetParameter(0); //value of 1st parameter
+    <a href="./ListOfTypes.html#Double_t">Double_t</a> err0 = myfunc-&gt;GetParError(0);  //error on first parameter
+
+  <a href="./TGraph2D.html#TGraph2D:Fit" title="TFitResultPtr TGraph2D::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;) or overloads">Fit</a> Statistics
+
+  You can change the statistics box to display the fit parameters with
+  the <a href="./TStyle.html">TStyle</a>::<a href="./TStyle.html#TStyle:SetOptFit" title="void TStyle::SetOptFit(Int_t fit=1)">SetOptFit</a>(mode) method. This mode has four digits.
+  mode = pcev  (default = 0111)
+    v = 1;  print name/values of parameters
+    e = 1;  print errors (if e=1, v must be 1)
+    c = 1;  print Chisquare/Number of degress of freedom
+    p = 1;  print Probability
+
+  For example: <a href="./TStyle.html">gStyle</a>-><a href="./TStyle.html#TStyle:SetOptFit" title="void TStyle::SetOptFit(Int_t fit=1)">SetOptFit</a>(1011);
+  prints the fit probability, parameter names/values, and errors.
+  You can change the position of the statistics box with these lines
+  (where g is a pointer to the <a href="./TGraph.html">TGraph</a>):
+
+  Root &gt; <a href="./TPaveStats.html">TPaveStats</a> *st = (<a href="./TPaveStats.html">TPaveStats</a>*)g-&gt;<a href="./TGraph2D.html#TGraph2D:GetListOfFunctions" title="TList* TGraph2D::GetListOfFunctions()">GetListOfFunctions</a>()-><a href="./TList.html#TList:FindObject" title="TObject* TList::FindObject(const char* name) or overloads">FindObject</a>(<span class="string">"stats"</span>)
+  Root &gt; st-&gt;SetX1NDC(newx1); //new x start position
+  Root &gt; st-&gt;SetX2NDC(newx2); //new x end position
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:FitPanel" href="src/TGraph2D.cxx.html#CfaevC">FitPanel</a>()</span><br />
+<div class="funccomm"><pre> Display a GUI panel with all graph fit options.
+
+   See class <a href="./TFitEditor.html">TFitEditor</a> for example
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TAxis.html">TAxis</a> * <a class="funcname" name="TGraph2D:GetXaxis" href="src/TGraph2D.cxx.html#Q95E1B">GetXaxis</a>() const</span><br />
+<div class="funccomm"><pre> Get x axis of the graph.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TAxis.html">TAxis</a> * <a class="funcname" name="TGraph2D:GetYaxis" href="src/TGraph2D.cxx.html#IHwE1B">GetYaxis</a>() const</span><br />
+<div class="funccomm"><pre> Get y axis of the graph.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TAxis.html">TAxis</a> * <a class="funcname" name="TGraph2D:GetZaxis" href="src/TGraph2D.cxx.html#ARmE1B">GetZaxis</a>() const</span><br />
+<div class="funccomm"><pre> Get z axis of the graph.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a> * <a class="funcname" name="TGraph2D:GetContourList" href="src/TGraph2D.cxx.html#jXs3PB">GetContourList</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> contour)</span><br />
+<div class="funccomm"><pre> Returns the X and Y graphs building a contour. A contour level may
+ consist in several parts not connected to each other. This function
+ returns them in a graphs' list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetErrorX" href="src/TGraph2D.cxx.html#brZhkB">GetErrorX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> This function is called by Graph2DFitChisquare.
+ It always returns a negative value. Real implementation in <a href="./TGraph2DErrors.html">TGraph2DErrors</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetErrorY" href="src/TGraph2D.cxx.html#P6ahkB">GetErrorY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> This function is called by Graph2DFitChisquare.
+ It always returns a negative value. Real implementation in <a href="./TGraph2DErrors.html">TGraph2DErrors</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetErrorZ" href="src/TGraph2D.cxx.html#DJchkB">GetErrorZ</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> This function is called by Graph2DFitChisquare.
+ It always returns a negative value. Real implementation in <a href="./TGraph2DErrors.html">TGraph2DErrors</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a> * <a class="funcname" name="TGraph2D:GetHistogram" href="src/TGraph2D.cxx.html#J9ynD">GetHistogram</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> By default returns a pointer to the Delaunay histogram. If <a href="./TGraph2D.html#TGraph2D:fHistogram" title="TH2D* TGraph2D::fHistogram">fHistogram</a>
+ doesn't exist, books the 2D histogram <a href="./TGraph2D.html#TGraph2D:fHistogram" title="TH2D* TGraph2D::fHistogram">fHistogram</a> with a margin around
+ the hull. Calls <a href="./TGraphDelaunay.html">TGraphDelaunay</a>::<a href="./TGraphDelaunay.html#TGraphDelaunay:Interpolate" title="Double_t TGraphDelaunay::Interpolate(Double_t x,Double_t y)">Interpolate</a> at each bin centre to build up
+ an interpolated 2D histogram.
+ If the <span class="string">"empty"</span> option is selected, returns an empty histogram booked with
+ the limits of <a href="./TGraph2D.html#TGraph2D:fX" title="Double_t* TGraph2D::fX">fX</a>, <a href="./TGraph2D.html#TGraph2D:fY" title="Double_t* TGraph2D::fY">fY</a> and <a href="./TGraph2D.html#TGraph2D:fZ" title="Double_t* TGraph2D::fZ">fZ</a>. This option is used when the data set is
+ drawn with markers only. In that particular case there is no need to
+ find the Delaunay triangles.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetXmax" href="src/TGraph2D.cxx.html#vPdE1E">GetXmax</a>() const</span><br />
+<div class="funccomm"><pre> Returns the X maximum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetXmin" href="src/TGraph2D.cxx.html#jeuQ1E">GetXmin</a>() const</span><br />
+<div class="funccomm"><pre> Returns the X minimum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetYmax" href="src/TGraph2D.cxx.html#Xt.hXC">GetYmax</a>() const</span><br />
+<div class="funccomm"><pre> Returns the Y maximum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetYmin" href="src/TGraph2D.cxx.html#L8QuXC">GetYmin</a>() const</span><br />
+<div class="funccomm"><pre> Returns the Y minimum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetZmax" href="src/TGraph2D.cxx.html#uPdE1E">GetZmax</a>() const</span><br />
+<div class="funccomm"><pre> Returns the Z maximum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetZmin" href="src/TGraph2D.cxx.html#ieuQ1E">GetZmin</a>() const</span><br />
+<div class="funccomm"><pre> Returns the Z minimum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:Interpolate" href="src/TGraph2D.cxx.html#Va2.mB">Interpolate</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</span><br />
+<div class="funccomm"><pre> Finds the z value at the position (x,y) thanks to
+ the Delaunay interpolation.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Paint" href="src/TGraph2D.cxx.html#WqMhXD">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Paints this 2D graph with its current attributes
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1.html">TH1</a> * <a class="funcname" name="TGraph2D:Project" href="src/TGraph2D.cxx.html#wBt1E">Project</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"x"</span>) const</span><br />
+<div class="funccomm"><pre> Projects a 2-d graph into 1 or 2-d histograms depending on the
+ option parameter
+ option may contain a combination of the characters x,y,z
+ option = <span class="string">"x"</span> return the x projection into a <a href="./TH1D.html">TH1D</a> histogram
+ option = <span class="string">"y"</span> return the y projection into a <a href="./TH1D.html">TH1D</a> histogram
+ option = <span class="string">"xy"</span> return the x versus y projection into a <a href="./TH2D.html">TH2D</a> histogram
+ option = <span class="string">"yx"</span> return the y versus x projection into a <a href="./TH2D.html">TH2D</a> histogram
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraph2D:RemovePoint" href="src/TGraph2D.cxx.html#yRouJ">RemovePoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipoint)</span><br />
+<div class="funccomm"><pre> Deletes point number ipoint
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SavePrimitive" href="src/TGraph2D.cxx.html#gtCyqC">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Saves primitive as a C++ statement(s) on output stream out
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Set" href="src/TGraph2D.cxx.html#YzqieE">Set</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph2D.html#TGraph2D:Set" title="void TGraph2D::Set(Int_t n)">Set</a> number of points in the 2D graph.
+ Existing coordinates are preserved.
+ New coordinates above <a href="./TGraph2D.html#TGraph2D:fNpoints" title="Int_t TGraph2D::fNpoints">fNpoints</a> are preset to 0.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetDirectory" href="src/TGraph2D.cxx.html#Z2Q.CB">SetDirectory</a>(<a href="./TDirectory.html">TDirectory</a>* dir)</span><br />
+<div class="funccomm"><pre> By default when an 2D graph is created, it is added to the list
+ of 2D graph objects in the current directory in memory.
+ Remove reference to this 2D graph from current directory and add
+ reference to new directory dir. dir can be 0 in which case the
+ 2D graph does not belong to any directory.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetHistogram" href="src/TGraph2D.cxx.html#DBa8KC">SetHistogram</a>(<a href="./TH2.html">TH2</a>* h)</span><br />
+<div class="funccomm"><pre> Sets the histogram to be filled
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetMargin" href="src/TGraph2D.cxx.html#uJLebD">SetMargin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> m = 0.1)</span><br />
+<div class="funccomm"><pre> Sets the extra space (in %) around interpolated area for the 2D histogram
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetMarginBinsContent" href="src/TGraph2D.cxx.html#pGcpOD">SetMarginBinsContent</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0.)</span><br />
+<div class="funccomm"><pre> Sets the histogram bin height for points lying outside the <a href="./TGraphDelaunay.html">TGraphDelaunay</a>
+ convex hull ie: the bins in the margin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetMaximum" href="src/TGraph2D.cxx.html#yQmUeC">SetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maximum = -1111)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph2D.html#TGraph2D:Set" title="void TGraph2D::Set(Int_t n)">Set</a> maximum.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetMinimum" href="src/TGraph2D.cxx.html#epI7WD">SetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minimum = -1111)</span><br />
+<div class="funccomm"><pre> <a href="./TGraph2D.html#TGraph2D:Set" title="void TGraph2D::Set(Int_t n)">Set</a> minimum.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetName" href="src/TGraph2D.cxx.html#pMpMrC">SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span><br />
+<div class="funccomm"><pre> Changes the name of this 2D graph
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetNameTitle" href="src/TGraph2D.cxx.html#Q7GtrE">SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</span><br />
+<div class="funccomm"><pre> Change the name and title of this 2D graph
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetNpx" href="src/TGraph2D.cxx.html#Ilv52B">SetNpx</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npx = 40)</span><br />
+<div class="funccomm"><pre> Sets the number of bins along X used to draw the function
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetNpy" href="src/TGraph2D.cxx.html#cMc52B">SetNpy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npx = 40)</span><br />
+<div class="funccomm"><pre> Sets the number of bins along Y used to draw the function
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetPoint" href="src/TGraph2D.cxx.html#w8yQwC">SetPoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> point, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> Sets point number n.
+ If n is greater than the current size, the arrays are automatically
+ extended.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetTitle" href="src/TGraph2D.cxx.html#L1cnPB">SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Sets graph title
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:Streamer" href="src/TGraph2D.cxx.html#xYx1pE">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream a class object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDirectory.html">TDirectory</a>           * <a class="funcname" name="TGraph2D:GetDirectory" href="src/TGraph2D.h.html#B4Sq3B">GetDirectory</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fDirectory" title="TDirectory* TGraph2D::fDirectory">fDirectory</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraph2D:GetNpx" href="src/TGraph2D.h.html#jDnkPC">GetNpx</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fNpx" title="Int_t TGraph2D::fNpx">fNpx</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraph2D:GetNpy" href="src/TGraph2D.h.html#jDn4PC">GetNpy</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fNpy" title="Int_t TGraph2D::fNpy">fNpy</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>                * <a class="funcname" name="TGraph2D:GetListOfFunctions" href="src/TGraph2D.h.html#bEaW.D">GetListOfFunctions</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fFunctions" title="TList* TGraph2D::fFunctions">fFunctions</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetMargin" href="src/TGraph2D.h.html#WuIPjB">GetMargin</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fMargin" title="Double_t TGraph2D::fMargin">fMargin</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraph2D:GetN" href="src/TGraph2D.h.html#QT9Jy">GetN</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fNpoints" title="Int_t TGraph2D::fNpoints">fNpoints</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>             * <a class="funcname" name="TGraph2D:GetX" href="src/TGraph2D.h.html#vyNqR">GetX</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fX" title="Double_t* TGraph2D::fX">fX</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>             * <a class="funcname" name="TGraph2D:GetY" href="src/TGraph2D.h.html#dG6pR">GetY</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fY" title="Double_t* TGraph2D::fY">fY</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>             * <a class="funcname" name="TGraph2D:GetZ" href="src/TGraph2D.h.html#XL1qR">GetZ</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:fZ" title="Double_t* TGraph2D::fZ">fZ</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>     * <a class="funcname" name="TGraph2D:GetEX" href="src/TGraph2D.h.html#u0fLJC">GetEX</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>     * <a class="funcname" name="TGraph2D:GetEY" href="src/TGraph2D.h.html#m_fLJC">GetEY</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>     * <a class="funcname" name="TGraph2D:GetEZ" href="src/TGraph2D.h.html#KhfLJC">GetEZ</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetXmaxE" href="src/TGraph2D.h.html#AdgpBB">GetXmaxE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetXmax" title="Double_t TGraph2D::GetXmax()">GetXmax</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetXminE" href="src/TGraph2D.h.html#gLqoBB">GetXminE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetXmin" title="Double_t TGraph2D::GetXmin()">GetXmin</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetYmaxE" href="src/TGraph2D.h.html#MOvu8">GetYmaxE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetYmax" title="Double_t TGraph2D::GetYmax()">GetYmax</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetYminE" href="src/TGraph2D.h.html#s84t8">GetYminE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetYmin" title="Double_t TGraph2D::GetYmin()">GetYmin</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetZmaxE" href="src/TGraph2D.h.html#c6CfLB">GetZmaxE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetZmax" title="Double_t TGraph2D::GetZmax()">GetZmax</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGraph2D:GetZminE" href="src/TGraph2D.h.html#UabfLB">GetZminE</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGraph2D.html#TGraph2D:GetZmin" title="Double_t TGraph2D::GetZmin()">GetZmin</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraph2D:SetMaxIter" href="src/TGraph2D.h.html#d2.zHB">SetMaxIter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n = 100000)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGraph2D.html#TGraph2D:fMaxIter" title="Int_t TGraph2D::fMaxIter">fMaxIter</a> = n;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Olivier+Couet"> Olivier Couet</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/hist:$Id: TGraph2D.h,v 1.00 </em><em>&raquo; Last generated: 2011-11-03 20:17</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1212 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:13:33 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TFormula</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TFormula','libHist','TFormula.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TFormula.h.html">header file</a>
+<a class="descrheadentry" href="src/TFormula.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TFormula.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TFormula.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TFormula:description">class description</a> 
+<a class="descrheadentry" href="#TFormula:Function_Members">function members</a>
+<a class="descrheadentry" href="#TFormula:Data_Members">data members</a>
+<a class="descrheadentry" href="#TFormula:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TFormula</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TFormula:description"></a>class TFormula: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+The  F O R M U L A  class*-*-*-*-
+*-*                  =========================
+-
+*-*   This class has been implemented by Nicolas Brun (age 18).
+*-*   =========================================================
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/tformula_classtree.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+-
+*-*  Example of valid expressions:
+*-*     -  sin(x)/x
+*-*     -  [0]*sin(x) + [1]*exp(-[2]*x)
+*-*     -  x + y**2
+*-*     -  x^2 + y^2
+*-*     -  [0]*pow([1],4)
+*-*     -  2*pi*sqrt(x/y)
+*-*     -  gaus(0)*expo(3)  + ypol3(5)*x
+*-*     -  gausn(0)*expo(3) + ypol3(5)*x
+-
+*-*  In the last example above:
+*-*     gaus(0) is a substitute for [0]*exp(-0.5*((x-[1])/[2])**2)
+*-*        and (0) means start numbering parameters at 0
+*-*     gausn(0) is a substitute for [0]*exp(-0.5*((x-[1])/[2])**2)/(sqrt(2*pi)*[2]))
+*-*        and (0) means start numbering parameters at 0
+*-*     expo(3) is a substitute for exp([3]+[4]*x)
+*-*     pol3(5) is a substitute for par[5]+par[6]*x+par[7]*x**2+par[8]*x**3
+*-*         (here Pol3 stands for Polynomial of degree 3)
+-
+*-*   <a href="./TMath.html">TMath</a> functions can be part of the expression, eg:
+*-*     -  <a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Landau" title="Double_t TMath::Landau(Double_t x,Double_t mpv=0,Double_t sigma=1,Bool_t norm=kFALSE)">Landau</a>(x)*sin(x)
+*-*     -  <a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Erf" title="Double_t TMath::Erf(Double_t x)">Erf</a>(x)
+-
+*-*   Comparisons operators are also supported (&amp;&amp;, ||, ==, &lt;=, &gt;=, !)
+*-*   Examples:
+*-*      sin(x*(x&lt;0.5 || x&gt;1))
+*-*   If the result of a comparison is TRUE, the result is 1, otherwise 0.
+-
+*-*   Already predefined names can be given. For example, if the formula
+*-*     <a href="./TFormula.html">TFormula</a> old(sin(x*(x&lt;0.5 || x&gt;1))) one can assign a name to the formula. By default
+*-*     the name of the object = title = formula itself.
+*-*     old.<a href="./TNamed.html#TNamed:SetName" title="void TNamed::SetName(const char* name)">SetName</a>(<span class="string">"old"</span>).
+*-*     then, old can be reused in a new expression.
+*-*     <a href="./TFormula.html">TFormula</a> new(<span class="string">"x*old"</span>) is equivalent to:
+*-*     <a href="./TFormula.html">TFormula</a> new(<span class="string">"x*sin(x*(x&lt;0.5 || x&gt;1))"</span>)
+-
+*-*   Up to 4 dimensions are supported (indicated by x, y, z, t)
+*-*   An expression may have 0 parameters or a list of parameters
+*-*   indicated by the sequence [par_number]
+-
+*-*   A graph showing the logic to compile and analyze a formula
+*-*   is shown in <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:Compile" title="Int_t TFormula::Compile(const char* expression=&quot;&quot;)">Compile</a> and <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>.
+*-*   Once a formula has been compiled, it can be evaluated for a given
+*-*   set of parameters. see graph in <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPar" title="Double_t TFormula::EvalPar(const Double_t* x,const Double_t* params=0)">EvalPar</a>.
+-
+*-*   This class is the base class for the function classes <a href="./TF1.html">TF1</a>,<a href="./TF2.html">TF2</a> and <a href="./TF3.html">TF3</a>.
+*-*   It is also used by the ntuple selection mechanism TNtupleFormula.
+-
+*-*   In version 7 of <a href="./TFormula.html">TFormula</a>, the usage of <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a> has been changed
+*-*   to improve the performance of <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPar" title="Double_t TFormula::EvalPar(const Double_t* x,const Double_t* params=0)">EvalPar</a>.
+*-*   Conceptually, <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a> was changed from a simple array of <a href="./ListOfTypes.html#Int_t">Int_t</a>
+*-*   to an array of composite values.
+*-*   For example a 'ylandau(5)' operation used to be encoded as 4105;
+*-*   it is now encoded as (<a href="./TFormula.html#TFormula:klandau" title="const enum TFormula:: TFormula::klandau">klandau</a> &gt;&gt; kTFOperShit) + 5
+*-*   Any class inheriting from <a href="./TFormula.html">TFormula</a> and using directly <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a> (which
+*-*   is now a private data member), needs to be updated to take this
+*-*   in consideration.  The member functions recommended to set and
+*-*   access <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a> are:  <a href="./TFormula.html#TFormula:SetAction" title="void TFormula::SetAction(Int_t code,Int_t value,Int_t param=0)">SetAction</a>, <a href="./TFormula.html#TFormula:GetAction" title="Short_t TFormula::GetAction(Int_t code)">GetAction</a>, <a href="./TFormula.html#TFormula:GetActionParam" title="Int_t TFormula::GetActionParam(Int_t code)">GetActionParam</a>
+*-*   For more performant access to the information, see the implementation
+*-*   <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPar" title="Double_t TFormula::EvalPar(const Double_t* x,const Double_t* params=0)">EvalPar</a>
+-
+*-*   CHANGING DEFAULT SETTINGS
+*-*   =========================
+*-*   When creating complex formula , it may be necessary to increase
+*-*   some default parameters. see static function <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:SetMaxima" title="void TFormula::SetMaxima(Int_t maxop=1000,Int_t maxpar=1000,Int_t maxconst=1000)">SetMaxima</a>
+-
+*-*   WHY <a href="./TFormula.html">TFormula</a> CANNOT ACCEPT A CLASS MEMBER FUNCTION ?
+*-*   ====================================================
+*-* This is a frequently asked question.
+*-* C++ is a strongly typed language. There is no way for <a href="./TFormula.html">TFormula</a> (without
+*-* recompiling this class) to know about all possible user defined data types.
+*-* This also apply to the case of a static class function.
+*-* Because <a href="./TMath.html">TMath</a> is a special and frequent case, <a href="./TFormula.html">TFormula</a> is aware
+*-* of all <a href="./TMath.html">TMath</a> functions.
+-
+-
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TFormula:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFormula:TFormula">TFormula</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFormula:TFormula%2">TFormula</a>(<span class="keyword">const</span> <a href="./TFormula.html">TFormula</a>&amp; formula)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFormula:TFormula%1">TFormula</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* formula)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TFormula:_TFormula">~TFormula</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Analyze">Analyze</a>(<span class="keyword">const</span> <span class="keyword">char</span>* schain, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err, <a href="./ListOfTypes.html#Int_t">Int_t</a> offset = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:AnalyzeFunction">AnalyzeFunction</a>(<a href="./TString.html">TString</a>&amp; chaine, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err, <a href="./ListOfTypes.html#Int_t">Int_t</a> offset = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:Compile">Compile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Copy">Copy</a>(<a href="./TObject.html">TObject</a>&amp; formula) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFormula:DefinedString">DefinedString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:DefinedValue">DefinedValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:DefinedVariable">DefinedVariable</a>(<a href="./TString.html">TString</a>&amp; variable, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; action)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:Eval">Eval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> t = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPar">EvalPar</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalParOld">EvalParOld</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetExpFormula">GetExpFormula</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:GetLinearPart">GetLinearPart</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetNdim">GetNdim</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetNpar">GetNpar</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetNumber">GetNumber</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetParameter">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetParameter%1">GetParameter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:GetParameters">GetParameters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:GetParameters%1">GetParameters</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFormula:GetParName">GetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetParNumber">GetParNumber</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:IsLinear">IsLinear</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:IsNormalized">IsNormalized</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFormula.html">TFormula</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFormula:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TFormula.html">TFormula</a>&amp; rhs)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Optimize">Optimize</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:ProcessLinear">ProcessLinear</a>(<a href="./TString.html">TString</a>&amp; replaceformula)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetMaxima">SetMaxima</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxop = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxconst = 1000)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetNumber">SetNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParameter">SetParameter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParameter%1">SetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParameters">SetParameters</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParameters%1">SetParameters</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> p0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p1, <a href="./ListOfTypes.html#Double_t">Double_t</a> p2 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p3 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p4 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p5 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p6 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p7 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p8 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p9 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p10 = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParName">SetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetParNames">SetParNames</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name0 = <span class="string">"p0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name1 = <span class="string">"p1"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name2 = <span class="string">"p2"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name3 = <span class="string">"p3"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name4 = <span class="string">"p4"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name5 = <span class="string">"p5"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name6 = <span class="string">"p6"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name7 = <span class="string">"p7"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name8 = <span class="string">"p8"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name9 = <span class="string">"p9"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name10 = <span class="string">"p10"</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Update">Update</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:CheckOperands">CheckOperands</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> operation, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:CheckOperands%1">CheckOperands</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> leftoperand, <a href="./ListOfTypes.html#Int_t">Int_t</a> rightoperartion, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:ClearFormula">ClearFormula</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:Convert">Convert</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> fromVersion)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalParFast">EvalParFast</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive">EvalPrimitive</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive0">EvalPrimitive0</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive1">EvalPrimitive1</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive2">EvalPrimitive2</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive3">EvalPrimitive3</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:EvalPrimitive4">EvalPrimitive4</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetAction">GetAction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetActionOptimized">GetActionOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetActionParam">GetActionParam</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:GetActionParamOptimized">GetActionParamOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:GetOper">GetOper</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TFormula:GetOperOptimized">GetOperOptimized</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:IsString">IsString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> oper) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:MakePrimitive">MakePrimitive</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expr, <a href="./ListOfTypes.html#Int_t">Int_t</a> pos)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:PreCompile">PreCompile</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetAction">SetAction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <a href="./ListOfTypes.html#Int_t">Int_t</a> value, <a href="./ListOfTypes.html#Int_t">Int_t</a> param = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFormula:SetActionOptimized">SetActionOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <a href="./ListOfTypes.html#Int_t">Int_t</a> value, <a href="./ListOfTypes.html#Int_t">Int_t</a> param = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFormula:StringToNumber">StringToNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TFormula:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TFormula:kEnd"></a>kEnd</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kAdd"></a>kAdd</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kSubstract"></a>kSubstract</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kMultiply"></a>kMultiply</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kDivide"></a>kDivide</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kModulo"></a>kModulo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kcos"></a>kcos</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ksin"></a>ksin</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ktan"></a>ktan</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kacos"></a>kacos</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kasin"></a>kasin</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:katan"></a>katan</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:katan2"></a>katan2</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kfmod"></a>kfmod</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kpow"></a>kpow</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ksq"></a>ksq</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ksqrt"></a>ksqrt</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kstrstr"></a>kstrstr</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kmin"></a>kmin</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kmax"></a>kmax</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:klog"></a>klog</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kexp"></a>kexp</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:klog10"></a>klog10</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kpi"></a>kpi</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kabs"></a>kabs</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ksign"></a>ksign</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kint"></a>kint</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kSignInv"></a>kSignInv</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:krndm"></a>krndm</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kAnd"></a>kAnd</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kOr"></a>kOr</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kEqual"></a>kEqual</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kNotEqual"></a>kNotEqual</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kLess"></a>kLess</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kGreater"></a>kGreater</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kLessThan"></a>kLessThan</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kGreaterThan"></a>kGreaterThan</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kNot"></a>kNot</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kcosh"></a>kcosh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ksinh"></a>ksinh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:ktanh"></a>ktanh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kacosh"></a>kacosh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kasinh"></a>kasinh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:katanh"></a>katanh</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kStringEqual"></a>kStringEqual</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kStringNotEqual"></a>kStringNotEqual</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBitAnd"></a>kBitAnd</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBitOr"></a>kBitOr</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kLeftShift"></a>kLeftShift</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kRightShift"></a>kRightShift</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kJumpIf"></a>kJumpIf</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kJump"></a>kJump</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kexpo"></a>kexpo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxexpo"></a>kxexpo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kyexpo"></a>kyexpo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kzexpo"></a>kzexpo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxyexpo"></a>kxyexpo</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kgaus"></a>kgaus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxgaus"></a>kxgaus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kygaus"></a>kygaus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kzgaus"></a>kzgaus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxygaus"></a>kxygaus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:klandau"></a>klandau</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxlandau"></a>kxlandau</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kylandau"></a>kylandau</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kzlandau"></a>kzlandau</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxylandau"></a>kxylandau</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kpol"></a>kpol</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kxpol"></a>kxpol</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kypol"></a>kypol</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kzpol"></a>kzpol</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kParameter"></a>kParameter</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kConstant"></a>kConstant</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBoolOptimize"></a>kBoolOptimize</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kStringConst"></a>kStringConst</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kVariable"></a>kVariable</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFunctionCall"></a>kFunctionCall</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kData"></a>kData</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kUnary"></a>kUnary</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBinary"></a>kBinary</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kThree"></a>kThree</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kDefinedVariable"></a>kDefinedVariable</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kDefinedString"></a>kDefinedString</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kPlusD"></a>kPlusD</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kPlusDD"></a>kPlusDD</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kMultD"></a>kMultD</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kMultDD"></a>kMultDD</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBoolOptimizeOr"></a>kBoolOptimizeOr</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBoolOptimizeAnd"></a>kBoolOptimizeAnd</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kBoolSet"></a>kBoolSet</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFDM"></a>kFDM</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFD0"></a>kFD0</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFD1"></a>kFD1</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFD2"></a>kFD2</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kFD3"></a>kFD3</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kNotGlobal"></a>kNotGlobal</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kNormalized"></a>kNormalized</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TFormula:kLinear"></a>kLinear</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TBits.html">TBits</a></td><td class="dataname"><a name="TFormula:fAlreadyFound"></a>fAlreadyFound</td><td class="datadesc">! cache for information</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TFormula:fConst"></a>fConst</td><td class="datadesc">[fNconst] Array of fNconst formula constants</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a>*</td><td class="dataname"><a name="TFormula:fExpr"></a>fExpr</td><td class="datadesc">[fNoper] List of expressions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a>*</td><td class="dataname"><a name="TFormula:fExprOptimized"></a>fExprOptimized</td><td class="datadesc">![fNOperOptimized] List of expressions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TFormula:fFunctions"></a>fFunctions</td><td class="datadesc">Array of function calls to make</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TFormula:fLinearParts"></a>fLinearParts</td><td class="datadesc">Linear parts if the formula is linear (contains '|' or "++")</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNOperOptimized"></a>fNOperOptimized</td><td class="datadesc">!Number of operators after optimization</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a>*</td><td class="dataname"><a name="TFormula:fNames"></a>fNames</td><td class="datadesc">[fNpar] Array of parameter names</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNconst"></a>fNconst</td><td class="datadesc">Number of constants</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNdim"></a>fNdim</td><td class="datadesc">Dimension of function (1=1-Dim, 2=2-Dim,etc)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNoper"></a>fNoper</td><td class="datadesc">Number of operators</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNpar"></a>fNpar</td><td class="datadesc">Number of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNstring"></a>fNstring</td><td class="datadesc">Number of different constants character strings</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNumber"></a>fNumber</td><td class="datadesc">formula number identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFormula:fNval"></a>fNval</td><td class="datadesc">Number of different variables in expression</td></tr>
+<tr class="data"><td class="datatype">TOperOffset*</td><td class="dataname"><a name="TFormula:fOperOffset"></a>fOperOffset</td><td class="datadesc">![fNOperOptimized]         Offsets of operrands</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TFormula:fOperOptimized"></a>fOperOptimized</td><td class="datadesc">![fNOperOptimized] List of operators. (See documentation for changes made at version 7)</td></tr>
+<tr class="data"><td class="datatype">G__p2memfunc</td><td class="dataname"><a name="TFormula:fOptimal"></a>fOptimal</td><td class="datadesc">!pointer to optimal function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TFormula:fParams"></a>fParams</td><td class="datadesc">[fNpar] Array of fNpar parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>**</td><td class="dataname"><a name="TFormula:fPredefined"></a>fPredefined</td><td class="datadesc">![fNPar] predefined function  </td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TFormula:fOper"></a>fOper</td><td class="datadesc">[fNoper] List of operators. (See documentation for changes made at version 7)</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TFormula:Class_Charts"></a>Class Charts</h2>
+<map name="MapTFormula_Inh" id="MapTFormula_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="155,20,207,34"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="22,20,71,34"/>
+<area shape="rect" href="./RooFormula.html" title="RooFormula" alt="" coords="415,2,488,17"/>
+<area shape="rect" href="./TF1.html" title="TF1" alt="" coords="440,20,463,34"/>
+<area shape="rect" href="./TTreeFormula.html" title="TTreeFormula" alt="" coords="410,37,493,51"/>
+<area shape="rect" href="./TF12.html" title="TF12" alt="" coords="571,11,602,26"/>
+<area shape="rect" href="./TF2.html" title="TF2" alt="" coords="575,28,598,43"/>
+<area shape="rect" href="./TF3.html" title="TF3" alt="" coords="710,28,733,43"/>
+</map>
+<map name="MapTFormula_InhMem" id="MapTFormula_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTFormula_Lib" id="MapTFormula_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTFormula_Inh" class="tabsel" href="inh/TFormula_Inh.png" onclick="javascript:return SetImg('Charts','inh/TFormula_Inh.png');">Inheritance</a>
+<a id="imgTFormula_InhMem" class="tab" href="inhmem/TFormula_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TFormula_InhMem.png');">Inherited Members</a>
+<a id="imgTFormula_Incl" class="tab" href="incl/TFormula_Incl.png" onclick="javascript:return SetImg('Charts','incl/TFormula_Incl.png');">Includes</a>
+<a id="imgTFormula_Lib" class="tab" href="lib/TFormula_Lib.png" onclick="javascript:return SetImg('Charts','lib/TFormula_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTFormula_Inh" src="inh/TFormula_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFormula:TFormula" href="src/TFormula.cxx.html#Dsm7QC">TFormula</a>()</span><br />
+<div class="funccomm"><pre>Formula default constructor*-*-*-
+*-*                  ============================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFormula:TFormula%1" href="src/TFormula.cxx.html#eJktvE">TFormula</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* formula)</span><br />
+<div class="funccomm"><pre>Normal Formula constructor*-*-*-
+*-*                  ==========================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFormula:TFormula%2" href="src/TFormula.cxx.html#XUPIoE">TFormula</a>(<span class="keyword">const</span> <a href="./TFormula.html">TFormula</a>&amp; formula)</span><br />
+<div class="funccomm"><pre> Default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFormula.html">TFormula</a>&amp; <a class="funcname" name="TFormula:operator_" href="src/TFormula.cxx.html#ynJQWC">operator=</a>(<span class="keyword">const</span> <a href="./TFormula.html">TFormula</a>&amp; rhs)</span><br />
+<div class="funccomm"><pre> Operator =
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFormula:_TFormula" href="src/TFormula.cxx.html#gyXd_B">~TFormula</a>()</span><br />
+<div class="funccomm"><pre>Formula default destructor*-*-*-
+*-*                  ===========================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:AnalyzeFunction" href="src/TFormula.cxx.html#N_6LNC">AnalyzeFunction</a>(<a href="./TString.html">TString</a>&amp; chaine, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err, <a href="./ListOfTypes.html#Int_t">Int_t</a> offset = 0)</span><br />
+<div class="funccomm"><pre>Check if the chain as function call *-*-
+*-*              =======================================
+-
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Analyze" href="src/TFormula.cxx.html#xadIcE">Analyze</a>(<span class="keyword">const</span> <span class="keyword">char</span>* schain, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err, <a href="./ListOfTypes.html#Int_t">Int_t</a> offset = 0)</span><br />
+<div class="funccomm"><pre><a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a> a sub-expression in one formula*-*-
+*-*              =======================================
+-
+*-*   Expressions in one formula are recursively analyzed.
+*-*   Result of analysis is stored in the object tables.
+-
+*-*                  Table of function codes and errors
+*-*                  ==================================
+-
+*-*   * functions :
+-
+*-*     +           1                   pow          20
+*-*     -           2                   sq           21
+*-*     *           3                   sqrt         22
+*-*     /           4                   strstr       23
+*-*     %           5                   min          24
+*-*                                     max          25
+*-*                                     log          30
+*-*     cos         10                  exp          31
+*-*     sin         11                  log10        32
+*-*     tan         12
+*-*     acos        13                  abs          41
+*-*     asin        14                  sign         42
+*-*     atan        15                  <a href="./ListOfTypes.html#int">int</a>          43
+*-*     atan2       16
+*-*     fmod        17                  rndm         50
+-
+*-*     cosh        70                  acosh        73
+*-*     sinh        71                  asinh        74
+*-*     tanh        72                  atanh        75
+-
+*-*     expo       100                  gaus        110     gausn  (see note below)
+*-*     expo(0)    100 0                gaus(0)     110 0   gausn(0)
+*-*     expo(1)    100 1                gaus(1)     110 1   gausn(1)
+*-*     xexpo      100 x                xgaus       110 x   xgausn
+*-*     yexpo      101 x                ygaus       111 x   ygausn
+*-*     zexpo      102 x                zgaus       112 x   zgausn
+*-*     xyexpo     105 x                xygaus      115 x   xygausn
+*-*     yexpo(5)   102 5                ygaus(5)    111 5   ygausn(5)
+*-*     xyexpo(2)  105 2                xygaus(2)   115 2   xygausn(2)
+-
+*-*     landau      120 x   landaun (see note below)
+*-*     landau(0)   120 0   landaun(0)
+*-*     landau(1)   120 1   landaun(1)
+*-*     xlandau     120 x   xlandaun
+*-*     ylandau     121 x   ylandaun
+*-*     zlandau     122 x   zlandaun
+*-*     xylandau    125 x   xylandaun
+*-*     ylandau(5)  121 5   ylandaun(5)
+*-*     xylandau(2) 125 2   xylandaun(2)
+-
+*-*     pol0        130 x               pol1        130 1xx
+*-*     pol0(0)     130 0               pol1(0)     130 100
+*-*     pol0(1)     130 1               pol1(1)     130 101
+*-*     xpol0       130 x               xpol1       130 101
+*-*     ypol0       131 x               ypol1       131 101
+*-*     zpol0       132 x               zpol1       132 1xx
+*-*     ypol0(5)    131 5               ypol1(5)    131 105
+-
+*-*     pi          40
+-
+*-*     &amp;&amp;          60                  &lt;            64
+*-*     ||          61                  &gt;            65
+*-*     ==          62                  &lt;=           66
+*-*     !=          63                  =&gt;           67
+*-*     !           68
+*-*     ==(string)  76                  &amp;            78
+*-*     !=(string)  77                  |            79
+*-*     &lt;&lt;(shift)   80                  &gt;&gt;(shift)    81
+*_*     ? :         82
+-
+*-*   * constants (kConstants) :
+-
+*-*    c0  141 1      c1  141 2  etc..
+-
+*-*   * strings (<a href="./TFormula.html#TFormula:kStringConst" title="const enum TFormula:: TFormula::kStringConst">kStringConst</a>):
+-
+*-*    sX  143 x
+-
+*-*   * variables (kFormulaVar) :
+-
+*-*     x    144 0      y    144 1      z    144 2      t    144 3
+-
+*-*   * parameters :
+-
+*-*     [1]        140 1
+*-*     [2]        140 2
+*-*     etc.
+-
+*-*   special cases for normalized gaussian or landau distributions
+*-*   =============================================================
+*-*   the expression <span class="string">"gaus"</span> is a substitute for
+*-*     [0]*exp(-0.5*((x-[1])/[2])**2)
+*-*   to obtain a standard normalized gaussian, use <span class="string">"gausn"</span> instead of <span class="string">"gaus"</span>
+*-*   the expression <span class="string">"gausn"</span> is a substitute for
+*-*     [0]*exp(-0.5*((x-[1])/[2])**2)/(sqrt(2*pi)*[2]))
+*-*   WARNING: gaus and gausn are mutually exclusive in the same expression.
+-
+*-*   In the same way the expression <span class="string">"landau"</span> is a substitute for
+*-*     [0]*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Landau" title="Double_t TMath::Landau(Double_t x,Double_t mpv=0,Double_t sigma=1,Bool_t norm=kFALSE)">Landau</a>(x,[1],[2],<a href="./ListOfTypes.html#Bool_t">kFALSE</a>)
+*-*   to obtain a standard normalized landau, use <span class="string">"landaun"</span> instead of <span class="string">"landau"</span>
+*-*   the expression <span class="string">"landaun"</span> is a substitute for
+*-*     [0]*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Landau" title="Double_t TMath::Landau(Double_t x,Double_t mpv=0,Double_t sigma=1,Bool_t norm=kFALSE)">Landau</a>(x,[1],[2],<a href="./ListOfTypes.html#Bool_t">kTRUE</a>)
+*-*   WARNING: landau and landaun are mutually exclusive in the same expression.
+-
+*-*   boolean optimization (kBoolOptmize) :
+*-*   =====================================
+-
+*-*     Those pseudo operation are used to implement lazy evaluation of
+*-*     &amp;&amp; and ||.  When the left hand of the expression if <a href="./ListOfTypes.html#bool">false</a>
+*-*     (respectively <a href="./ListOfTypes.html#bool">true</a>), the evaluation of the right is entirely skipped
+*-*     (since it would not change the value of the expreession).
+-
+*-*     &amp;&amp;   142 11 (one operation on right) 142 21 (2 operations on right)
+*-*     ||   142 12 (one operation on right) 142 22 (2 operations on right)
+-
+*-*   * functions calls (<a href="./TFormula.html#TFormula:kFunctionCall" title="const enum TFormula:: TFormula::kFunctionCall">kFunctionCall</a>) :
+-
+*-*    f0 145  0  f1 145  1  etc..
+-
+*-*   errors :
+*-*   ========
+-
+*-*     1  : Division By Zero
+*-*     2  : Invalid Floating Point Operation
+*-*     4  : Empty String
+*-*     5  : invalid syntax
+*-*     6  : Too many operators
+*-*     7  : Too many parameters
+*-*    10  : z specified but not x and y
+*-*    11  : z and y specified but not x
+*-*    12  : y specified but not x
+*-*    13  : z and x specified but not y
+*-*    20  : non integer value for parameter number
+*-*    21  : atan2 requires two arguments
+*-*    22  : pow requires two arguments
+*-*    23  : degree of polynomial not specified
+*-*    24  : Degree of polynomial must be positive
+*-*    25  : Degree of polynomial must be less than 20
+*-*    26  : Unknown name
+*-*    27  : Too many constants in expression
+*-*    28  : strstr requires two arguments
+*-*    29  : interpreted or compiled function have to return a numerical type
+*-*    30  : Bad numerical expression
+*-*    31  : Part of the variable exist but some of it is not accessible or useable
+*-*    40  : <span class="string">'('</span> is expected
+*-*    41  : <span class="string">')'</span> is expected
+*-*    42  : <span class="string">'['</span> is expected
+*-*    43  : <span class="string">']'</span> is expected
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/analyze.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+-
+*-*  Special functions
+*-*  -----------------
+*-*  By default, the formula is assigned <a href="./TFormula.html#TFormula:fNumber" title="Int_t TFormula::fNumber">fNumber</a>=0. However, the following
+*-*  formula built with simple functions are assigned  <a href="./TFormula.html#TFormula:fNumber" title="Int_t TFormula::fNumber">fNumber</a>:
+*-*    <span class="string">"gaus"</span>      100  (or gausn)
+*-*    <span class="string">"xygaus"</span>    110
+*-*    <span class="string">"expo"</span>      200
+*-*    <span class="string">"polN"</span>      300+N
+*-*    <span class="string">"landau"</span>    400
+*-*    <span class="string">"xylandau"</span>  410
+*-*  Note that expressions like gaus(0), expo(1) will force <a href="./TFormula.html#TFormula:fNumber" title="Int_t TFormula::fNumber">fNumber</a>=0
+-
+*-*  <a href="./TObject.html#TObject:Warning" title="void TObject::Warning(const char* method,const char* msgfmt)">Warning</a> when deriving a class from <a href="./TFormula.html">TFormula</a>
+*-*  -------------------------------------------
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:CheckOperands" href="src/TFormula.cxx.html#syMZU">CheckOperands</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> operation, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err)</span><br />
+<div class="funccomm"><pre> Check whether the operand at 'oper-1' is compatible with the operation at 'oper'.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:CheckOperands%1" href="src/TFormula.cxx.html#BitWgD">CheckOperands</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> leftoperand, <a href="./ListOfTypes.html#Int_t">Int_t</a> rightoperartion, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; err)</span><br />
+<div class="funccomm"><pre> Check whether the operands at 'leftoper' and 'oper-1' are compatible with the operation at 'oper'.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:StringToNumber" href="src/TFormula.cxx.html#MA5CbC">StringToNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</span><br />
+<div class="funccomm"><pre> Try to 'demote' a string into an array bytes.  If this is not possible,
+ return <a href="./ListOfTypes.html#bool">false</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Clear" href="src/TFormula.cxx.html#X9aS6E">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>Resets the objects*-*-
+*-*              ==================
+-
+*-* Resets the object to its state before compilation.
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:ClearFormula" href="src/TFormula.cxx.html#inTFu">ClearFormula</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>Resets the objects*-*-
+*-*              ==================
+-
+*-* Resets the object to its state before compilation.
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:Compile" href="src/TFormula.cxx.html#yUkim">Compile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>-*-*-*-*-*<a href="./TFormula.html#TFormula:Compile" title="Int_t TFormula::Compile(const char* expression=&quot;&quot;)">Compile</a> expression already stored in fTitle
+*-*                  ===========================================
+-
+*-*   Loop on all subexpressions of formula stored in fTitle
+-
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/compile.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Copy" href="src/TFormula.cxx.html#nw9Yw">Copy</a>(<a href="./TObject.html">TObject</a>&amp; formula) const</span><br />
+<div class="funccomm"><pre><a href="./TFormula.html#TFormula:Copy" title="void TFormula::Copy(TObject&amp; formula)">Copy</a> this formula*-*-*-*-*-*-*-*-
+*-*                  =================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">char</span> * <a class="funcname" name="TFormula:DefinedString" href="src/TFormula.cxx.html#JJ_qQC">DefinedString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</span><br />
+<div class="funccomm"><pre>Return address of string corresponding to special code
+*-*        ======================================================
+-
+*-*   This member function is inactive in the <a href="./TFormula.html">TFormula</a> class.
+*-*   It may be redefined in derived classes.
+-
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:DefinedValue" href="src/TFormula.cxx.html#nCJT5E">DefinedValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)</span><br />
+<div class="funccomm"><pre>Return value corresponding to special code*-*-*-
+*-*        ==========================================
+-
+*-*   This member function is inactive in the <a href="./TFormula.html">TFormula</a> class.
+*-*   It may be redefined in derived classes.
+-
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:DefinedVariable" href="src/TFormula.cxx.html#jBinjB">DefinedVariable</a>(<a href="./TString.html">TString</a>&amp; variable, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; action)</span><br />
+<div class="funccomm"><pre>-*Check if expression is in the list of defined variables
+*-*        =======================================================
+-
+*-*   This member function can be overloaded in derived classes
+-
+*-*   If you overload this member function, you also HAVE TO
+*-*   never call the constructor:
+-
+*-*     <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:TFormula" title="TFormula TFormula::TFormula() or overloads">TFormula</a>(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression)
+-
+*-*   and write your own constructor
+-
+*-*     MyClass::MyClass(const <a href="./ListOfTypes.html#char">char</a> *name,const <a href="./ListOfTypes.html#char">char</a> *expression) : <a href="./TFormula.html">TFormula</a>()
+-
+*-*   which has to call the <a href="./TFormula.html">TFormula</a> default constructor and whose implementation
+*-*   should be similar to the implementation of the normal <a href="./TFormula.html">TFormula</a> constructor
+-
+*-*   This is necessary because the normal <a href="./TFormula.html">TFormula</a> constructor call indirectly
+*-*   the virtual member functions <a href="./TFormula.html#TFormula:Analyze" title="void TFormula::Analyze(const char* schain,Int_t&amp; err,Int_t offset=0)">Analyze</a>, DefaultString, DefaultValue
+*-*   and DefaultVariable.
+-
+*-*   The expected returns values are
+*-*     -2 :  the name has been recognized but won't be usable
+*-*     -1 :  the name has not been recognized
+*-*    &gt;=0 :  the name has been recognized, return the action parameter.
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:Eval" href="src/TFormula.cxx.html#M7KQQ">Eval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> t = 0) const</span><br />
+<div class="funccomm"><pre>Evaluate this formula*-*-*-*-*-*-
+*-*                  =====================
+-
+*-*   The current value of variables x,y,z,t is passed through x, y, z and t.
+*-*   The parameters used will be the ones in the array params if params is given
+*-*    otherwise parameters will be taken from the stored data members <a href="./TFormula.html#TFormula:fParams" title="Double_t* TFormula::fParams">fParams</a>
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalParOld" href="src/TFormula.cxx.html#OzxFaC">EvalParOld</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params = 0)</span><br />
+<div class="funccomm"><pre>Evaluate this formula*-*-*-*-*-*-
+*-*                  =====================
+-
+*-*   The current value of variables x,y,z,t is passed through the pointer x.
+*-*   The parameters used will be the ones in the array params if params is given
+*-*    otherwise parameters will be taken from the stored data members <a href="./TFormula.html#TFormula:fParams" title="Double_t* TFormula::fParams">fParams</a>
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/eval.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+-
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TFormula:GetExpFormula" href="src/TFormula.cxx.html#nlxnrC">GetExpFormula</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre>Reconstruct the formula expression from*-*-
+*-*              the internal <a href="./TFormula.html">TFormula</a> member variables
+*-*              =======================================
+-
+*-*   This function uses the internal member variables of <a href="./TFormula.html">TFormula</a> to
+*-*   construct the mathematical expression associated with the <a href="./TFormula.html">TFormula</a>
+*-*   instance. This function can be used to get an expanded version of the
+*-*   expression originally assigned to the <a href="./TFormula.html">TFormula</a> instance, i.e. that
+*-*   the string returned by <a href="./TFormula.html#TFormula:GetExpFormula" title="TString TFormula::GetExpFormula(Option_t* option=&quot;&quot;)">GetExpFormula</a>() doesn't depend on other
+*-*   <a href="./TFormula.html">TFormula</a> object names.
+-
+*-*  if option contains <span class="string">"p"</span> the returned string will contain the formula
+*-*  expression with symbolic parameters, eg [0] replaced by the actual value
+*-*  of the parameter. Example:
+*-*  if expression in formula is: <span class="string">"[0]*(x&gt;-[1])+[2]*exp(-[3]*x)"</span>
+*-*  and parameters are 3.25,-4.01,4.44,-0.04, <a href="./TFormula.html#TFormula:GetExpFormula" title="TString TFormula::GetExpFormula(Option_t* option=&quot;&quot;)">GetExpFormula</a>(<span class="string">"p"</span>) will return:
+*-*   <span class="string">"(3.25*(x&gt;+4.01))+(4.44*exp(+0.04*x))"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TObject.html">TObject</a>* <a class="funcname" name="TFormula:GetLinearPart" href="src/TFormula.cxx.html#Uzoy_C">GetLinearPart</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i)</span><br />
+<div class="funccomm"><pre> Return linear part.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:GetParameter" href="src/TFormula.cxx.html#pW8lnE">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+<div class="funccomm"><pre>return value of parameter number ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:GetParameter%1" href="src/TFormula.cxx.html#kthGVC">GetParameter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre>return value of parameter named parName
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFormula:GetParName" href="src/TFormula.cxx.html#fnW3WB">GetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+<div class="funccomm"><pre>Return name of one parameter*-*-*-*-*-*-*-*-
+*-*            ============================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetParNumber" href="src/TFormula.cxx.html#VOioX">GetParNumber</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> return parameter number by name
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:IsString" href="src/TFormula.cxx.html#bpd7SD">IsString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> oper) const</span><br />
+<div class="funccomm"><pre> return <a href="./ListOfTypes.html#bool">true</a> if the expression at the index 'oper' is to be treated as
+ as string
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Print" href="src/TFormula.cxx.html#xt1xd">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre>-*<a href="./TObject.html#TObject:Dump" title="void TObject::Dump()">Dump</a> this formula with its attributes
+*-*                  =====================================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:ProcessLinear" href="src/TFormula.cxx.html#INO2BE">ProcessLinear</a>(<a href="./TString.html">TString</a>&amp; replaceformula)</span><br />
+<div class="funccomm"><pre>if the formula is for linear fitting, change the title to
+normal and fill the LinearParts array
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParameter" href="src/TFormula.cxx.html#Mf5CO">SetParameter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</span><br />
+<div class="funccomm"><pre>Initialize parameter number ipar*-*-*-*-*-
+*-*            ================================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParameter%1" href="src/TFormula.cxx.html#M2kM4B">SetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</span><br />
+<div class="funccomm"><pre>Initialize parameter number ipar*-*-*-*-*-
+*-*            ================================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParameters" href="src/TFormula.cxx.html#mELgWC">SetParameters</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre> Initialize array of all parameters
+ see also next function with same name
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParameters%1" href="src/TFormula.cxx.html#Pa_jBD">SetParameters</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> p0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p1, <a href="./ListOfTypes.html#Double_t">Double_t</a> p2 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p3 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p4 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p5 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p6 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p7 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p8 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p9 = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> p10 = 0)</span><br />
+<div class="funccomm"><pre> Initialize up to 10 parameters
+ All arguments except THE FIRST TWO are optional
+ In case of a function with only one parameter, call this function with p1=0.
+ Minimum two arguments are required to differentiate this function
+ from the <a href="./TFormula.html#TFormula:SetParameters" title="void TFormula::SetParameters(const Double_t* params) or overloads">SetParameters</a>(cont <a href="./ListOfTypes.html#Double_t">Double_t</a> *params)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParName" href="src/TFormula.cxx.html#xpiY5D">SetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <span class="keyword">const</span> <span class="keyword">char</span>* name)</span><br />
+<div class="funccomm"><pre> Set name of parameter number ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetParNames" href="src/TFormula.cxx.html#kgev6C">SetParNames</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name0 = <span class="string">"p0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name1 = <span class="string">"p1"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name2 = <span class="string">"p2"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name3 = <span class="string">"p3"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name4 = <span class="string">"p4"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name5 = <span class="string">"p5"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name6 = <span class="string">"p6"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name7 = <span class="string">"p7"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name8 = <span class="string">"p8"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name9 = <span class="string">"p9"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* name10 = <span class="string">"p10"</span>)</span><br />
+<div class="funccomm"><pre>Set up to 10 parameter names*-*-*-*-*-
+*-*                ============================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Streamer" href="src/TFormula.cxx.html#l8dAjC">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre>Stream a class object*-*-*-*-*-*-*-
+*-*              =========================================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Convert" href="src/TFormula.cxx.html#AZKqa">Convert</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> fromVersion)</span><br />
+<div class="funccomm"><pre> <a href="./TFormula.html#TFormula:Convert" title="void TFormula::Convert(UInt_t fromVersion)">Convert</a> the <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a> of a <a href="./TFormula.html">TFormula</a> version fromVersion to the current in memory version
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:MakePrimitive" href="src/TFormula.cxx.html#oTldjC">MakePrimitive</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expr, <a href="./ListOfTypes.html#Int_t">Int_t</a> pos)</span><br />
+<div class="funccomm"><pre>
+  <a href="./TFormula.html#TFormula:MakePrimitive" title="void TFormula::MakePrimitive(const char* expr,Int_t pos)">MakePrimitive</a>
+  find <a href="./TFormulaPrimitive.html">TFormulaPrimitive</a> replacement for some operands
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Optimize" href="src/TFormula.cxx.html#XmEwlD">Optimize</a>()</span><br />
+<div class="funccomm"><pre>
+ MI include
+
+ <a href="./TFormula.html#TFormula:Optimize" title="void TFormula::Optimize()">Optimize</a> formula
+ 1.) Minimize the number of operands
+     a.)  several operanands are glued togther
+     b.)  some primitive functions glued together - exemp. (x+y) =&gt; PlusXY(x,y)
+     c.)  maximize number of standard calls minimizing number of jumps in <a href="./TFormula.html#TFormula:Eval" title="Double_t TFormula::Eval(Double_t x,Double_t y=0,Double_t z=0,Double_t t=0)">Eval</a> cases
+     d.)  variables, parameters and constants are mapped - using fOperOfssets0
+          <a href="./TFormula.html#TFormula:Eval" title="Double_t TFormula::Eval(Double_t x,Double_t y=0,Double_t z=0,Double_t t=0)">Eval</a> procedure use direct acces to data (only one corresponding case statement in eval procedure)
+
+          pdata[operand={Var,Par,Const}][offset]
+          pdata[fOperOffsets0[i]][fOperOffset1[i+1]]
+ 2.) The fastest evaluation function is choosen at the end
+     a.) <a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a> := pointer to the fastest function for given evaluation string
+             switch(<a href="./TFormula.html#TFormula:GetActionOptimized" title="Short_t TFormula::GetActionOptimized(Int_t code)">GetActionOptimized</a>(0)){
+               case <a href="./TFormula.html#TFormula:kData" title="const enum TFormula:: TFormula::kData">kData</a> : {<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>= (<a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>::<a href="./ListOfTypes.html#TFormulaPrimitive__TFuncG">TFuncG</a>)&amp;<a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPrimitive0" title="Double_t TFormula::EvalPrimitive0(const Double_t* x,const Double_t* params)">EvalPrimitive0</a>; break;}
+               case <a href="./TFormula.html#TFormula:kUnary" title="const enum TFormula:: TFormula::kUnary">kUnary</a> : {<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>= (<a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>::<a href="./ListOfTypes.html#TFormulaPrimitive__TFuncG">TFuncG</a>)&amp;<a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPrimitive1" title="Double_t TFormula::EvalPrimitive1(const Double_t* x,const Double_t* params)">EvalPrimitive1</a>; break;}
+               case <a href="./TFormula.html#TFormula:kBinary" title="const enum TFormula:: TFormula::kBinary">kBinary</a> : {<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>= (<a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>::<a href="./ListOfTypes.html#TFormulaPrimitive__TFuncG">TFuncG</a>)&amp;<a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPrimitive2" title="Double_t TFormula::EvalPrimitive2(const Double_t* x,const Double_t* params)">EvalPrimitive2</a>; break;}
+               case <a href="./TFormula.html#TFormula:kThree" title="const enum TFormula:: TFormula::kThree">kThree</a> : {<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>= (<a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>::<a href="./ListOfTypes.html#TFormulaPrimitive__TFuncG">TFuncG</a>)&amp;<a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPrimitive3" title="Double_t TFormula::EvalPrimitive3(const Double_t* x,const Double_t* params)">EvalPrimitive3</a>; break;}
+               case <a href="./TFormula.html#TFormula:kFDM" title="const enum TFormula:: TFormula::kFDM">kFDM</a> : {<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>= (<a href="./TFormulaPrimitive.html">TFormulaPrimitive</a>::<a href="./ListOfTypes.html#TFormulaPrimitive__TFuncG">TFuncG</a>)&amp;<a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:EvalPrimitive4" title="Double_t TFormula::EvalPrimitive4(const Double_t* x,const Double_t* params)">EvalPrimitive4</a>; break;}
+             }
+     b.) ex. <a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a> = ::<a href="./TFormula.html#TFormula:EvalPrimitive0" title="Double_t TFormula::EvalPrimitive0(const Double_t* x,const Double_t* params)">EvalPrimitive0</a> - if it return only variable, constant or parameter
+                      = ::EvalParameter1 - if only one unary operation
+                      = ::<a href="./TFormula.html#TFormula:EvalPrimitive2" title="Double_t TFormula::EvalPrimitive2(const Double_t* x,const Double_t* params)">EvalPrimitive2</a> - if only one binary operation
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive" href="src/TFormula.cxx.html#Svc4jC">EvalPrimitive</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive0" href="src/TFormula.cxx.html#JUHMcB">EvalPrimitive0</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive1" href="src/TFormula.cxx.html#xi4KcB">EvalPrimitive1</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive2" href="src/TFormula.cxx.html#h2kOcB">EvalPrimitive2</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive3" href="src/TFormula.cxx.html#VFWNcB">EvalPrimitive3</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPrimitive4" href="src/TFormula.cxx.html#FZCRcB">EvalPrimitive4</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>
+Evaluate primitive formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalParFast" href="src/TFormula.cxx.html#VycLvC">EvalParFast</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+<div class="funccomm"><pre>Evaluate this formula*-*-*-*-*-*-
+*-*                  =====================
+-
+*-*   The current value of variables x,y,z,t is passed through the pointer x.
+*-*   The parameters used will be the ones in the array params if params is given
+*-*    otherwise parameters will be taken from the stored data members <a href="./TFormula.html#TFormula:fParams" title="Double_t* TFormula::fParams">fParams</a>
+
+</pre><!-- TDocHtmlDirective start -->   /*
+   <img src="gif/eval.gif">
+   */
+<!-- TDocHtmlDirective end --><pre>
+-
+-
+-
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:PreCompile" href="src/TFormula.cxx.html#YzD1JB">PreCompile</a>()</span><br />
+<div class="funccomm"><pre>
+Pre compile function
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetMaxima" href="src/TFormula.cxx.html#FMwKpC">SetMaxima</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> maxop = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxconst = 1000)</span><br />
+<div class="funccomm"><pre> static function to set the maximum value of 3 parameters
+  -maxop    : maximum number of operations
+  -maxpar   : maximum number of parameters
+  -maxconst : maximum number of constants
+ None of these parameters cannot be less than 10 (default is 1000)
+ call this function to increase one or all maxima when processing
+ very complex formula, eg <a href="./TFormula.html">TFormula</a>::<a href="./TFormula.html#TFormula:SetMaxima" title="void TFormula::SetMaxima(Int_t maxop=1000,Int_t maxpar=1000,Int_t maxconst=1000)">SetMaxima</a>(100000,1000,1000000);
+ If you process many functions with a small number of operations/parameters
+ you may gain some memory and performance by decreasing these values.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a>     * <a class="funcname" name="TFormula:GetOper" href="src/TFormula.h.html#A.jX5">GetOper</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Short_t">Short_t</a> <a class="funcname" name="TFormula:GetAction" href="src/TFormula.h.html#FCKIVB">GetAction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a>[code] &gt;&gt; kTFOperShift; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetActionParam" href="src/TFormula.h.html#BQFxFB">GetActionParam</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOper" title="Int_t* TFormula::fOper">fOper</a>[code] &amp; kTFOperMask; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetAction" href="src/TFormula.h.html#bQrUVB">SetAction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <a href="./ListOfTypes.html#Int_t">Int_t</a> value, <a href="./ListOfTypes.html#Int_t">Int_t</a> param = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a>     * <a class="funcname" name="TFormula:GetOperOptimized" href="src/TFormula.h.html#PRdwoE">GetOperOptimized</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOperOptimized" title="Int_t* TFormula::fOperOptimized">fOperOptimized</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Short_t">Short_t</a> <a class="funcname" name="TFormula:GetActionOptimized" href="src/TFormula.h.html#sQPUXB">GetActionOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOperOptimized" title="Int_t* TFormula::fOperOptimized">fOperOptimized</a>[code] &gt;&gt; kTFOperShift; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetActionParamOptimized" href="src/TFormula.h.html#feVP9C">GetActionParamOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFormula.html#TFormula:fOperOptimized" title="Int_t* TFormula::fOperOptimized">fOperOptimized</a>[code] &amp; kTFOperMask; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetActionOptimized" href="src/TFormula.h.html#TlAFXB">SetActionOptimized</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <a href="./ListOfTypes.html#Int_t">Int_t</a> value, <a href="./ListOfTypes.html#Int_t">Int_t</a> param = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFormula:EvalPar" href="src/TFormula.h.html#I7p6NB">EvalPar</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* params = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> ((*<span class="keyword">this</span>).*<a href="./TFormula.html#TFormula:fOptimal" title="G__p2memfunc TFormula::fOptimal">fOptimal</a>)(x,params);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetNdim" href="src/TFormula.h.html#TQWbLC">GetNdim</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TFormula.html#TFormula:fNdim" title="Int_t TFormula::fNdim">fNdim</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetNpar" href="src/TFormula.h.html#XQgiOC">GetNpar</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TFormula.html#TFormula:fNpar" title="Int_t TFormula::fNpar">fNpar</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFormula:GetNumber" href="src/TFormula.h.html#jXXMiC">GetNumber</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TFormula.html#TFormula:fNumber" title="Int_t TFormula::fNumber">fNumber</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>   * <a class="funcname" name="TFormula:GetParameters" href="src/TFormula.h.html#S0mqGE">GetParameters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TFormula.html#TFormula:fParams" title="Double_t* TFormula::fParams">fParams</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:GetParameters%1" href="src/TFormula.h.html#YQVUwE">GetParameters</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* params)</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">for</span>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0;i&lt;<a href="./TFormula.html#TFormula:fNpar" title="Int_t TFormula::fNpar">fNpar</a>;i++) params[i] = <a href="./TFormula.html#TFormula:fParams" title="Double_t* TFormula::fParams">fParams</a>[i];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:IsLinear" href="src/TFormula.h.html#xvUubB">IsLinear</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TFormula.html#TFormula:kLinear" title="const enum TFormula:: TFormula::kLinear">kLinear</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFormula:IsNormalized" href="src/TFormula.h.html#dTR.dC">IsNormalized</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TFormula.html#TFormula:kNormalized" title="const enum TFormula:: TFormula::kNormalized">kNormalized</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:SetNumber" href="src/TFormula.h.html#hlFaAC">SetNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TFormula.html#TFormula:fNumber" title="Int_t TFormula::fNumber">fNumber</a> = number;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFormula:Update" href="src/TFormula.h.html#qOwjPE">Update</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Nicolas+Brun"> Nicolas Brun   19/08/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/hist:$Id: TFormula.h 30176 2009-09-15 15:42:11Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:13</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

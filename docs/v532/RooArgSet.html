@@ -1,0 +1,643 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:26:41 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooArgSet</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooArgSet','libRooFitCore','RooArgSet.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooArgSet.h.html">header file</a>
+<a class="descrheadentry" href="src/RooArgSet.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/inc/RooArgSet.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/src/RooArgSet.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooArgSet:description">class description</a> 
+<a class="descrheadentry" href="#RooArgSet:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooArgSet:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooArgSet:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOFITCORE_Index.html">ROOFITCORE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooArgSet</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooArgSet:description"></a>class RooArgSet: public <a href="./RooAbsCollection.html">RooAbsCollection</a></h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./RooArgSet.html">RooArgSet</a> is a container object that can hold multiple <a href="./RooAbsArg.html">RooAbsArg</a> objects.
+ The container has set semantics which means that:
+
+  - Every object it <a href="./RooAbsCollection.html#RooAbsCollection:contains" title="Bool_t RooAbsCollection::contains(const RooAbsArg&amp; var)">contains</a> must have a unique name returned by <a href="./RooAbsCollection.html#RooAbsCollection:GetName" title="const char* RooAbsCollection::GetName()">GetName</a>().
+
+  - Contained objects are not ordered, although the set can be traversed
+    using an <a href="./RooAbsCollection.html#RooAbsCollection:iterator" title="RooLinkedListIter RooAbsCollection::iterator(Bool_t dir=kIterForward)">iterator</a> returned by <a href="./RooAbsCollection.html#RooAbsCollection:createIterator" title="TIterator* RooAbsCollection::createIterator(Bool_t dir=kIterForward)">createIterator</a>(). The <a href="./RooAbsCollection.html#RooAbsCollection:iterator" title="RooLinkedListIter RooAbsCollection::iterator(Bool_t dir=kIterForward)">iterator</a> does not
+    necessarily follow the object insertion order.
+
+  - Objects can be retrieved by name only, and not by index.
+
+
+ Ownership of contents.
+
+ Unowned objects are inserted with the <a href="./RooArgSet.html#RooArgSet:add" title="Bool_t RooArgSet::add(const RooAbsArg&amp; var,Bool_t silent=kFALSE) or overloads">add</a>() method. Owned objects
+ are added with <a href="./RooArgSet.html#RooArgSet:addOwned" title="Bool_t RooArgSet::addOwned(RooAbsArg&amp; var,Bool_t silent=kFALSE) or overloads">addOwned</a>() or <a href="./RooArgSet.html#RooArgSet:addClone" title="RooAbsArg* RooArgSet::addClone(const RooAbsArg&amp; var,Bool_t silent=kFALSE) or overloads">addClone</a>(). A <a href="./RooArgSet.html">RooArgSet</a> either owns all
+ of it contents, or none, which is determined by the <a href="./RooAbsCollection.html#RooAbsCollection:first" title="RooAbsArg* RooAbsCollection::first()">first</a> &lt;<a href="./RooArgSet.html#RooArgSet:add" title="Bool_t RooArgSet::add(const RooAbsArg&amp; var,Bool_t silent=kFALSE) or overloads">add</a>&gt;
+ call. Once an ownership status is selected, inappropriate &lt;<a href="./RooArgSet.html#RooArgSet:add" title="Bool_t RooArgSet::add(const RooAbsArg&amp; var,Bool_t silent=kFALSE) or overloads">add</a>&gt; calls
+ will return error status. Clearing the list via <a href="./RooAbsCollection.html#RooAbsCollection:removeAll" title="void RooAbsCollection::removeAll()">removeAll</a>() resets the
+ ownership status. Arguments supplied in the constructor are always added
+ as unowned elements.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooArgSet:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet">RooArgSet</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%1">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgList.html">RooArgList</a>&amp; list)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%4">RooArgSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%2">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgList.html">RooArgList</a>&amp; list, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>* var1)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%3">RooArgSet</a>(<span class="keyword">const</span> <a href="./TCollection.html">TCollection</a>&amp; tcoll, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%6">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%15">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; other, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%5">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set1, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set2, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%7">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%8">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%9">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%10">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%11">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%12">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%13">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var8, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooArgSet:RooArgSet%14">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var8, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var9, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooArgSet:_RooArgSet">~RooArgSet</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:add">add</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:add%1">add</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; list, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooAbsArg.html">RooAbsArg</a>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:addClone">addClone</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:addClone%1">addClone</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; list, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:addOwned">addOwned</a>(<a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:addOwned%1">addOwned</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; list, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:allInRange"><span class="baseclass">RooAbsCollection::</span>allInRange</a>(<span class="keyword">const</span> <span class="keyword">char</span>* rangeSpec) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:assignFast"><span class="baseclass">RooAbsCollection::</span>assignFast</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; other, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> setValDirty = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsCollection.html">RooAbsCollection</a>&amp;</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:assignValueOnly"><span class="baseclass">RooAbsCollection::</span>assignValueOnly</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; other, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> oneSafe = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:cleanup">cleanup</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:clone">clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:Clone"><span class="baseclass">RooAbsCollection::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:contains"><span class="baseclass">RooAbsCollection::</span>contains</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:containsInstance"><span class="baseclass">RooAbsCollection::</span>containsInstance</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">string</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:contentsString"><span class="baseclass">RooAbsCollection::</span>contentsString</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:create">create</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TIterator.html">TIterator</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:createIterator"><span class="baseclass">RooAbsCollection::</span>createIterator</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> dir = <a href="./ListOfTypes.html#Bool_t">kIterForward</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:defaultPrintContents"><span class="baseclass">RooAbsCollection::</span>defaultPrintContents</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#ostream">ostream</a>&amp;</td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:defaultPrintStream"><span class="baseclass">RooPrintable::</span>defaultPrintStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>* os = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./RooPrintable.html">RooPrintable</a>::StyleOption</td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:defaultPrintStyle"><span class="baseclass">RooPrintable::</span>defaultPrintStyle</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:dump"><span class="baseclass">RooAbsCollection::</span>dump</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:equals"><span class="baseclass">RooAbsCollection::</span>equals</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; otherColl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsArg.html">RooAbsArg</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:find"><span class="baseclass">RooAbsCollection::</span>find</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsArg.html">RooAbsArg</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:find%1"><span class="baseclass">RooAbsCollection::</span>find</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp;) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsArg.html">RooAbsArg</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:first"><span class="baseclass">RooAbsCollection::</span>first</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooFIter.html">RooFIter</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:fwdIterator"><span class="baseclass">RooAbsCollection::</span>fwdIterator</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:getCatIndex">getCatIndex</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> defVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:getCatLabel">getCatLabel</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* defVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:getHashTableSize"><span class="baseclass">RooAbsCollection::</span>getHashTableSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:GetName"><span class="baseclass">RooAbsCollection::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:getRealValue">getRealValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> defVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:getSize"><span class="baseclass">RooAbsCollection::</span>getSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:getStringValue">getStringValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* defVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:isInRange">isInRange</a>(<span class="keyword">const</span> <span class="keyword">char</span>* rangeSpec)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:isOwning"><span class="baseclass">RooAbsCollection::</span>isOwning</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooLinkedListIter.html">RooLinkedListIter</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:iterator"><span class="baseclass">RooAbsCollection::</span>iterator</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> dir = <a href="./ListOfTypes.html#Bool_t">kIterForward</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:nameFieldLength"><span class="baseclass">RooPrintable::</span>nameFieldLength</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> newLen)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:operator_delete">operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#RooArgSet:operator_new">operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> bytes)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooArgSet.html">RooArgSet</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooArgSet:operator_">operator=</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; other)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsArg.html">RooAbsArg</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooArgSet:operator[]">operator[]</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:overlaps"><span class="baseclass">RooAbsCollection::</span>overlaps</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; otherColl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:Print"><span class="baseclass">RooAbsCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* options = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:printAddress"><span class="baseclass">RooPrintable::</span>printAddress</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:printArgs"><span class="baseclass">RooPrintable::</span>printArgs</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printClassName"><span class="baseclass">RooAbsCollection::</span>printClassName</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:printExtras"><span class="baseclass">RooPrintable::</span>printExtras</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printLatex%1"><span class="baseclass">RooAbsCollection::</span>printLatex</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; ofs, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncol, <span class="keyword">const</span> <span class="keyword">char</span>* option = <span class="string">"NEYU"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> sigDigit = 1, <span class="keyword">const</span> <a href="./RooLinkedList.html">RooLinkedList</a>&amp; siblingLists = <a href="./RooLinkedList.html">RooLinkedList</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>* formatCmd = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printLatex"><span class="baseclass">RooAbsCollection::</span>printLatex</a>(<span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg1 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg2 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg3 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg4 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg5 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg6 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg7 = <a href="./RooCmdArg.html">RooCmdArg</a>(), <span class="keyword">const</span> <a href="./RooCmdArg.html">RooCmdArg</a>&amp; arg8 = <a href="./RooCmdArg.html">RooCmdArg</a>()) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printMultiline"><span class="baseclass">RooAbsCollection::</span>printMultiline</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os, <a href="./ListOfTypes.html#Int_t">Int_t</a> contents, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>, <a href="./TString.html">TString</a> indent = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printName"><span class="baseclass">RooAbsCollection::</span>printName</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:printStream"><span class="baseclass">RooPrintable::</span>printStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os, <a href="./ListOfTypes.html#Int_t">Int_t</a> contents, <a href="./RooPrintable.html">RooPrintable</a>::StyleOption style, <a href="./TString.html">TString</a> indent = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printTitle"><span class="baseclass">RooAbsCollection::</span>printTitle</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooPrintable.html#RooPrintable:printTree"><span class="baseclass">RooPrintable::</span>printTree</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os, <a href="./TString.html">TString</a> indent = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:printValue"><span class="baseclass">RooAbsCollection::</span>printValue</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:readFromFile">readFromFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName, <span class="keyword">const</span> <span class="keyword">char</span>* flagReadAtt = 0, <span class="keyword">const</span> <span class="keyword">char</span>* section = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:readFromStream">readFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; is, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:readFromStream%1">readFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; is, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <span class="keyword">const</span> <span class="keyword">char</span>* flagReadAtt, <span class="keyword">const</span> <span class="keyword">char</span>* section, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:releaseOwnership"><span class="baseclass">RooAbsCollection::</span>releaseOwnership</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:remove"><span class="baseclass">RooAbsCollection::</span>remove</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> matchByNameOnly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:remove%1"><span class="baseclass">RooAbsCollection::</span>remove</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; list, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> matchByNameOnly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:removeAll"><span class="baseclass">RooAbsCollection::</span>removeAll</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:replace%1"><span class="baseclass">RooAbsCollection::</span>replace</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; other)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:replace"><span class="baseclass">RooAbsCollection::</span>replace</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsCollection.html">RooAbsCollection</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:selectByAttrib"><span class="baseclass">RooAbsCollection::</span>selectByAttrib</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> value) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsCollection.html">RooAbsCollection</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:selectByName"><span class="baseclass">RooAbsCollection::</span>selectByName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* nameList, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsCollection.html">RooAbsCollection</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:selectCommon"><span class="baseclass">RooAbsCollection::</span>selectCommon</a>(<span class="keyword">const</span> <a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; refColl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:setAttribAll"><span class="baseclass">RooAbsCollection::</span>setAttribAll</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Text_t">Text_t</a>* name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> value = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:setCatIndex">setCatIndex</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> newVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:setCatLabel">setCatLabel</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* newVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:setHashTableSize"><span class="baseclass">RooAbsCollection::</span>setHashTableSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:setName"><span class="baseclass">RooAbsCollection::</span>setName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:setRealValue">setRealValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> newVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:setStringValue">setStringValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* newVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsCollection.html">RooAbsCollection</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:snapshot"><span class="baseclass">RooAbsCollection::</span>snapshot</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> deepCopy = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:snapshot%1"><span class="baseclass">RooAbsCollection::</span>snapshot</a>(<a href="./RooAbsCollection.html">RooAbsCollection</a>&amp; output, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> deepCopy = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:sort"><span class="baseclass">RooAbsCollection::</span>sort</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> ascend = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:takeOwnership"><span class="baseclass">RooAbsCollection::</span>takeOwnership</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:writeToFile">writeToFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooArgSet:writeToStream">writeToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <span class="keyword">const</span> <span class="keyword">char</span>* section = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:addServerClonesToList"><span class="baseclass">RooAbsCollection::</span>addServerClonesToList</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#RooArgSet:checkForDup">checkForDup</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; arg, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:clearStructureTags"><span class="baseclass">RooAbsCollection::</span>clearStructureTags</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:makeStructureTag"><span class="baseclass">RooAbsCollection::</span>makeStructureTag</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:makeTypedStructureTag"><span class="baseclass">RooAbsCollection::</span>makeTypedStructureTag</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:safeDeleteList"><span class="baseclass">RooAbsCollection::</span>safeDeleteList</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TNamed.html">TNamed</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:structureTag"><span class="baseclass">RooAbsCollection::</span>structureTag</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TNamed.html">TNamed</a>*</td><td class="funcname"><a class="funcname" href="./RooAbsCollection.html#RooAbsCollection:typedStructureTag"><span class="baseclass">RooAbsCollection::</span>typedStructureTag</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooArgSet:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">RooPrintable::</span>ContentsOption { </td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kName">kName</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kClassName">kClassName</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kValue">kValue</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kArgs">kArgs</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kExtras">kExtras</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kAddress">kAddress</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kTitle">kTitle</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kCollectionHeader">kCollectionHeader</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">RooPrintable::</span>StyleOption { </td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kInline">kInline</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kSingleLine">kSingleLine</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kStandard">kStandard</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kVerbose">kVerbose</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:kTreeStructure">kTreeStructure</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_allRRV"><span class="baseclass">RooAbsCollection::</span>_allRRV</a></td><td class="datadesc">All contents are RRV</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooLinkedList.html">RooLinkedList</a></td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_list"><span class="baseclass">RooAbsCollection::</span>_list</a></td><td class="datadesc">Actual object store</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_name"><span class="baseclass">RooAbsCollection::</span>_name</a></td><td class="datadesc">Our name.</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./RooPrintable.html#RooPrintable:_nameLength"><span class="baseclass">RooPrintable::</span>_nameLength</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_ownCont"><span class="baseclass">RooAbsCollection::</span>_ownCont</a></td><td class="datadesc">Flag to identify a list that owns its contents.</td></tr>
+<tr class="data"><td class="datatype">static <span class="keyword">char</span>*</td><td class="dataname"><a name="RooArgSet:_poolBegin"></a>_poolBegin</td><td class="datadesc">! Start of memory pool</td></tr>
+<tr class="data"><td class="datatype">static <span class="keyword">char</span>*</td><td class="dataname"><a name="RooArgSet:_poolCur"></a>_poolCur</td><td class="datadesc">! Next free slot in memory pool</td></tr>
+<tr class="data"><td class="datatype">static <span class="keyword">char</span>*</td><td class="dataname"><a name="RooArgSet:_poolEnd"></a>_poolEnd</td><td class="datadesc">! End of memory pool  </td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TNamed.html">TNamed</a>*</td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_structureTag"><span class="baseclass">RooAbsCollection::</span>_structureTag</a></td><td class="datadesc">! Structure tag</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TNamed.html">TNamed</a>*</td><td class="dataname"><a href="./RooAbsCollection.html#RooAbsCollection:_typedStructureTag"><span class="baseclass">RooAbsCollection::</span>_typedStructureTag</a></td><td class="datadesc">! Typed structure tag</td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooArgSet:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooArgSet_Inh" id="MapRooArgSet_Inh">
+<area shape="rect" href="./RooAbsCollection.html" title="RooAbsCollection" alt="" coords="201,16,358,37"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="32,3,102,25"/>
+<area shape="rect" href="./RooPrintable.html" title="RooPrintable" alt="" coords="10,28,124,50"/>
+<area shape="rect" href="./RooSetProxy.html" title="RooSetProxy" alt="" coords="645,16,757,37"/>
+</map>
+<map name="MapRooArgSet_InhMem" id="MapRooArgSet_InhMem">
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="541,60,629,109"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="443,60,531,139"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="344,60,432,139"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="573,120,597,155"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="541,165,629,519"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="443,165,531,519"/>
+<area shape="rect" href="./RooAbsCollection.html" alt="" coords="344,165,432,519"/>
+<area shape="rect" href="./RooAbsCollection.html" title="RooAbsCollection" alt="" coords="333,16,640,529"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="224,731,312,839"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="125,731,213,839"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="27,731,115,839"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="256,849,280,884"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="224,895,312,1057"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="125,880,213,1057"/>
+<area shape="rect" href="./RooPrintable.html" alt="" coords="27,880,115,1057"/>
+<area shape="rect" href="./RooPrintable.html" title="RooPrintable" alt="" coords="16,687,323,1068"/>
+</map>
+<map name="MapRooArgSet_Lib" id="MapRooArgSet_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="524,353,652,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooArgSet_Inh" class="tabsel" href="inh/RooArgSet_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooArgSet_Inh.png');">Inheritance</a>
+<a id="imgRooArgSet_InhMem" class="tab" href="inhmem/RooArgSet_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooArgSet_InhMem.png');">Inherited Members</a>
+<a id="imgRooArgSet_Incl" class="tab" href="incl/RooArgSet_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooArgSet_Incl.png');">Includes</a>
+<a id="imgRooArgSet_Lib" class="tab" href="lib/RooArgSet_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooArgSet_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooArgSet_Inh" src="inh/RooArgSet_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooArgSet:cleanup" href="src/RooArgSet.cxx.html#WDGrxB">cleanup</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a> memoery pool on exit to avoid reported memory leaks
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>* <a class="funcname" name="RooArgSet:operator_new" href="src/RooArgSet.cxx.html#NQoJeD">operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> bytes)</span><br />
+<div class="funccomm"><pre> Overloaded new operator guarantees that all RooArgSets allocated with new
+ have a unique address, a property that is exploited in several places
+ in roofit to quickly index contents on normalization set pointers.
+ The memory pool only allocates space for the class itself. The elements
+ stored in the set are stored outside the pool.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooArgSet:operator_delete" href="src/RooArgSet.cxx.html#zR65SD">operator delete</a>(<span class="keyword">void</span>* ptr)</span><br />
+<div class="funccomm"><pre> Memory is owned by pool, we need to do nothing to release it
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet" href="src/RooArgSet.cxx.html#E2QqaC">RooArgSet</a>()</span><br />
+<div class="funccomm"><pre> Default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%1" href="src/RooArgSet.cxx.html#BOPYMC">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgList.html">RooArgList</a>&amp; list)</span><br />
+<div class="funccomm"><pre> Constructor from a <a href="./RooArgList.html">RooArgList</a>. If the list <a href="./RooAbsCollection.html#RooAbsCollection:contains" title="Bool_t RooAbsCollection::contains(const RooAbsArg&amp; var)">contains</a> multiple
+ objects with the same name, only the <a href="./RooAbsCollection.html#RooAbsCollection:first" title="RooAbsArg* RooAbsCollection::first()">first</a> is store in the set.
+ <a href="./TObject.html#TObject:Warning" title="void TObject::Warning(const char* method,const char* msgfmt)">Warning</a> messages will be printed for dropped items.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%2" href="src/RooArgSet.cxx.html#ZxDkWD">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgList.html">RooArgList</a>&amp; list, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>* var1)</span><br />
+<div class="funccomm"><pre> Constructor from a <a href="./RooArgList.html">RooArgList</a>. If the list <a href="./RooAbsCollection.html#RooAbsCollection:contains" title="Bool_t RooAbsCollection::contains(const RooAbsArg&amp; var)">contains</a> multiple
+ objects with the same name, only the <a href="./RooAbsCollection.html#RooAbsCollection:first" title="RooAbsArg* RooAbsCollection::first()">first</a> is store in the set.
+ <a href="./TObject.html#TObject:Warning" title="void TObject::Warning(const char* method,const char* msgfmt)">Warning</a> messages will be printed for dropped items.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%4" href="src/RooArgSet.cxx.html#kBvUDC">RooArgSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span><br />
+<div class="funccomm"><pre> Empty set constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%5" href="src/RooArgSet.cxx.html#Eb8yW">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set1, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set2, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Construct a set from two existing sets
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%6" href="src/RooArgSet.cxx.html#PH_2vE">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 1 initial object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%7" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 2 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%8" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 3 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%9" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 4 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%10" href="src/RooArgSet.cxx.html#PH_2vE">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 5 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%11" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 6 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%12" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 7 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%13" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var8, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 8 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%14" href="src/RooArgSet.cxx.html#vUjOZB">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var1, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var2, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var3, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var4, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var5, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var6, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var7, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var8, <span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var9, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor for set containing 9 initial objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%3" href="src/RooArgSet.cxx.html#AhcYZE">RooArgSet</a>(<span class="keyword">const</span> <a href="./TCollection.html">TCollection</a>&amp; tcoll, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor from a root <a href="./TCollection.html">TCollection</a>. Elements in the collection that
+ do not inherit from <a href="./RooAbsArg.html">RooAbsArg</a> will be skipped. A warning message
+ will be printed for every skipped item.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:RooArgSet%15" href="src/RooArgSet.cxx.html#tS79wC">RooArgSet</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; other, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Copy" title="void TObject::Copy(TObject&amp; object)">Copy</a> constructor. Note that a copy of a set is always non-owning,
+ even the source set is owning. To <a href="./RooArgSet.html#RooArgSet:create" title="TObject* RooArgSet::create(const char* newname)">create</a> an owning copy of
+ a set (owning or not), use the snaphot() method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooArgSet:_RooArgSet" href="src/RooArgSet.cxx.html#gMdDf">~RooArgSet</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:add" href="src/RooArgSet.cxx.html#odqlmC">add</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Add element to non-owning set. The operation will fail if
+ a similarly named object already exists in the set, or
+ the set is specified to own its elements. Eventual error messages
+ can be suppressed with the silent flag
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:addOwned" href="src/RooArgSet.cxx.html#TICdZE">addOwned</a>(<a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Add element to an owning set. The operation will fail if
+ a similarly named object already exists in the set, or
+ the set is not specified to own its elements. Eventual error messages
+ can be suppressed with the silent flag
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooAbsArg.html">RooAbsArg</a>* <a class="funcname" name="RooArgSet:addClone" href="src/RooArgSet.cxx.html#kE1Xk">addClone</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Add <a href="./RooArgSet.html#RooArgSet:clone" title="TObject* RooArgSet::clone(const char* newname)">clone</a> of specified element to an owning set. If sucessful, the
+ set will own the <a href="./RooArgSet.html#RooArgSet:clone" title="TObject* RooArgSet::clone(const char* newname)">clone</a>, not the original. The operation will fail if
+ a similarly named object already exists in the set, or
+ the set is not specified to own its elements. Eventual error messages
+ can be suppressed with the silent flag
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooAbsArg.html">RooAbsArg</a>&amp; <a class="funcname" name="RooArgSet:operator[]" href="src/RooArgSet.cxx.html#W8.yx">operator[]</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Array operator. Named element must exist in set, otherwise
+ code will abort.
+
+ When used as lvalue in assignment operations, the element contained in
+ the list will not be changed, only the value of the existing element!
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:checkForDup" href="src/RooArgSet.cxx.html#F9C5.C">checkForDup</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; arg, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent) const</span><br />
+<div class="funccomm"><pre> Check if element with var's name is already in set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="RooArgSet:getRealValue" href="src/RooArgSet.cxx.html#hEuFzD">getRealValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> defVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) const</span><br />
+<div class="funccomm"><pre> Get value of a <a href="./RooAbsReal.html">RooAbsReal</a> stored in set with given name. If none is found, value of defVal is returned.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:setRealValue" href="src/RooArgSet.cxx.html#zKZ46E">setRealValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> newVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Set value of a RooAbsRealLValye stored in set with given name to newVal
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>* <a class="funcname" name="RooArgSet:getCatLabel" href="src/RooArgSet.cxx.html#ojbrX">getCatLabel</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* defVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) const</span><br />
+<div class="funccomm"><pre> Get state name of a <a href="./RooAbsCategory.html">RooAbsCategory</a> stored in set with given name. If none is found, value of defVal is returned.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:setCatLabel" href="src/RooArgSet.cxx.html#Djd_MC">setCatLabel</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* newVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Set state name of a <a href="./RooAbsCategoryLValue.html">RooAbsCategoryLValue</a> stored in set with given name to newVal.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="RooArgSet:getCatIndex" href="src/RooArgSet.cxx.html#WAa0CE">getCatIndex</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> defVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) const</span><br />
+<div class="funccomm"><pre> Get index value of a <a href="./RooAbsCategory.html">RooAbsCategory</a> stored in set with given name. If none is found, value of defVal is returned.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:setCatIndex" href="src/RooArgSet.cxx.html#k7H7VB">setCatIndex</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> newVal = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Set index value of a <a href="./RooAbsCategoryLValue.html">RooAbsCategoryLValue</a> stored in set with given name to newVal.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>* <a class="funcname" name="RooArgSet:getStringValue" href="src/RooArgSet.cxx.html#ShysRC">getStringValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* defVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) const</span><br />
+<div class="funccomm"><pre> Get string value of a <a href="./RooAbsString.html">RooAbsString</a> stored in set with given name. If none is found, value of defVal is returned.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:setStringValue" href="src/RooArgSet.cxx.html#DSIFt">setStringValue</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* newVal = <span class="string">""</span>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Set string value of a <a href="./RooStringVar.html">RooStringVar</a> stored in set with given name to newVal.
+ No error messages are printed unless the verbose flag is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooArgSet:writeToFile" href="src/RooArgSet.cxx.html#hW.SRB">writeToFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName) const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> contents of the argset to specified file.
+ See <a href="./RooArgSet.html#RooArgSet:writeToStream" title="void RooArgSet::writeToStream(ostream&amp; os,Bool_t compact,const char* section=0)">writeToStream</a>() for details
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:readFromFile" href="src/RooArgSet.cxx.html#UoOlC">readFromFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName, <span class="keyword">const</span> <span class="keyword">char</span>* flagReadAtt = 0, <span class="keyword">const</span> <span class="keyword">char</span>* section = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> contents of the argset from specified file.
+ See <a href="./RooArgSet.html#RooArgSet:readFromStream" title="Bool_t RooArgSet::readFromStream(istream&amp; is,Bool_t compact,Bool_t verbose=kFALSE) or overloads">readFromStream</a>() for details
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooArgSet:writeToStream" href="src/RooArgSet.cxx.html#GvqtjE">writeToStream</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; os, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <span class="keyword">const</span> <span class="keyword">char</span>* section = 0) const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> the contents of the argset in ASCII form to given stream.
+
+ A line is written for each element contained in the form
+ &lt;argName&gt; = &lt;argValue&gt;
+
+ The &lt;argValue&gt; part of each element is written by the arguments'
+ <a href="./RooArgSet.html#RooArgSet:writeToStream" title="void RooArgSet::writeToStream(ostream&amp; os,Bool_t compact,const char* section=0)">writeToStream</a>() function.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:readFromStream%1" href="src/RooArgSet.cxx.html#ZkHNgE">readFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; is, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <span class="keyword">const</span> <span class="keyword">char</span>* flagReadAtt, <span class="keyword">const</span> <span class="keyword">char</span>* section, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> the contents of the argset in ASCII form from given stream.
+
+ The stream is read to end-of-file and each line is assumed to be
+ of the form
+
+ &lt;argName&gt; = &lt;argValue&gt;
+
+ Lines starting with argNames not matching any element in the list
+ will be ignored with a warning message. In addition limited C++ style
+ preprocessing and flow control is provided. The following constructions
+ are recognized:
+
+ &gt; #include <span class="string">"include.file"</span>
+
+ Include given file, recursive inclusion OK
+
+ &gt; if (&lt;boolean_expression&gt;)
+ &gt;   &lt;name&gt; = &lt;value&gt;
+ &gt;   ....
+ &gt; else if (&lt;boolean_expression&gt;)
+
+ &gt; else
+
+ &gt; endif
+
+ All expressions are evaluated by <a href="./RooFormula.html">RooFormula</a>, and may involve any of
+ the sets variables.
+
+ &gt; echo &lt;Message&gt;
+
+ <a href="./RooAbsCollection.html#RooAbsCollection:Print" title="void RooAbsCollection::Print(Option_t* options=0)">Print</a> console message while reading from stream
+
+ &gt; abort
+
+ Force termination of read sequence with error status
+
+ The value of each argument is read by the arguments <a href="./RooArgSet.html#RooArgSet:readFromStream" title="Bool_t RooArgSet::readFromStream(istream&amp; is,Bool_t compact,Bool_t verbose=kFALSE) or overloads">readFromStream</a>
+ function.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:isInRange" href="src/RooArgSet.cxx.html#VP9nd">isInRange</a>(<span class="keyword">const</span> <span class="keyword">char</span>* rangeSpec)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>* <a class="funcname" name="RooArgSet:clone" href="src/RooArgSet.h.html#EPdybD">clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <span class="keyword">new</span> <a href="./RooArgSet.html">RooArgSet</a>(*<span class="keyword">this</span>,newname); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>* <a class="funcname" name="RooArgSet:create" href="src/RooArgSet.h.html#vff2I">create</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <span class="keyword">new</span> <a href="./RooArgSet.html">RooArgSet</a>(newname); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooArgSet.html">RooArgSet</a>&amp; <a class="funcname" name="RooArgSet:operator_" href="src/RooArgSet.h.html#zmOOVB">operator=</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; other)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./RooAbsCollection.html">RooAbsCollection</a>::<span class="keyword">operator</span>=(other) ; <span class="keyword">return</span> *<span class="keyword">this</span> ;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:add" href="src/RooArgSet.h.html#REG4h">add</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:addOwned" href="src/RooArgSet.h.html#EUHzt">addOwned</a>(<a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooAbsArg.html">RooAbsArg</a> * <a class="funcname" name="RooArgSet:addClone" href="src/RooArgSet.h.html#cl5yNB">addClone</a>(<span class="keyword">const</span> <a href="./RooAbsArg.html">RooAbsArg</a>&amp; var, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> silent = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="RooArgSet:readFromStream" href="src/RooArgSet.h.html#Gfc5RD">readFromStream</a>(<a href="./ListOfTypes.html#istream">istream</a>&amp; is, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> compact, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> I/O streaming interface (machine readable)
+</pre></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: Fri Dec  2 14:26:41 2011 </em><em>&raquo; Last generated: 2011-12-02 14:26</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

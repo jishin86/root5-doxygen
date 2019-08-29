@@ -1,0 +1,573 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:24:18 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TVirtualViewer3D</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TVirtualViewer3D','libCore','TVirtualViewer3D.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TVirtualViewer3D.h.html">header file</a>
+<a class="descrheadentry" href="src/TVirtualViewer3D.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/inc/TVirtualViewer3D.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/src/TVirtualViewer3D.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TVirtualViewer3D:description">class description</a> 
+<a class="descrheadentry" href="#TVirtualViewer3D:Function_Members">function members</a>
+<a class="descrheadentry" href="#TVirtualViewer3D:Data_Members">data members</a>
+<a class="descrheadentry" href="#TVirtualViewer3D:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_BASE_Index.html">BASE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TVirtualViewer3D</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TVirtualViewer3D:description"></a>class TVirtualViewer3D: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TVirtualViewer3D.html">TVirtualViewer3D</a>
+
+Abstract 3D shapes viewer. The concrete implementations are:
+
+<a href="./TViewerX3D.html">TViewerX3D</a>   : X3d viewer
+<a href="./TGLViewer.html">TGLViewer</a>    : OpenGL viewer
+
+
+
+</pre><!-- TDocHtmlDirective start --> <!--
+/* -->
+<h4>3D Viewer Infrastructure Overview</h4>
+<p>The 3D Viewer infrastructure consists of:</p>
+<ul>
+  <li> TVirtualViewer3D interface: An abstract handle to the viewer, allowing
+    client to test preferences, add objects, control the viewer via scripting
+    (to be added) etc.</li>
+  <li>TBuffer3D class hierarchy: Used to describe 3D objects
+    (&quot;shapes&quot;)
+    - filled /added by negotiation with viewer via TVirtualViewer3D.</li>
+</ul>
+<p>Together these allow clients to publish objects to any one of the 3D viewers
+  (currently OpenGL/x3d,TPad), free of viewer specific drawing code. They allow
+  our simple x3d viewer, and considerably more sophisticated OpenGL one to both
+  work with both geometry libraries (g3d and geom) efficiently.</p>
+<p>Publishing to a viewer consists of the following steps:</p>
+<ol>
+  <li> Create / obtain viewer handle</li>
+  <li>Begin scene on viewer</li>
+  <li>Fill mandatory parts of TBuffer3D describing object</li>
+  <li>Add to viewer</li>
+  <li>Fill optional parts of TBuffer3D if requested by viewer, and add again<br>
+     ... repeat 3/4/5
+  as required</li>
+  <li>End scene on viewer</li>
+</ol>
+<h4>Creating / Obtaining Viewer</h4>
+<p>Create/obtain the viewer handle via local/global pad - the viewer is always
+  bound to a TPad object at present [This may be removed as a restriction in
+  the future] . You should perform the publishing to the viewer described below
+  in the Paint() method of the object you attach to the pad (via Draw())</p>
+<pre>TVirtualViewer3D * v = gPad-&gt;GetViewer3D(&quot;xxxx&quot;);</pre>
+<p>&quot; xxxx&quot; is viewer type: OpenGL &quot;ogl&quot;, X3D &quot;x3d&quot; or
+  Pad &quot;pad&quot; (default). The viewer is created via the plugin manager,
+  attached to pad, and the interface returned.</p>
+<h4> Begin / End Scene</h4>
+<p>Objects must be added to viewer between BeginScene/EndScene calls e.g.</p>
+<pre>v-&gt;BeginScene();
+.....
+v-&gt;AddObject(....);
+v-&gt;AddObject(....);
+.....
+v-&gt;EndScene();>
+<p>The BeginScene call will cause the viewer to suspend redraws etc, and after
+  the EndScene the viewer will reset the camera to frame the new scene and redraw.</p>
+[x3d viewer does not support changing of scenes - objects added after the
+  first Open/CloseScene pair will be ignored.]<br>
+<h4>Filling TBuffer3D and Adding to Viewer</h4>
+<p>The viewers behind the TVirtualViewer3D interface differ greatly in their
+  capabilities e.g.</p>
+<ul>
+  <li> Some know how to draw certain shapes natively (e.g. spheres/tubes in
+    OpenGL) - others always require a raw tessellation description of points/lines/segments.</li>
+  <li>Some
+      need the 3D object positions in the global frame, others can cope with
+    local frames + a translation matrix - which can give considerable performance
+      benefits.</li>
+</ul>
+<p>To cope with these situations the object buffer is filled out in negotiation
+  with the viewer. TBuffer3D classes are conceptually divided into enumerated
+  sections Core, BoundingBox, Raw etc (see TBuffer3D.h for more details). </p>
+<p align="center"><img src="gif/TBuffer3D.gif" width="501" height="501"></p>
+<p>The<em> SectionsValid() / SetSectionsValid / ClearSectionsValid() </em>methods of TBuffer3D
+    are used to test/set/clear these section valid flags.</p>
+<p>The sections found in TBuffer3D (<em>Core/BoundingBox/Raw Sizes/Raw</em>)
+  are sufficient to describe any tessellated shape in a generic fashion. An additional <em>ShapeSpecific</em>  section
+  in derived shape specific classes allows a more abstract shape description
+  (&quot;a sphere of inner radius x, outer radius y&quot;). This enables a viewer
+  which knows how to draw (tessellate) the shape itself to do so, which can bring
+  considerable performance and quality benefits, while providing a generic fallback
+  suitable for all viewers.</p>
+<p>The rules for client negotiation with the viewer are:</p>
+<ul>
+  <li> If suitable specialized TBuffer3D class exists, use it, otherwise use
+    TBuffer3D.</li>
+  <li>Complete the mandatory Core section.</li>
+  <li>Complete the ShapeSpecific section
+      if applicable.</li>
+  <li>Complete the BoundingBox if you can.</li>
+  <li>Pass this buffer to the viewer using
+      one of the AddObject() methods - see below.</li>
+</ul>
+<p>If the viewer requires more sections to be completed (Raw/RawSizes) AddObject()
+  will return flags indicating which ones, otherwise it returns kNone. You must
+  fill the buffer and mark these sections valid, and pass the buffer again. A
+  typical code snippet would be:</p>
+<pre>TBuffer3DSphere sphereBuffer;
+ Fill out kCore...
+ Fill out kBoundingBox...
+ Fill out kShapeSpecific for TBuffer3DSphere
+ Try first add to viewer
+Int_t reqSections = viewer-&gt;AddObject(buffer);
+if (reqSections != TBuffer3D::kNone) {
+  if (reqSections &amp; TBuffer3D::kRawSizes) {
+ Fill out kRawSizes...
+  }
+  if (reqSections &amp; TBuffer3D::kRaw) {
+ Fill out kRaw...
+  }
+ Add second time to viewer - ignore return cannot do more
+  viewer-&gt;AddObject(buffer);
+  }
+}>
+<p><em>ShapeSpecific</em>: If the viewer can directly display the buffer without
+  filling of the kRaw/kRawSizes section it will not need to request client side
+  tessellation.
+  Currently we provide the following various shape specific classes, which the
+  OpenGL viewer can take advantage of (see TBuffer3D.h and TBuffer3DTypes.h)</p>
+<ul>
+  <li>TBuffer3DSphere - solid, hollow and cut spheres*</li>
+  <li>TBuffer3DTubeSeg - angle tube segment</li>
+  <li>TBuffer3DCutTube - angle tube segment with plane cut ends.</li>
+</ul>
+<p>*OpenGL only supports solid spheres at present - cut/hollow ones will be
+    requested tessellated.</p>
+<p>Anyone is free to add new TBuffer3D classes, but it should be clear that the
+  viewers require updating to be able to take advantage of them. The number of
+  native shapes in OpenGL will be expanded over time.</p>
+<p><em>BoundingBox: </em>You are not obliged to complete this, as any viewer
+  requiring one internally (OpenGL) will build one for you if you do not provide.
+  However
+  to do this the viewer will force you to provide the raw tessellation, and the
+  resulting box will be axis aligned with the overall scene, which is non-ideal
+  for rotated shapes.</p>
+<p>As we need to support orientated (rotated) bounding boxes, TBuffer3D requires
+  the 6 vertices of the box. We also provide a convenience function, SetAABoundingBox(),
+  for simpler case of setting an axis aligned bounding box.</p>
+<h4>
+  Master/Local Reference Frames</h4>
+The <em>Core</em> section of TBuffer3D contains two members relating to reference
+  frames:
+<em>fLocalFrame</em> &amp; <em>fLocalMaster</em>. <em>fLocalFrame</em> indicates
+  if any positions in the buffer (bounding box and tessellation vertexes) are
+  in local or master (world
+  frame). <em>fLocalMaster</em> is a standard 4x4 translation matrix (OpenGL
+  colum major ordering) for placing the object into the 3D master frame.
+  <p>If <em>fLocalFrame</em> is kFALSE, <em>fLocalMaster</em> should contain an
+  identity matrix. This is set by default, and can be reset using <em>SetLocalMasterIdentity()</em> function.<br>
+Logical &amp; Physical Objects</p>
+<p>There are two cases of object addition:</p>
+<ul>
+  <li> Add this object as a single independent entity in the world reference
+    frame.</li>
+  <li>Add
+        a physical placement (copy) of this logical object (described in local
+    reference frame).</li>
+</ul>
+<p>The second case is very typical in geometry packages, GEANT4, where we have
+  very large number repeated placements of relatively few logical (unique) shapes.
+  Some viewers (OpenGL only at present) are able to take advantage of this by
+  identifying unique logical shapes from the <em>fID</em> logical ID member of
+  TBuffer3D. If repeated addition of the same <em>fID</em> is found, the shape
+  is cached already - and the costly tessellation does not need to be sent again.
+  The viewer can
+  also perform internal GL specific caching with considerable performance gains
+  in these cases.</p>
+<p>For this to work correctly the logical object in must be described in TBuffer3D
+  in the local reference frame, complete with the local/master translation. The
+  viewer indicates this through the interface method</p>
+<pre>PreferLocalFrame()</pre>
+<p>If this returns kTRUE you can make repeated calls to AddObject(), with TBuffer3D
+  containing the same fID, and different <em>fLocalMaster</em> placements.</p>
+<p>For viewers supporting logical/physical objects, the TBuffer3D content refers
+  to the properties of logical object, with the <em>fLocalMaster</em> transform and the
+  <em>fColor</em> and <em>fTransparency</em> attributes, which can be varied for each physical
+  object.</p>
+<p>As a minimum requirement all clients must be capable of filling the raw tessellation
+  of the object buffer, in the master reference frame. Conversely viewers must
+  always be capable of displaying the object described by this buffer.</p>
+<h4>
+  Scene Rebuilds</h4>
+<p>It should be understood that AddObject is not an explicit command to the viewer
+  - it may for various reasons decide to ignore it:</p>
+<ul>
+  <li> It already has the object internally cached .</li>
+  <li>The object falls outside
+    some 'interest' limits of the viewer camera.</li>
+  <li>The object is too small to
+      be worth drawing.</li>
+</ul>
+<p>In all these cases AddObject() returns kNone, as it does for successful addition,
+  simply indicating it does not require you to provide further information about
+  this object. You should
+  not try to make any assumptions about what the viewer did with it.</p>
+<p>This enables the viewer to be connected to a client which sends potentially
+  millions of objects, and only accept those that are of interest at a certain
+  time, caching the relatively small number of CPU/memory costly logical shapes,
+  and retaining/discarding the physical placements as required. The viewer may
+  decide to force the client to rebuild (republish) the scene (via
+  a TPad
+  repaint
+  at
+  present),
+  and
+  thus
+  collect
+  these
+  objects if
+  the
+  internal viewer state changes. It does this presently by forcing a repaint
+  on the attached TPad object - hence the reason for putting all publishing to
+  the viewer in the attached pad objects Paint() method. We will likely remove
+  this requirement in the future, indicating the rebuild request via a normal
+ROOT signal, which the client can detect.</p>
+<h4>
+  Physical IDs</h4>
+TVirtualViewer3D provides for two methods of object addition:virtual Int_t AddObject(const
+TBuffer3D &amp; buffer, Bool_t * addChildren = 0)<br>
+<pre>virtual Int_t AddObject(UInt_t physicalID, const TBuffer3D &amp; buffer, Bool_t * addChildren = 0)</pre>
+<p>If you use the first (simple) case a viewer using logical/physical pairs
+    will generate IDs for each physical object internally. In the second you
+    can specify
+      a unique identifier from the client, which allows the viewer to be more
+    efficient. It can now cache both logical and physical objects, and only discard
+    physical
+  objects no longer of interest as part of scene rebuilds.</p>
+<h4>
+  Child Objects</h4>
+<p>In many geometries there is a rigid containment hierarchy, and so if the viewer
+  is not interested in a certain object due to limits/size then it will also
+  not be interest in any of the contained branch of descendents. Both AddObject()
+  methods have an addChildren parameter. The viewer will complete this (if passed)
+indicating if children (contained within the one just sent) are worth adding.</p>
+<h4>
+  Recyling TBuffer3D </h4>
+<p>Once add AddObject() has been called, the contents are copied to the viewer
+  internally. You are free to destroy this object, or recycle it for the next
+  object if suitable.</p>
+<!--*/
+ -->
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TVirtualViewer3D:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="TVirtualViewer3D.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:_TVirtualViewer3D">~TVirtualViewer3D</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:AddCompositeOp">AddCompositeOp</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> operation)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:AddObject">AddObject</a>(<span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:AddObject%1">AddObject</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> physicalID, <span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:BeginScene">BeginScene</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:BuildingScene">BuildingScene</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:CanLoopOnPrimitives">CanLoopOnPrimitives</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:CloseComposite">CloseComposite</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:DrawViewer">DrawViewer</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:EndScene">EndScene</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:ObjectPaint">ObjectPaint</a>(<a href="./TObject.html">TObject</a>*, <a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:OpenComposite">OpenComposite</a>(<span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TVirtualViewer3D.html">TVirtualViewer3D</a>&amp;</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TVirtualViewer3D.html">TVirtualViewer3D</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:PadPaint">PadPaint</a>(<a href="./TVirtualPad.html">TVirtualPad</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:PreferLocalFrame">PreferLocalFrame</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:PrintObjects">PrintObjects</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:ResetCameras">ResetCameras</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:ResetCamerasAfterNextUpdate">ResetCamerasAfterNextUpdate</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:SelectObject">SelectObject</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TVirtualViewer3D.html">TVirtualViewer3D</a>*</td><td class="funcname"><a class="funcname" href="#TVirtualViewer3D:Viewer3D">Viewer3D</a>(<a href="./TVirtualPad.html">TVirtualPad</a>* pad = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* type = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TVirtualViewer3D:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="TVirtualViewer3D:Class_Charts"></a>Class Charts</h2>
+<map name="MapTVirtualViewer3D_Inh" id="MapTVirtualViewer3D_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="27,45,87,63"/>
+<area shape="rect" href="./TGLViewer.html" title="TGLViewer" alt="" coords="441,13,521,31"/>
+<area shape="rect" href="./TGLScenePad.html" title="TGLScenePad" alt="" coords="428,35,533,53"/>
+<area shape="rect" href="./TViewer3DPad.html" title="TViewer3DPad" alt="" coords="425,56,536,74"/>
+<area shape="rect" href="./TViewerX3D.html" title="TViewerX3D" alt="" coords="434,77,528,95"/>
+<area shape="rect" href="./TGLEmbeddedViewer.html" title="TGLEmbeddedViewer" alt="" coords="598,3,763,21"/>
+<area shape="rect" href="./TGLSAViewer.html" title="TGLSAViewer" alt="" coords="630,24,732,42"/>
+</map>
+<map name="MapTVirtualViewer3D_InhMem" id="MapTVirtualViewer3D_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTVirtualViewer3D_Lib" id="MapTVirtualViewer3D_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTVirtualViewer3D_Inh" class="tabsel" href="inh/TVirtualViewer3D_Inh.png" onclick="javascript:return SetImg('Charts','inh/TVirtualViewer3D_Inh.png');">Inheritance</a>
+<a id="imgTVirtualViewer3D_InhMem" class="tab" href="inhmem/TVirtualViewer3D_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TVirtualViewer3D_InhMem.png');">Inherited Members</a>
+<a id="imgTVirtualViewer3D_Incl" class="tab" href="incl/TVirtualViewer3D_Incl.png" onclick="javascript:return SetImg('Charts','incl/TVirtualViewer3D_Incl.png');">Includes</a>
+<a id="imgTVirtualViewer3D_Lib" class="tab" href="lib/TVirtualViewer3D_Lib.png" onclick="javascript:return SetImg('Charts','lib/TVirtualViewer3D_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTVirtualViewer3D_Inh" src="inh/TVirtualViewer3D_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><a href="./TVirtualViewer3D.html">TVirtualViewer3D</a>* <a class="funcname" name="TVirtualViewer3D:Viewer3D" href="src/TVirtualViewer3D.cxx.html#inj5oD">Viewer3D</a>(<a href="./TVirtualPad.html">TVirtualPad</a>* pad = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* type = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Create a Viewer 3D of specified type.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TVirtualViewer3D:_TVirtualViewer3D" href="src/TVirtualViewer3D.h.html#rXIUEB">~TVirtualViewer3D</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TVirtualViewer3D:PreferLocalFrame" href="src/TVirtualViewer3D.h.html#ypKE9B">PreferLocalFrame</a>() const</span><br />
+<div class="funccomm"><pre> Viewers must always handle master (absolute) positions - and
+ buffer producers must be able to supply them. Some viewers may
+ prefer local frame &amp; translation - and producers can optionally
+ supply them
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TVirtualViewer3D:CanLoopOnPrimitives" href="src/TVirtualViewer3D.h.html#eDWGsD">CanLoopOnPrimitives</a>() const</span><br />
+<div class="funccomm"><pre> Viewers can implement their own loop over pad's primitive list.
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:PadPaint" href="src/TVirtualViewer3D.h.html#iUtj4">PadPaint</a>(<a href="./TVirtualPad.html">TVirtualPad</a>* )</span><br />
+<div class="funccomm"><pre> When they can, <a href="./TPad.html">TPad</a>::<a href="./TPad.html#TPad:Paint" title="void TPad::Paint(Option_t* option=&quot;&quot;)">Paint</a>() and <a href="./TPad.html">TPad</a>::<a href="./TPad.html#TPad:PaintModified" title="void TPad::PaintModified()">PaintModified</a>() simply
+ call the following function:
+</pre></div>
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:ObjectPaint" href="src/TVirtualViewer3D.h.html#igfWmE">ObjectPaint</a>(<a href="./TObject.html">TObject</a>* , <a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>)</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:BeginScene" href="src/TVirtualViewer3D.h.html#SZQOk">BeginScene</a>()</span><br />
+<div class="funccomm"><pre> Addition/removal of objects must occur between Begin/EndUpdate calls
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TVirtualViewer3D:BuildingScene" href="src/TVirtualViewer3D.h.html#RG2WTB">BuildingScene</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:EndScene" href="src/TVirtualViewer3D.h.html#t2aEu">EndScene</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TVirtualViewer3D:AddObject" href="src/TVirtualViewer3D.h.html#BBOtfC">AddObject</a>(<span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</span><br />
+<div class="funccomm"><pre> Simple object addition - buffer represents a unique single positioned object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TVirtualViewer3D:AddObject%1" href="src/TVirtualViewer3D.h.html#OsqkwD">AddObject</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> physicalID, <span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</span><br />
+<div class="funccomm"><pre> Complex object addition - for adding physical objects which have common logical
+ shapes. In this case buffer describes template shape (aside from kCore).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TVirtualViewer3D:OpenComposite" href="src/TVirtualViewer3D.h.html#smMO6D">OpenComposite</a>(<span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>* addChildren = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:CloseComposite" href="src/TVirtualViewer3D.h.html#AKuhMC">CloseComposite</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:AddCompositeOp" href="src/TVirtualViewer3D.h.html#XjPUzC">AddCompositeOp</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> operation)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TVirtualViewer3D:SelectObject" href="src/TVirtualViewer3D.h.html#Ezh8pB">SelectObject</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:DrawViewer" href="src/TVirtualViewer3D.h.html#qlzXQ">DrawViewer</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:PrintObjects" href="src/TVirtualViewer3D.h.html#t1fAsB">PrintObjects</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:ResetCameras" href="src/TVirtualViewer3D.h.html#DkCu.">ResetCameras</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TVirtualViewer3D:ResetCamerasAfterNextUpdate" href="src/TVirtualViewer3D.h.html#S11UcE">ResetCamerasAfterNextUpdate</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Olivier+Couet"> Olivier Couet 05/10/2004</a> </em><em>&raquo; Copyright   (C) 1995-2004, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/base:$Id: TVirtualViewer3D.h 20877 2007-11-19 11:17:07Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:24</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:13:06 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TEveViewerList - source file</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="codeAndLineNumbers"><pre class="listing">
+<span class="comment">// @(#)root/eve:$Id: <a href="../TEveViewer.html">TEveViewer</a>.h 33463 2010-05-11 09:38:29Z matevz $</span>
+<span class="comment">// Authors: Matevz Tadel &amp; Alja Mrak-Tadel: 2006, 2007</span>
+
+<span class="comment">/*************************************************************************
+ * Copyright (C) 1995-2007, Rene Brun and Fons Rademakers.               *
+ * All rights reserved.                                                  *
+ *                                                                       *
+ * For the licensing terms see $ROOTSYS/LICENSE.                         *
+ * For the list of contributors see $ROOTSYS/README/CREDITS.             *
+ *************************************************************************/</span>
+
+<span class="cpp">#ifndef ROOT_TEveViewer</span>
+<span class="cpp">#define ROOT_TEveViewer</span>
+
+<span class="cpp">#include "<a href="../TEveElement.h">TEveElement.h</a>"</span>
+<span class="cpp">#include "<a href="../TEveWindow.h">TEveWindow.h</a>"</span>
+
+<span class="keyword">class</span> <a href="../TGWindow.html">TGWindow</a>;
+<span class="keyword">class</span> <a href="../TGedEditor.html">TGedEditor</a>;
+<span class="keyword">class</span> <a href="../TGLViewer.html">TGLViewer</a>;
+<span class="keyword">class</span> <a href="../TGLSAViewer.html">TGLSAViewer</a>;
+<span class="keyword">class</span> <a href="../TGLEmbeddedViewer.html">TGLEmbeddedViewer</a>;
+
+<span class="keyword">class</span> <a href="../TEveScene.html">TEveScene</a>;
+
+<span class="comment">/******************************************************************************/</span>
+<span class="comment">// <a href="../TEveViewer.html">TEveViewer</a></span>
+<span class="comment">/******************************************************************************/</span>
+
+<span class="keyword">class</span> <a href="../TEveViewer.html">TEveViewer</a> : <span class="keyword">public</span> <a href="../TEveWindowFrame.html">TEveWindowFrame</a>
+{
+<span class="keyword">private</span>:
+   <a href="../TEveViewer.html">TEveViewer</a>(<span class="keyword">const</span> <a href="../TEveViewer.html">TEveViewer</a>&amp;);            <span class="comment">// Not implemented</span>
+<a name="iv3LcD"></a>   <a href="../TEveViewer.html">TEveViewer</a>&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> <a href="../TEveViewer.html">TEveViewer</a>&amp;); <span class="comment">// Not implemented</span>
+
+<span class="keyword">protected</span>:
+   <a href="../TGLViewer.html">TGLViewer</a>    *fGLViewer;
+   <a href="../TGFrame.html">TGFrame</a>      *fGLViewerFrame;
+
+   <span class="keyword">static</span> <a href="../ListOfTypes.html#Bool_t">Bool_t</a> fgInitInternal;
+   <span class="keyword">static</span> <a href="../ListOfTypes.html#Bool_t">Bool_t</a> fgRecreateGlOnDockOps;
+   <span class="keyword">static</span> <span class="keyword">void</span>   InitInternal();
+
+<span class="keyword">public</span>:
+   <a href="../TEveViewer.html">TEveViewer</a>(<span class="keyword">const</span> <span class="keyword">char</span>* n=<span class="string">"TEveViewer"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* t=<span class="string">""</span>);
+   <span class="keyword">virtual</span> ~TEveViewer();
+
+   <span class="keyword">virtual</span> <span class="keyword">void</span> PreUndock();
+   <span class="keyword">virtual</span> <span class="keyword">void</span> PostDock();
+
+   <a href="../TGLViewer.html">TGLViewer</a>* GetGLViewer() <span class="keyword">const</span> { <span class="keyword">return</span> fGLViewer; }
+   <span class="keyword">void</span> SetGLViewer(<a href="../TGLViewer.html">TGLViewer</a>* viewer, <a href="../TGFrame.html">TGFrame</a>* frame);
+
+   <a href="../TGLSAViewer.html">TGLSAViewer</a>*       SpawnGLViewer(<a href="../TGedEditor.html">TGedEditor</a>* ged=0, <a href="../ListOfTypes.html#Bool_t">Bool_t</a> stereo=<a href="../ListOfTypes.html#Bool_t">kFALSE</a>);
+   <a href="../TGLEmbeddedViewer.html">TGLEmbeddedViewer</a>* SpawnGLEmbeddedViewer(<a href="../TGedEditor.html">TGedEditor</a>* ged=0, <a href="../ListOfTypes.html#Int_t">Int_t</a> border=0);
+
+   <span class="keyword">void</span> Redraw(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> resetCameras=<a href="../ListOfTypes.html#Bool_t">kFALSE</a>);
+   <span class="keyword">void</span> SwitchStereo();
+
+   <span class="keyword">virtual</span> <span class="keyword">void</span> AddScene(<a href="../TEveScene.html">TEveScene</a>* scene);
+
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RemoveElementLocal" title="void TEveViewerList::RemoveElementLocal(TEveElement* el)">RemoveElementLocal</a>(<a href="../TEveElement.html">TEveElement</a>* el);
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RemoveElementsLocal" title="void TEveViewerList::RemoveElementsLocal()">RemoveElementsLocal</a>();
+
+   <span class="keyword">virtual</span> <a href="../TObject.html">TObject</a>* <a href="../TEveElement.html#TEveElement:GetEditorObject" title="TObject* TEveElement::GetEditorObject(const TEveException&amp; eh)">GetEditorObject</a>(<span class="keyword">const</span> <a href="../TEveException.html">TEveException</a>&amp; eh=<span class="string">"TEveViewer::GetEditorObject "</span>) <span class="keyword">const</span>;
+
+   <span class="keyword">virtual</span> <a href="../ListOfTypes.html#Bool_t">Bool_t</a> <a href="../TEveElement.html#TEveElement:HandleElementPaste" title="Bool_t TEveElement::HandleElementPaste(TEveElement* el)">HandleElementPaste</a>(<a href="../TEveElement.html">TEveElement</a>* el);
+
+   <span class="keyword">virtual</span> <span class="keyword">const</span> <a href="../TGPicture.html">TGPicture</a>* <a href="../TEveElement.html#TEveElement:GetListTreeIcon" title="const TGPicture* TEveElement::GetListTreeIcon(Bool_t open=kFALSE)">GetListTreeIcon</a>(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> open=<a href="../ListOfTypes.html#Bool_t">kFALSE</a>);
+
+   ClassDef(<a href="../TEveViewer.html">TEveViewer</a>, 0); <span class="comment">// Reve representation of <a href="../TGLViewer.html">TGLViewer</a>.</span>
+};
+
+
+<span class="comment">/******************************************************************************/</span>
+<span class="comment">// <a href="../TEveViewerList.html">TEveViewerList</a></span>
+<span class="comment">/******************************************************************************/</span>
+
+<span class="keyword">class</span> <a href="../TEveViewerList.html">TEveViewerList</a> : <span class="keyword">public</span> <a href="../TEveElementList.html">TEveElementList</a>
+{
+<span class="keyword">private</span>:
+<a name="XwW2aE"></a>   <a href="../TEveViewerList.html">TEveViewerList</a>(<span class="keyword">const</span> <a href="../TEveViewerList.html">TEveViewerList</a>&amp;);            <span class="comment">// Not implemented</span>
+   <a href="../TEveViewerList.html">TEveViewerList</a>&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> <a href="../TEveViewerList.html">TEveViewerList</a>&amp;); <span class="comment">// Not implemented</span>
+
+<span class="keyword">protected</span>:
+   <a href="../ListOfTypes.html#Bool_t">Bool_t</a>        <a href="../TEveViewerList.html#TEveViewerList:fShowTooltip" title="Bool_t TEveViewerList::fShowTooltip">fShowTooltip</a>;
+
+   <a href="../ListOfTypes.html#Float_t">Float_t</a>       <a href="../TEveViewerList.html#TEveViewerList:fBrightness" title="Float_t TEveViewerList::fBrightness">fBrightness</a>;
+   <a href="../ListOfTypes.html#Bool_t">Bool_t</a>        <a href="../TEveViewerList.html#TEveViewerList:fUseLightColorSet" title="Bool_t TEveViewerList::fUseLightColorSet">fUseLightColorSet</a>;
+
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:HandleTooltip" title="void TEveViewerList::HandleTooltip()">HandleTooltip</a>();
+
+<span class="keyword">public</span>:
+   <a href="../TEveViewerList.html">TEveViewerList</a>(<span class="keyword">const</span> <span class="keyword">char</span>* n=<span class="string">"TEveViewerList"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* t=<span class="string">""</span>);
+   <span class="keyword">virtual</span> <a href="../TEveViewerList.html#TEveViewerList:_TEveViewerList" title="void TEveViewerList::~TEveViewerList()">~TEveViewerList</a>();
+
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:AddElement" title="void TEveViewerList::AddElement(TEveElement* el)">AddElement</a>(<a href="../TEveElement.html">TEveElement</a>* el);
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RemoveElementLocal" title="void TEveViewerList::RemoveElementLocal(TEveElement* el)">RemoveElementLocal</a>(<a href="../TEveElement.html">TEveElement</a>* el);
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RemoveElementsLocal" title="void TEveViewerList::RemoveElementsLocal()">RemoveElementsLocal</a>();
+
+   <span class="comment">// --------------------------------</span>
+
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:Connect" title="void TEveViewerList::Connect()">Connect</a>();
+   <span class="keyword">virtual</span> <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:Disconnect" title="void TEveViewerList::Disconnect()">Disconnect</a>();
+
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RepaintChangedViewers" title="void TEveViewerList::RepaintChangedViewers(Bool_t resetCameras,Bool_t dropLogicals)">RepaintChangedViewers</a>(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> resetCameras, <a href="../ListOfTypes.html#Bool_t">Bool_t</a> dropLogicals);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:RepaintAllViewers" title="void TEveViewerList::RepaintAllViewers(Bool_t resetCameras,Bool_t dropLogicals)">RepaintAllViewers</a>(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> resetCameras, <a href="../ListOfTypes.html#Bool_t">Bool_t</a> dropLogicals);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:DeleteAnnotations" title="void TEveViewerList::DeleteAnnotations()">DeleteAnnotations</a>();
+
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:SceneDestructing" title="void TEveViewerList::SceneDestructing(TEveScene* scene)">SceneDestructing</a>(<a href="../TEveScene.html">TEveScene</a>* scene);
+
+   <span class="comment">// --------------------------------</span>
+
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnMouseOver" title="void TEveViewerList::OnMouseOver(TObject* obj,UInt_t state)">OnMouseOver</a>(<a href="../TObject.html">TObject</a>* obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnReMouseOver" title="void TEveViewerList::OnReMouseOver(TObject* obj,UInt_t state)">OnReMouseOver</a>(<a href="../TObject.html">TObject</a>* obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnUnMouseOver" title="void TEveViewerList::OnUnMouseOver(TObject* obj,UInt_t state)">OnUnMouseOver</a>(<a href="../TObject.html">TObject</a>* obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnClicked" title="void TEveViewerList::OnClicked(TObject* obj,UInt_t button,UInt_t state)">OnClicked</a>(<a href="../TObject.html">TObject</a> *obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> button, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnReClicked" title="void TEveViewerList::OnReClicked(TObject* obj,UInt_t button,UInt_t state)">OnReClicked</a>(<a href="../TObject.html">TObject</a> *obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> button, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+   <span class="keyword">void</span> <a href="../TEveViewerList.html#TEveViewerList:OnUnClicked" title="void TEveViewerList::OnUnClicked(TObject* obj,UInt_t button,UInt_t state)">OnUnClicked</a>(<a href="../TObject.html">TObject</a> *obj, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> button, <a href="../ListOfTypes.html#UInt_t">UInt_t</a> state);
+
+   <span class="comment">// --------------------------------</span>
+
+<a name="cWK5vB"></a>   <a href="../ListOfTypes.html#Bool_t">Bool_t</a>  <a href="../TEveViewerList.html#TEveViewerList:GetShowTooltip" title="Bool_t TEveViewerList::GetShowTooltip()">GetShowTooltip</a>()     <span class="keyword">const</span> { <span class="keyword">return</span> <a href="../TEveViewerList.html#TEveViewerList:fShowTooltip" title="Bool_t TEveViewerList::fShowTooltip">fShowTooltip</a>; }
+<a name="MIO_EB"></a>   <span class="keyword">void</span>    <a href="../TEveViewerList.html#TEveViewerList:SetShowTooltip" title="void TEveViewerList::SetShowTooltip(Bool_t x)">SetShowTooltip</a>(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> x)   { <a href="../TEveViewerList.html#TEveViewerList:fShowTooltip" title="Bool_t TEveViewerList::fShowTooltip">fShowTooltip</a> = x; }
+
+<a name="pfn.r"></a>   <a href="../ListOfTypes.html#Float_t">Float_t</a> <a href="../TEveViewerList.html#TEveViewerList:GetColorBrightness" title="Float_t TEveViewerList::GetColorBrightness()">GetColorBrightness</a>() <span class="keyword">const</span> { <span class="keyword">return</span> <a href="../TEveViewerList.html#TEveViewerList:fBrightness" title="Float_t TEveViewerList::fBrightness">fBrightness</a>; }
+   <span class="keyword">void</span>    <a href="../TEveViewerList.html#TEveViewerList:SetColorBrightness" title="void TEveViewerList::SetColorBrightness(Float_t b)">SetColorBrightness</a>(<a href="../ListOfTypes.html#Float_t">Float_t</a> b);
+  
+<a name="nQxlxB"></a>   <a href="../ListOfTypes.html#Bool_t">Bool_t</a>  <a href="../TEveViewerList.html#TEveViewerList:UseLightColorSet" title="Bool_t TEveViewerList::UseLightColorSet()">UseLightColorSet</a>()   <span class="keyword">const</span> { <span class="keyword">return</span> <a href="../TEveViewerList.html#TEveViewerList:fUseLightColorSet" title="Bool_t TEveViewerList::fUseLightColorSet">fUseLightColorSet</a>; }
+   <span class="keyword">void</span>    <a href="../TEveViewerList.html#TEveViewerList:SwitchColorSet" title="void TEveViewerList::SwitchColorSet()">SwitchColorSet</a>();
+
+   ClassDef(<a href="../TEveViewerList.html">TEveViewerList</a>, 0); <span class="comment">// List of Viewers providing common operations on <a href="../TEveViewer.html">TEveViewer</a> collections.</span>
+};
+
+<span class="cpp">#endif</span>
+</pre>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="87" href="#87" class="ln">87</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="88" href="#88" class="ln">88</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="89" href="#89" class="ln">89</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="90" href="#90" class="ln">90</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="91" href="#91" class="ln">91</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="92" href="#92" class="ln">92</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="93" href="#93" class="ln">93</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="94" href="#94" class="ln">94</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="95" href="#95" class="ln">95</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="96" href="#96" class="ln">96</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="97" href="#97" class="ln">97</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="98" href="#98" class="ln">98</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="99" href="#99" class="ln">99</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="100" href="#100" class="ln">100</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="101" href="#101" class="ln">101</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="102" href="#102" class="ln">102</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="103" href="#103" class="ln">103</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="104" href="#104" class="ln">104</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="105" href="#105" class="ln">105</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="106" href="#106" class="ln">106</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="107" href="#107" class="ln">107</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="108" href="#108" class="ln">108</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="109" href="#109" class="ln">109</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="110" href="#110" class="ln">110</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="111" href="#111" class="ln">111</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="112" href="#112" class="ln">112</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="113" href="#113" class="ln">113</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="114" href="#114" class="ln">114</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="115" href="#115" class="ln">115</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="116" href="#116" class="ln">116</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="117" href="#117" class="ln">117</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="118" href="#118" class="ln">118</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="119" href="#119" class="ln">119</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="120" href="#120" class="ln">120</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="121" href="#121" class="ln">121</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="122" href="#122" class="ln">122</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="123" href="#123" class="ln">123</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="124" href="#124" class="ln">124</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="125" href="#125" class="ln">125</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="126" href="#126" class="ln">126</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="127" href="#127" class="ln">127</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="128" href="#128" class="ln">128</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="129" href="#129" class="ln">129</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="130" href="#130" class="ln">130</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="131" href="#131" class="ln">131</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="132" href="#132" class="ln">132</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="133" href="#133" class="ln">133</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="134" href="#134" class="ln">134</a></div><div class="ln">&nbsp;<span class="lnfile">TEveViewer.h:</span><a name="135" href="#135" class="ln">135</a></div></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-11-03 20:13 </em><em>&raquo; Last generated: 2011-11-03 20:13</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

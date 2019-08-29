@@ -1,0 +1,493 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:11:25 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TEntryListArray</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TEntryListArray','libTree','TEntryListArray.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TEntryListArray.h.html">header file</a>
+<a class="descrheadentry" href="src/TEntryListArray.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tree/tree/inc/TEntryListArray.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tree/tree/src/TEntryListArray.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TEntryListArray:description">class description</a> 
+<a class="descrheadentry" href="#TEntryListArray:Function_Members">function members</a>
+<a class="descrheadentry" href="#TEntryListArray:Data_Members">data members</a>
+<a class="descrheadentry" href="#TEntryListArray:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./TREE_Index.html">TREE</a>
+ &#187; <a class="locationlevel" href="./TREE_TREE_Index.html">TREE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TEntryListArray</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TEntryListArray:description"></a>class TEntryListArray: public <a href="./TEntryList.html">TEntryList</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>TEntryListArray: a list of entries and subentries in a TTree or TChain</h2></center>
+TEntryListArray is an extension of TEntryList, used to hold selected entries and subentries (sublists) for when the user has a TTree with containers (vectors, arrays, ...).
+<!-- TDocHtmlDirective end --><pre>
+
+</pre><!-- TDocHtmlDirective start --><h4> Usage with TTree::Draw to select entries and subentries </h4> 
+<ol>
+<li> <b>To fill a list <i>elist</i> </b>:
+    <pre>
+     tree->Draw(">> elist", "x > 0", "entrylistarray"); 
+    </pre>
+<li> <b>To use a list to select entries and subentries:</b>
+  <pre>
+     tree->SetEntryList(elist);
+     tree->Draw("y");
+     tree->Draw("z");
+  </pre>
+</ol>
+Its main purpose is to improve the performance of a code that needs to apply complex cuts on TTree::Draw multiple times. After the first call above to TTree::Draw, a TEntryListArray is created and filled with the entries and the indices of the arrays that satisfied the selection cut (x > 0). In the subsequent calls to TTree::Draw, only these entries / subentries are used to fill histograms.
+<!-- TDocHtmlDirective end --><pre>
+
+</pre><!-- TDocHtmlDirective start --><h4> About the class </h4>
+The class derives from TEntryList and can be used basically in the same way. This same class is used to keep entries and subentries, so there are two types of TEntryListArray's:
+<ol>
+<li> The ones that only hold subentries 
+  <ul><li> fEntry is set to the entry# for which the subentries correspond
+  <li> fSubLists must be 0</ul>
+<li> The ones that hold entries and eventually lists with subentries in fSubLists.
+  <ul><li> fEntry = -1 for those
+  <li> If there are no sublists for a given entry, all the subentries will be used in the selection </ul>
+</ol>
+<h4> Additions with respect to TEntryList </h4>
+<ol><li> Data members:
+ <ul><li> fSubLists: a container to hold the sublists
+ <li> fEntry: the entry number if the list is used to hold subentries
+ <li> fLastSubListQueried and fSubListIter: a pointer to the last sublist queried and an iterator to resume the loop from the last sublist queried (to speed up selection and insertion in TTree::Draw) </ul>
+<li> Public methods:
+  <ul><li> Contains, Enter and Remove with subentry as argument
+  <li> GetSubListForEntry: to return the sublist corresponding to the given entry </ul>
+<li> Protected methods:
+  <ul><li> AddEntriesAndSubLists: called by Add when adding two TEntryList arrays with sublists
+  <li> ConvertToTEntryListArray: convert TEntryList to TEntryListArray
+  <li> RemoveSubList: to remove the given sublist
+  <li> RemoveSubListForEntry: to remove the sublist corresponding to the given entry
+  <li> SetEntry: to get / set a sublist for the given entry </ul>
+</ol>  
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TEntryListArray:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray">TEntryListArray</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%4">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TTree.html">TTree</a>* tree)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%5">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TEntryListArray.html">TEntryListArray</a>&amp; elist)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%6">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>&amp; elist)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%1">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%2">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TTree.html">TTree</a>* tree)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEntryListArray:TEntryListArray%3">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TEntryListArray:_TEntryListArray">~TEntryListArray</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Add">Add</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TEntryListArray:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Contains%1">Contains</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Contains">Contains</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:DirectoryAutoAdd"><span class="baseclass">TEntryList::</span>DirectoryAutoAdd</a>(<a href="./TDirectory.html">TDirectory</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Enter%1">Enter</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Enter">Enter</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TEntryList.html">TEntryList</a>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetCurrentList"><span class="baseclass">TEntryList::</span>GetCurrentList</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetDirectory"><span class="baseclass">TEntryList::</span>GetDirectory</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetEntriesToProcess"><span class="baseclass">TEntryList::</span>GetEntriesToProcess</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetEntry"><span class="baseclass">TEntryList::</span>GetEntry</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetEntryAndTree"><span class="baseclass">TEntryList::</span>GetEntryAndTree</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; treenum)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TEntryList.html">TEntryList</a>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetEntryList"><span class="baseclass">TEntryList::</span>GetEntryList</a>(<span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetFileName"><span class="baseclass">TEntryList::</span>GetFileName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetLists"><span class="baseclass">TEntryList::</span>GetLists</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetN"><span class="baseclass">TEntryList::</span>GetN</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetReapplyCut"><span class="baseclass">TEntryList::</span>GetReapplyCut</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TEntryListArray.html">TEntryListArray</a>*</td><td class="funcname"><a class="funcname" href="#TEntryListArray:GetSubListForEntry">GetSubListForEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TEntryListArray:GetSubLists">GetSubLists</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetTreeName"><span class="baseclass">TEntryList::</span>GetTreeName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:GetTreeNumber"><span class="baseclass">TEntryList::</span>GetTreeNumber</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TEntryListArray:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:Merge"><span class="baseclass">TEntryList::</span>Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:Next"><span class="baseclass">TEntryList::</span>Next</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:OptimizeStorage"><span class="baseclass">TEntryList::</span>OptimizeStorage</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Remove%1">Remove</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Remove">Remove</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Reset">Reset</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetDirectory"><span class="baseclass">TEntryList::</span>SetDirectory</a>(<a href="./TDirectory.html">TDirectory</a>* dir)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetEntriesToProcess"><span class="baseclass">TEntryList::</span>SetEntriesToProcess</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> nen)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetFileName"><span class="baseclass">TEntryList::</span>SetFileName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetReapplyCut"><span class="baseclass">TEntryList::</span>SetReapplyCut</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> apply = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetShift"><span class="baseclass">TEntryList::</span>SetShift</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> shift)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:SetTree%1">SetTree</a>(<span class="keyword">const</span> <a href="./TTree.html">TTree</a>* tree)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:SetTree">SetTree</a>(<span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetTreeName"><span class="baseclass">TEntryList::</span>SetTreeName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* treename)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TEntryList.html#TEntryList:SetTreeNumber"><span class="baseclass">TEntryList::</span>SetTreeNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Subtract">Subtract</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:AddEntriesAndSubLists">AddEntriesAndSubLists</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:ConvertToTEntryListArray">ConvertToTEntryListArray</a>(<a href="./TEntryList.html">TEntryList</a>* e)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEntryListArray:Init">Init</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:RemoveSubList">RemoveSubList</a>(<a href="./TEntryListArray.html">TEntryListArray</a>* e, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEntryListArray:RemoveSubListForEntry">RemoveSubListForEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TEntryListArray.html">TEntryListArray</a>*</td><td class="funcname"><a class="funcname" href="#TEntryListArray:SetEntry">SetEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><a href="./TEntryListArray.html">TEntryListArray</a>&amp;</td><td class="funcname"><a class="funcname" href="#TEntryListArray:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TEntryListArray.html">TEntryListArray</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TEntryListArray:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TEntryList::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TEntryList.html#TEntryList:kBlockSize">kBlockSize</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TObjArray.html">TObjArray</a>*</td><td class="dataname"><a href="./TEntryList.html#TEntryList:fBlocks"><span class="baseclass">TEntryList::</span>fBlocks</a></td><td class="datadesc">blocks with indices of passing events (TEntryListBlocks)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TEntryList.html">TEntryList</a>*</td><td class="dataname"><a href="./TEntryList.html#TEntryList:fCurrent"><span class="baseclass">TEntryList::</span>fCurrent</a></td><td class="datadesc">! currently filled entry list</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a href="./TEntryList.html#TEntryList:fDirectory"><span class="baseclass">TEntryList::</span>fDirectory</a></td><td class="datadesc">! Pointer to directory holding this tree</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fEntriesToProcess"><span class="baseclass">TEntryList::</span>fEntriesToProcess</a></td><td class="datadesc">used on proof to set the number of entries to process in a packet</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TEntryListArray:fEntry"></a>fEntry</td><td class="datadesc">the entry number, when the list is used for subentries</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fFileName"><span class="baseclass">TEntryList::</span>fFileName</a></td><td class="datadesc">name of the file, where the tree is</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fLastIndexQueried"><span class="baseclass">TEntryList::</span>fLastIndexQueried</a></td><td class="datadesc">! used to optimize GetEntry() function from a loop </td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fLastIndexReturned"><span class="baseclass">TEntryList::</span>fLastIndexReturned</a></td><td class="datadesc">! used to optimize GetEntry() function from a loop</td></tr>
+<tr class="data"><td class="datatype"><a href="./TEntryListArray.html">TEntryListArray</a>*</td><td class="dataname"><a name="TEntryListArray:fLastSubListQueried"></a>fLastSubListQueried</td><td class="datadesc">! last sublist checked by GetSubListForEntry</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TEntryList.html#TEntryList:fLists"><span class="baseclass">TEntryList::</span>fLists</a></td><td class="datadesc">a list of underlying entry lists for each tree of a chain</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fN"><span class="baseclass">TEntryList::</span>fN</a></td><td class="datadesc">number of entries in the list</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fNBlocks"><span class="baseclass">TEntryList::</span>fNBlocks</a></td><td class="datadesc">number of TEntryListBlocks</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fReapply"><span class="baseclass">TEntryList::</span>fReapply</a></td><td class="datadesc">If true, TTree::Draw will 'reapply' the original cut</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fShift"><span class="baseclass">TEntryList::</span>fShift</a></td><td class="datadesc">! true when some sub-lists don't correspond to trees</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fStringHash"><span class="baseclass">TEntryList::</span>fStringHash</a></td><td class="datadesc">! Hash value of a string of treename and filename</td></tr>
+<tr class="data"><td class="datatype"><a href="./TIter.html">TIter</a>*</td><td class="dataname"><a name="TEntryListArray:fSubListIter"></a>fSubListIter</td><td class="datadesc">! to iterate over fSubLists and keep last one checked</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TEntryListArray:fSubLists"></a>fSubLists</td><td class="datadesc">a list of underlying entry lists for each event of a TEntryList</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fTreeName"><span class="baseclass">TEntryList::</span>fTreeName</a></td><td class="datadesc">name of the tree</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TEntryList.html#TEntryList:fTreeNumber"><span class="baseclass">TEntryList::</span>fTreeNumber</a></td><td class="datadesc">! the index of the tree in the chain (used when the entry</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TEntryListArray:Class_Charts"></a>Class Charts</h2>
+<map name="MapTEntryListArray_Inh" id="MapTEntryListArray_Inh">
+<area shape="rect" href="./TEntryList.html" title="TEntryList" alt="" coords="398,8,485,29"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="216,8,289,29"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="31,8,98,29"/>
+</map>
+<map name="MapTEntryListArray_InhMem" id="MapTEntryListArray_InhMem">
+<area shape="rect" href="./TEntryList.html" alt="" coords="859,60,947,168"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="760,60,848,183"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="661,60,749,183"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="891,179,915,213"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="859,224,947,460"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="760,195,848,460"/>
+<area shape="rect" href="./TEntryList.html" alt="" coords="661,195,749,460"/>
+<area shape="rect" href="./TEntryList.html" title="TEntryList" alt="" coords="651,16,957,471"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTEntryListArray_Lib" id="MapTEntryListArray_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="407,160,535,208"/>
+</map>
+<div class="tabs">
+<a id="imgTEntryListArray_Inh" class="tabsel" href="inh/TEntryListArray_Inh.png" onclick="javascript:return SetImg('Charts','inh/TEntryListArray_Inh.png');">Inheritance</a>
+<a id="imgTEntryListArray_InhMem" class="tab" href="inhmem/TEntryListArray_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TEntryListArray_InhMem.png');">Inherited Members</a>
+<a id="imgTEntryListArray_Incl" class="tab" href="incl/TEntryListArray_Incl.png" onclick="javascript:return SetImg('Charts','incl/TEntryListArray_Incl.png');">Includes</a>
+<a id="imgTEntryListArray_Lib" class="tab" href="lib/TEntryListArray_Lib.png" onclick="javascript:return SetImg('Charts','lib/TEntryListArray_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTEntryListArray_Inh" src="inh/TEntryListArray_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:Init" href="src/TEntryListArray.cxx.html#xajiID">Init</a>()</span><br />
+<div class="funccomm"><pre> Initialize data members, called by <a href="./TEntryListArray.html#TEntryListArray:Reset" title="void TEntryListArray::Reset()">Reset</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray" href="src/TEntryListArray.cxx.html#s4g20E">TEntryListArray</a>()</span><br />
+<div class="funccomm"><pre>default c-tor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%1" href="src/TEntryListArray.cxx.html#RwHLkC">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</span><br />
+<div class="funccomm"><pre>c-tor with name and title
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%2" href="src/TEntryListArray.cxx.html#FeLkUC">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TTree.html">TTree</a>* tree)</span><br />
+<div class="funccomm"><pre>constructor with name and title, which also sets the tree
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%3" href="src/TEntryListArray.cxx.html#Y2oMe">TEntryListArray</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename)</span><br />
+<div class="funccomm"><pre>c-tor with name and title, which also sets the treename and the filename
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%4" href="src/TEntryListArray.cxx.html#fNA6bC">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TTree.html">TTree</a>* tree)</span><br />
+<div class="funccomm"><pre>c-tor, which sets the tree
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%5" href="src/TEntryListArray.cxx.html#aa2bVE">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TEntryListArray.html">TEntryListArray</a>&amp; elist)</span><br />
+<div class="funccomm"><pre>copy c-tor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:TEntryListArray%6" href="src/TEntryListArray.cxx.html#Vgbw">TEntryListArray</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>&amp; elist)</span><br />
+<div class="funccomm"><pre>c-tor, from <a href="./TEntryList.html">TEntryList</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEntryListArray:_TEntryListArray" href="src/TEntryListArray.cxx.html#riluv">~TEntryListArray</a>()</span><br />
+<div class="funccomm"><pre> d-tor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:Add" href="src/TEntryListArray.cxx.html#KwlS7">Add</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</span><br />
+<div class="funccomm"><pre><a href="./TEntryListArray.html#TEntryListArray:Add" title="void TEntryListArray::Add(const TEntryList* elist)">Add</a> 2 entry lists
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:AddEntriesAndSubLists" href="src/TEntryListArray.cxx.html#VXUWs">AddEntriesAndSubLists</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</span><br />
+<div class="funccomm"><pre> The method that really adds two entry lists with sublists
+ If lists are splitted (fLists != 0), look for the ones whose trees match and call the method for those lists.
+ <a href="./TEntryListArray.html#TEntryListArray:Add" title="void TEntryListArray::Add(const TEntryList* elist)">Add</a> first the sublists, and then use <a href="./TEntryList.html">TEntryList</a>::<a href="./TEntryList.html#TEntryList:Add" title="void TEntryList::Add(const TEntryList* elist)">Add</a> to deal with the entries
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TEntryListArray:Contains" href="src/TEntryListArray.cxx.html#BQmUO">Contains</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+<div class="funccomm"><pre>When tree = 0, returns from the current list
+When tree != 0, finds the list corresponding to this tree
+When tree is a chain, the entry is assumed to be global index and the local
+entry is recomputed from the treeoffset information of the chain
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:ConvertToTEntryListArray" href="src/TEntryListArray.cxx.html#lFdQPB">ConvertToTEntryListArray</a>(<a href="./TEntryList.html">TEntryList</a>* e)</span><br />
+<div class="funccomm"><pre> Create a <a href="./TEntryListArray.html">TEntryListArray</a> based on the given <a href="./TEntryList.html">TEntryList</a>
+ Called by <a href="./TEntryListArray.html#TEntryListArray:SetTree" title="void TEntryListArray::SetTree(const char* treename,const char* filename) or overloads">SetTree</a> when the given list is added to fLists
+ Replace it by a <a href="./TEntryListArray.html">TEntryListArray</a> and delete the given list
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:Enter" href="src/TEntryListArray.cxx.html#EDe.aC">Enter</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+<div class="funccomm"><pre><a href="./TEntryListArray.html#TEntryListArray:Add" title="void TEntryListArray::Add(const TEntryList* elist)">Add</a> entry #entry (, #subentry) to the list
+When tree = 0, adds to the current list
+When tree != 0, finds the list corresponding to this tree (or add a new one)
+When tree is a chain, the entry is assumed to be global index and the local
+entry is recomputed from the treeoffset information of the chain
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TEntryListArray.html">TEntryListArray</a>* <a class="funcname" name="TEntryListArray:GetSubListForEntry" href="src/TEntryListArray.cxx.html#T_P0cB">GetSubListForEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</span><br />
+<div class="funccomm"><pre> Return the list holding the subentries for the given entry or 0
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:Print" href="src/TEntryListArray.cxx.html#T4GSqB">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre><a href="./TEntryListArray.html#TEntryListArray:Print" title="void TEntryListArray::Print(Option_t* option=&quot;&quot;)">Print</a> this list
+option = <span class="string">""</span> - default - print the name of the tree and file
+option = <span class="string">"all"</span> - print all the entry numbers
+option = <span class="string">"subentries"</span> - print all the entry numbers and associated subentries
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:Remove" href="src/TEntryListArray.cxx.html#gYgXnC">Remove</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+<div class="funccomm"><pre><a href="./TEntryListArray.html#TEntryListArray:Remove" title="Bool_t TEntryListArray::Remove(Long64_t entry,TTree* tree,Long64_t subentry) or overloads">Remove</a> entry #entry (, #subentry)  from the list
+When tree = 0, removes from the current list
+When tree != 0, finds the list, corresponding to this tree
+When tree is a chain, the entry is assumed to be global index and the local
+entry is recomputed from the treeoffset information of the chain
+If subentry != -1, only the given subentry is removed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:RemoveSubList" href="src/TEntryListArray.cxx.html#Wnp9_">RemoveSubList</a>(<a href="./TEntryListArray.html">TEntryListArray</a>* e, <a href="./TTree.html">TTree</a>* tree = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TEntryListArray.html#TEntryListArray:Remove" title="Bool_t TEntryListArray::Remove(Long64_t entry,TTree* tree,Long64_t subentry) or overloads">Remove</a> the given sublist and return <a href="./ListOfTypes.html#bool">true</a> if succeeded
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:RemoveSubListForEntry" href="src/TEntryListArray.cxx.html#H1L7vB">RemoveSubListForEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TEntryListArray.html#TEntryListArray:Remove" title="Bool_t TEntryListArray::Remove(Long64_t entry,TTree* tree,Long64_t subentry) or overloads">Remove</a> the sublists for the given entry --&gt; not being used...
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:Reset" href="src/TEntryListArray.cxx.html#tVNcf">Reset</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TEntryListArray.html#TEntryListArray:Reset" title="void TEntryListArray::Reset()">Reset</a> all entries and remove all sublists
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TEntryListArray.html">TEntryListArray</a>* <a class="funcname" name="TEntryListArray:SetEntry" href="src/TEntryListArray.cxx.html#PrOvuB">SetEntry</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree = 0)</span><br />
+<div class="funccomm"><pre>Create a sublist for the given entry and returns it --&gt; should be called after calling <a href="./TEntryListArray.html#TEntryListArray:GetSubListForEntry" title="TEntryListArray* TEntryListArray::GetSubListForEntry(Long64_t entry,TTree* tree=0)">GetSubListForEntry</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:Subtract" href="src/TEntryListArray.cxx.html#AF0mgB">Subtract</a>(<span class="keyword">const</span> <a href="./TEntryList.html">TEntryList</a>* elist)</span><br />
+<div class="funccomm"><pre><a href="./TEntryListArray.html#TEntryListArray:Remove" title="Bool_t TEntryListArray::Remove(Long64_t entry,TTree* tree,Long64_t subentry) or overloads">Remove</a> all the entries (and subentries) of this entry list that are contained in elist
+If for a given entry present in both lists, one has subentries and the other does not, the whole entry is removed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:SetTree" href="src/TEntryListArray.cxx.html#ff3LLE">SetTree</a>(<span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename)</span><br />
+<div class="funccomm"><pre>If a list for a tree with such name and filename exists, sets it as the current sublist
+If not, creates this list and sets it as the current sublist
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TEntryListArray.html">TEntryListArray</a>&amp; <a class="funcname" name="TEntryListArray:operator_" href="src/TEntryListArray.h.html#vSCsdB">operator=</a>(<span class="keyword">const</span> <a href="./TEntryListArray.html">TEntryListArray</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TEntryListArray:Contains" href="src/TEntryListArray.h.html#c.0InB">Contains</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:Enter" href="src/TEntryListArray.h.html#ljnfLB">Enter</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEntryListArray:Remove" href="src/TEntryListArray.h.html#lXkrXB">Remove</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> entry, <a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> subentry)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEntryListArray:SetTree" href="src/TEntryListArray.h.html#YId_5E">SetTree</a>(<span class="keyword">const</span> <span class="keyword">char</span>* treename, <span class="keyword">const</span> <span class="keyword">char</span>* filename)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>* <a class="funcname" name="TEntryListArray:GetSubLists" href="src/TEntryListArray.h.html#JrimMC">GetSubLists</a>() const</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Bruno+Lenzi"> Bruno Lenzi 12/07/2011</a> </em><em>&raquo; Copyright   (C) 1995-2006, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/tree:$Id: TEntryListArray.h 40643 2011-08-19 19:27:05Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:11</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

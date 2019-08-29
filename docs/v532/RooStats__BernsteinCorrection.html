@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:21 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooStats::BernsteinCorrection</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooStats::BernsteinCorrection','libRooStats','RooStats/BernsteinCorrection.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooStats__BernsteinCorrection.h.html">header file</a>
+<a class="descrheadentry" href="src/RooStats__BernsteinCorrection.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/inc/RooStats/BernsteinCorrection.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/src/BernsteinCorrection.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooStats__BernsteinCorrection:description">class description</a> 
+<a class="descrheadentry" href="#RooStats__BernsteinCorrection:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooStats__BernsteinCorrection:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooStats__BernsteinCorrection:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOSTATS_Index.html">ROOSTATS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooStats::BernsteinCorrection</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooStats__BernsteinCorrection:description"></a>class RooStats::BernsteinCorrection</h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><p>
+BernsteinCorrection is a utility in RooStats to augment a nominal PDF with a polynomial 
+correction term.  This is useful for incorporating systematic variations to the nominal PDF.  
+The Bernstein basis polynomails are particularly appropriate because they are positive definite. 
+</p>
+<p>
+This tool was inspired by the work of Glen Cowan together with Stephan Horner, Sascha Caron, 
+Eilam Gross, and others.  
+The initial implementation is independent work.  The major step forward in the approach was 
+to provide a well defined algorithm that specifies the order of polynomial to be included 
+in the correction.  This is an emperical algorithm, so in addition to the nominal model it 
+needs either a real data set or a simulated one.  In the early work, the nominal model was taken
+to be a histogram from Monte Carlo simulations, but in this implementation it is generalized to an
+arbitrary PDF (which includes a RooHistPdf).  The algorithm basically consists of a 
+hypothesis test of an nth-order correction (null) against a n+1-th order correction (alternate). 
+The quantity q = -2 log LR is used to determine whether the n+1-th order correction is a major 
+improvement to the n-th order correction.  The distribution of q is expected to be roughly 
+\chi^2 with one degree of freedom if the n-th order correction is a good model for the data. 
+ Thus, one only moves to the n+1-th order correction of q is relatively large.  The chance that 
+one moves from the n-th to the n+1-th order correction when the n-th order correction 
+(eg. a type 1 error) is sufficient is given by the Prob(\chi^2_1 > threshold).  The constructor 
+of this class allows you to directly set this tolerance (in terms of probability that the n+1-th
+ term is added unnecessarily).
+</p>
+<p>
+To do:
+Add another method to the utility that will make the sampling distribution for -2 log lambda 
+for various m vs. m+1 order corrections using a nominal model and perhaps having two ways of 
+generating the toys (either via a histogram or via an independent model that is supposed to
+ reflect reality).  That will allow one to make plots like Glen has at the end of his DRAFT
+ very easily. 
+</p>
+<!-- TDocHtmlDirective end --><pre>
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooStats__BernsteinCorrection:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:_BernsteinCorrection">~BernsteinCorrection</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BernsteinCorrection.html">BernsteinCorrection</a></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:BernsteinCorrection">BernsteinCorrection</a>(<span class="keyword">double</span> tolerance = 0.05)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BernsteinCorrection.html">BernsteinCorrection</a></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:BernsteinCorrection%1">BernsteinCorrection</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BernsteinCorrection.html">BernsteinCorrection</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:CreateQSamplingDist">CreateQSamplingDist</a>(<a href="./RooWorkspace.html">RooWorkspace</a>* wks, <span class="keyword">const</span> <span class="keyword">char</span>* nominalName, <span class="keyword">const</span> <span class="keyword">char</span>* varName, <span class="keyword">const</span> <span class="keyword">char</span>* dataName, <a href="./TH1F.html">TH1F</a>*, <a href="./TH1F.html">TH1F</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a> degree, <a href="./ListOfTypes.html#Int_t">Int_t</a> nToys = 500)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:ImportCorrectedPdf">ImportCorrectedPdf</a>(<a href="./RooWorkspace.html">RooWorkspace</a>*, <span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BernsteinCorrection.html">BernsteinCorrection</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:operator_">operator=</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__BernsteinCorrection.html">BernsteinCorrection</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:SetMaxCorrection">SetMaxCorrection</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maxCorr)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__BernsteinCorrection:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooStats__BernsteinCorrection:Data_Members"></a>Data Members</h2>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__BernsteinCorrection:fMaxCorrection"></a>fMaxCorrection</td><td class="datadesc">maximum correction factor at any point</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__BernsteinCorrection:fTolerance"></a>fTolerance</td><td class="datadesc">probability to add an unecessary term</td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooStats__BernsteinCorrection:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooStats__BernsteinCorrection_Lib" id="MapRooStats__BernsteinCorrection_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="371,367,463,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooStats__BernsteinCorrection_Inh" class="tabsel" href="inh/RooStats__BernsteinCorrection_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooStats__BernsteinCorrection_Inh.png');">Inheritance</a>
+<a id="imgRooStats__BernsteinCorrection_InhMem" class="tab" href="inhmem/RooStats__BernsteinCorrection_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooStats__BernsteinCorrection_InhMem.png');">Inherited Members</a>
+<a id="imgRooStats__BernsteinCorrection_Incl" class="tab" href="incl/RooStats__BernsteinCorrection_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooStats__BernsteinCorrection_Incl.png');">Includes</a>
+<a id="imgRooStats__BernsteinCorrection_Lib" class="tab" href="lib/RooStats__BernsteinCorrection_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooStats__BernsteinCorrection_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooStats__BernsteinCorrection_Inh" src="inh/RooStats__BernsteinCorrection_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BernsteinCorrection:BernsteinCorrection" href="src/RooStats__BernsteinCorrection.cxx.html#t9qRi">BernsteinCorrection</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> tolerance)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="RooStats__BernsteinCorrection:ImportCorrectedPdf" href="src/RooStats__BernsteinCorrection.cxx.html#l62neC">ImportCorrectedPdf</a>(<a href="./RooWorkspace.html">RooWorkspace</a>* , <span class="keyword">const</span> <span class="keyword">char</span>* , <span class="keyword">const</span> <span class="keyword">char</span>* , <span class="keyword">const</span> <span class="keyword">char</span>* )</span><br />
+<div class="funccomm"><pre> Main method for Bernstein correction.
+ get ingredients out of workspace
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BernsteinCorrection:CreateQSamplingDist" href="src/RooStats__BernsteinCorrection.cxx.html#oqOVYC">CreateQSamplingDist</a>(<a href="./RooWorkspace.html">RooWorkspace</a>* wks, <span class="keyword">const</span> <span class="keyword">char</span>* nominalName, <span class="keyword">const</span> <span class="keyword">char</span>* varName, <span class="keyword">const</span> <span class="keyword">char</span>* dataName, <a href="./TH1F.html">TH1F</a>* , <a href="./TH1F.html">TH1F</a>* , <a href="./ListOfTypes.html#Int_t">Int_t</a> degree, <a href="./ListOfTypes.html#Int_t">Int_t</a> nToys = 500)</span><br />
+<div class="funccomm"><pre> Create sampling distribution for q given degree-1 vs. degree corrections
+ get ingredients out of workspace
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__BernsteinCorrection:BernsteinCorrection" href="src/RooStats__BernsteinCorrection.h.html#vsoxcC">BernsteinCorrection</a>(<span class="keyword">double</span> tolerance = 0.05)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="RooStats__BernsteinCorrection:_BernsteinCorrection" href="src/RooStats__BernsteinCorrection.h.html#LYQohD">~BernsteinCorrection</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__BernsteinCorrection:SetMaxCorrection" href="src/RooStats__BernsteinCorrection.h.html#cQAm6C">SetMaxCorrection</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maxCorr)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__BernsteinCorrection.html#RooStats__BernsteinCorrection:fMaxCorrection" title="Double_t RooStats::BernsteinCorrection::fMaxCorrection">fMaxCorrection</a> = maxCorr;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Kyle+Cranmer"> Kyle Cranmer</a> </em><em>&raquo; Copyright   (C) 1995-2008, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/roostats:$Id: BernsteinCorrection.h 39391 2011-05-26 09:51:59Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

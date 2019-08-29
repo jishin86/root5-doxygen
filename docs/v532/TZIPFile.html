@@ -1,0 +1,520 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:24:27 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TZIPFile</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TZIPFile','libRIO','TZIPFile.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TZIPFile.h.html">header file</a>
+<a class="descrheadentry" href="src/TZIPFile.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/io/io/inc/TZIPFile.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/io/io/src/TZIPFile.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TZIPFile:description">class description</a> 
+<a class="descrheadentry" href="#TZIPFile:Function_Members">function members</a>
+<a class="descrheadentry" href="#TZIPFile:Data_Members">data members</a>
+<a class="descrheadentry" href="#TZIPFile:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./IO_Index.html">IO</a>
+ &#187; <a class="locationlevel" href="./IO_IO_Index.html">IO</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TZIPFile</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TZIPFile:description"></a>class TZIPFile: public <a href="./TArchiveFile.html">TArchiveFile</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TZIPFile.html">TZIPFile</a>
+
+This class describes a ZIP archive file containing multiple
+sub-files. Typically the sub-files are <a href="./ROOT.html">ROOT</a> files. Notice that
+the <a href="./ROOT.html">ROOT</a> files should not be compressed when being added to the
+ZIP file, since <a href="./ROOT.html">ROOT</a> files are normally already compressed.
+Such a ZIP file should be created like:
+
+zip -n root multi file1.root file2.root
+
+which creates a ZIP file multi.zip.
+
+A ZIP archive consists of files compressed with the popular ZLIB
+compression algorithm. The archive format is used among others by
+PKZip and <a href="./TObject.html#TObject:Info" title="void TObject::Info(const char* method,const char* msgfmt)">Info</a>-ZIP. The compression algorithm is also used by
+GZIP and the PNG graphics standard. The format of the archives is
+explained briefly below. This class provides an interface to read
+such archives.
+
+A ZIP archive contains a prefix, series of archive members
+(sub-files), and a central directory. In theory the archive could
+span multiple disks (or files) with the central directory of the
+whole archive on the last disk, but this class does not support
+such multi-part archives. The prefix is only used in self-extracting
+executable archive files.
+
+The members are stored in the archive sequentially, each with a
+local header followed by the (optionally) compressed data; the local
+header describes the member, including its file name and compressed
+and real sizes. The central directory includes the member details
+again, plus allows an extra member comment to be added. The last
+member in the central directory is an end marker that can contain
+a comment for the whole archive. Both the local header and the
+central directory can also carry extra member-specific data; the
+data in the local and global parts can be different.
+The fact that the archive has a global directory makes it efficient
+and allows for only the reading of the desired data, one does not
+have to scan through the whole file to find the desired sub-file.
+The Zip64 extensions are supported so files larger than 2GB can be
+stored in archives larger than 4 GB.
+
+Once the archive has been opened, the client can query the members
+and read their contents by asking the archive for an offset where
+the sub-file starts. The members can be accessed in any order.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TZIPFile:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TZIPFile:TZIPFile%1">TZIPFile</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TZIPFile:TZIPFile%2">TZIPFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* archive, <span class="keyword">const</span> <span class="keyword">char</span>* member, <a href="./TFile.html">TFile</a>* file)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TZIPFile:_TZIPFile">~TZIPFile</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TZIPFile:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetArchiveName"><span class="baseclass">TArchiveFile::</span>GetArchiveName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TArchiveMember.html">TArchiveMember</a>*</td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetMember"><span class="baseclass">TArchiveFile::</span>GetMember</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetMemberFilePosition"><span class="baseclass">TArchiveFile::</span>GetMemberFilePosition</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetMemberIndex"><span class="baseclass">TArchiveFile::</span>GetMemberIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetMemberName"><span class="baseclass">TArchiveFile::</span>GetMemberName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetMembers"><span class="baseclass">TArchiveFile::</span>GetMembers</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:GetNumberOfMembers"><span class="baseclass">TArchiveFile::</span>GetNumberOfMembers</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TZIPFile:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TArchiveFile.html">TArchiveFile</a>*</td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:Open"><span class="baseclass">TArchiveFile::</span>Open</a>(<span class="keyword">const</span> <span class="keyword">char</span>* url, <a href="./TFile.html">TFile</a>* file)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:OpenArchive">OpenArchive</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TZIPFile:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:SetCurrentMember">SetCurrentMember</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:SetMember"><span class="baseclass">TArchiveFile::</span>SetMember</a>(<span class="keyword">const</span> <span class="keyword">char</span>* member)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:SetMember%1"><span class="baseclass">TArchiveFile::</span>SetMember</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TZIPFile:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TZIPFile:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TZIPFile:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TZIPFile:TZIPFile">TZIPFile</a>(<span class="keyword">const</span> <a href="./TZIPFile.html">TZIPFile</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:DecodeZip64ExtendedExtraField">DecodeZip64ExtendedExtraField</a>(<a href="./TZIPMember.html">TZIPMember</a>* m, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> global = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:FindEndHeader">FindEndHeader</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:Get">Get</a>(<span class="keyword">const</span> <span class="keyword">void</span>* buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> bytes)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#ULong64_t">ULong64_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:Get64">Get64</a>(<span class="keyword">const</span> <span class="keyword">void</span>* buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> bytes)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TZIPFile.html">TZIPFile</a>&amp;</td><td class="funcname"><a class="funcname" href="#TZIPFile:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TZIPFile.html">TZIPFile</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TArchiveFile.html#TArchiveFile:ParseUrl"><span class="baseclass">TArchiveFile::</span>ParseUrl</a>(<span class="keyword">const</span> <span class="keyword">char</span>* url, <a href="./TString.html">TString</a>&amp; archive, <a href="./TString.html">TString</a>&amp; member, <a href="./TString.html">TString</a>&amp; type)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:ReadDirectory">ReadDirectory</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:ReadEndHeader">ReadEndHeader</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:ReadMemberHeader">ReadMemberHeader</a>(<a href="./TZIPMember.html">TZIPMember</a>* member)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:ReadZip64EndLocator">ReadZip64EndLocator</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TZIPFile:ReadZip64EndRecord">ReadZip64EndRecord</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TZIPFile:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EZIPConstants { </td><td class="dataname"><a name="TZIPFile:kARCHIVE_VERSION"></a>kARCHIVE_VERSION</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_HEADER_MAGIC"></a>kDIR_HEADER_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_HEADER_MAGIC"></a>kENTRY_HEADER_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_HEADER_MAGIC"></a>kEND_HEADER_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_HEADER_MAGIC"></a>kZIP64_EDR_HEADER_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_HEADER_MAGIC"></a>kZIP64_EDL_HEADER_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_MAGIC"></a>kZIP64_EXTENDED_MAGIC</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP_MAGIC_LEN"></a>kZIP_MAGIC_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kMAX_VAR_LEN"></a>kMAX_VAR_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kMAX_SIZE"></a>kMAX_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_MAGIC_OFF"></a>kDIR_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_VMADE_OFF"></a>kDIR_VMADE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_VMADE_LEN"></a>kDIR_VMADE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_VREQD_OFF"></a>kDIR_VREQD_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_VREQD_LEN"></a>kDIR_VREQD_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_FLAG_OFF"></a>kDIR_FLAG_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_FLAG_LEN"></a>kDIR_FLAG_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_METHOD_OFF"></a>kDIR_METHOD_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_METHOD_LEN"></a>kDIR_METHOD_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_DATE_OFF"></a>kDIR_DATE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_DATE_LEN"></a>kDIR_DATE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_CRC32_OFF"></a>kDIR_CRC32_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_CRC32_LEN"></a>kDIR_CRC32_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_CSIZE_OFF"></a>kDIR_CSIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_CSIZE_LEN"></a>kDIR_CSIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_USIZE_OFF"></a>kDIR_USIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_USIZE_LEN"></a>kDIR_USIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_NAMELEN_OFF"></a>kDIR_NAMELEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_NAMELEN_LEN"></a>kDIR_NAMELEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_EXTRALEN_OFF"></a>kDIR_EXTRALEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_EXTRALEN_LEN"></a>kDIR_EXTRALEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_COMMENTLEN_OFF"></a>kDIR_COMMENTLEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_COMMENTLEN_LEN"></a>kDIR_COMMENTLEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_DISK_START_OFF"></a>kDIR_DISK_START_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_DISK_START_LEN"></a>kDIR_DISK_START_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_INT_ATTR_OFF"></a>kDIR_INT_ATTR_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_INT_ATTR_LEN"></a>kDIR_INT_ATTR_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_EXT_ATTR_OFF"></a>kDIR_EXT_ATTR_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_EXT_ATTR_LEN"></a>kDIR_EXT_ATTR_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_ENTRY_POS_OFF"></a>kDIR_ENTRY_POS_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_ENTRY_POS_LEN"></a>kDIR_ENTRY_POS_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDIR_HEADER_SIZE"></a>kDIR_HEADER_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_MAGIC_OFF"></a>kZIP64_EDR_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_SIZE_OFF"></a>kZIP64_EDR_SIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_SIZE_LEN"></a>kZIP64_EDR_SIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_VERS_MADE_OFF"></a>kZIP64_EDR_VERS_MADE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_VERS_MADE_LEN"></a>kZIP64_EDR_VERS_MADE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_VERS_EXT_OFF"></a>kZIP64_EDR_VERS_EXT_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_VERS_EXT_LEN"></a>kZIP64_EDR_VERS_EXT_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DISK_OFF"></a>kZIP64_EDR_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DISK_LEN"></a>kZIP64_EDR_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_DISK_OFF"></a>kZIP64_EDR_DIR_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_DISK_LEN"></a>kZIP64_EDR_DIR_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DISK_HDRS_OFF"></a>kZIP64_EDR_DISK_HDRS_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DISK_HDRS_LEN"></a>kZIP64_EDR_DISK_HDRS_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_TOTAL_HDRS_OFF"></a>kZIP64_EDR_TOTAL_HDRS_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_TOTAL_HDRS_LEN"></a>kZIP64_EDR_TOTAL_HDRS_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_SIZE_OFF"></a>kZIP64_EDR_DIR_SIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_SIZE_LEN"></a>kZIP64_EDR_DIR_SIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_OFFSET_OFF"></a>kZIP64_EDR_DIR_OFFSET_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_DIR_OFFSET_LEN"></a>kZIP64_EDR_DIR_OFFSET_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDR_HEADER_SIZE"></a>kZIP64_EDR_HEADER_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_MAGIC_OFF"></a>kZIP64_EDL_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_DISK_OFF"></a>kZIP64_EDL_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_DISK_LEN"></a>kZIP64_EDL_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_REC_OFFSET_OFF"></a>kZIP64_EDL_REC_OFFSET_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_REC_OFFSET_LEN"></a>kZIP64_EDL_REC_OFFSET_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_TOTAL_DISK_OFF"></a>kZIP64_EDL_TOTAL_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_TOTAL_DISK_LEN"></a>kZIP64_EDL_TOTAL_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EDL_HEADER_SIZE"></a>kZIP64_EDL_HEADER_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_MAGIC_OFF"></a>kEND_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DISK_OFF"></a>kEND_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DISK_LEN"></a>kEND_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_DISK_OFF"></a>kEND_DIR_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_DISK_LEN"></a>kEND_DIR_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DISK_HDRS_OFF"></a>kEND_DISK_HDRS_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DISK_HDRS_LEN"></a>kEND_DISK_HDRS_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_TOTAL_HDRS_OFF"></a>kEND_TOTAL_HDRS_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_TOTAL_HDRS_LEN"></a>kEND_TOTAL_HDRS_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_SIZE_OFF"></a>kEND_DIR_SIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_SIZE_LEN"></a>kEND_DIR_SIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_OFFSET_OFF"></a>kEND_DIR_OFFSET_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_DIR_OFFSET_LEN"></a>kEND_DIR_OFFSET_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_COMMENTLEN_OFF"></a>kEND_COMMENTLEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_COMMENTLEN_LEN"></a>kEND_COMMENTLEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kEND_HEADER_SIZE"></a>kEND_HEADER_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_MAGIC_OFF"></a>kENTRY_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_VREQD_OFF"></a>kENTRY_VREQD_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_VREQD_LEN"></a>kENTRY_VREQD_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_FLAG_OFF"></a>kENTRY_FLAG_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_FLAG_LEN"></a>kENTRY_FLAG_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_METHOD_OFF"></a>kENTRY_METHOD_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_METHOD_LEN"></a>kENTRY_METHOD_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_DATE_OFF"></a>kENTRY_DATE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_DATE_LEN"></a>kENTRY_DATE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_CRC32_OFF"></a>kENTRY_CRC32_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_CRC32_LEN"></a>kENTRY_CRC32_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_CSIZE_OFF"></a>kENTRY_CSIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_CSIZE_LEN"></a>kENTRY_CSIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_USIZE_OFF"></a>kENTRY_USIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_USIZE_LEN"></a>kENTRY_USIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_NAMELEN_OFF"></a>kENTRY_NAMELEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_NAMELEN_LEN"></a>kENTRY_NAMELEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_EXTRALEN_OFF"></a>kENTRY_EXTRALEN_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_EXTRALEN_LEN"></a>kENTRY_EXTRALEN_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kENTRY_HEADER_SIZE"></a>kENTRY_HEADER_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_MAGIC_OFF"></a>kZIP64_EXTENDED_MAGIC_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_MAGIC_LEN"></a>kZIP64_EXTENDED_MAGIC_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_SIZE_OFF"></a>kZIP64_EXTENDED_SIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_SIZE_LEN"></a>kZIP64_EXTENDED_SIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_USIZE_OFF"></a>kZIP64_EXTENDED_USIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_USIZE_LEN"></a>kZIP64_EXTENDED_USIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENTED_CSIZE_OFF"></a>kZIP64_EXTENTED_CSIZE_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_CSIZE_LEN"></a>kZIP64_EXTENDED_CSIZE_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_HDR_OFFSET_OFF"></a>kZIP64_EXTENDED_HDR_OFFSET_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_HDR_OFFSET_LEN"></a>kZIP64_EXTENDED_HDR_OFFSET_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_DISK_OFF"></a>kZIP64_EXTENDED_DISK_OFF</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_DISK_LEN"></a>kZIP64_EXTENDED_DISK_LEN</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kZIP64_EXTENDED_SIZE"></a>kZIP64_EXTENDED_SIZE</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kSTORED"></a>kSTORED</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TZIPFile:kDEFLATED"></a>kDEFLATED</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fArchiveName"><span class="baseclass">TArchiveFile::</span>fArchiveName</a></td><td class="datadesc">Archive file name</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TZIPFile:fComment"></a>fComment</td><td class="datadesc">Archive comment</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TArchiveMember.html">TArchiveMember</a>*</td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fCurMember"><span class="baseclass">TArchiveFile::</span>fCurMember</a></td><td class="datadesc">Current archive member</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TZIPFile:fDirOffset"></a>fDirOffset</td><td class="datadesc">Central directory offset (from the beginning of the archive)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TZIPFile:fDirPos"></a>fDirPos</td><td class="datadesc">Central directory position</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TZIPFile:fDirSize"></a>fDirSize</td><td class="datadesc">Central directory size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TFile.html">TFile</a>*</td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fFile"><span class="baseclass">TArchiveFile::</span>fFile</a></td><td class="datadesc">File stream used to access the archive</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fMemberIndex"><span class="baseclass">TArchiveFile::</span>fMemberIndex</a></td><td class="datadesc">Index of sub-file in archive</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fMemberName"><span class="baseclass">TArchiveFile::</span>fMemberName</a></td><td class="datadesc">Sub-file name</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TObjArray.html">TObjArray</a>*</td><td class="dataname"><a href="./TArchiveFile.html#TArchiveFile:fMembers"><span class="baseclass">TArchiveFile::</span>fMembers</a></td><td class="datadesc">Members in this archive</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TZIPFile:Class_Charts"></a>Class Charts</h2>
+<map name="MapTZIPFile_Inh" id="MapTZIPFile_Inh">
+<area shape="rect" href="./TArchiveFile.html" title="TArchiveFile" alt="" coords="306,13,462,44"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="47,13,149,44"/>
+</map>
+<map name="MapTZIPFile_InhMem" id="MapTZIPFile_InhMem">
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="541,60,629,109"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="443,60,531,139"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="344,60,432,139"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="573,120,597,155"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="541,165,629,313"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="443,151,531,313"/>
+<area shape="rect" href="./TArchiveFile.html" alt="" coords="344,151,432,313"/>
+<area shape="rect" href="./TArchiveFile.html" title="TArchiveFile" alt="" coords="333,16,640,324"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTZIPFile_Lib" id="MapTZIPFile_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="399,83,527,131"/>
+</map>
+<div class="tabs">
+<a id="imgTZIPFile_Inh" class="tabsel" href="inh/TZIPFile_Inh.png" onclick="javascript:return SetImg('Charts','inh/TZIPFile_Inh.png');">Inheritance</a>
+<a id="imgTZIPFile_InhMem" class="tab" href="inhmem/TZIPFile_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TZIPFile_InhMem.png');">Inherited Members</a>
+<a id="imgTZIPFile_Incl" class="tab" href="incl/TZIPFile_Incl.png" onclick="javascript:return SetImg('Charts','incl/TZIPFile_Incl.png');">Includes</a>
+<a id="imgTZIPFile_Lib" class="tab" href="lib/TZIPFile_Lib.png" onclick="javascript:return SetImg('Charts','lib/TZIPFile_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTZIPFile_Inh" src="inh/TZIPFile_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TZIPFile:TZIPFile%1" href="src/TZIPFile.cxx.html#NBjt3C">TZIPFile</a>()</span><br />
+<div class="funccomm"><pre> Default ctor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TZIPFile:TZIPFile%2" href="src/TZIPFile.cxx.html#mPcT5C">TZIPFile</a>(<span class="keyword">const</span> <span class="keyword">char</span>* archive, <span class="keyword">const</span> <span class="keyword">char</span>* member, <a href="./TFile.html">TFile</a>* file)</span><br />
+<div class="funccomm"><pre> Specify the archive name and member name. The member can be a decimal
+ number which allows to access the n-th member.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:OpenArchive" href="src/TZIPFile.cxx.html#mSEMU">OpenArchive</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TArchiveFile.html#TArchiveFile:Open" title="TArchiveFile* TArchiveFile::Open(const char* url,TFile* file)">Open</a> archive and read end-header and directory. Returns -1 in case
+ of error, 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="TZIPFile:FindEndHeader" href="src/TZIPFile.cxx.html#vNEUgC">FindEndHeader</a>()</span><br />
+<div class="funccomm"><pre> Find the end header of the ZIP archive. Returns 0 in case of error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:ReadEndHeader" href="src/TZIPFile.cxx.html#wrMyNC">ReadEndHeader</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> the end header of the ZIP archive including the archive comment
+ at the current file position. Check that it really was a single-disk
+ archive with all the entries as expected. Most importantly, figure
+ out where the central directory begins. Returns -1 in case of error,
+ 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="TZIPFile:ReadZip64EndLocator" href="src/TZIPFile.cxx.html#vVyWMB">ReadZip64EndLocator</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> Zip64 end of central directory locator. Returns -1 in case of error,
+ -2 in case end locator magic is not found (i.e. not a zip64 file) and
+ offset of Zip64 end of central directory record in case of success.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:ReadZip64EndRecord" href="src/TZIPFile.cxx.html#yFCGgB">ReadZip64EndRecord</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> Zip64 end of central directory record. Returns -1 in case of error
+ and 0 in case of success.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:ReadDirectory" href="src/TZIPFile.cxx.html#TI8Dn">ReadDirectory</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> the directory of the ZIP archive. Returns -1 in case of error,
+ 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:ReadMemberHeader" href="src/TZIPFile.cxx.html#dKtDYE">ReadMemberHeader</a>(<a href="./TZIPMember.html">TZIPMember</a>* member)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> the member header of the ZIP archive. Sets the position where
+ the data starts in the member object. Returns -1 in case of error,
+ 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:DecodeZip64ExtendedExtraField" href="src/TZIPFile.cxx.html#n4LnCC">DecodeZip64ExtendedExtraField</a>(<a href="./TZIPMember.html">TZIPMember</a>* m, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> global = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Decode the Zip64 extended extra field. If global is <a href="./ListOfTypes.html#bool">true</a>, decode the
+ extra field coming from the central directory, if <a href="./ListOfTypes.html#bool">false</a> decode the
+ extra field coming from the local file header. Returns -1 in case of
+ error, -2 in case Zip64 extra block was not found and 0 in case of
+ success.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TZIPFile:SetCurrentMember" href="src/TZIPFile.cxx.html#E1NE9">SetCurrentMember</a>()</span><br />
+<div class="funccomm"><pre> Find the desired member in the member array and make it the
+ current member. Returns -1 in case member is not found, 0 otherwise.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TZIPFile:Get" href="src/TZIPFile.cxx.html#afRuPC">Get</a>(<span class="keyword">const</span> <span class="keyword">void</span>* buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> bytes)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> a <span class="string">"bytes"</span> <a href="./ListOfTypes.html#long">long</a> little-endian integer value from <span class="string">"buffer"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> <a class="funcname" name="TZIPFile:Get64" href="src/TZIPFile.cxx.html#E_MhGC">Get64</a>(<span class="keyword">const</span> <span class="keyword">void</span>* buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> bytes)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> a 8 byte <a href="./ListOfTypes.html#long">long</a> little-endian integer value from <span class="string">"buffer"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TZIPFile:Print" href="src/TZIPFile.cxx.html#WfR7F">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Pretty print ZIP archive members.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TZIPFile:TZIPFile" href="src/TZIPFile.h.html#exjGY">TZIPFile</a>(<span class="keyword">const</span> <a href="./TZIPFile.html">TZIPFile</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TZIPFile.html">TZIPFile</a>&amp; <a class="funcname" name="TZIPFile:operator_" href="src/TZIPFile.h.html#RcaknB">operator=</a>(<span class="keyword">const</span> <a href="./TZIPFile.html">TZIPFile</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TZIPFile:_TZIPFile" href="src/TZIPFile.h.html#oXDyaD">~TZIPFile</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Fons+Rademakers"> Fons Rademakers   30/6/04</a> </em><em>&raquo; Copyright   (C) 1995-2004, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/io:$Id: TZIPFile.h 39381 2011-05-25 20:36:50Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:24</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

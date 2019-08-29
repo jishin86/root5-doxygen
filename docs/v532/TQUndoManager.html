@@ -1,0 +1,624 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:08 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TQUndoManager</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TQUndoManager','libCore','TQCommand.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TQUndoManager.h.html">header file</a>
+<a class="descrheadentry" href="src/TQUndoManager.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/inc/TQCommand.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/src/TQCommand.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TQUndoManager:description">class description</a> 
+<a class="descrheadentry" href="#TQUndoManager:Function_Members">function members</a>
+<a class="descrheadentry" href="#TQUndoManager:Data_Members">data members</a>
+<a class="descrheadentry" href="#TQUndoManager:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_BASE_Index.html">BASE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TQUndoManager</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TQUndoManager:description"></a>class TQUndoManager: public <a href="./TQCommand.html">TQCommand</a></h1>
+<div class="classdescr">
+<pre>
+
+The Command design pattern is based on the idea, that all editing
+in an application is done by creating instances of command objects.
+Command objects apply changes to the edited object and then are
+stored  on a command stack. Furthermore, each command knows how to
+undo its changes to bring the edited object back to its previous
+state. As <a href="./ListOfTypes.html#long">long</a> as the application only uses command objects to
+change the state of the edited object, it is possible to undo
+a sequence of commands by traversing the command stack downwards and
+calling the <span class="string">"undo"</span> method of each command in turn. It is also
+possible to redo a sequence of commands by traversing the command
+stack upwards and calling the <span class="string">"redo"</span> method of each command.
+
+
+Examples:
+
+1. Create a new command
+
+<a href="./TQCommand.html">TQCommand</a> *com = new <a href="./TQCommand.html">TQCommand</a>(<span class="string">"TH1"</span>, hpx, <span class="string">"SetFillColor(Color_t)"</span>
+<span class="string">"SetFillColor(Color_t)"</span>);
+
+1st parameter - the name of class
+2nd parameter - object
+3rd parameter - the name of do/redo method
+4th parameter - the name of undo method
+
+Since redo,undo methods are the same, undo name can be omitted, e.g.
+
+<a href="./TQCommand.html">TQCommand</a> *com = new <a href="./TQCommand.html">TQCommand</a>(<span class="string">"TH1"</span>, hpx, <span class="string">"SetFillColor(Color_t)"</span>);
+
+For objects derived from <a href="./TObject.html">TObject</a> class name can be omitted, e.g.
+
+<a href="./TQCommand.html">TQCommand</a> *com = new <a href="./TQCommand.html">TQCommand</a>(hpx, <span class="string">"SetFillColor(Color_t)"</span>);
+
+2. Setting undo, redo parameters.
+
+<a href="./ListOfTypes.html#Color_t">Color_t</a> old_color = hpx-&gt;GetFillColor();
+<a href="./ListOfTypes.html#Color_t">Color_t</a> new_color = 4;  // blue color
+
+com-&gt;<a href="./TQCommand.html#TQCommand:SetRedoArgs" title="void TQCommand::SetRedoArgs(Int_t nargs)">SetRedoArgs</a>(1, new_color);
+com-&gt;<a href="./TQCommand.html#TQCommand:SetUndoArgs" title="void TQCommand::SetUndoArgs(Int_t nargs)">SetUndoArgs</a>(1, old_color);
+
+1st argument - the number of undo, redo parameters
+the other arguments - undo, redo values
+
+Since the number of undo,redo parameters is the same one can use
+
+com-&gt;<a href="./TQCommand.html#TQCommand:SetArgs" title="void TQCommand::SetArgs(Int_t nargs)">SetArgs</a>(1, new_color, old_color);
+
+3. <a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a>, redo method execution
+
+com-&gt;<a href="./TQUndoManager.html#TQUndoManager:Redo" title="void TQUndoManager::Redo(Option_t* option=&quot;&quot;)">Redo</a>(); // execute redo method
+com-&gt;<a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a>(); // execute undo method
+
+4. Merged commands
+
+It possible to group several commands together so an end user
+can undo and redo them with one command.
+
+<a href="./TQCommand.html">TQCommand</a> *update = new <a href="./TQCommand.html">TQCommand</a>(gPad, <span class="string">"Modified()"</span>);
+com-&gt;<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a>(update);
+
+5. Macro commands
+
+<span class="string">"Merging"</span> allows to create macro commands, e.g.
+
+<a href="./TQCommand.html">TQCommand</a> *macro = new <a href="./TQCommand.html">TQCommand</a>(<span class="string">"my macro"</span>);
+macro-&gt;<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a>(com1);
+macro-&gt;<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a>(com2);
+
+
+During <a href="./TQUndoManager.html#TQUndoManager:Redo" title="void TQUndoManager::Redo(Option_t* option=&quot;&quot;)">Redo</a> operation commands composing macro command are executed
+sequentially in direct  order (first in first out). During <a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a>,
+they are executed in reverse order (last in first out).
+
+6. <a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a> manager.
+
+<a href="./TQUndoManager.html">TQUndoManager</a> is recorder of undo and redo operations. This is
+command history list which can be traversed backwards and upwards
+performing undo and redo operations.
+To register command <a href="./TQUndoManager.html">TQUndoManager</a>::<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a>(<a href="./TObject.html">TObject</a>*) method is used.
+
+<a href="./TQUndoManager.html">TQUndoManager</a> *history = new <a href="./TQUndoManager.html">TQUndoManager</a>();
+history-&gt;<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a>(com);
+
+<a href="./TQUndoManager.html">TQUndoManager</a>::<a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a> automatically invokes execution of command's
+<a href="./TQUndoManager.html#TQUndoManager:Redo" title="void TQUndoManager::Redo(Option_t* option=&quot;&quot;)">Redo</a> method.
+
+Use <a href="./TQUndoManager.html">TQUndoManager</a>::<a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a> to undo commands in  history list.
+ <a href="./TQUndoManager.html#TQUndoManager:Redo" title="void TQUndoManager::Redo(Option_t* option=&quot;&quot;)">Redo</a> is <a href="./TQUndoManager.html#TQUndoManager:Undo" title="void TQUndoManager::Undo(Option_t* option=&quot;&quot;)">Undo</a> for undo action. Use <a href="./TQUndoManager.html">TQUndoManager</a>::<a href="./TQUndoManager.html#TQUndoManager:Redo" title="void TQUndoManager::Redo(Option_t* option=&quot;&quot;)">Redo</a> method for that
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TQUndoManager:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TQUndoManager:TQUndoManager">TQUndoManager</a>()</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TQUndoManager:_TQUndoManager">~TQUndoManager</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:Add%1">Add</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:Add">Add</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddAfter"><span class="baseclass">TList::</span>AddAfter</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* after, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddAfter%1"><span class="baseclass">TList::</span>AddAfter</a>(TObjLink* after, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AddAll"><span class="baseclass">TCollection::</span>AddAll</a>(<span class="keyword">const</span> <a href="./TCollection.html">TCollection</a>* col)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddAt"><span class="baseclass">TList::</span>AddAt</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddBefore"><span class="baseclass">TList::</span>AddBefore</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* before, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddBefore%1"><span class="baseclass">TList::</span>AddBefore</a>(TObjLink* before, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddFirst"><span class="baseclass">TList::</span>AddFirst</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddFirst%1"><span class="baseclass">TList::</span>AddFirst</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddLast"><span class="baseclass">TList::</span>AddLast</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:AddLast%1"><span class="baseclass">TList::</span>AddLast</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AddVector"><span class="baseclass">TCollection::</span>AddVector</a>(<a href="./TObject.html">TObject</a>* obj1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:After"><span class="baseclass">TList::</span>After</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreAllSignalsBlocked"><span class="baseclass">TQObject::</span>AreAllSignalsBlocked</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreSignalsBlocked"><span class="baseclass">TQObject::</span>AreSignalsBlocked</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AssertClass"><span class="baseclass">TCollection::</span>AssertClass</a>(<a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:At"><span class="baseclass">TList::</span>At</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:Before"><span class="baseclass">TList::</span>Before</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockAllSignals"><span class="baseclass">TQObject::</span>BlockAllSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockSignals"><span class="baseclass">TQObject::</span>BlockSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Browse"><span class="baseclass">TCollection::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:CanCompress"><span class="baseclass">TQCommand::</span>CanCompress</a>(<a href="./TQCommand.html">TQCommand</a>* c) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:CanMerge"><span class="baseclass">TQCommand::</span>CanMerge</a>(<a href="./TQCommand.html">TQCommand</a>* c) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TQUndoManager:CanRedo">CanRedo</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TQUndoManager:CanUndo">CanUndo</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Capacity"><span class="baseclass">TCollection::</span>Capacity</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ChangedBy"><span class="baseclass">TQObject::</span>ChangedBy</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TQUndoManager:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:Clear"><span class="baseclass">TList::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Clone"><span class="baseclass">TCollection::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CollectClassSignalLists"><span class="baseclass">TQObject::</span>CollectClassSignalLists</a>(<a href="./TList.html">TList</a>&amp; list, <a href="./TClass.html">TClass</a>* cls)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Compare"><span class="baseclass">TCollection::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:Compress"><span class="baseclass">TQCommand::</span>Compress</a>(<a href="./TQCommand.html">TQCommand</a>* c)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%1"><span class="baseclass">TQObject::</span>Connect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%2"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connected"><span class="baseclass">TQObject::</span>Connected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Contains"><span class="baseclass">TCollection::</span>Contains</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Contains%1"><span class="baseclass">TCollection::</span>Contains</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:CurrentChanged">CurrentChanged</a>(<a href="./TQCommand.html">TQCommand</a>* c)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:Delete"><span class="baseclass">TQCommand::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Destroyed"><span class="baseclass">TQObject::</span>Destroyed</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%1"><span class="baseclass">TQObject::</span>Disconnect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%2"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* class_name, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnected"><span class="baseclass">TQObject::</span>Disconnected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Draw"><span class="baseclass">TCollection::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Dump"><span class="baseclass">TCollection::</span>Dump</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%1"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a>* paramArr)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%2"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* params)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%3"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Double_t">Double_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%4"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%5"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%6"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%7"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Char_t">Char_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%8"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UChar_t">UChar_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%9"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Short_t">Short_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%10"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UShort_t">UShort_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%11"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%12"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%13"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong_t">ULong_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%14"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%15"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Float_t">Float_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA%1"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs, va_list va)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:EmptyGarbageCollection"><span class="baseclass">TCollection::</span>EmptyGarbageCollection</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:FindObject"><span class="baseclass">TList::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:FindObject%1"><span class="baseclass">TList::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:First"><span class="baseclass">TList::</span>First</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:FirstLink"><span class="baseclass">TList::</span>FirstLink</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GarbageCollect"><span class="baseclass">TCollection::</span>GarbageCollect</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TQCommand.html">TQCommand</a>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetCommand"><span class="baseclass">TQCommand::</span>GetCommand</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TQCommand.html">TQCommand</a>*</td><td class="funcname"><a class="funcname" href="#TQUndoManager:GetCurrent">GetCurrent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TCollection.html">TCollection</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetCurrentCollection"><span class="baseclass">TCollection::</span>GetCurrentCollection</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TQCommand.html">TQCommand</a>*</td><td class="funcname"><a class="funcname" href="#TQUndoManager:GetCursor">GetCursor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetEntries"><span class="baseclass">TCollection::</span>GetEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:GetLast"><span class="baseclass">TSeqCollection::</span>GetLast</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TQUndoManager:GetLimit">GetLimit</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfClassSignals"><span class="baseclass">TQObject::</span>GetListOfClassSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfConnections"><span class="baseclass">TQObject::</span>GetListOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfSignals"><span class="baseclass">TQObject::</span>GetListOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetName"><span class="baseclass">TQCommand::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetNRargs"><span class="baseclass">TQCommand::</span>GetNRargs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetNUargs"><span class="baseclass">TQCommand::</span>GetNUargs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetObject"><span class="baseclass">TQCommand::</span>GetObject</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>**</td><td class="funcname"><a class="funcname" href="./TList.html#TList:GetObjectRef"><span class="baseclass">TList::</span>GetObjectRef</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TQConnection.html">TQConnection</a>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetRedo"><span class="baseclass">TQCommand::</span>GetRedo</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long_t">Long_t</a>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetRedoArgs"><span class="baseclass">TQCommand::</span>GetRedoArgs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetRedoName"><span class="baseclass">TQCommand::</span>GetRedoName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetSize"><span class="baseclass">TCollection::</span>GetSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetStatus"><span class="baseclass">TQCommand::</span>GetStatus</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetTitle"><span class="baseclass">TQCommand::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TQConnection.html">TQConnection</a>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetUndo"><span class="baseclass">TQCommand::</span>GetUndo</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long_t">Long_t</a>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetUndoArgs"><span class="baseclass">TQCommand::</span>GetUndoArgs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:GetUndoName"><span class="baseclass">TQCommand::</span>GetUndoName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GrowBy"><span class="baseclass">TCollection::</span>GrowBy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> delta) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HasConnection"><span class="baseclass">TQObject::</span>HasConnection</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Hash"><span class="baseclass">TCollection::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HighPriority"><span class="baseclass">TQObject::</span>HighPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:IndexOf"><span class="baseclass">TSeqCollection::</span>IndexOf</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TQUndoManager:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsArgNull"><span class="baseclass">TCollection::</span>IsArgNull</a>(<span class="keyword">const</span> <span class="keyword">char</span>* where, <span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TList.html#TList:IsAscending"><span class="baseclass">TList::</span>IsAscending</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsEmpty"><span class="baseclass">TCollection::</span>IsEmpty</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsEqual"><span class="baseclass">TQCommand::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsExecuting"><span class="baseclass">TQCommand::</span>IsExecuting</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsFolder"><span class="baseclass">TCollection::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TQUndoManager:IsLogging">IsLogging</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsMacro"><span class="baseclass">TQCommand::</span>IsMacro</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsOwner"><span class="baseclass">TCollection::</span>IsOwner</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsRedoing"><span class="baseclass">TQCommand::</span>IsRedoing</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsSetter"><span class="baseclass">TQCommand::</span>IsSetter</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsSortable"><span class="baseclass">TCollection::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:IsSorted"><span class="baseclass">TSeqCollection::</span>IsSorted</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:IsUndoing"><span class="baseclass">TQCommand::</span>IsUndoing</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:Last"><span class="baseclass">TList::</span>Last</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:LastIndex"><span class="baseclass">TSeqCollection::</span>LastIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:LastLink"><span class="baseclass">TList::</span>LastLink</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LoadRQ_OBJECT"><span class="baseclass">TQObject::</span>LoadRQ_OBJECT</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LowPriority"><span class="baseclass">TQObject::</span>LowPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:ls">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TIterator.html">TIterator</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:MakeIterator"><span class="baseclass">TList::</span>MakeIterator</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a href="./TString.html">dir</a> = <a href="./ListOfTypes.html#Bool_t">kIterForward</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TIterator.html">TIterator</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:MakeReverseIterator"><span class="baseclass">TCollection::</span>MakeReverseIterator</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:Merge"><span class="baseclass">TQCommand::</span>Merge</a>(<a href="./TQCommand.html">TQCommand</a>* c)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:Merge%1"><span class="baseclass">TQCommand::</span>Merge</a>(<a href="./TCollection.html">TCollection</a>*, <a href="./TFileMergeInfo.html">TFileMergeInfo</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Message"><span class="baseclass">TQObject::</span>Message</a>(<span class="keyword">const</span> <span class="keyword">char</span>* msg)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfConnections"><span class="baseclass">TQObject::</span>NumberOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfSignals"><span class="baseclass">TQObject::</span>NumberOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:ObjCompare"><span class="baseclass">TSeqCollection::</span>ObjCompare</a>(<a href="./TObject.html">TObject</a>* a, <a href="./TObject.html">TObject</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:operator()"><span class="baseclass">TCollection::</span>operator()</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>&amp;</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_"><span class="baseclass">TObject::</span>operator=</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Paint"><span class="baseclass">TCollection::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%1"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%2"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <span class="keyword">const</span> <span class="keyword">char</span>* wildcard, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%3"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./TPRegexp.html">TPRegexp</a>&amp; regexp, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort%1"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./TObject.html">TObject</a>** b, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort%2"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./ListOfTypes.html#Int_t">Int_t</a> nBs, <a href="./TObject.html">TObject</a>*** b, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:RecursiveRemove"><span class="baseclass">TList::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:Redo">Redo</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:Remove"><span class="baseclass">TList::</span>Remove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:Remove%1"><span class="baseclass">TList::</span>Remove</a>(TObjLink* lnk)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveAfter"><span class="baseclass">TSeqCollection::</span>RemoveAfter</a>(<a href="./TObject.html">TObject</a>* after)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:RemoveAll%1"><span class="baseclass">TCollection::</span>RemoveAll</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:RemoveAll"><span class="baseclass">TCollection::</span>RemoveAll</a>(<a href="./TCollection.html">TCollection</a>* col)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveAt"><span class="baseclass">TSeqCollection::</span>RemoveAt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveBefore"><span class="baseclass">TSeqCollection::</span>RemoveBefore</a>(<a href="./TObject.html">TObject</a>* before)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveFirst"><span class="baseclass">TSeqCollection::</span>RemoveFirst</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:RemoveLast"><span class="baseclass">TList::</span>RemoveLast</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:SetArgs"><span class="baseclass">TQCommand::</span>SetArgs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:SetCurrentCollection"><span class="baseclass">TCollection::</span>SetCurrentCollection</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:SetLimit">SetLimit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> limit)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:SetLogging">SetLogging</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> on = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:SetName"><span class="baseclass">TQCommand::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:SetOwner"><span class="baseclass">TCollection::</span>SetOwner</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> enable = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:SetRedoArgs"><span class="baseclass">TQCommand::</span>SetRedoArgs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:SetTitle"><span class="baseclass">TQCommand::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:SetUndoArgs"><span class="baseclass">TQCommand::</span>SetUndoArgs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:Sort"><span class="baseclass">TList::</span>Sort</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> order = kSortAscending)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:StartGarbageCollection"><span class="baseclass">TCollection::</span>StartGarbageCollection</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:Undo">Undo</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:UnSort"><span class="baseclass">TSeqCollection::</span>UnSort</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Write"><span class="baseclass">TCollection::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Write%1"><span class="baseclass">TCollection::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:Changed"><span class="baseclass">TSeqCollection::</span>Changed</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CheckConnectArgs"><span class="baseclass">TQObject::</span>CheckConnectArgs</a>(<a href="./TQObject.html">TQObject</a>* sender, <a href="./TClass.html">TClass</a>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass%1"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TList.html#TList:DeleteLink"><span class="baseclass">TList::</span>DeleteLink</a>(TObjLink* lnk)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">TObjLink**</td><td class="funcname"><a class="funcname" href="./TList.html#TList:DoSort"><span class="baseclass">TList::</span>DoSort</a>(TObjLink** head, <a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret">TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:FindLink"><span class="baseclass">TList::</span>FindLink</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; idx) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetCollectionEntryName"><span class="baseclass">TCollection::</span>GetCollectionEntryName</a>(<a href="./TObject.html">TObject</a>* entry) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetSender"><span class="baseclass">TQObject::</span>GetSender</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetSenderClassName"><span class="baseclass">TQObject::</span>GetSenderClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:Init"><span class="baseclass">TQCommand::</span>Init</a>(<span class="keyword">const</span> <span class="keyword">char</span>* cl, <span class="keyword">void</span>* object, <span class="keyword">const</span> <span class="keyword">char</span>* redo, <span class="keyword">const</span> <span class="keyword">char</span>* undo)</td></tr>
+<tr class="funcinh"><td class="funcret">TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:LinkAt"><span class="baseclass">TList::</span>LinkAt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TList.html#TList:LnkCompare"><span class="baseclass">TList::</span>LnkCompare</a>(TObjLink* l1, TObjLink* l2)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:NewLink"><span class="baseclass">TList::</span>NewLink</a>(<a href="./TObject.html">TObject</a>* obj, TObjLink* prev = NULL)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="./TList.html#TList:NewOptLink"><span class="baseclass">TList::</span>NewOptLink</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt, TObjLink* prev = NULL)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TQUndoManager:PrintCollectionEntry">PrintCollectionEntry</a>(<a href="./TObject.html">TObject</a>* entry, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQCommand.html#TQCommand:PrintCollectionHeader"><span class="baseclass">TQCommand::</span>PrintCollectionHeader</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TQUndoManager:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TCollection::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TCollection.html#TCollection:kIsOwner">kIsOwner</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TCollection.html#TCollection:kInitCapacity">kInitCapacity</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TCollection.html#TCollection:kInitHashTableCapacity">kInitHashTableCapacity</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TList.html#TList:fAscending"><span class="baseclass">TList::</span>fAscending</a></td><td class="datadesc">! sorting order (when calling Sort() or for TSortedList)</td></tr>
+<tr class="datainh"><td class="datatype">TObjLink*</td><td class="dataname"><a href="./TList.html#TList:fCache"><span class="baseclass">TList::</span>fCache</a></td><td class="datadesc">! cache to speedup sequential calling of Before() and After() functions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TQCommand.html">TQCommand</a>*</td><td class="dataname"><a name="TQUndoManager:fCurrent"></a>fCurrent</td><td class="datadesc">the latest executed command</td></tr>
+<tr class="data"><td class="datatype">TObjLink*</td><td class="dataname"><a name="TQUndoManager:fCursor"></a>fCursor</td><td class="datadesc">current position in history stack</td></tr>
+<tr class="datainh"><td class="datatype">TObjLink*</td><td class="dataname"><a href="./TList.html#TList:fFirst"><span class="baseclass">TList::</span>fFirst</a></td><td class="datadesc">! pointer to first entry in linked list</td></tr>
+<tr class="datainh"><td class="datatype">TObjLink*</td><td class="dataname"><a href="./TList.html#TList:fLast"><span class="baseclass">TList::</span>fLast</a></td><td class="datadesc">! pointer to last entry in linked list</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TQUndoManager:fLimit"></a>fLimit</td><td class="datadesc">maximum number of commands can be located in stack</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfConnections"><span class="baseclass">TQObject::</span>fListOfConnections</a></td><td class="datadesc">! list of connections to this object</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfSignals"><span class="baseclass">TQObject::</span>fListOfSignals</a></td><td class="datadesc">! list of signals from this object</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TQUndoManager:fLogBook"></a>fLogBook</td><td class="datadesc">listing of all actions during execution</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TQUndoManager:fLogging"></a>fLogging</td><td class="datadesc">kTRUE if logging is ON</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fNRargs"><span class="baseclass">TQCommand::</span>fNRargs</a></td><td class="datadesc">number of redo arguments</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fNUargs"><span class="baseclass">TQCommand::</span>fNUargs</a></td><td class="datadesc">number of undo arguments</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fName"><span class="baseclass">TQCommand::</span>fName</a></td><td class="datadesc">command name. Default is "ClassName::RedoName(args)"</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TCollection.html#TCollection:fName"><span class="baseclass">TCollection::</span>fName</a></td><td class="datadesc">name of the collection</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fNewDelete"><span class="baseclass">TQCommand::</span>fNewDelete</a></td><td class="datadesc">kTRUE if Redo/Undo methods are new/delete</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">void</span>*</td><td class="dataname"><a href="./TQCommand.html#TQCommand:fObject"><span class="baseclass">TQCommand::</span>fObject</a></td><td class="datadesc">object to which undo/redo actions applied</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TQConnection.html">TQConnection</a>*</td><td class="dataname"><a href="./TQCommand.html#TQCommand:fRedo"><span class="baseclass">TQCommand::</span>fRedo</a></td><td class="datadesc">do/redo action</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a>*</td><td class="dataname"><a href="./TQCommand.html#TQCommand:fRedoArgs"><span class="baseclass">TQCommand::</span>fRedoArgs</a></td><td class="datadesc">redo values</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fSignalsBlocked"><span class="baseclass">TQObject::</span>fSignalsBlocked</a></td><td class="datadesc">! flag used for suppression of signals</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TCollection.html#TCollection:fSize"><span class="baseclass">TCollection::</span>fSize</a></td><td class="datadesc">number of elements in collection</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TSeqCollection.html#TSeqCollection:fSorted"><span class="baseclass">TSeqCollection::</span>fSorted</a></td><td class="datadesc">true if collection has been sorted</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fState"><span class="baseclass">TQCommand::</span>fState</a></td><td class="datadesc">-1 undoing on, 1 redoing on, 0 nothing in progress</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fStatus"><span class="baseclass">TQCommand::</span>fStatus</a></td><td class="datadesc">fStatus++ after Redo(), fStatus-- after Undo()</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TQCommand.html#TQCommand:fTitle"><span class="baseclass">TQCommand::</span>fTitle</a></td><td class="datadesc">command description</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TQConnection.html">TQConnection</a>*</td><td class="dataname"><a href="./TQCommand.html#TQCommand:fUndo"><span class="baseclass">TQCommand::</span>fUndo</a></td><td class="datadesc">undo action</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a>*</td><td class="dataname"><a href="./TQCommand.html#TQCommand:fUndoArgs"><span class="baseclass">TQCommand::</span>fUndoArgs</a></td><td class="datadesc">undo values</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fgAllSignalsBlocked"><span class="baseclass">TQObject::</span>fgAllSignalsBlocked</a></td><td class="datadesc">flag used for suppression of all signals</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TQUndoManager:Class_Charts"></a>Class Charts</h2>
+<map name="MapTQUndoManager_Inh" id="MapTQUndoManager_Inh">
+<area shape="rect" href="./TQCommand.html" title="TQCommand" alt="" coords="506,10,580,24"/>
+<area shape="rect" href="./TList.html" title="TList" alt="" coords="406,2,433,16"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="393,18,446,31"/>
+<area shape="rect" href="./TSeqCollection.html" title="TSeqCollection" alt="" coords="250,2,335,16"/>
+<area shape="rect" href="./TCollection.html" title="TCollection" alt="" coords="134,2,197,16"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="20,2,64,16"/>
+</map>
+<map name="MapTQUndoManager_InhMem" id="MapTQUndoManager_InhMem">
+<area shape="rect" href="./TQCommand.html" alt="" coords="1493,60,1581,139"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1395,60,1483,168"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1296,60,1384,168"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1525,149,1549,184"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1493,195,1581,475"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1395,195,1483,475"/>
+<area shape="rect" href="./TQCommand.html" alt="" coords="1296,195,1384,475"/>
+<area shape="rect" href="./TQCommand.html" title="TQCommand" alt="" coords="1285,16,1592,485"/>
+<area shape="rect" href="./TList.html" alt="" coords="1176,60,1264,109"/>
+<area shape="rect" href="./TList.html" alt="" coords="1077,60,1165,124"/>
+<area shape="rect" href="./TList.html" alt="" coords="979,60,1067,124"/>
+<area shape="rect" href="./TList.html" alt="" coords="1208,120,1232,155"/>
+<area shape="rect" href="./TList.html" alt="" coords="1176,165,1264,416"/>
+<area shape="rect" href="./TList.html" alt="" coords="1077,165,1165,416"/>
+<area shape="rect" href="./TList.html" alt="" coords="979,165,1067,416"/>
+<area shape="rect" href="./TList.html" title="TList" alt="" coords="968,16,1275,427"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="1176,481,1264,531"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="1077,481,1165,545"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="979,481,1067,545"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="1208,541,1232,576"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="1176,587,1264,823"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="1077,587,1165,823"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="979,587,1067,823"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="968,437,1275,833"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="693,60,947,109"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="859,120,947,327"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="760,120,848,341"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="661,120,749,341"/>
+<area shape="rect" href="./TSeqCollection.html" title="TSeqCollection" alt="" coords="651,16,957,352"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="541,60,629,124"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="443,60,531,153"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="344,60,432,153"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="573,135,597,169"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="541,180,629,489"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="443,165,531,489"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="344,165,432,489"/>
+<area shape="rect" href="./TCollection.html" title="TCollection" alt="" coords="333,16,640,500"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTQUndoManager_Lib" id="MapTQUndoManager_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTQUndoManager_Inh" class="tabsel" href="inh/TQUndoManager_Inh.png" onclick="javascript:return SetImg('Charts','inh/TQUndoManager_Inh.png');">Inheritance</a>
+<a id="imgTQUndoManager_InhMem" class="tab" href="inhmem/TQUndoManager_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TQUndoManager_InhMem.png');">Inherited Members</a>
+<a id="imgTQUndoManager_Incl" class="tab" href="incl/TQUndoManager_Incl.png" onclick="javascript:return SetImg('Charts','incl/TQUndoManager_Incl.png');">Includes</a>
+<a id="imgTQUndoManager_Lib" class="tab" href="lib/TQUndoManager_Lib.png" onclick="javascript:return SetImg('Charts','lib/TQUndoManager_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTQUndoManager_Inh" src="inh/TQUndoManager_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TQUndoManager:TQUndoManager" href="src/TQUndoManager.cxx.html#DEAP1C">TQUndoManager</a>()</span><br />
+<div class="funccomm"><pre> Constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TQUndoManager:_TQUndoManager" href="src/TQUndoManager.cxx.html#dBAJo">~TQUndoManager</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:ls" href="src/TQUndoManager.cxx.html#BgkxV">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Lists all commands in stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:PrintCollectionEntry" href="src/TQUndoManager.cxx.html#XJyLoB">PrintCollectionEntry</a>(<a href="./TObject.html">TObject</a>* entry, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse) const</span><br />
+<div class="funccomm"><pre> <a href="./TCollection.html#TCollection:Print" title="void TCollection::Print(Option_t* option=&quot;&quot;) or overloads">Print</a> collection entry.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:SetLogging" href="src/TQUndoManager.cxx.html#cyLkYE">SetLogging</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> on = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Start logging. <a href="./TQCommand.html#TQCommand:Delete" title="void TQCommand::Delete(Option_t* option=&quot;&quot;)">Delete</a> all previous log records
+ Note: logging is not implemented yet
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:Add" href="src/TQUndoManager.cxx.html#CRcdCE">Add</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</span><br />
+<div class="funccomm"><pre> <a href="./TQUndoManager.html#TQUndoManager:Add" title="void TQUndoManager::Add(TObject* obj,Option_t* opt) or overloads">Add</a> command to the stack of commands.
+ Command's redo action will be executed.
+
+ option string can contain the following substrings:
+    <span class="string">"merge"</span> - input command will be merged
+    <span class="string">"compress"</span> - input command will be compressed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:CurrentChanged" href="src/TQUndoManager.cxx.html#BpNsAD">CurrentChanged</a>(<a href="./TQCommand.html">TQCommand</a>* c)</span><br />
+<div class="funccomm"><pre> emit signal
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:Undo" href="src/TQUndoManager.cxx.html#zxFTcD">Undo</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Performs undo action. Move cursor position backward in history stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:Redo" href="src/TQUndoManager.cxx.html#tFymoD">Redo</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Performs redo action. Move cursor position forward in history stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TQUndoManager:CanRedo" href="src/TQUndoManager.cxx.html#QfVNBB">CanRedo</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> if redo action is possible
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TQUndoManager:CanUndo" href="src/TQUndoManager.cxx.html#hGu0hD">CanUndo</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> if undo action is possible
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TQUndoManager:IsLogging" href="src/TQUndoManager.cxx.html#zncm0C">IsLogging</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> if logging is ON
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TQCommand.html">TQCommand</a> * <a class="funcname" name="TQUndoManager:GetCurrent" href="src/TQUndoManager.cxx.html#gklryD">GetCurrent</a>() const</span><br />
+<div class="funccomm"><pre> Returns the last executed command
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TQCommand.html">TQCommand</a> * <a class="funcname" name="TQUndoManager:GetCursor" href="src/TQUndoManager.cxx.html#ejtRcB">GetCursor</a>() const</span><br />
+<div class="funccomm"><pre> Returns a command correspondent to the current cursor position in stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:SetLimit" href="src/TQUndoManager.cxx.html#FqKCrD">SetLimit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> limit)</span><br />
+<div class="funccomm"><pre> Returns a maximum number of commands which could be located in stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TQUndoManager:GetLimit" href="src/TQUndoManager.cxx.html#JJablD">GetLimit</a>() const</span><br />
+<div class="funccomm"><pre> Returns a maximum number of commands which  could be located in stack
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TQUndoManager:Add" href="src/TQUndoManager.h.html#tYjTiE">Add</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Valeriy+Onuchin"> Valeriy Onuchin   04/27/2004</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/base:$Id: TQCommand.h 39365 2011-05-24 19:53:19Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

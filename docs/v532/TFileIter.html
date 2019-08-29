@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:13:25 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TFileIter</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TFileIter','libTable','TFileIter.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TFileIter.h.html">header file</a>
+<a class="descrheadentry" href="src/TFileIter.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/misc/table/inc/TFileIter.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/misc/table/src/TFileIter.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TFileIter:description">class description</a> 
+<a class="descrheadentry" href="#TFileIter:Function_Members">function members</a>
+<a class="descrheadentry" href="#TFileIter:Data_Members">data members</a>
+<a class="descrheadentry" href="#TFileIter:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MISC_Index.html">MISC</a>
+ &#187; <a class="locationlevel" href="./MISC_TABLE_Index.html">TABLE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TFileIter</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TFileIter:description"></a>class TFileIter: public <a href="./TListIter.html">TListIter</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TFileIter.html#TFileIter:Class" title="TClass* TFileIter::Class()">Class</a> to iterate (read / write ) the events written to <a href="./TFile.html">TFile</a>.
+The event is supposed to assign an unique ID in form of
+
+<a href="./TKey.html">TKey</a> &lt;event Id&gt; ::= eventName <span class="string">"."</span> run_number <span class="string">"."</span> event_number
+
+and stored as the <a href="./TKey.html">TKey</a> name of the object written
+
+
+
+ <a href="./ListOfTypes.html#void">void</a> TesTFileIter(){
+ // This macros tests the various methods of <a href="./TFileIter.html">TFileIter</a> class.
+   <a href="./TSystem.html">gSystem</a>-><a href="./TSystem.html#TSystem:Load" title="int TSystem::Load(const char* module,const char* entry=&quot;&quot;,Bool_t system=kFALSE)">Load</a>(<span class="string">"libTable"</span>);
+
+   //First create simple <a href="./ROOT.html">ROOT</a> file
+   <a href="./TDataSet.html">TDataSet</a> *ds = new <a href="./TDataSet.html">TDataSet</a>(<span class="string">"event"</span>);
+   <a href="./TObject.html">TObject</a> *nextObject = 0;
+   <a href="./TRandom.html">TRandom</a> run;
+   <a href="./TRandom.html">TRandom</a> event;
+   {
+     <a href="./TFileIter.html">TFileIter</a> outSet(<span class="string">"test.root"</span>,<span class="string">"RECREATE"</span>);
+     <a href="./ListOfTypes.html#UInt_t">UInt_t</a> totalEvent = 10;
+     <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber  = 20010301;
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> i=0;
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> j=0;
+     for (;j &lt; 10;j++) {
+       for (i = 1;i&lt;totalEvent;i++) {
+         outSet.<a href="./TFileIter.html#TFileIter:NextEventPut" title="Int_t TFileIter::NextEventPut(TObject* obj,UInt_t eventNum,UInt_t runNumber,const char* name=0)">NextEventPut</a>(ds,<a href="./ListOfTypes.html#UInt_t">UInt_t</a>(i),<a href="./ListOfTypes.html#UInt_t">UInt_t</a>(runNumber+j+10*run.Rndm()-5));
+       }
+     }
+   }
+   printf(<span class="string">" ----------------------&gt; TFile has been created &lt;--------------------\n"</span>);
+   <a href="./TFile.html">TFile</a> *f = new <a href="./TFile.html">TFile</a>(<span class="string">"test.root"</span>);
+   <a href="./TFileIter.html">TFileIter</a> readObj(f);
+   // the number of the object available directly from <span class="string">"MyDataSet.root"</span>
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> size = readObj.<a href="./TFileIter.html#TFileIter:TotalKeys" title="Int_t TFileIter::TotalKeys()">TotalKeys</a>();
+   printf(<span class="string">" The total number of the objects: %d\n"</span>,size);
+
+   //-----------------------------------------------------------------------
+   // Loop over all objects, read them in to memory one by one
+
+   printf(<span class="string">" -- &gt; Loop over all objects, read them in to memory one by one &lt; -- \n"</span>);
+   for( readObj = 0; <a href="./ListOfTypes.html#int">int</a>(readObj) &lt; size; ++readObj){
+       nextObject = *readObj;
+       printf(<span class="string">" %d bytes of the object \"%s\" of class \"%s\" written with TKey \"%s\"  has been read from file\n"</span>
+                ,readObj.<a href="./TFileIter.html#TFileIter:GetObjlen" title="Int_t TFileIter::GetObjlen()">GetObjlen</a>()
+                ,nextObject-&gt;GetName()
+                ,nextObject-&gt;<a href="./TFileIter.html#TFileIter:IsA" title="TClass* TFileIter::IsA()">IsA</a>()-><a href="./TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>()
+                ,(const <a href="./ListOfTypes.html#char">char</a> *)readObj
+             );
+       delete nextObject;
+  }
+ //-----------------------------------------------------------------------
+ //  Now loop over all objects in inverse order
+  printf(<span class="string">" -- &gt; Now loop over all objects in inverse order &lt; -- \n"</span>);
+  for( readObj = size-1; (<a href="./ListOfTypes.html#int">int</a>)readObj &gt;= 0; --readObj)
+  {
+       nextObject = *readObj;
+       if (nextObject) {
+          printf(<span class="string">" Object \"%s\" of class \"%s\" written with TKey \"%s\"  has been read from file\n"</span>
+                 ,nextObject-&gt;GetName()
+                 , nextObject-&gt;<a href="./TFileIter.html#TFileIter:IsA" title="TClass* TFileIter::IsA()">IsA</a>()-><a href="./TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>()
+                 ,(const <a href="./ListOfTypes.html#char">char</a> *)readObj
+                );
+         delete nextObject;
+      } else {
+        printf(<span class="string">"Error reading file by index\n"</span>);
+      }
+  }
+ //-----------------------------------------------------------------------
+ // Loop over the objects starting from the object with the key name <span class="string">"event.02.01"</span>
+   printf(<span class="string">" -- &gt; Loop over the objects starting from the object with the key name \"event.02.01\" &lt; -- \n"</span>);
+   for( readObj = <span class="string">"event.02.01"</span>; (const <a href="./ListOfTypes.html#char">char</a> *)readObj != 0; ++readObj){
+       nextObject = *readObj;
+       printf(<span class="string">" Object \"%s\" of class \"%s\" written with Tkey \"%s\"  has been read from file\n"</span>
+               , nextObject-&gt;GetName()
+               , nextObject-&gt;<a href="./TFileIter.html#TFileIter:IsA" title="TClass* TFileIter::IsA()">IsA</a>()-><a href="./TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>()
+               , (const <a href="./ListOfTypes.html#char">char</a> *)readObj
+             );
+       delete nextObject;
+   }
+
+   printf(<span class="string">" -- &gt; Loop over the objects starting from the 86-th object"</span> &lt; -- \n<span class="string">");</span>
+   for( readObj = (const <a href="./ListOfTypes.html#char">char</a> *)(readObj = 86); (const <a href="./ListOfTypes.html#char">char</a> *)readObj != 0; ++readObj){
+       nextObject = *readObj;
+       printf(<span class="string">" Object \"%s\" of class \"%s\" written with Tkey \"%s\"  has been read from file\n"</span>
+               , nextObject-&gt;GetName()
+               , nextObject-&gt;<a href="./TFileIter.html#TFileIter:IsA" title="TClass* TFileIter::IsA()">IsA</a>()-><a href="./TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>()
+               , (const <a href="./ListOfTypes.html#char">char</a> *)readObj
+             );
+       delete nextObject;
+   }
+
+ }
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TFileIter:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFileIter:TFileIter%1">TFileIter</a>(<a href="./TFile.html">TFile</a>* file = 0)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFileIter:TFileIter%2">TFileIter</a>(<a href="./TDirectory.html">TDirectory</a>* directory)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFileIter:TFileIter%3">TFileIter</a>(<span class="keyword">const</span> <a href="./TFileIter.html">TFileIter</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFileIter:TFileIter">TFileIter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* ftitle = <span class="string">""</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> compress = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> netopt = 0)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TFileIter:_TFileIter">~TFileIter</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:CurrentCursorPosition">CurrentCursorPosition</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TCollection.html">TCollection</a>*</td><td class="funcname"><a class="funcname" href="./TListIter.html#TListIter:GetCollection"><span class="baseclass">TListIter::</span>GetCollection</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TKey.html">TKey</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetCurrentKey">GetCurrentKey</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetDefaultMapFileName">GetDefaultMapFileName</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:GetDepth">GetDepth</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetForeignFileSystemKey">GetForeignFileSystemKey</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetKeyName">GetKeyName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetLocalFileNameKey">GetLocalFileNameKey</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetObject">GetObject</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:GetObjlen">GetObjlen</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TListIter.html#TListIter:GetOption"><span class="baseclass">TListIter::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetResourceName">GetResourceName</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetTDirectory">GetTDirectory</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TFile.html">TFile</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:GetTFile">GetTFile</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:IsOpen">IsOpen</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TFileIter:MapName">MapName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* localSystemKey = 0, <span class="keyword">const</span> <span class="keyword">char</span>* mountedFileSystemKey = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:Next">Next</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:Next%1">Next</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:NextEventGet">NextEventGet</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"*"</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:NextEventPut">NextEventPut</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNum, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber, <span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_const_char*">operator const char*</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_const_TDirectory*">operator const TDirectory*</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TFile.html">TFile</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_const_TFile*">operator const TFile*</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TFileIter:operator_int">operator int</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TFileIter:operator!_%1">operator!=</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator()%1">operator()</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator()">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:operator*">operator*</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator++">operator++</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator+_">operator+=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> shift)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator--">operator--</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator-_">operator-=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> shift)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_%1">operator=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> cursorPosition)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TFileIter.html">TFileIter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_%2">operator=</a>(<span class="keyword">const</span> <span class="keyword">char</span>* keyNameToFind)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TFileIter:operator__">operator==</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:PurgeKeys">PurgeKeys</a>(<a href="./TList.html">TList</a>* listOfKeys)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:Reset">Reset</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:Rewind">Rewind</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:SetCursorPosition">SetCursorPosition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> cursorPosition)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:SetCursorPosition%1">SetCursorPosition</a>(<span class="keyword">const</span> <span class="keyword">char</span>* keyNameToFind)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TListIter.html#TListIter:SetOption"><span class="baseclass">TListIter::</span>SetOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TKey.html">TKey</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:SkipObjects">SkipObjects</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFileIter:TotalKeys">TotalKeys</a>() <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFileIter:Initialize">Initialize</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TKey.html">TKey</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:NextEventKey">NextEventKey</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"*"</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TFileIter:ReadObj">ReadObj</a>(<span class="keyword">const</span> <a href="./TKey.html">TKey</a>* key) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret">virtual <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="#TFileIter:operator!_">operator!=</a>(<span class="keyword">const</span> <a href="./TIterator.html">TIterator</a>&amp; it) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TIterator.html">TIterator</a>&amp;</td><td class="funcname"><a class="funcname" href="#TFileIter:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TIterator.html">TIterator</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TFileIter:Data_Members"></a>Data Members</h2>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype">TObjLink*</td><td class="dataname"><a href="./TListIter.html#TListIter:fCurCursor"><span class="baseclass">TListIter::</span>fCurCursor</a></td><td class="datadesc">current position in list</td></tr>
+<tr class="datainh"><td class="datatype">TObjLink*</td><td class="dataname"><a href="./TListIter.html#TListIter:fCursor"><span class="baseclass">TListIter::</span>fCursor</a></td><td class="datadesc">next position in list</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFileIter:fCursorPosition"></a>fCursorPosition</td><td class="datadesc">the position of the current key in the sorted TKey list</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TListIter.html#TListIter:fDirection"><span class="baseclass">TListIter::</span>fDirection</a></td><td class="datadesc">iteration direction</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TFileIter:fEventName"></a>fEventName</td><td class="datadesc">current key name</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TFileIter:fEventNumber"></a>fEventNumber</td><td class="datadesc">current "event number"</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">const</span> <a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TListIter.html#TListIter:fList"><span class="baseclass">TListIter::</span>fList</a></td><td class="datadesc">list being iterated</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TFileIter:fOwnTFile"></a>fOwnTFile</td><td class="datadesc">Bit whether this classs creates TFile on its own to delete</td></tr>
+<tr class="data"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a name="TFileIter:fRootFile"></a>fRootFile</td><td class="datadesc">TDirectory/TFile to be iterated over</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TFileIter:fRunNumber"></a>fRunNumber</td><td class="datadesc">current "run number"</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TListIter.html#TListIter:fStarted"><span class="baseclass">TListIter::</span>fStarted</a></td><td class="datadesc">iteration started</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TFileIter.html">TFileIter</a>*</td><td class="dataname"><a name="TFileIter:fNestedIterator"></a>fNestedIterator</td><td class="datadesc">! The inner TFidrectory interator;</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TFileIter:Class_Charts"></a>Class Charts</h2>
+<map name="MapTFileIter_Inh" id="MapTFileIter_Inh">
+<area shape="rect" href="./TListIter.html" title="TListIter" alt="" coords="569,11,618,25"/>
+<area shape="rect" href="./TIterator.html" title="TIterator" alt="" coords="228,2,280,16"/>
+</map>
+<map name="MapTFileIter_InhMem" id="MapTFileIter_InhMem">
+<area shape="rect" href="./TListIter.html" alt="" coords="1031,60,1119,124"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="932,60,1020,124"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="833,60,921,124"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="1063,135,1087,169"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="1031,180,1119,299"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="932,151,1020,299"/>
+<area shape="rect" href="./TListIter.html" alt="" coords="833,151,921,299"/>
+<area shape="rect" href="./TListIter.html" title="TListIter" alt="" coords="823,16,1129,309"/>
+<area shape="rect" href="./TIterator.html" alt="" coords="304,60,557,109"/>
+<area shape="rect" href="./TIterator.html" alt="" coords="469,120,557,253"/>
+<area shape="rect" href="./TIterator.html" alt="" coords="371,120,459,253"/>
+<area shape="rect" href="./TIterator.html" alt="" coords="272,120,360,253"/>
+<area shape="rect" href="./TIterator.html" title="TIterator" alt="" coords="261,16,568,264"/>
+</map>
+<map name="MapTFileIter_Lib" id="MapTFileIter_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="449,315,577,363"/>
+</map>
+<div class="tabs">
+<a id="imgTFileIter_Inh" class="tabsel" href="inh/TFileIter_Inh.png" onclick="javascript:return SetImg('Charts','inh/TFileIter_Inh.png');">Inheritance</a>
+<a id="imgTFileIter_InhMem" class="tab" href="inhmem/TFileIter_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TFileIter_InhMem.png');">Inherited Members</a>
+<a id="imgTFileIter_Incl" class="tab" href="incl/TFileIter_Incl.png" onclick="javascript:return SetImg('Charts','incl/TFileIter_Incl.png');">Includes</a>
+<a id="imgTFileIter_Lib" class="tab" href="lib/TFileIter_Lib.png" onclick="javascript:return SetImg('Charts','lib/TFileIter_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTFileIter_Inh" src="inh/TFileIter_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFileIter:TFileIter%1" href="src/TFileIter.cxx.html#ouyGOC">TFileIter</a>(<a href="./TFile.html">TFile</a>* file = 0)</span><br />
+<div class="funccomm"><pre> Create iterator over all objects from the <a href="./TFile.html">TFile</a> provided
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFileIter:TFileIter%2" href="src/TFileIter.cxx.html#WixN8C">TFileIter</a>(<a href="./TDirectory.html">TDirectory</a>* directory)</span><br />
+<div class="funccomm"><pre> Create iterator over all objects from the <a href="./TDirectory.html">TDirectory</a> provided
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFileIter:TFileIter" href="src/TFileIter.cxx.html#DWUKZ">TFileIter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* ftitle = <span class="string">""</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> compress = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> netopt = 0)</span><br />
+<div class="funccomm"><pre> Open <a href="./ROOT.html">ROOT</a> <a href="./TFile.html">TFile</a> by the name provided;
+ This <a href="./TFile.html">TFile</a> is to be deleted by the <a href="./TFileIter.html">TFileIter</a> alone
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFileIter:TFileIter%3" href="src/TFileIter.cxx.html#jfDhCD">TFileIter</a>(<span class="keyword">const</span> <a href="./TFileIter.html">TFileIter</a>&amp; )</span><br />
+<div class="funccomm"><pre> Copy ctor can be used with the <span class="string">"read only"</span> files only.
+the next statement is illegal, spotted by coverity <span class="string">"Dereferencing pointer "</span>this-&gt;<a href="./TFileIter.html#TFileIter:fRootFile" title="TDirectory* TFileIter::fRootFile">fRootFile</a><span class="string">". (Deref happens because this is a virtual function call.)</span>
+assert(!<a href="./TFileIter.html#TFileIter:fRootFile" title="TDirectory* TFileIter::fRootFile">fRootFile</a>-><a href="./TDirectory.html#TDirectory:IsWritable" title="Bool_t TDirectory::IsWritable()">IsWritable</a>());
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFileIter:_TFileIter" href="src/TFileIter.cxx.html#g158dE">~TFileIter</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TFileIter.html">TFileIter</a> dtor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:Initialize" href="src/TFileIter.cxx.html#sHqdc">Initialize</a>()</span><br />
+<div class="funccomm"><pre>to be documented
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TFileIter:IsOpen" href="src/TFileIter.cxx.html#HPtHvE">IsOpen</a>() const</span><br />
+<div class="funccomm"><pre> Check whether the associated <a href="./ROOT.html">ROOT</a> <a href="./TFile.html">TFile</a> was open
+ and <a href="./TFile.html">TFile</a> object is healthy.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TKey.html">TKey</a> * <a class="funcname" name="TFileIter:GetCurrentKey" href="src/TFileIter.cxx.html#Dc9qwD">GetCurrentKey</a>() const</span><br />
+<div class="funccomm"><pre> return the pointer to the current <a href="./TKey.html">TKey</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFileIter:GetDepth" href="src/TFileIter.cxx.html#rcgdPC">GetDepth</a>() const</span><br />
+<div class="funccomm"><pre> return the current number of the nested subdirectroies;
+      = 0 - means there is no subdirectories
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFileIter:GetKeyName" href="src/TFileIter.cxx.html#QbSYi">GetKeyName</a>() const</span><br />
+<div class="funccomm"><pre> return the name of the current <a href="./TKey.html">TKey</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:GetObject" href="src/TFileIter.cxx.html#eEW2nC">GetObject</a>() const</span><br />
+<div class="funccomm"><pre> read the object from <a href="./TFile.html">TFile</a> defined by the current <a href="./TKey.html">TKey</a>
+
+ ATTENTION:  memory leak danger !!!
+
+ This method does create a new object and it is the end-user
+ code responsibility to take care about this object
+ to avoid memory leak.
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFileIter:GetObjlen" href="src/TFileIter.cxx.html#pCetCE">GetObjlen</a>() const</span><br />
+<div class="funccomm"><pre> Returns the uncompressed length of the current object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFileIter:TotalKeys" href="src/TFileIter.cxx.html#kbhs8B">TotalKeys</a>() const</span><br />
+<div class="funccomm"><pre> The total number of the <a href="./TKey.html">TKey</a> keys in the current <a href="./TDirectory.html">TDirectory</a> only
+ Usually this means the total number of different objects
+ those can be read one by one.
+ It does NOT count the nested sub-<a href="./TDirectory.html">TDirectory</a>.
+ It is too costly and it can be abused.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:Next%1" href="src/TFileIter.cxx.html#Jf6SZC">Next</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip)</span><br />
+<div class="funccomm"><pre> return the pointer to the object defined by next <a href="./TKey.html">TKey</a>
+ This method is not recommended. It was done for the sake
+ of the compatibility with <a href="./TListIter.html">TListIter</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:PurgeKeys" href="src/TFileIter.cxx.html#jypJPC">PurgeKeys</a>(<a href="./TList.html">TList</a>* listOfKeys)</span><br />
+<div class="funccomm"><pre> Remove the <a href="./TKey.html">TKey</a> duplication,
+ leave the keys with highest cycle number only
+ Sort if first
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:Reset" href="src/TFileIter.cxx.html#b7Wl.C">Reset</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TFileIter.html#TFileIter:Reset" title="void TFileIter::Reset()">Reset</a> the status of the iterator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:SetCursorPosition%1" href="src/TFileIter.cxx.html#zCWdcE">SetCursorPosition</a>(<span class="keyword">const</span> <span class="keyword">char</span>* keyNameToFind)</span><br />
+<div class="funccomm"><pre> Find the key by the name provided
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TKey.html">TKey</a> * <a class="funcname" name="TFileIter:SkipObjects" href="src/TFileIter.cxx.html#OdG6_D">SkipObjects</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip = 1)</span><br />
+<div class="funccomm"><pre>
+ Returns the <a href="./TKey.html">TKey</a> pointer to the nSkip <a href="./TKey.html">TKey</a> object from the current one
+ nSkip = 0; the state of the iterator is not changed
+
+ nSkip &gt; 0; iterator skips nSkip objects in the container.
+            the direction of the iteration is
+            sign(nSkip)*<a href="./ListOfTypes.html#Bool_t">kIterForward</a>
+
+ Returns: <a href="./TKey.html">TKey</a> that can be used to fetch the object from the <a href="./TDirectory.html">TDirectory</a>
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TKey.html">TKey</a> * <a class="funcname" name="TFileIter:NextEventKey" href="src/TFileIter.cxx.html#VvAM6C">NextEventKey</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"*"</span>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:NextEventGet" href="src/TFileIter.cxx.html#aSGBrC">NextEventGet</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber = <a href="./ListOfTypes.html#UInt_t">UInt_t</a>(-1), <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"*"</span>)</span><br />
+<div class="funccomm"><pre> reads, creates and returns the object by <a href="./TKey.html">TKey</a> name that matches
+ the <span class="string">"name"</span> .<span class="string">"runNumber"</span> .<span class="string">" eventNumber"</span> schema
+ Attention: This method does create a new <a href="./TObject.html">TObject</a> and it is the user
+ code responsibility to take care (delete) this object to avoid
+ memory leak.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:ReadObj" href="src/TFileIter.cxx.html#YQKdYD">ReadObj</a>(<span class="keyword">const</span> <a href="./TKey.html">TKey</a>* key) const</span><br />
+<div class="funccomm"><pre>Read the next <a href="./TObject.html">TObject</a> from for the <a href="./TDirectory.html">TDirectory</a> by <a href="./TKey.html">TKey</a> provided
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFileIter:NextEventPut" href="src/TFileIter.cxx.html#CoqLw">NextEventPut</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> eventNum, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> runNumber, <span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</span><br />
+<div class="funccomm"><pre> Create a special <a href="./TKey.html">TKey</a> name with obj provided and write it out.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TFileIter:MapName" href="src/TFileIter.cxx.html#kGcRdD">MapName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* localSystemKey = 0, <span class="keyword">const</span> <span class="keyword">char</span>* mountedFileSystemKey = 0)</span><br />
+<div class="funccomm"><pre>
+ <a href="./TFileIter.html#TFileIter:MapName" title="TString TFileIter::MapName(const char* name,const char* localSystemKey=0,const char* mountedFileSystemKey=0)">MapName</a>(const <a href="./ListOfTypes.html#char">char</a> *name, const <a href="./ListOfTypes.html#char">char</a> *localSystemKey,const <a href="./ListOfTypes.html#char">char</a> *mountedFileSystemKey)
+
+ Substitute the logical name with the real one if any
+ 1. add a line into system.rootrc or ~/.rootrc or ./.rootrc
+
+  <a href="./TFileIter.html">TFileIter</a>.ForeignFileMap  mapFile // the name of the file
+ to map the local name
+ to the global file service
+
+  If this line is omitted then <a href="./TFileIter.html">TFileIter</a> class seeks for
+  the default mapping file in the current directory <span class="string">"io.config"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFileIter:GetResourceName" href="src/TFileIter.h.html#lOBhAB">GetResourceName</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <span class="string">"ForeignFileMap"</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFileIter:GetDefaultMapFileName" href="src/TFileIter.h.html#fuB46B">GetDefaultMapFileName</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <span class="string">"io.config"</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFileIter:GetLocalFileNameKey" href="src/TFileIter.h.html#tjD76C">GetLocalFileNameKey</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <span class="string">"LocalFileSystem"</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TFileIter:GetForeignFileSystemKey" href="src/TFileIter.h.html#viXHIB">GetForeignFileSystemKey</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <span class="string">"MountedFileSystem"</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFileIter:CurrentCursorPosition" href="src/TFileIter.h.html#Vpc7g">CurrentCursorPosition</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TFile.html">TFile</a> * <a class="funcname" name="TFileIter:GetTFile" href="src/TFileIter.h.html#CD2lg">GetTFile</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:GetTDirectory" title="const TDirectory* TFileIter::GetTDirectory()">GetTDirectory</a>()-><a href="./TDirectory.html#TDirectory:GetFile" title="TFile* TDirectory::GetFile()">GetFile</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TDirectory.html">TDirectory</a> * <a class="funcname" name="TFileIter:GetTDirectory" href="src/TFileIter.h.html#yivJD">GetTDirectory</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:fNestedIterator" title="TFileIter* TFileIter::fNestedIterator">fNestedIterator</a> ? <a href="./TFileIter.html#TFileIter:fNestedIterator" title="TFileIter* TFileIter::fNestedIterator">fNestedIterator</a>-><a href="./TFileIter.html#TFileIter:GetTDirectory" title="const TDirectory* TFileIter::GetTDirectory()">GetTDirectory</a>() : fRootFile; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:Next" href="src/TFileIter.h.html#SiZLRC">Next</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:Rewind" href="src/TFileIter.h.html#Ie2IGC">Rewind</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFileIter:SetCursorPosition" href="src/TFileIter.h.html#E6m_1C">SetCursorPosition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> cursorPosition)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator_%2" href="src/TFileIter.h.html#VRT48B">operator=</a>(<span class="keyword">const</span> <span class="keyword">char</span>* keyNameToFind)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator_%1" href="src/TFileIter.h.html#oinqFB">operator=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> cursorPosition)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator+_" href="src/TFileIter.h.html#bxr7IB">operator+=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> shift)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TFileIter.html#TFileIter:SkipObjects" title="TKey* TFileIter::SkipObjects(Int_t nSkip=1)">SkipObjects</a>(shift); <span class="keyword">return</span> *<span class="keyword">this</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator-_" href="src/TFileIter.h.html#LFYPFB">operator-=</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> shift)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <span class="keyword">operator</span>+=(-shift);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator++" href="src/TFileIter.h.html#AFdoz">operator++</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TFileIter.html#TFileIter:SkipObjects" title="TKey* TFileIter::SkipObjects(Int_t nSkip=1)">SkipObjects</a>( 1); <span class="keyword">return</span> *<span class="keyword">this</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFileIter.html">TFileIter</a> &amp; <a class="funcname" name="TFileIter:operator--" href="src/TFileIter.h.html#AFdty">operator--</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TFileIter.html#TFileIter:SkipObjects" title="TKey* TFileIter::SkipObjects(Int_t nSkip=1)">SkipObjects</a>(-1); <span class="keyword">return</span> *<span class="keyword">this</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:operator*" href="src/TFileIter.h.html#yHlSH">operator*</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:GetObject" title="TObject* TFileIter::GetObject()">GetObject</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">inline</span> <a class="funcname" name="TFileIter:operator_int" href="src/TFileIter.h.html#i8SfPE">operator int</a>() const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:CurrentCursorPosition" title="Int_t TFileIter::CurrentCursorPosition()">CurrentCursorPosition</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">int</span> <a class="funcname" name="TFileIter:operator__" href="src/TFileIter.h.html#liu1jD">operator==</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> name ? !strcmp(name,<a href="./TFileIter.html#TFileIter:GetKeyName" title="const char* TFileIter::GetKeyName()">GetKeyName</a>()):0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">int</span> <a class="funcname" name="TFileIter:operator!_%1" href="src/TFileIter.h.html#JFM0jD">operator!=</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> !(<span class="keyword">operator</span>==(name)); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:operator()%1" href="src/TFileIter.h.html#ejql7">operator()</a>()</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:Next" title="TObject* TFileIter::Next() or overloads">Next</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TFileIter:operator()" href="src/TFileIter.h.html#LZuW_">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nSkip)</span><br />
+<div class="funccomm"><pre>
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TFileIter.html#TFileIter:Next" title="TObject* TFileIter::Next() or overloads">Next</a>(nSkip);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TIterator.html">TIterator</a> &amp; <a class="funcname" name="TFileIter:operator_" href="src/TFileIter.h.html#FUTTO">operator=</a>(<span class="keyword">const</span> <a href="./TIterator.html">TIterator</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">bool</span> <a class="funcname" name="TFileIter:operator!_" href="src/TFileIter.h.html#PzgWWD">operator!=</a>(<span class="keyword">const</span> <a href="./TIterator.html">TIterator</a>&amp; it) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TListIter.html">TListIter</a>::<span class="keyword">operator</span>!=(it);}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Valery+Fine(fine@bnl.gov)"> Valery Fine(fine@bnl.gov)   01/03/2001</a> </em><em>&raquo; Copyright   (C) 1995-2004, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/table:$Id: TFileIter.h 41088 2011-10-01 19:38:48Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:13</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

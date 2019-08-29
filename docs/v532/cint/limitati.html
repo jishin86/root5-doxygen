@@ -1,0 +1,708 @@
+<pre>Limitation of CINT
+
+  Cint accepts most of K&amp;R and ANSI C/C++ language construct but not perfect. 
+ In fact, Cint is not aimed to be a 100% ANSI/ISO compliant C/C++ language
+ processor. It rather is a portable script language environment which is
+ close enough to the standard C++. This document describes major differences
+ from the standard. 
+
+# General information:
+
+ + How to workaround Cint limitation
+   If you have unsupported features in your source code, that part must be 
+  escaped by <span class="string">"#ifndef __CINT__"</span> for cint and <span class="string">"#ifndef __MAKECINT__"</span> for
+  makecint. The macro __CINT__ is defined both in cint and makecint.
+  __MAKECINT__ is defined only in makecint.
+
+ + Simple expression recommended
+   Because ANSI/ISO C++ standard is a huge document, it is impractical to 
+  describe every details of differences in this document.  Only major 
+  differences and cautions are described. To avoid unnecessary confusion,
+  please use simple expression whenever possible. 
+
+
+# Scope:
+
+ + Function scope
+   Variables can be declared in global or function scope.
+   Unlike ANSI, local variable has function scope. If a local variable is 
+  once declared in a function, it will be alive until execution gets out 
+  from the function even if it is declared within sub-block. In ANSI C, local 
+  variables have block scope.
+
+	<a href="../ListOfTypes.html#void">void</a> func()
+	{
+	  <a href="../ListOfTypes.html#int">int</a> i;
+	  for(i=0;i&lt;10;i++) {
+	    <a href="../ListOfTypes.html#int">int</a> n;      /* block scope */</span>
+	    printf(<span class="string">"n=%d\\n"</span>,n++);
+	  }
+	  /* n is still alive here in cint, n should be already
+	  dead in ANSI C */</span> 
+	}
+
+ + In function typedef and class declaration/definition 
+   You can not define a new type in a function neither with typedef or
+  class/struct declaration.
+
+        <a href="../ListOfTypes.html#void">void</a> func() {
+          typedef <a href="../ListOfTypes.html#int">int</a> int32;       // BAD in cint
+          class A { /* ... */</span> };   // BAD in cint
+        }
+
+
+# Fundamental types
+ + <a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a> , <a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>
+   '<a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>' is supported by an optional library which can be compiled
+  in lib/longlong. There are some platforms which can not compile this
+  library. '<a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>' is implemented as a wrapper class G__longlong with
+  limited capability.
+   '<a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>' is simply handled as '<a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>'. Cint will not
+  distinguish between '<a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>' and '<a href="../ListOfTypes.html#unsigned">unsigned</a> <a href="../ListOfTypes.html#long">long</a> <a href="../ListOfTypes.html#long">long</a>'.
+
+ + <a href="../ListOfTypes.html#bool">bool</a>
+   '<a href="../ListOfTypes.html#bool">bool</a>' is supposed to be a fundamental type in C++ standard. But in 
+  Cint, <a href="../ListOfTypes.html#bool">bool</a> is defined as enum in $CINTSYSDIR/include/<a href="../ListOfTypes.html#bool">bool</a>.h. boo.h is
+  automatically loaded by cint when it sees declaration using <a href="../ListOfTypes.html#bool">bool</a>. In
+  most cases, it works without problem. 
+   There is a known problem, however, if you check <a href="../ListOfTypes.html#bool">bool</a> with ERTTI API.
+
+
+        #include &lt;ertti.h&gt;
+        #include &lt;iostream.h&gt;
+        <a href="../ListOfTypes.html#int">int</a> main() {
+          G__TypeInfo t(<span class="string">"bool"</span>);
+          if(t.Property()&amp;G__BIT_ISFUNDAMENTAL) {
+            // this is supposed to be <a href="../ListOfTypes.html#bool">true</a>, but not in cint
+            <a href="../ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"bool is a fundamental type"</span> &lt;&lt; endl;
+          }
+          if(t.Property()&amp;G__BIT_ISENUM) {
+            // cint takes this case
+            <a href="../ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"bool is an enum"</span> &lt;&lt; endl;
+          }
+          return(0);
+        }
+
+
+# Pointer declaration
+   When declaring pointer, space character is needed somewhere in the 
+  declaration. For example,
+
+       <a href="../ListOfTypes.html#int">int</a>* p1;   // OK
+       <a href="../ListOfTypes.html#int">int</a> *p2;   // OK
+       <a href="../ListOfTypes.html#int">int</a> * p3;  // OK
+       <a href="../ListOfTypes.html#int">int</a>*p3;    // Cint parsing limitation, space character needed
+
+  This is Cint limitation. For pointer to pointer, cint may not understand
+  too many levels of redirection. If you have many levels of pointer 
+  redirection, it is recommended to have space character between type name
+  and <span class="string">'*'</span>.
+
+       <a href="../ListOfTypes.html#int">int</a> ****p4; // OK
+       <a href="../ListOfTypes.html#int">int</a>**** p5; // Cint parsing limitation
+   
+
+# Class/struct alignment:
+   Each C/C++ compiler or interpreter has unique class/struct alignment 
+  and padding rule. When class or struct is precompiled, cint mirrors 
+  compiler's alignment. Alignment of precompiled class/struct is identical
+  to compiler you use.
+  If class or struct is interpreted, cint uses very conservative alignment
+  and padding rule which may not match to other C/C++ processing system.
+
+
+# bit-field:
+   Bit-fields in precompiled class and struct can not be accessed from the
+  interpreter. 
+
+
+# Variable argument:
+   Variable argument is supported from Cint 5.14.69.  &lt;stdarg.h&gt; must be
+  included to use variable argument. Cint accepts both form of declaration.
+ 
+       <a href="../ListOfTypes.html#void">void</a> foo1(<a href="../ListOfTypes.html#char">char</a> *fmt, ...);
+       <a href="../ListOfTypes.html#void">void</a> foo2(<a href="../ListOfTypes.html#char">char</a> *fmt ...);
+
+  Above declarations are handled identically. Function is mached only by name.
+  Types and number of arguments are not used as function mathcing criteria.
+
+ + Calling interpreted function with variable arguments
+   A function with variable arguments can be interpreted by the Cint 
+  interpreter. For doing this, va_list, va_start, va_arg and va_end 
+  can be used. For example,
+
+       #include &lt;stdio.h&gt;
+       #include &lt;stdarg.h&gt;
+       <a href="../ListOfTypes.html#void">void</a> foo2(<a href="../ListOfTypes.html#char">char</a> *fmt ...) {
+         va_list ap;
+         va_start(ap, argn);
+         for(<a href="../ListOfTypes.html#int">int</a> i=0;i&lt;argn;i++) {
+	   <a href="../ListOfTypes.html#double">double</a> d = va_arg(ap,<a href="../ListOfTypes.html#double">double</a>);
+           printf(<span class="string">"%g "</span>,d);
+         }
+         printf(<span class="string">"\n"</span>);
+         va_end(ap);
+       }
+
+ + Calling compiled function with variable arguments
+   Argument values for variable arguments must be put into function call 
+  stack. For each computer platform, specific byte layout must be emulated 
+  by Cint. Because byte layout is not publicly informed, this capability 
+  may not be portable to all platforms. At this moment, this capbility is
+  only supported for Intel architecture(Linux &amp; Win32), HP-UX and Solaris. 
+  Support for PowerPC looks quite difficult, if not possible.
+  Need more investigation for other platforms.
+
+ + ANSI C library functions
+  In order to suport variable argument, cint needs to know stack layout
+  which is machine dependent and not known.
+
+   Cint supports following library functions as special cases. Please note
+  that scanf function has limitation in number of arguments.
+
+        <a href="../ListOfTypes.html#ostream">ostream</a>&amp; <a href="../ListOfTypes.html#ostream">ostream</a>::format(<a href="../ListOfTypes.html#char">char</a> *format ...); 
+        <a href="../ListOfTypes.html#int">int</a> fprintf(FILE *fp,<a href="../ListOfTypes.html#char">char</a> *format ...);
+        <a href="../ListOfTypes.html#int">int</a> printf(<a href="../ListOfTypes.html#char">char</a> *format ...);
+        <a href="../ListOfTypes.html#int">int</a> sprintf(<a href="../ListOfTypes.html#char">char</a>* string,<a href="../ListOfTypes.html#char">char</a> *format ...);
+        <a href="../ListOfTypes.html#int">int</a> fscanf(FILE *fp,<a href="../ListOfTypes.html#char">char</a> *format ...);     // only upto 12 arguments
+        <a href="../ListOfTypes.html#int">int</a> scanf(<a href="../ListOfTypes.html#char">char</a> *format ...);               //         <span class="string">"</span>
+        <a href="../ListOfTypes.html#int">int</a> sscanf(<a href="../ListOfTypes.html#char">char</a> *string,<a href="../ListOfTypes.html#char">char</a> *format ...); //         <span class="string">"</span>
+
+   Note that null characters can not be inserted in a file or string using
+   the scanf/printf routine from the interpreter for example with
+        fprintf(f, <span class="string">"%c%c%c%c"</span>, 44, 0, 44, 0);
+   the resulting file will only containg the comma characters.
+
+# switch statement and default: label
+   Cint requires default: label to appear at the end of switch statement.
+  If you put case label after default: ,  switch statement does not work
+  properly. For example,
+
+        <a href="../ListOfTypes.html#int">int</a> n = 1;
+
+        switch(n) {
+        case 0: 
+          printf(<span class="string">"zero\n"</span>);
+	  break;
+        case 1: 
+          printf(<span class="string">"one\n"</span>);    // 'one' is printed both with cint and g++
+	  break;
+        default: 
+          printf(<span class="string">"many\n"</span>);
+	  break;
+        }
+
+        switch(n) {
+        case 0: 
+          printf(<span class="string">"zero\n"</span>);
+	  break;
+        default: 
+          printf(<span class="string">"many\n"</span>);  // Cint prints 'many'
+	  break;
+        case 1: 
+          printf(<span class="string">"one\n"</span>);   // But g++ prints 'one' 
+	  break;
+        }
+
+
+# Library function:
+
+ + ANSI C library function
+   Most of ANSI C standard library functions are built in. However, following 
+  ones are not supported.
+
+	<a href="../ListOfTypes.html#int">int</a> setjmp(jmp_buf environment)
+	<a href="../ListOfTypes.html#void">void</a> longjmp(jmp_buf environment,<a href="../ListOfTypes.html#int">int</a> rval)
+	typename *va_arg(va_list listptr,typename)
+	<a href="../ListOfTypes.html#void">void</a> va_end(va_list listptr)
+	<a href="../ListOfTypes.html#void">void</a> va_start(va_list listptr,type rightparm)
+	<a href="../ListOfTypes.html#int">int</a> vfprintf(FILE *fp,const <a href="../ListOfTypes.html#char">char</a> *format, va_list arguments)
+	<a href="../ListOfTypes.html#int">int</a> vprintf(const <a href="../ListOfTypes.html#char">char</a> *format, va_list arguments)
+	<a href="../ListOfTypes.html#int">int</a> vsprintf(<a href="../ListOfTypes.html#char">char</a> *string,const <a href="../ListOfTypes.html#char">char</a> *format, va_list arguments)
+
+ + Optional POSIX, Win32, TCP/IP libraries
+   Cint does not contain non ANSI functions by default. But you can use them
+  by building optional libraries. Small subset of POSIX, Win32 and TCP/IP 
+  libraries can be build under lib/posix, lib/win32api and  lib/socket
+  directory. Please read README.txt in each directory.
+
+ + STL
+   Cint source package comes with an old STL (HP reference implementation) 
+  which is in stl directory. You can interpret string, vector and list 
+  containers and several generic algorithms.
+   Small subset of precompiled STL containers can be built under lib/dll_stl 
+  directory. Read lib/dll_stl/README.txt and run setup script there. You
+  can precompile STL containers by yourself too. Simple example is in
+  demo/makecint/stl directory.  STL dummy headers are in lib/prec_stl
+  directory.
+   Please understand that there are many limitations for using STL on Cint.
+  STL is so complex that it is very difficult to document all limitations.
+
+# Operator:
+
+ + Power operator
+   Power operator <span class="string">'@'</span> is the original extension. It can be used both 
+  integer and floating point. This extension is made for convenience of
+  scientific application.  
+
+  Before cint5.15.25, '**' notation was also used as power operator. This
+  extension has been eliminated in order to avoid confusions in following 
+  expression.
+  
+     <a href="../ListOfTypes.html#int">int</a> a=1,b=2,c;
+     <a href="../ListOfTypes.html#int">int</a> *p = &amp;b;
+     c = a**b; // Use parenthesis a*(*b), although completely legal
+
+
+ + sizeof
+   Sizeof must be used with '()'.  If size of and its' operand is separated
+  by space , without '()', cint will not produce correct result.
+
+   Cint returns 0 for sizeof unnamed union if it is precompiled. If the
+  code is interpreted, Cint can return appropriate number.
+
+
+ + '.*' and '-&gt;*' 
+   Pointer to member access operator '.*' and '-&gt;*' are newly supported from
+  cint5.14.9. You need to define G__PTR2MEMFUNC macro in platform dependency
+  file in order to turn this feature on. Use of pointer to member access
+  operator is not recommended because it is premature.
+
+
+ + Unsupported operators
+   Sequencing operator <span class="string">','</span> is not supported. Operation of <span class="string">','</span> is hard coded
+  in Cint core and can not be modified by operator overloading. Also,
+  expression like 'expr1,expr2,expr3' does not work properly.
+
+
+
+# Array declaration
+  Cint supports array declaration. There are original enhancements and 
+ recommendations.
+
+ + constness of array dimension
+   Variable dimension is not allowed in C/C++. Cint has special capability to
+  allow it only in interactive command and '{ ... }' style macro.
+
+     <a href="../ListOfTypes.html#void">void</a> f() {
+       <a href="../ListOfTypes.html#int">int</a> n=5;
+       <a href="../ListOfTypes.html#float">float</a> a[n]; // this is error now
+     }
+
+     $ cint
+     cint&gt; .
+     cint&gt; <a href="../ListOfTypes.html#int">int</a> n=5;
+     cint&gt; <a href="../ListOfTypes.html#float">float</a> a[n];  // this is allowed, special extension
+
+ + constness of array dimension - recommendation
+   Constness is not enough for valid array dimension. C/C++ requests
+  array dimension to be defined in following ways.
+
+     <a href="../ListOfTypes.html#int">int</a> g() { return 5; }
+     #define n0 5          // GOOD: macro             recommended
+     <a href="../ListOfTypes.html#int">int</a> n1=5;             // BAD : non-const static
+     static <a href="../ListOfTypes.html#int">int</a> n2=5;      // BAD : non-const file-scope static
+     const <a href="../ListOfTypes.html#int">int</a> n3=5;       // GOOD: static const      recommended
+     const <a href="../ListOfTypes.html#int">int</a> n4=g();     // BAD : static const initialized for process
+     <a href="../ListOfTypes.html#void">void</a> f() {
+       <a href="../ListOfTypes.html#int">int</a> n5=5;           // BAD : non-const
+       static <a href="../ListOfTypes.html#int">int</a> n6=5;    // BAD : non-const static
+       const <a href="../ListOfTypes.html#int">int</a> n7=5;     // GOOD: static const      not recommended
+       static const n8=5;  // GOOD: static const      not recommended
+       const <a href="../ListOfTypes.html#int">int</a> n9=g();   // BAD : non-static const
+       <a href="../ListOfTypes.html#float">float</a> a[n?];
+     }
+
+   Looks pretty inconsistent, but this is C++. All of above behaviors are
+   implemented in cint5.14.5. Having array dimension constant in local 
+   scope works properly, but it complicates the situation. It has to 
+   be <span class="string">"static const"</span> anyway , it is recommended to declare it in global
+   scope.
+
+ + constness and staticness of array
+   Following code works on cint. But if you try to be safe, const or
+  static array in local scope is not recommended.
+
+    const <a href="../ListOfTypes.html#int">int</a> nx=5;
+    const <a href="../ListOfTypes.html#float">float</a> ax[5]={1,2,3,4,5};           // Recommend this
+    <a href="../ListOfTypes.html#void">void</a> f() {
+      const <a href="../ListOfTypes.html#int">int</a> n=5;                         // not recommended
+      <a href="../ListOfTypes.html#float">float</a> a1[n];                           // This is fine
+      const <a href="../ListOfTypes.html#float">float</a> a2[n] = {1,2,3,4,5};       // not recommended
+      static <a href="../ListOfTypes.html#float">float</a> a3[n];                    // not recommended
+      static const <a href="../ListOfTypes.html#float">float</a> a4[n]={1,2,3,4,5};  // not recommended
+    }
+
+ + array versus pointer
+   In C++, f(T* p) and f(T p[]) are equivalent. CINT prefers the first
+   form; the second can cause problems for compound types T.
+
+# Preprocessor statements:
+
+   Cint has limitations in handling define macros in default mode. Following
+  limitations applies. You can avoid following limitations by using
+  preprocessor prior to interpretation by -p or +P,-P command line option.
+  Read also cint(1) for use of -p and +P,-P options.
+
+ + Macro definition:
+   The biggest syntax limitation of cint is associated with define macro.
+  Cint can only handle simple define macros. Some complex use of macros
+  has to be handled by separate preprocessor by -p or +P,-P options.
+
+	#define	  ON    1       /* Fine */</span>
+	#define  f(x)  (x-1)    /* OK, but not recommended */</span>
+	#define  <a href="../ListOfTypes.html#bool">bool</a>  <a href="../ListOfTypes.html#int">int</a>      /* OK, but not recommended */</span>
+	#define  DECL_B  <a href="../ListOfTypes.html#int">int</a> b  /* May not work */</span> 
+
+
+# Operator overloading
+
+ + Unsupported operators for overloading
+   Following operators can not be overloaded.
+
+	new , delete , unary &amp;
+
+   The operator new is already overloaded in cint as follows. So, you don't
+  need to overload new anyway in the interpreter environment. This is already
+  done for both interpreted and precompiled classes.
+
+       <a href="../ListOfTypes.html#void">void</a>* operator new(<a href="../ListOfTypes.html#size_t">size_t</a> size,<a href="../ListOfTypes.html#void">void</a>* arena) {return(arena);}
+
+ + Explicit operator function call
+   Operator function can not be called explicitly by name because of parse rule
+  limitation. 
+
+	complex a=complex(1,5),b=complex(-1,3.1),c=complex(0,0);
+	c = operator+(a,b);  // BAD operator function can not be called
+			     // explicitly.
+	c = a+b;  // OK
+
+
+# operator= overloading
+
+   In Cint, if you define operator= for a class, class that is derived 
+  from it must have operator=. In ANSI/ISO standard, this is not necessary.
+
+       class A {
+        public:
+         A&amp; operator=(const A&amp; x);
+       };
+
+       class B : public A {
+        public:
+         B&amp; operator=(const B&amp; x); // this is needed in cint
+       };
+
+
+# Templates
+
+   Cint can run simple STL programs. Following limitations apply.
+
+ + Explicit type conversion
+   Explicit type conversion for template class can not be used because of 
+  parsing limitation. Use typedef if you want to do so.
+
+	// suppose you have 
+	ary&lt;<a href="../ListOfTypes.html#double">double</a>,100&gt; a;
+	a = ary&lt;<a href="../ListOfTypes.html#double">double</a>,100&gt;(3.14);  // can't handle this
+
+ + Scope resolution operator
+   Template class name can not be used with scope operator to resolve 
+  ambiguity. Use typedef if you want to do so.
+
+
+	intary10.ary&lt;<a href="../ListOfTypes.html#int">int</a>,10&gt;::disp(); // can't handle this
+
+
+ + Member function template
+   Member function template works in Cint with limitation. Member function
+  template must be defined within a class definition as inline function.
+
+	template&lt;class T&gt; class A {
+	  T dat;
+	 public:
+          template&lt;class E&gt; A(E&amp; x) { dat = x; }    // OK
+	  template&lt;class E&gt; <a href="../ListOfTypes.html#void">void</a> Set(E&amp; x) {dat=x;} // OK
+	};
+
+
+ + Partial template specialization
+   Partial template specialization is not supported. For example,
+
+
+	// this template is fine
+	template &lt;class Iterator&gt;
+	struct iterator_traits {
+  	  typedef typename Iterator::iterator_category iterator_category;
+  	  typedef typename Iterator::value_type        value_type;
+  	  typedef typename Iterator::difference_type   difference_type;
+  	  typedef typename Iterator::pointer           pointer;
+  	  typedef typename Iterator::reference         reference;
+	};
+
+	// template partial specialization not supported
+	template &lt;class T&gt;
+	struct iterator_traits&lt;T*&gt; {
+  	  typedef random_access_iterator_tag iterator_category;
+  	  typedef T                          value_type;
+  	  typedef ptrdiff_t                  difference_type;
+  	  typedef T*                         pointer;
+  	  typedef T&amp;                         reference;
+	};
+
+
+
+# STL 
+   Supporting templates and supporting STL are quite different subject. STL
+  is a very complex template library which many compiler makers have trouble
+  with. Cint supports STL in limited way.
+
+ + Using precompiled STL containers
+   vector, list, deque, map and string container classes can be precompiled
+  if they are instantiated. Please refer to lib/prec_stl/README.txt and
+  lib/dll_stl/README.txt for more detail.  It is recommended to use 
+  precompiled STL containers rather than interpreting them.
+
+ + Interpret STL containers
+   Cint can interpret vector, string and some simple list container classes.
+  But this is not recommended. It is very slow and has many troubles.
+  Interpreted STL implementation is based on old 1994 HP reference 
+  implementation.
+
+ + Qualified template paremeters and default arguments
+   Cint is unable to handle template parameters of STL types that have
+   <span class="string">"std::"</span> prepended. I.e. MyTemplate&lt;complex&lt;<a href="../ListOfTypes.html#double">double</a>&gt; &gt; works, but
+   MyTemplate&lt;std::complex&lt;<a href="../ListOfTypes.html#double">double</a>&gt; &gt; doesn't.
+
+
+
+# Reference member
+   Reference type member is not supported
+
+	class A {
+	 private:
+	  <a href="../ListOfTypes.html#int">int</a>&amp; refa; // Limitation
+	};
+
+
+# Reference to pointer to pointer
+   Reference to pointer to pointer is not supported
+
+        <a href="../ListOfTypes.html#int">int</a>** &amp;a; // Limitation
+
+
+# Array reference
+   Array reference is not supported by Cint.
+
+	<a href="../ListOfTypes.html#void">void</a> func(<a href="../ListOfTypes.html#int">int</a> (&amp;ary)[5]); // Limitation
+
+
+# Function overloading
+   Cint implements function overloading resolution. It behaves quite similar
+  to what is defined in ANSI/ISO standard, but not 100% correct. If you find
+  strange behavior, it is recommended to remove ambiguous function calls.
+  Some of those limitations are described below.
+
+ + Pointer to function as argument
+   Cint has problem resolving function overloading with pointer to function
+  as an argument. Suppose you have following functions,
+
+	<a href="../ListOfTypes.html#void">void</a> f(<a href="../ListOfTypes.html#int">int</a> (*p2f)(<a href="../ListOfTypes.html#double">double</a>));
+	<a href="../ListOfTypes.html#void">void</a> f(<a href="../ListOfTypes.html#void">void</a> *p);
+
+  Cint may not resolve above functions correctly. This is due to Cint's 
+  complication of handling pointer to interpreted function and pointer to
+  compiled function. 
+ 
+
+# Pointer to function
+   It is recommended to avoid pointer to function in interpreted code whenever
+  possible. Implementation of pointer to function is very slow. 
+
+ + Mixing interpreted and compiled pointer to function
+   In many cases, user wants to mix interpreted and compiled pointer to 
+  function. Interpreted pointer to function is not compatible with compiled 
+  pointer to function. There is a special trick to do so. Please refer 
+  doc/ref.txt for the detail. Search for the item G__isinterpretedp2f and 
+  read it carefully. Please limit use of such trick to where it is inevitable.
+
+
+# Pointer to member
+ + Pointer to member function
+   Pointer to member function is newly supported from cint5.14.9. This feature
+  is normally turned off. In order to activate, you need to define 
+  G__PTR2MEMFUNC macro in platform dependency file and re-compile Cint.
+   This feature is only experimental and not recommended for use in general.
+   Interpreted pointer to member function and compiled pointer to member
+  function are completely different objects. Mixing those concepts will cause
+  fatal error.  For example, following code works as <a href="../ListOfTypes.html#long">long</a> as everything is
+  interpreted. However, it will cause fatal error if you precompile g() 
+  and interpret main().
+
+
+     class A {
+      public:
+       <a href="../ListOfTypes.html#void">void</a> f() { }
+     };
+
+     typedef <a href="../ListOfTypes.html#void">void</a> (A::*A_p2mf)(<a href="../ListOfTypes.html#void">void</a>);
+
+     <a href="../ListOfTypes.html#void">void</a> g(A *pa,A_p2mf x) { (pa-&gt;*x)(); }
+
+     main() {
+       A a;
+       A_p2mf pf = &amp;A::f;
+       (a.*pf)();
+     }
+
+ + Pointer to data member
+   Pointer to data member is not supported.
+
+
+# Exception handling
+   Exception handling is implemented but with limitations. Object destruction
+  may not be done properly in complex case. It is recommended not to use 
+  Exception Handling in interpreted code. For example, if you interpret 
+  following code, Cint will crash at ~A() because Cint can not handle
+  object destruction if exception is thrown in a constructor.
+  
+     class A {
+       <a href="../ListOfTypes.html#int">int</a> *d;
+       <a href="../ListOfTypes.html#int">int</a> s;
+      public:
+       A(<a href="../ListOfTypes.html#int">int</a> sz) : s(sz) { 
+         if(s&lt;0) throw exception(); 
+         d = new <a href="../ListOfTypes.html#int">int</a>[s];
+       }
+       ~A() { delete[] d; } // causes problem here
+     };
+
+     <a href="../ListOfTypes.html#void">void</a> f() {
+       A a(3);
+       A b(-1);  // exception is thrown
+       A c(4);
+     }
+
+     <a href="../ListOfTypes.html#int">int</a> main() {
+       try {
+       }
+       catch(exception&amp; x) {
+         printf(<span class="string">"This is a std::exception '%s'\n"</span>,z.what()); 
+       }
+       return 0;
+     }
+
+   Workaround to this problem is to either precompile class A , or to
+  change implementation of class A as follows.
+
+     class A {
+       <a href="../ListOfTypes.html#int">int</a> *d;
+       <a href="../ListOfTypes.html#int">int</a> s;
+      public:
+       A(<a href="../ListOfTypes.html#int">int</a> sz) : s(0) { 
+         if(s&lt;0) throw exception(); 
+         d = new <a href="../ListOfTypes.html#int">int</a>[sz];
+         s = sz; // s is set at the end of the constructor 
+       }
+       ~A() {if(s) delete[] d;} // use s as a protection 
+     };
+
+   Exception thrown in compiled code can be caught by Cint if Cint is
+  compiled with -DG__STD_EXCEPTION. Refer to platform/README.txt for more
+  detail.
+
+
+# namespace
+   namespace is implemented with some limitation. 'namespace std' is ignored
+  and it is merged with global scope. Using directive can not be used in
+  global scope. Other than those, namespace works reasonably well.
+
+
+# dynamic_cast, static_cast, reinterpret_cast, const_cast
+   dynamic_cast, static_cast, reinterpret_cast and const_cast are parsed by
+  cint but behave the same as C style '(T)v' casting.
+
+	dynamic_cast&lt;T&gt;(v)       same as   (T)v
+	static_cast&lt;T&gt;(v)        same as   (T)v
+	reinterpret_cast&lt;T&gt;(v)   same as   (T)v
+	const_cast&lt;T&gt;(v)         same as   (T)v
+
+
+# RTTI
+   RTTI library is implemented based on ANSI/ISO resolution proposal 95 spring.
+  This specification may have been changed in final ANSI/ISO standard.
+
+
+# Multi-Language
+   Cint can handle multi-byte character sets in comment and string constant.
+  Cint attempts to judge between S-JIS and EUC automatically. This algorithm 
+  works for most cases, but not perfect. In S-JIS, half-size kana character 
+  must not be used. There may be other corner cases that the algorithm 
+  makes wrong judgment.
+   Cint can not take JIS and Unicode.
+
+
+# KNOWN BUGS
+
+ + static class object
+
+   There is a bug in CINT interpreter declaring static class object in a 
+  function.
+
+
+    func() {
+      static InterpretedClass a;           // FIxed in 5.13.77
+      static InterpretedClass b(initval);  // FIxed in 5.13.77
+      static InterpretedClass b=initval;   // CINT BUG, CAUSES ERROR
+      static CompiledClass d;              // FIxed in 5.13.77
+      static CompiledClass e(initval);     // FIxed in 5.13.77
+      static CompiledClass f=initval;      // FIxed in 5.13.77
+      static <a href="../ListOfTypes.html#int">int</a> g;                        // Work fine
+      static <a href="../ListOfTypes.html#int">int</a> h(1);                     // Work fine
+      static <a href="../ListOfTypes.html#int">int</a> i=1;                      // Work fine
+    }
+
+
+# Special language extensions
+
+   There are special language extension Cint allows for user's convenience.
+  Those extensions are potentially illegal in standard C/C++. Please note
+  that if you use Cint's unique extensions, the code will not work with 
+  C/C++ compilers.
+
+   - Direct comparison of string constants
+       <a href="../ListOfTypes.html#char">char</a> *p = <span class="string">"abc"</span>;
+       if(p==<span class="string">"abc"</span>)  printf(<span class="string">"true\n"</span>);  // <a href="../ListOfTypes.html#bool">true</a>
+
+   - Using string constant in switch statement
+       <a href="../ListOfTypes.html#char">char</a> *p=<span class="string">"abc"</span>;
+       switch(p) {
+       case <span class="string">"abc"</span>: printf(<span class="string">"match abc\n"</span>); break;
+       case <span class="string">"def"</span>: printf(<span class="string">"match def\n"</span>); break;
+       default:    printf(<span class="string">"unmatch\n"</span>); break;
+       }
+
+   - Power operator
+       <a href="../ListOfTypes.html#double">double</a> a = 2**3;  // power
+       <a href="../ListOfTypes.html#double">double</a> b = 2@3;   // power
+
+   - Dynamic array allocation with non const integer as an index
+     (This is allowed only from command interface. If this appears in a
+      source code, cint detects it as an error.)
+       cint&gt; <a href="../ListOfTypes.html#int">int</a> n=5;
+       cint&gt; <a href="../ListOfTypes.html#float">float</a> a[n];  
+
+    (This list is not complete.)
+
+# BUGS
+   Report bugs and requirements to cint@pcroot.cern.ch. Bugs tend to 
+  be fixed very quickly. Any kind of comments or messages will be appreciated.
+
+# SEE ALSO
+	doc/cint.txt doc/makecint.txt doc/bytecode.txt
+
+# AUTHOR
+
+  Masaharu Goto (cint@pcroot.cern.ch)
+  Copyright (c) 1995~2002 Masaharu Goto
+</pre>

@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:26:37 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooAbsPdf::GenSpec</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooAbsPdf::GenSpec','libRooFitCore','RooAbsPdf.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooAbsPdf__GenSpec.h.html">header file</a>
+<a class="descrheadentry" href="src/RooAbsPdf__GenSpec.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/inc/RooAbsPdf.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/src/RooAbsPdf.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooAbsPdf__GenSpec:description">class description</a> 
+<a class="descrheadentry" href="#RooAbsPdf__GenSpec:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooAbsPdf__GenSpec:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooAbsPdf__GenSpec:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOFITCORE_Index.html">ROOFITCORE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooAbsPdf::GenSpec</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooAbsPdf__GenSpec:description"></a>class RooAbsPdf::GenSpec</h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./RooAbsPdf.html">RooAbsPdf</a> is the abstract interface for all probability density
+ functions The class provides hybrid analytical/numerical
+ normalization for its implementations, error tracing and a MC
+ generator interface.
+
+ A minimal implementation of a PDF class derived from <a href="./RooAbsPdf.html">RooAbsPdf</a>
+ should overload the evaluate() function. This functions should
+ return PDFs value.
+
+
+ [Normalization/Integration]
+
+ Although the normalization of a PDF is an integral part of a
+ probability density function, normalization is treated separately
+ in <a href="./RooAbsPdf.html">RooAbsPdf</a>. The reason is that a <a href="./RooAbsPdf.html">RooAbsPdf</a> object is more than a
+ PDF: it can be a building block for a more complex, composite PDF
+ if any of its variables are functions instead of variables. In
+ such cases the normalization of the composite may not be simply the
+ integral over the dependents of the top level PDF as these are
+ functions with potentially non-trivial Jacobian terms themselves.
+ Therefore
+
+ --&gt; No explicit attempt should be made to normalize
+     the functions output in evaluate().
+
+ In addition, <a href="./RooAbsPdf.html">RooAbsPdf</a> objects do not have a static concept of what
+ variables are parameters and what variables are dependents (which
+ need to be integrated over for a correct PDF normalization).
+ Instead the choice of normalization is always specified each time a
+ normalized values is requested from the PDF via the getVal()
+ method.
+
+ <a href="./RooAbsPdf.html">RooAbsPdf</a> manages the entire normalization logic of each PDF with
+ help of a <a href="./RooRealIntegral.html">RooRealIntegral</a> object, which coordinates the integration
+ of a given choice of normalization. By default, <a href="./RooRealIntegral.html">RooRealIntegral</a> will
+ perform a fully numeric integration of all dependents. However,
+ PDFs can advertise one or more (partial) analytical integrals of
+ their function, and these will be used by <a href="./RooRealIntegral.html">RooRealIntegral</a>, if it
+ determines that this is safe (i.e. no hidden Jacobian terms,
+ multiplication with other PDFs that have one or more dependents in
+ commen etc)
+
+ To implement analytical integrals, two functions must be implemented. First,
+
+ <a href="./ListOfTypes.html#Int_t">Int_t</a> getAnalyticalIntegral(const <a href="./RooArgSet.html">RooArgSet</a>&amp; integSet, <a href="./RooArgSet.html">RooArgSet</a>&amp; anaIntSet)
+
+ advertises the analytical integrals that are supported. 'integSet'
+ is the set of dependents for which integration is requested. The
+ function should copy the subset of dependents it can analytically
+ integrate to anaIntSet and return a unique identification code for
+ this integration configuration.  If no integration can be
+ performed, zero should be returned.  Second,
+
+ <a href="./ListOfTypes.html#Double_t">Double_t</a> analyticalIntegral(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)
+
+ Implements the actual analytical integral(s) advertised by
+ getAnalyticalIntegral.  This functions will only be called with
+ codes returned by getAnalyticalIntegral, except code zero.
+
+ The integration range for real each dependent to be integrated can
+ be obtained from the dependents' proxy functions min() and
+ max(). Never call these proxy functions for any proxy not known to
+ be a dependent via the integration code.  Doing so may be
+ ill-defined, e.g. in case the proxy holds a function, and will
+ trigger an assert. Integrated category dependents should always be
+ summed over all of their states.
+
+
+
+ [Direct generation of observables]
+
+ Any PDF dependent can be generated with the accept/reject method,
+ but for certain PDFs more efficient methods may be implemented. To
+ implement direct generation of one or more observables, two
+ functions need to be implemented, similar to those for analytical
+ integrals:
+
+ <a href="./ListOfTypes.html#Int_t">Int_t</a> getGenerator(const <a href="./RooArgSet.html">RooArgSet</a>&amp; generateVars, <a href="./RooArgSet.html">RooArgSet</a>&amp; directVars) and
+ <a href="./ListOfTypes.html#void">void</a> generateEvent(<a href="./ListOfTypes.html#Int_t">Int_t</a> code)
+
+ The first function advertises observables that can be generated,
+ similar to the way analytical integrals are advertised. The second
+ function implements the generator for the advertised observables
+
+ The generated dependent values should be store in the proxy
+ objects. For this the assignment operator can be used (i.e. xProxy
+ = 3.0 ). Never call assign to any proxy not known to be a dependent
+ via the generation code.  Doing so may be ill-defined, e.g. in case
+ the proxy holds a function, and will trigger an assert
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooAbsPdf__GenSpec:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:_GenSpec">~GenSpec</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:GenSpec">GenSpec</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:operator_">operator=</a>(<span class="keyword">const</span> <a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:GenSpec%2">GenSpec</a>(<span class="keyword">const</span> <a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a>&amp; other)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>::<a href="./RooAbsPdf__GenSpec.html">GenSpec</a></td><td class="funcname"><a class="funcname" href="#RooAbsPdf__GenSpec:GenSpec%1">GenSpec</a>(<a href="./RooAbsGenContext.html">RooAbsGenContext</a>* context, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; whatVars, <a href="./RooDataSet.html">RooDataSet</a>* protoData, <a href="./ListOfTypes.html#Int_t">Int_t</a> nGen, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> extended, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> randProto, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> resampleProto, <a href="./TString.html">TString</a> dsetName, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> init = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooAbsPdf__GenSpec:Data_Members"></a>Data Members</h2>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_dsetName"></a>_dsetName</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_extended"></a>_extended</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsGenContext.html">RooAbsGenContext</a>*</td><td class="dataname"><a name="RooAbsPdf__GenSpec:_genContext"></a>_genContext</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_init"></a>_init</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_nGen"></a>_nGen</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooDataSet.html">RooDataSet</a>*</td><td class="dataname"><a name="RooAbsPdf__GenSpec:_protoData"></a>_protoData</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_randProto"></a>_randProto</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_resampleProto"></a>_resampleProto</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooAbsPdf__GenSpec:_whatVars"></a>_whatVars</td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooAbsPdf__GenSpec:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooAbsPdf__GenSpec_Lib" id="MapRooAbsPdf__GenSpec_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="524,353,652,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooAbsPdf__GenSpec_Inh" class="tabsel" href="inh/RooAbsPdf__GenSpec_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooAbsPdf__GenSpec_Inh.png');">Inheritance</a>
+<a id="imgRooAbsPdf__GenSpec_InhMem" class="tab" href="inhmem/RooAbsPdf__GenSpec_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooAbsPdf__GenSpec_InhMem.png');">Inherited Members</a>
+<a id="imgRooAbsPdf__GenSpec_Incl" class="tab" href="incl/RooAbsPdf__GenSpec_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooAbsPdf__GenSpec_Incl.png');">Includes</a>
+<a id="imgRooAbsPdf__GenSpec_Lib" class="tab" href="lib/RooAbsPdf__GenSpec_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooAbsPdf__GenSpec_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooAbsPdf__GenSpec_Inh" src="inh/RooAbsPdf__GenSpec_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooAbsPdf__GenSpec:_GenSpec" href="src/RooAbsPdf__GenSpec.cxx.html#trjuKC">~GenSpec</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooAbsPdf__GenSpec:GenSpec%1" href="src/RooAbsPdf__GenSpec.cxx.html#PcC4mD">GenSpec</a>(<a href="./RooAbsGenContext.html">RooAbsGenContext</a>* context, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; whatVars, <a href="./RooDataSet.html">RooDataSet</a>* protoData, <a href="./ListOfTypes.html#Int_t">Int_t</a> nGen, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> extended, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> randProto, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> resampleProto, <a href="./TString.html">TString</a> dsetName, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> init = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooAbsPdf__GenSpec:GenSpec" href="src/RooAbsPdf__GenSpec.h.html#oUhzx">GenSpec</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./RooAbsPdf__GenSpec.html#RooAbsPdf__GenSpec:_genContext" title="RooAbsGenContext* RooAbsPdf::GenSpec::_genContext">_genContext</a> = 0 ; _protoData = 0 ; <a href="./RooAbsPdf__GenSpec.html#RooAbsPdf__GenSpec:_init" title="Bool_t RooAbsPdf::GenSpec::_init">_init</a> = <a href="./ListOfTypes.html#Bool_t">kFALSE</a> ; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooAbsPdf__GenSpec:GenSpec%1" href="src/RooAbsPdf__GenSpec.h.html#G.WIO">GenSpec</a>(<a href="./RooAbsGenContext.html">RooAbsGenContext</a>* context, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; whatVars, <a href="./RooDataSet.html">RooDataSet</a>* protoData, <a href="./ListOfTypes.html#Int_t">Int_t</a> nGen, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> extended, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> randProto, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> resampleProto, <a href="./TString.html">TString</a> dsetName, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> init = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: Fri Dec  2 14:26:37 2011 </em><em>&raquo; Last generated: 2011-12-02 14:26</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

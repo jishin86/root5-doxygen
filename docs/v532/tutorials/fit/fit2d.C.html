@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:29:17 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>example illustrating how to fit a 2-d histogram of type y=f(x)
+</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks"><div class="descrhead"><table class="descrtitle" id="contexttitle"><tr class="descrtitle"><td id="contextheadarrow_prev"><div id="divcontextheadar_prev"><a class="contextheadarrow" href="fit2a.C.html">&lt;</a></div></td><td class="contextheadentry" id="contextheadentry_prev"><a class="contextheadentry" href="fit2a.C.html">fit2a.C: Fitting a 2-D histogram (a variant)
+</a></td><td id="contextheadarrow_up"><div id="divcontextheadar_up"><a class="contextheadarrow" href="index.html">^</a></div></td><td class="contextheadentry" id="contextheadentry_up"><a class="contextheadentry" href="index.html">Fitting tutorials</a></td><td class="contextheadentry" id="contextheadentry_next"><a class="contextheadentry" href="fit2dHist.C.html">fit2dHist.C:   Example to fit two histograms at the same time via TVirtualFitter
+</a></td><td id="contextheadarrow_next"><div id="divcontextheadar_next"><a class="contextheadarrow" href="fit2dHist.C.html">&gt;</a></div></td></tr></table></div><h1 class="convert">fit2d.C: example illustrating how to fit a 2-d histogram of type y=f(x)
+</h1></div>
+<div class="location"><h2>From <a href="http://root.cern.ch/viewvc/trunk/tutorials/fit/fit2d.C?view=markup">$ROOTSYS/tutorials/fit/fit2d.C</a></h2></div>
+<table><tr><td style="vertical-align:top;padding-right:2em;">
+<div class="listing"><pre class="listing">
+<span class="keyword">void</span> fit2d()
+{
+   <span class="comment">//example illustrating how to fit a 2-d histogram of type y=f(x)</span>
+   <span class="comment">//Author: Rene Brun</span>
+   
+   <span class="comment">// generate a 2-d histogram using a <a href="../../TCutG.html">TCutG</a></span>
+   <span class="keyword">const</span> <a href="../../ListOfTypes.html#Int_t">Int_t</a> n = 6;
+   <a href="../../ListOfTypes.html#Float_t">Float_t</a> x[n] = {0.092,0.83,0.94,0.81,0.12,0.1};
+   <a href="../../ListOfTypes.html#Float_t">Float_t</a> y[n] = {0.71,9.4,9,8,0.3,0.71};
+   <a href="../../TCutG.html">TCutG</a> *cut = <span class="keyword">new</span> <a href="../../TCutG.html">TCutG</a>(<span class="string">"cut"</span>,n,x,y);
+   <a href="../../TH2F.html">TH2F</a> *h2 = <span class="keyword">new</span> <a href="../../TH2F.html">TH2F</a>(<span class="string">"h2"</span>,<span class="string">"h2"</span>,40,0,1,40,0,10);
+   <a href="../../ListOfTypes.html#Float_t">Float_t</a> u,v;
+   <span class="keyword">for</span> (<a href="../../ListOfTypes.html#Int_t">Int_t</a> i=0;i&lt;100000;i++) {
+      u = <a href="../../TRandom.html">gRandom</a>-><a href="../../TRandom.html#TRandom:Rndm" title="Double_t TRandom::Rndm(Int_t i=0)">Rndm</a>();
+      v = 10*<a href="../../TRandom.html">gRandom</a>-><a href="../../TRandom.html#TRandom:Rndm" title="Double_t TRandom::Rndm(Int_t i=0)">Rndm</a>();
+      <span class="keyword">if</span> (cut-&gt;IsInside(u,v)) h2-&gt;Fill(u,v);
+   }
+   <a href="../../TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="../../TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"show profile"</span>,600,900);
+   c1-&gt;<a href="../../TPad.html#TPad:Divide" title="void TPad::Divide(Int_t nx=1,Int_t ny=1,Float_t xmargin=0.01,Float_t ymargin=0.01,Int_t color=0)">Divide</a>(1,2);
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(1);
+   h2-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(2);
+   
+   <span class="comment">//use a <a href="../../TProfile.html">TProfile</a> to convert the 2-d to 1-d problem</span>
+   <a href="../../TProfile.html">TProfile</a> *prof = h2-&gt;ProfileX();
+   prof-&gt;<a href="../../TH1.html#TH1:Fit" title="TFitResultPtr TH1::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Double_t xmin=0,Double_t xmax=0) or overloads">Fit</a>(<span class="string">"pol1"</span>);
+}
+   
+</pre></div>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">fit2d.C:</span><a name="29" href="#29" class="ln">29</a></div></div>
+</td><td style="vertical-align:top;">
+<table>
+<tr><td><a href="fit2d.C_0.png">
+<img src="fit2d.C_0.png" id="canv0" alt="thumb" style="border:none;width:22em;" onmouseover="javascript:canv0.style.width='auto';" />
+</a></td></tr>
+</table>
+</td></tr></table>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:29 </em><em>&raquo; Last generated: 2011-12-02 14:29</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:23:48 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TTimer</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TTimer','libCore','TTimer.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TTimer.h.html">header file</a>
+<a class="descrheadentry" href="src/TTimer.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/inc/TTimer.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/base/src/TTimer.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TTimer:description">class description</a> 
+<a class="descrheadentry" href="#TTimer:Function_Members">function members</a>
+<a class="descrheadentry" href="#TTimer:Data_Members">data members</a>
+<a class="descrheadentry" href="#TTimer:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_BASE_Index.html">BASE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TTimer</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TTimer:description"></a>class TTimer: public <a href="./TSysEvtHandler.html">TSysEvtHandler</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TTimer.html">TTimer</a>
+
+Handles synchronous and a-synchronous timer events.
+1. synchronous timer is registered into <a href="./TSystem.html">TSystem</a> and is processed
+within the standard <a href="./ROOT.html">ROOT</a> event-loop.
+2. asynchronous timer is passed to the operating system which sends
+an external signal to <a href="./ROOT.html">ROOT</a> and thus interrupts its event-loop.
+
+You can use this class in one of the following ways:
+- Sub-class <a href="./TTimer.html">TTimer</a> and override the <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>() method.
+- Re-implement the <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:HandleTimer" title="Bool_t TObject::HandleTimer(TTimer* timer)">HandleTimer</a>() method in your class
+and pass a pointer to this object to timer, see the <a href="./TTimer.html#TTimer:SetObject" title="void TTimer::SetObject(TObject* object)">SetObject</a>()
+method.
+- Pass an interpreter command to timer, see <a href="./TTimer.html#TTimer:SetCommand" title="void TTimer::SetCommand(const char* command)">SetCommand</a>() method.
+- Create a <a href="./TTimer.html">TTimer</a>, connect its <a href="./TTimer.html#TTimer:Timeout" title="void TTimer::Timeout()">Timeout</a>() signal to the
+appropriate methods. Then when the time is up it will emit a
+<a href="./TTimer.html#TTimer:Timeout" title="void TTimer::Timeout()">Timeout</a>() signal and call connected slots.
+
+Minimum timeout interval is defined in <a href="./TSystem.html">TSystem</a>::ESysConstants as
+kItimerResolution (currently 10 ms).
+
+Signal/slots example:
+<a href="./TTimer.html">TTimer</a> *timer = new <a href="./TTimer.html">TTimer</a>();
+timer-&gt;<a href="./TQObject.html#TQObject:Connect" title="Bool_t TQObject::Connect(const char* signal,const char* receiver_class,void* receiver,const char* slot) or overloads">Connect</a>(<span class="string">"Timeout()"</span>, <span class="string">"myObjectClassName"</span>,
+myObject, <span class="string">"TimerDone()"</span>);
+timer-&gt;<a href="./TTimer.html#TTimer:Start" title="void TTimer::Start(Long_t milliSec=-1,Bool_t singleShot=kFALSE)">Start</a>(2000, <a href="./ListOfTypes.html#Bool_t">kTRUE</a>);   // 2 seconds single-shot
+
+To emit the <a href="./TTimer.html#TTimer:Timeout" title="void TTimer::Timeout()">Timeout</a> signal repeadetly with minimum timeout:
+timer-&gt;<a href="./TTimer.html#TTimer:Start" title="void TTimer::Start(Long_t milliSec=-1,Bool_t singleShot=kFALSE)">Start</a>(0, <a href="./ListOfTypes.html#Bool_t">kFALSE</a>);
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TTimer:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTimer:TTimer%1">TTimer</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTimer:TTimer%2">TTimer</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTimer:TTimer%3">TTimer</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command, <a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TTimer:_TTimer">~TTimer</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:Activate"><span class="baseclass">TSysEvtHandler::</span>Activate</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:Activated"><span class="baseclass">TSysEvtHandler::</span>Activated</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Add">Add</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:Added"><span class="baseclass">TSysEvtHandler::</span>Added</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreAllSignalsBlocked"><span class="baseclass">TQObject::</span>AreAllSignalsBlocked</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreSignalsBlocked"><span class="baseclass">TQObject::</span>AreSignalsBlocked</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockAllSignals"><span class="baseclass">TQObject::</span>BlockAllSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockSignals"><span class="baseclass">TQObject::</span>BlockSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ChangedBy"><span class="baseclass">TQObject::</span>ChangedBy</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:CheckTimer">CheckTimer</a>(<span class="keyword">const</span> <a href="./TTime.html">TTime</a>&amp; now)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTimer:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CollectClassSignalLists"><span class="baseclass">TQObject::</span>CollectClassSignalLists</a>(<a href="./TList.html">TList</a>&amp; list, <a href="./TClass.html">TClass</a>* cls)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%1"><span class="baseclass">TQObject::</span>Connect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%2"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connected"><span class="baseclass">TQObject::</span>Connected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:DeActivate"><span class="baseclass">TSysEvtHandler::</span>DeActivate</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:DeActivated"><span class="baseclass">TSysEvtHandler::</span>DeActivated</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Destroyed"><span class="baseclass">TQObject::</span>Destroyed</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%1"><span class="baseclass">TQObject::</span>Disconnect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%2"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* class_name, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnected"><span class="baseclass">TQObject::</span>Disconnected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%1"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a>* paramArr)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%2"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* params)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%3"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Double_t">Double_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%4"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%5"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%6"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%7"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Char_t">Char_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%8"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UChar_t">UChar_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%9"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Short_t">Short_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%10"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UShort_t">UShort_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%11"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%12"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%13"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong_t">ULong_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%14"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%15"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Float_t">Float_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA%1"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs, va_list va)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TTime.html">TTime</a></td><td class="funcname"><a class="funcname" href="#TTimer:GetAbsTime">GetAbsTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TTimer:GetCommand">GetCommand</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfClassSignals"><span class="baseclass">TQObject::</span>GetListOfClassSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfConnections"><span class="baseclass">TQObject::</span>GetListOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfSignals"><span class="baseclass">TQObject::</span>GetListOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TTimer:GetObject">GetObject</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TTime.html">TTime</a></td><td class="funcname"><a class="funcname" href="#TTimer:GetTime">GetTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:GetTimerID">GetTimerID</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HasConnection"><span class="baseclass">TQObject::</span>HasConnection</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:HasTimedOut">HasTimedOut</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HighPriority"><span class="baseclass">TQObject::</span>HighPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTimer:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:IsActive"><span class="baseclass">TSysEvtHandler::</span>IsActive</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:IsAsync">IsAsync</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:IsInterruptingSyscalls">IsInterruptingSyscalls</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:IsSync">IsSync</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LoadRQ_OBJECT"><span class="baseclass">TQObject::</span>LoadRQ_OBJECT</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LowPriority"><span class="baseclass">TQObject::</span>LowPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Message"><span class="baseclass">TQObject::</span>Message</a>(<span class="keyword">const</span> <span class="keyword">char</span>* msg)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:Notified"><span class="baseclass">TSysEvtHandler::</span>Notified</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTimer:Notify">Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfConnections"><span class="baseclass">TQObject::</span>NumberOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfSignals"><span class="baseclass">TQObject::</span>NumberOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Remove">Remove</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSysEvtHandler.html#TSysEvtHandler:Removed"><span class="baseclass">TSysEvtHandler::</span>Removed</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Reset">Reset</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SetCommand">SetCommand</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SetInterruptSyscalls">SetInterruptSyscalls</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> set = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SetObject">SetObject</a>(<a href="./TObject.html">TObject</a>* object)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SetTime">SetTime</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SetTimerID">SetTimerID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> id = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:SingleShot">SingleShot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> milliSec, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* method)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Start">Start</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec = -1, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> singleShot = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Stop">Stop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:Timeout">Timeout</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:TurnOff">TurnOff</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTimer:TurnOn">TurnOn</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CheckConnectArgs"><span class="baseclass">TQObject::</span>CheckConnectArgs</a>(<a href="./TQObject.html">TQObject</a>* sender, <a href="./TClass.html">TClass</a>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass%1"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetSender"><span class="baseclass">TQObject::</span>GetSender</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetSenderClassName"><span class="baseclass">TQObject::</span>GetSenderClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTimer:TTimer">TTimer</a>(<span class="keyword">const</span> <a href="./TTimer.html">TTimer</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TTimer.html">TTimer</a>&amp;</td><td class="funcname"><a class="funcname" href="#TTimer:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TTimer.html">TTimer</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TTimer:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TTime.html">TTime</a></td><td class="dataname"><a name="TTimer:fAbsTime"></a>fAbsTime</td><td class="datadesc">absolute time out time in ms</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TTimer:fCommand"></a>fCommand</td><td class="datadesc">interpreter command to be executed</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTimer:fIntSyscalls"></a>fIntSyscalls</td><td class="datadesc">true is a-synchronous timer is to interrupt system calls</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfConnections"><span class="baseclass">TQObject::</span>fListOfConnections</a></td><td class="datadesc">! list of connections to this object</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfSignals"><span class="baseclass">TQObject::</span>fListOfSignals</a></td><td class="datadesc">! list of signals from this object</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TTimer:fObject"></a>fObject</td><td class="datadesc">object to be notified (if any)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fSignalsBlocked"><span class="baseclass">TQObject::</span>fSignalsBlocked</a></td><td class="datadesc">! flag used for suppression of signals</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTimer:fSync"></a>fSync</td><td class="datadesc">true if synchrounous timer</td></tr>
+<tr class="data"><td class="datatype"><a href="./TTime.html">TTime</a></td><td class="dataname"><a name="TTimer:fTime"></a>fTime</td><td class="datadesc">time out time in ms</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TTimer:fTimeID"></a>fTimeID</td><td class="datadesc">the system ID of this timer (for WIN32)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTimer:fTimeout"></a>fTimeout</td><td class="datadesc">true if timer has timed out</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fgAllSignalsBlocked"><span class="baseclass">TQObject::</span>fgAllSignalsBlocked</a></td><td class="datadesc">flag used for suppression of all signals</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TTimer:Class_Charts"></a>Class Charts</h2>
+<map name="MapTTimer_Inh" id="MapTTimer_Inh">
+<area shape="rect" href="./TSysEvtHandler.html" title="TSysEvtHandler" alt="" coords="193,15,330,36"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="31,3,98,24"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="24,27,105,48"/>
+<area shape="rect" href="./TProcessEventTimer.html" title="TProcessEventTimer" alt="" coords="587,15,763,36"/>
+</map>
+<map name="MapTTimer_InhMem" id="MapTTimer_InhMem">
+<area shape="rect" href="./TSysEvtHandler.html" alt="" coords="376,60,629,109"/>
+<area shape="rect" href="./TSysEvtHandler.html" alt="" coords="541,120,629,253"/>
+<area shape="rect" href="./TSysEvtHandler.html" alt="" coords="443,120,531,283"/>
+<area shape="rect" href="./TSysEvtHandler.html" alt="" coords="344,120,432,283"/>
+<area shape="rect" href="./TSysEvtHandler.html" title="TSysEvtHandler" alt="" coords="333,16,640,293"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="224,731,312,780"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="125,731,213,795"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="27,731,115,795"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="256,791,280,825"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="224,836,312,1072"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="125,836,213,1072"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="27,836,115,1072"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="16,687,323,1083"/>
+</map>
+<map name="MapTTimer_Lib" id="MapTTimer_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTTimer_Inh" class="tabsel" href="inh/TTimer_Inh.png" onclick="javascript:return SetImg('Charts','inh/TTimer_Inh.png');">Inheritance</a>
+<a id="imgTTimer_InhMem" class="tab" href="inhmem/TTimer_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TTimer_InhMem.png');">Inherited Members</a>
+<a id="imgTTimer_Incl" class="tab" href="incl/TTimer_Incl.png" onclick="javascript:return SetImg('Charts','incl/TTimer_Incl.png');">Includes</a>
+<a id="imgTTimer_Lib" class="tab" href="lib/TTimer_Lib.png" onclick="javascript:return SetImg('Charts','lib/TTimer_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTTimer_Inh" src="inh/TTimer_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTimer:TTimer%1" href="src/TTimer.cxx.html#UrKvn">TTimer</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Create timer that times out in ms milliseconds. If milliSec is 0
+ then the timeout will be the minimum timeout (see <a href="./TSystem.html">TSystem</a>::ESysConstants,
+ i.e. 10 ms). If mode == <a href="./ListOfTypes.html#Bool_t">kTRUE</a> then the timer is synchronous else
+ a-synchronous. The default is synchronous. <a href="./TTimer.html#TTimer:Add" title="void TTimer::Add()">Add</a> a timer to the system
+ eventloop by calling <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>(). Set command to be executed from <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>()
+ or set the object whose <a href="./TObject.html#TObject:HandleTimer" title="Bool_t TObject::HandleTimer(TTimer* timer)">HandleTimer</a>() method will be called via <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>(),
+ derive from <a href="./TTimer.html">TTimer</a> and override <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>() or connect slots to the
+ signals <a href="./TTimer.html#TTimer:Timeout" title="void TTimer::Timeout()">Timeout</a>(), <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>() and <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTimer:TTimer%2" href="src/TTimer.cxx.html#xjhzHD">TTimer</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Create timer that times out in ms milliseconds. If mode == <a href="./ListOfTypes.html#Bool_t">kTRUE</a> then
+ the timer is synchronous else a-synchronous. The default is synchronous.
+ <a href="./TTimer.html#TTimer:Add" title="void TTimer::Add()">Add</a> a timer to the system eventloop by calling <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>().
+ The object's <a href="./TObject.html#TObject:HandleTimer" title="Bool_t TObject::HandleTimer(TTimer* timer)">HandleTimer</a>() will be called by <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTimer:TTimer%3" href="src/TTimer.cxx.html#X5UvHD">TTimer</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command, <a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> mode = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Create timer that times out in ms milliseconds. If mode == <a href="./ListOfTypes.html#Bool_t">kTRUE</a> then
+ the timer is synchronous else a-synchronous. The default is synchronous.
+ <a href="./TTimer.html#TTimer:Add" title="void TTimer::Add()">Add</a> a timer to the system eventloop by calling <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>().
+ The interpreter will execute command from <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:CheckTimer" href="src/TTimer.cxx.html#vk8AsD">CheckTimer</a>(<span class="keyword">const</span> <a href="./TTime.html">TTime</a>&amp; now)</span><br />
+<div class="funccomm"><pre> Check if timer timed out.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:Notify" href="src/TTimer.cxx.html#PqigxC">Notify</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TTimer.html#TTimer:Notify" title="Bool_t TTimer::Notify()">Notify</a> when timer times out. The timer is always reset. To stop
+ the timer call <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Reset" href="src/TTimer.cxx.html#y.NZVC">Reset</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TTimer.html#TTimer:Reset" title="void TTimer::Reset()">Reset</a> the timer.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SetCommand" href="src/TTimer.cxx.html#JUn8pC">SetCommand</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command)</span><br />
+<div class="funccomm"><pre> Set the interpreter command to be executed at time out. Removes the
+ object to be notified (if it was set).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SetObject" href="src/TTimer.cxx.html#gmngqE">SetObject</a>(<a href="./TObject.html">TObject</a>* object)</span><br />
+<div class="funccomm"><pre> Set the object to be notified  at time out. Removes the command to
+ be executed (if it was set).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SetInterruptSyscalls" href="src/TTimer.cxx.html#ij13pD">SetInterruptSyscalls</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> set = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> When the argument is <a href="./ListOfTypes.html#bool">true</a> the a-synchronous timer (SIGALRM) signal
+ handler is set so that interrupted syscalls will not be restarted
+ by the kernel. This is typically used in case one wants to put a
+ timeout on an I/O operation. By default interrupted syscalls will
+ be restarted.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Start" href="src/TTimer.cxx.html#WtZ_RC">Start</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec = -1, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> singleShot = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Starts the timer with a milliSec timeout. If milliSec is 0
+ then the timeout will be the minimum timeout (see <a href="./TSystem.html">TSystem</a>::ESysConstants,
+ i.e. 10 ms), if milliSec is -1 then the time interval as previously
+ specified (in ctor or <a href="./TTimer.html#TTimer:SetTime" title="void TTimer::SetTime(Long_t milliSec)">SetTime</a>()) will be used.
+ If singleShot is <a href="./ListOfTypes.html#Bool_t">kTRUE</a>, the timer will be activated only once,
+ otherwise it will continue until it is stopped.
+ See also <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>(), <a href="./TTimer.html#TTimer:Stop" title="void TTimer::Stop()">Stop</a>(), <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:TurnOff" href="src/TTimer.cxx.html#r4XPH">TurnOff</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TTimer.html#TTimer:Remove" title="void TTimer::Remove()">Remove</a> timer from system timer list. This requires that a timer
+ has been placed in the system timer list (using <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>()).
+ If a <a href="./TTimer.html">TTimer</a> subclass is placed on another list, override <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>() to
+ remove the timer from the correct list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:TurnOn" href="src/TTimer.cxx.html#mzkAG">TurnOn</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TTimer.html#TTimer:Add" title="void TTimer::Add()">Add</a> the timer to the system timer list. If a <a href="./TTimer.html">TTimer</a> subclass has to be
+ placed on another list, override <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>() to add the timer to the correct
+ list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SingleShot" href="src/TTimer.cxx.html#BasDz">SingleShot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> milliSec, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* method)</span><br />
+<div class="funccomm"><pre> This static function calls a slot after a given time interval.
+ Created internal timer will be deleted after that.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTimer:TTimer" href="src/TTimer.h.html#eZc1eD">TTimer</a>(<span class="keyword">const</span> <a href="./TTimer.html">TTimer</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTimer.html">TTimer</a>&amp; <a class="funcname" name="TTimer:operator_" href="src/TTimer.h.html#FwZIq">operator=</a>(<span class="keyword">const</span> <a href="./TTimer.html">TTimer</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TTimer:_TTimer" href="src/TTimer.h.html#o8ITQB">~TTimer</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:Remove" title="void TTimer::Remove()">Remove</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>    * <a class="funcname" name="TTimer:GetCommand" href="src/TTimer.h.html#xAQ3sC">GetCommand</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fCommand" title="TString TTimer::fCommand">fCommand</a>.<a href="./TString.html#TString:Data" title="const char* TString::Data()">Data</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>       * <a class="funcname" name="TTimer:GetObject" href="src/TTimer.h.html#j9lX5D">GetObject</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fObject" title="TObject* TTimer::fObject">fObject</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTime.html">TTime</a> <a class="funcname" name="TTimer:GetTime" href="src/TTimer.h.html#w0pusB">GetTime</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fTime" title="TTime TTimer::fTime">fTime</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TTimer:GetTimerID" href="src/TTimer.h.html#X_Au5D">GetTimerID</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fTimeID" title="UInt_t TTimer::fTimeID">fTimeID</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTime.html">TTime</a> <a class="funcname" name="TTimer:GetAbsTime" href="src/TTimer.h.html#fuhATD">GetAbsTime</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fAbsTime" title="TTime TTimer::fAbsTime">fAbsTime</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:HasTimedOut" href="src/TTimer.h.html#fzanFE">HasTimedOut</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fTimeout" title="Bool_t TTimer::fTimeout">fTimeout</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:IsSync" href="src/TTimer.h.html#xRROB">IsSync</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fSync" title="Bool_t TTimer::fSync">fSync</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:IsAsync" href="src/TTimer.h.html#g7pyh">IsAsync</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> !<a href="./TTimer.html#TTimer:fSync" title="Bool_t TTimer::fSync">fSync</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTimer:IsInterruptingSyscalls" href="src/TTimer.h.html#CYSNbE">IsInterruptingSyscalls</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTimer.html#TTimer:fIntSyscalls" title="Bool_t TTimer::fIntSyscalls">fIntSyscalls</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Add" href="src/TTimer.h.html#YtOOnC">Add</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:TurnOn" title="void TTimer::TurnOn()">TurnOn</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Remove" href="src/TTimer.h.html#lQvYj">Remove</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SetTime" href="src/TTimer.h.html#UdbMUE">SetTime</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a> milliSec)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:fTime" title="TTime TTimer::fTime">fTime</a> = milliSec; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:SetTimerID" href="src/TTimer.h.html#Jcd7mD">SetTimerID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> id = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:fTimeID" title="UInt_t TTimer::fTimeID">fTimeID</a> = id; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Stop" href="src/TTimer.h.html#axohTC">Stop</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TTimer.html#TTimer:TurnOff" title="void TTimer::TurnOff()">TurnOff</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTimer:Timeout" href="src/TTimer.h.html#NolQHE">Timeout</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TQObject.html#TQObject:Emit" title="void TQObject::Emit(const char* signal) or overloads">Emit</a>(<span class="string">"Timeout()"</span>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Fons+Rademakers"> Fons Rademakers   28/11/96</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/base:$Id: TTimer.h 20877 2007-11-19 11:17:07Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:23</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

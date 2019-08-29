@@ -1,0 +1,547 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:47 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TRandom</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TRandom','libMathCore','TRandom.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TRandom.h.html">header file</a>
+<a class="descrheadentry" href="src/TRandom.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mathcore/inc/TRandom.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mathcore/src/TRandom.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TRandom:description">class description</a> 
+<a class="descrheadentry" href="#TRandom:Function_Members">function members</a>
+<a class="descrheadentry" href="#TRandom:Data_Members">data members</a>
+<a class="descrheadentry" href="#TRandom:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MATHCORE_Index.html">MATHCORE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TRandom</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TRandom:description"></a>class TRandom: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./TRandom.html">TRandom</a>
+
+ basic Random number generator class (periodicity = 10**9).
+ Note that this is a very simple generator (linear congruential)
+ which is known to have defects (the lower random bits are correlated)
+ and therefore should NOT be used in any statistical study.
+ One should use instead <a href="./TRandom1.html">TRandom1</a>, <a href="./TRandom2.html">TRandom2</a> or <a href="./TRandom3.html">TRandom3</a>.
+ <a href="./TRandom3.html">TRandom3</a>, is based on the <span class="string">"Mersenne Twister generator"</span>, and is the recommended one,
+ since it has good random proprieties (period of about 10**6000 ) and it is fast.
+ <a href="./TRandom1.html">TRandom1</a>, based on the RANLUX algorithm, has mathematically proven random proprieties
+ and a period of about 10**171. It is however slower than the others.
+ <a href="./TRandom2.html">TRandom2</a>, is based on the Tausworthe generator of L'Ecuyer, and it has the advantage
+ of being fast and using only 3 words (of 32 bits) for the state. The period is 10**26.
+
+ The following table shows some timings (in nanoseconds/call)
+ for the random numbers obtained using an Intel Pentium 3.0 GHz running Linux
+ and using the gcc 3.2.3 compiler
+
+    <a href="./TRandom.html">TRandom</a>           34   ns/call     (BAD Generator)
+    <a href="./TRandom1.html">TRandom1</a>          242  ns/call
+    <a href="./TRandom2.html">TRandom2</a>          37   ns/call
+    <a href="./TRandom3.html">TRandom3</a>          45   ns/call
+
+
+ The following basic Random distributions are provided:
+
+   -<a href="./TRandom.html#TRandom:Exp" title="Double_t TRandom::Exp(Double_t tau)">Exp</a>(tau)
+   -<a href="./TRandom.html#TRandom:Integer" title="UInt_t TRandom::Integer(UInt_t imax)">Integer</a>(imax)
+   -<a href="./TRandom.html#TRandom:Gaus" title="Double_t TRandom::Gaus(Double_t mean=0,Double_t sigma=1)">Gaus</a>(mean,sigma)
+   -<a href="./TRandom.html#TRandom:Rndm" title="Double_t TRandom::Rndm(Int_t i=0)">Rndm</a>()
+   -<a href="./TRandom.html#TRandom:Uniform" title="Double_t TRandom::Uniform(Double_t x1=1) or overloads">Uniform</a>(x1)
+   -<a href="./TRandom.html#TRandom:Landau" title="Double_t TRandom::Landau(Double_t mean=0,Double_t sigma=1)">Landau</a>(mpv,sigma)
+   -<a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a>(mean)
+   -<a href="./TRandom.html#TRandom:Binomial" title="Int_t TRandom::Binomial(Int_t ntot,Double_t prob)">Binomial</a>(ntot,prob)
+
+ Random numbers distributed according to 1-d, 2-d or 3-d distributions
+
+ contained in <a href="./TF1.html">TF1</a>, <a href="./TF2.html">TF2</a> or <a href="./TF3.html">TF3</a> objects.
+ For example, to get a random number distributed following abs(sin(x)/x)*sqrt(x)
+ you can do :
+   <a href="./TF1.html">TF1</a> *f1 = new <a href="./TF1.html">TF1</a>(<span class="string">"f1"</span>,<span class="string">"abs(sin(x)/x)*sqrt(x)"</span>,0,10);
+   <a href="./ListOfTypes.html#double">double</a> r = f1-&gt;GetRandom();
+ or you can use the UNURAN package. You need in this case to initialize UNURAN
+ to the function you would like to generate.
+   <a href="./TUnuran.html">TUnuran</a> u;
+   u.Init(TUnuranDistrCont(f1));
+   <a href="./ListOfTypes.html#double">double</a> r = u.Sample();
+
+ The techniques of using directly a <a href="./TF1.html">TF1</a>,2 or 3 function is powerful and
+ can be used to generate numbers in the defined range of the function.
+ Getting a number from a <a href="./TF1.html">TF1</a>,2,3 function is also quite fast.
+ UNURAN is a  powerful and flexible tool which containes various methods for
+ generate random numbers for continuous distributions of one and multi-dimension.
+ It requires some set-up (initialization) phase and can be very fast when the distribution
+ parameters are not changed for every call.
+
+ The following table shows some timings (in nanosecond/call)
+ for basic functions,  <a href="./TF1.html">TF1</a> functions and using UNURAN obtained running
+ the tutorial math/testrandom.C
+ Numbers have been obtained on an Intel Xeon Quad-core Harpertown (E5410) 2.33 GHz running
+ Linux SLC4 64 bit and compiled with gcc 3.4
+
+ Distribution            nanoseconds/call
+                     <a href="./TRandom.html">TRandom</a>  <a href="./TRandom1.html">TRandom1</a> <a href="./TRandom2.html">TRandom2</a> <a href="./TRandom3.html">TRandom3</a>
+ <a href="./TRandom.html#TRandom:Rndm" title="Double_t TRandom::Rndm(Int_t i=0)">Rndm</a>..............    5.000  105.000    7.000   10.000
+ <a href="./TRandom.html#TRandom:RndmArray" title="void TRandom::RndmArray(Int_t n,Float_t* array) or overloads">RndmArray</a>.........    4.000  104.000    6.000    9.000
+ <a href="./TRandom.html#TRandom:Gaus" title="Double_t TRandom::Gaus(Double_t mean=0,Double_t sigma=1)">Gaus</a>..............   36.000  180.000   40.000   48.000
+ <a href="./TRandom.html#TRandom:Rannor" title="void TRandom::Rannor(Float_t&amp; a,Float_t&amp; b) or overloads">Rannor</a>............  118.000  220.000  120.000  124.000
+ <a href="./TRandom.html#TRandom:Landau" title="Double_t TRandom::Landau(Double_t mean=0,Double_t sigma=1)">Landau</a>............   22.000  123.000   26.000   31.000
+ Exponential.......   93.000  198.000   98.000  104.000
+ <a href="./TRandom.html#TRandom:Binomial" title="Int_t TRandom::Binomial(Int_t ntot,Double_t prob)">Binomial</a>(5,0.5)...   30.000  548.000   46.000   65.000
+ <a href="./TRandom.html#TRandom:Binomial" title="Int_t TRandom::Binomial(Int_t ntot,Double_t prob)">Binomial</a>(15,0.5)..   75.000 1615.000  125.000  178.000
+ <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a>(3)........   96.000  494.000  109.000  125.000
+ <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a>(10).......  138.000 1236.000  165.000  203.000
+ <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a>(70).......  818.000 1195.000  835.000  844.000
+ <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a>(100)......  837.000 1218.000  849.000  864.000
+ GausTF1...........   83.000  180.000   87.000   88.000
+ LandauTF1.........   80.000  180.000   83.000   86.000
+ GausUNURAN........   40.000  139.000   41.000   44.000
+ PoissonUNURAN(10).   85.000  271.000   92.000  102.000
+ PoissonUNURAN(100)   62.000  256.000   69.000   78.000
+
+  Note that the time to generate a number from an arbitrary <a href="./TF1.html">TF1</a> function
+  using <a href="./TF1.html">TF1</a>::<a href="./TF1.html#TF1:GetRandom" title="Double_t TF1::GetRandom() or overloads">GetRandom</a> or using <a href="./TUnuran.html">TUnuran</a> is  independent of the complexity of the function.
+
+  <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:FillRandom" title="void TH1::FillRandom(const char* fname,Int_t ntimes=5000) or overloads">FillRandom</a>(<a href="./TH1.html">TH1</a> *) or <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:FillRandom" title="void TH1::FillRandom(const char* fname,Int_t ntimes=5000) or overloads">FillRandom</a>(const <a href="./ListOfTypes.html#char">char</a> *tf1name)
+
+  can be used to fill an histogram (1-d, 2-d, 3-d from an existing histogram
+  or from an existing function.
+
+  Note this interesting feature when working with objects
+
+  You can use several <a href="./TRandom.html">TRandom</a> objects, each with their <span class="string">"independent"</span>
+  random sequence. For example, one can imagine
+     <a href="./TRandom.html">TRandom</a> *eventGenerator = new <a href="./TRandom.html">TRandom</a>();
+     <a href="./TRandom.html">TRandom</a> *tracking       = new <a href="./TRandom.html">TRandom</a>();
+  eventGenerator can be used to generate the event kinematics.
+  tracking can be used to track the generated particles with random numbers
+  independent from eventGenerator.
+  This very interesting feature gives the possibility to work with simple
+  and very fast random number generators without worrying about
+  random number periodicity as it was the case with Fortran.
+  One can use <a href="./TRandom.html">TRandom</a>::<a href="./TRandom.html#TRandom:SetSeed" title="void TRandom::SetSeed(UInt_t seed=0)">SetSeed</a> to modify the seed of one generator.
+
+  a <a href="./TRandom.html">TRandom</a> object may be written to a Root file
+
+    -as part of another object
+    -or with its own key (example <a href="./TRandom.html">gRandom</a>-><a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a>(<span class="string">"Random"</span>);
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TRandom:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRandom:TRandom">TRandom</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> seed = 65539)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRandom:TRandom%1">TRandom</a>(<span class="keyword">const</span> <a href="./TRandom.html">TRandom</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TRandom:_TRandom">~TRandom</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Binomial">Binomial</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntot, <a href="./ListOfTypes.html#Double_t">Double_t</a> prob)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:BreitWigner">BreitWigner</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> gamma = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:Circle">Circle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a> r)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRandom:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Exp">Exp</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> tau)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Gaus">Gaus</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> sigma = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:GetSeed">GetSeed</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Integer">Integer</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> imax)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRandom:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Landau">Landau</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> sigma = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TRandom.html">TRandom</a>&amp;</td><td class="funcname"><a class="funcname" href="#TRandom:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TRandom.html">TRandom</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Poisson">Poisson</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:PoissonD">PoissonD</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:Rannor">Rannor</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>&amp; a, <a href="./ListOfTypes.html#Float_t">Float_t</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:Rannor%1">Rannor</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; a, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:ReadRandom">ReadRandom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Rndm">Rndm</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:RndmArray">RndmArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* array)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:RndmArray%1">RndmArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* array)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:SetSeed">SetSeed</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> seed = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:Sphere">Sphere</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; z, <a href="./ListOfTypes.html#Double_t">Double_t</a> r)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Uniform">Uniform</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1 = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TRandom:Uniform%1">Uniform</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRandom:WriteRandom">WriteRandom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename)</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TRandom:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TRandom:fSeed"></a>fSeed</td><td class="datadesc">Random number generator seed</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TRandom:Class_Charts"></a>Class Charts</h2>
+<map name="MapTRandom_Inh" id="MapTRandom_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="239,30,320,53"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="34,30,109,53"/>
+<area shape="rect" href="./TRandom1.html" title="TRandom1" alt="" coords="645,4,748,26"/>
+<area shape="rect" href="./TRandom2.html" title="TRandom2" alt="" coords="645,30,748,53"/>
+<area shape="rect" href="./TRandom3.html" title="TRandom3" alt="" coords="645,57,748,79"/>
+</map>
+<map name="MapTRandom_InhMem" id="MapTRandom_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTRandom_Lib" id="MapTRandom_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="444,44,572,92"/>
+</map>
+<div class="tabs">
+<a id="imgTRandom_Inh" class="tabsel" href="inh/TRandom_Inh.png" onclick="javascript:return SetImg('Charts','inh/TRandom_Inh.png');">Inheritance</a>
+<a id="imgTRandom_InhMem" class="tab" href="inhmem/TRandom_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TRandom_InhMem.png');">Inherited Members</a>
+<a id="imgTRandom_Incl" class="tab" href="incl/TRandom_Incl.png" onclick="javascript:return SetImg('Charts','incl/TRandom_Incl.png');">Includes</a>
+<a id="imgTRandom_Lib" class="tab" href="lib/TRandom_Lib.png" onclick="javascript:return SetImg('Charts','lib/TRandom_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTRandom_Inh" src="inh/TRandom_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRandom:TRandom" href="src/TRandom.cxx.html#W0zODE">TRandom</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> seed = 65539)</span><br />
+<div class="funccomm"><pre>default constructor*-*-*-*-
+*-*                  ===================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRandom:_TRandom" href="src/TRandom.cxx.html#ma1NM">~TRandom</a>()</span><br />
+<div class="funccomm"><pre>default destructor*-*-*-*-
+*-*                  ==================
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRandom:Binomial" href="src/TRandom.cxx.html#Eh6tFD">Binomial</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntot, <a href="./ListOfTypes.html#Double_t">Double_t</a> prob)</span><br />
+<div class="funccomm"><pre> Generates a random integer N according to the binomial law
+ Coded from Los Alamos report LA-5061-MS
+
+ N is binomially distributed between 0 and ntot inclusive
+ with mean prob*ntot.
+ prob is between 0 and 1.
+
+ Note: This function should not be used when ntot is large (say &gt;100).
+ The normal approximation is then recommended instead
+ (with mean =*ntot+0.5 and standard deviation sqrt(ntot*prob*(1-prob)).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:BreitWigner" href="src/TRandom.cxx.html#oMcovE">BreitWigner</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> gamma = 1)</span><br />
+<div class="funccomm"><pre>  Return a number distributed following a <a href="./TRandom.html#TRandom:BreitWigner" title="Double_t TRandom::BreitWigner(Double_t mean=0,Double_t gamma=1)">BreitWigner</a> function with mean and gamma
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:Circle" href="src/TRandom.cxx.html#uOYk1D">Circle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a> r)</span><br />
+<div class="funccomm"><pre> generates random vectors, uniformly distributed over a circle of given radius.
+   Input : r = circle radius
+   Output: x,y a random 2-d vector of length r
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Exp" href="src/TRandom.cxx.html#Kuf9yC">Exp</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> tau)</span><br />
+<div class="funccomm"><pre> returns an exponential deviate.
+
+          exp( -t/tau )
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Gaus" href="src/TRandom.cxx.html#wAIZr">Gaus</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> sigma = 1)</span><br />
+<div class="funccomm"><pre>
+  samples a random number from the standard Normal (Gaussian) Distribution
+  with the given mean and sigma.
+  Uses the Acceptance-complement ratio from W. Hoermann and G. Derflinger
+  This is one of the fastest existing method for generating normal random variables.
+  It is a factor 2/3 faster than the polar (Box-Muller) method used in the previous
+  version of <a href="./TRandom.html">TRandom</a>::<a href="./TRandom.html#TRandom:Gaus" title="Double_t TRandom::Gaus(Double_t mean=0,Double_t sigma=1)">Gaus</a>. The speed is comparable to the Ziggurat method (from Marsaglia)
+  implemented for example in GSL and available in the MathMore library.
+
+
+  REFERENCE:  - W. Hoermann and G. Derflinger (1990):
+               The ACR Method for generating normal random variables,
+               OR Spektrum 12 (1990), 181-185.
+
+  Implementation taken from
+   UNURAN (c) 2000  W. Hoermann &amp; J. Leydold, Institut f. Statistik, WU Wien
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TRandom:Integer" href="src/TRandom.cxx.html#uADbgE">Integer</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> imax)</span><br />
+<div class="funccomm"><pre>  returns a random integer on [ 0, imax-1 ].
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Landau" href="src/TRandom.cxx.html#U9oG7">Landau</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> sigma = 1)</span><br />
+<div class="funccomm"><pre>  Generate a random number following a <a href="./TRandom.html#TRandom:Landau" title="Double_t TRandom::Landau(Double_t mean=0,Double_t sigma=1)">Landau</a> distribution
+  with mpv(most probable value) and sigma
+  Use function landau_quantile(x,sigma) which provides
+  the inverse of the landau cumulative distribution
+  landau_quantile has been converted from CERNLIB ranlan(G110)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRandom:Poisson" href="src/TRandom.cxx.html#g32jfE">Poisson</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean)</span><br />
+<div class="funccomm"><pre> Generates a random integer N according to a <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a> law.
+ Prob(N) = exp(-mean)*mean^N/Factorial(N)
+
+ Use a different procedure according to the mean value.
+ The algorithm is the same used by CLHEP
+ For lower value (mean &lt; 25) use the rejection method based on
+ the exponential
+ For higher values use a rejection method comparing with a Lorentzian
+ distribution, as suggested by several authors
+ This routine since is returning 32 bits integer will not work for values larger than 2*10**9
+ One should then use the Trandom::<a href="./TRandom.html#TRandom:PoissonD" title="Double_t TRandom::PoissonD(Double_t mean)">PoissonD</a> for such large values
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:PoissonD" href="src/TRandom.cxx.html#Mq9gnB">PoissonD</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> mean)</span><br />
+<div class="funccomm"><pre> Generates a random number according to a <a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a> law.
+ Prob(N) = exp(-mean)*mean^N/Factorial(N)
+
+ This function is a variant of <a href="./TRandom.html">TRandom</a>::<a href="./TRandom.html#TRandom:Poisson" title="Int_t TRandom::Poisson(Double_t mean)">Poisson</a> returning a <a href="./ListOfTypes.html#double">double</a>
+ instead of an integer.
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:Rannor" href="src/TRandom.cxx.html#m3GYvC">Rannor</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>&amp; a, <a href="./ListOfTypes.html#Float_t">Float_t</a>&amp; b)</span><br />
+<div class="funccomm"><pre>      Return 2 numbers distributed following a gaussian with mean=0 and sigma=1
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:Rannor%1" href="src/TRandom.cxx.html#VxhmBD">Rannor</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; a, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; b)</span><br />
+<div class="funccomm"><pre>      Return 2 numbers distributed following a gaussian with mean=0 and sigma=1
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:ReadRandom" href="src/TRandom.cxx.html#NTxfM">ReadRandom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename)</span><br />
+<div class="funccomm"><pre>
+ Reads saved random generator status from filename
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Rndm" href="src/TRandom.cxx.html#wDDnOB">Rndm</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i = 0)</span><br />
+<div class="funccomm"><pre>  Machine independent random number generator.
+  Based on the BSD Unix (Rand) Linear congrential generator
+  Produces uniformly-distributed floating points between 0 and 1.
+  Identical sequence on all machines of &gt;= 32 bits.
+  Periodicity = 2**31
+  generates a number in ]0,1]
+  Note that this is a generator which is known to have defects
+  (the lower random bits are correlated) and therefore should NOT be
+  used in any statistical study.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:RndmArray%1" href="src/TRandom.cxx.html#ZVZZGC">RndmArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Double_t">Double_t</a>* array)</span><br />
+<div class="funccomm"><pre> Return an array of n random numbers uniformly distributed in ]0,1]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:RndmArray" href="src/TRandom.cxx.html#QpU7XE">RndmArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Float_t">Float_t</a>* array)</span><br />
+<div class="funccomm"><pre> Return an array of n random numbers uniformly distributed in ]0,1]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:SetSeed" href="src/TRandom.cxx.html#L24F5E">SetSeed</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> seed = 0)</span><br />
+<div class="funccomm"><pre>  Set the random generator seed. Note that default value is zero, which is different than the
+  default value used when constructing the class.
+  If the seed is zero the seed is set to a random value
+  which in case of <a href="./TRandom.html">TRandom</a> depends on the  machine clock.
+  Note that the machine clock is returned with a precision of 1 second.
+  If one calls <a href="./TRandom.html#TRandom:SetSeed" title="void TRandom::SetSeed(UInt_t seed=0)">SetSeed</a>(0) within a loop and the loop time is less than 1s,
+  all generated numbers will be identical!
+  Instead if a different generator implementation is used (<a href="./TRandom1.html">TRandom1</a> , 2 or 3) the seed is generated using
+  a 128 bit UUID. This results in different seeds and then random sequence for every <a href="./TRandom.html#TRandom:SetSeed" title="void TRandom::SetSeed(UInt_t seed=0)">SetSeed</a>(0) call.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:Sphere" href="src/TRandom.cxx.html#w_59wE">Sphere</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; z, <a href="./ListOfTypes.html#Double_t">Double_t</a> r)</span><br />
+<div class="funccomm"><pre> generates random vectors, uniformly distributed over the surface
+ of a sphere of given radius.
+   Input : r = sphere radius
+   Output: x,y,z a random 3-d vector of length r
+ Method:  (based on algorithm suggested by Knuth and attributed to Robert E Knop)
+          which uses less random numbers than the CERNLIB RN23DIM algorithm
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Uniform" href="src/TRandom.cxx.html#dB8LAE">Uniform</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1 = 1)</span><br />
+<div class="funccomm"><pre> returns a uniform deviate on the interval  ]0, x1].
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TRandom:Uniform%1" href="src/TRandom.cxx.html#NKDymE">Uniform</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2)</span><br />
+<div class="funccomm"><pre> returns a uniform deviate on the interval ]x1, x2].
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRandom:WriteRandom" href="src/TRandom.cxx.html#yNB3kC">WriteRandom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename)</span><br />
+<div class="funccomm"><pre>
+ Writes random generator status to filename
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRandom:TRandom" href="src/TRandom.h.html#fES_rC">TRandom</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> seed = 65539)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TRandom:GetSeed" href="src/TRandom.h.html#s1F9eE">GetSeed</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRandom.html#TRandom:fSeed" title="UInt_t TRandom::fSeed">fSeed</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun   15/12/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/mathcore:$Id: TRandom.h 32526 2010-03-10 14:56:13Z moneta $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

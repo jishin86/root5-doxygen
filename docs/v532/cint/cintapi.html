@@ -1,0 +1,330 @@
+<pre>CINT(API) 
+
+
+CAUTION:  Please refer to doc/ref.txt. This file is getting old.
+
+
+ This document describes CINT C/C++ interpreter API functions.
+
+
+
+CINT API functions
+        Following  functions  are  supplied by cint for debugging
+       and source code analysis purposes.
+
+            <a href="../ListOfTypes.html#char">char</a> *G__input(const <a href="../ListOfTypes.html#char">char</a> *prompt);
+            <a href="../ListOfTypes.html#int">int</a> G__pause();
+            <a href="../ListOfTypes.html#int">int</a> G__tracemode(<a href="../ListOfTypes.html#int">int</a> on_off);
+            <a href="../ListOfTypes.html#int">int</a> G__setbreakpoint(<a href="../ListOfTypes.html#char">char</a> *breakline,<a href="../ListOfTypes.html#char">char</a> *breakfile);
+            <a href="../ListOfTypes.html#int">int</a> G__stepmode(<a href="../ListOfTypes.html#int">int</a> on_off);
+            [anytype] G__calc(const <a href="../ListOfTypes.html#char">char</a> *expression);
+            [anytype] G__exec_tempfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+            <a href="../ListOfTypes.html#int">int</a> G__loadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+            <a href="../ListOfTypes.html#int">int</a> G__unloadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+            <a href="../ListOfTypes.html#int">int</a> G__reloadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+            <a href="../ListOfTypes.html#char">char</a> *G__search_next_member(const <a href="../ListOfTypes.html#char">char</a> *name,<a href="../ListOfTypes.html#int">int</a> state);
+            <a href="../ListOfTypes.html#void">void</a> *G__what_type(const <a href="../ListOfTypes.html#char">char</a> *name,<a href="../ListOfTypes.html#char">char</a> *type,<a href="../ListOfTypes.html#char">char</a> *tagname,<a href="../ListOfTypes.html#char">char</a> *typename);
+            <a href="../ListOfTypes.html#int">int</a> G__lock_variable(<a href="../ListOfTypes.html#char">char</a> *varname);
+            <a href="../ListOfTypes.html#int">int</a> G__unlock_variable(<a href="../ListOfTypes.html#char">char</a> *varname);
+            G__graph(<a href="../ListOfTypes.html#double">double</a> xdata[],<a href="../ListOfTypes.html#double">double</a> ydata[],<a href="../ListOfTypes.html#int">int</a> ndata,<a href="../ListOfTypes.html#char">char</a> *title,<a href="../ListOfTypes.html#int">int</a> mode);
+
+# <a href="../ListOfTypes.html#char">char</a> *G__input(const <a href="../ListOfTypes.html#char">char</a> *prompt);
+
+        G__input() reads keyboard input. It  returns  pointer  to
+       <a href="../ListOfTypes.html#char">char</a>  declared  as  static  opject  in G__pause(). So, the
+       returned pointer must not be freed.
+
+            main() {  // example program
+                 <a href="../ListOfTypes.html#char">char</a> *command;
+                 while(1) {
+                      command = G__input(<span class="string">"input command &gt; "</span>);
+                      if(strcmp(command,<span class="string">"exit"</span>)==0) exit();
+                      system(command);
+                 }
+            }
+
+# <a href="../ListOfTypes.html#int">int</a> G__pause();
+
+       When  G__pause()  is  called,  interactive  interface  is
+       started.   Debug commands can be used.  G__pause() returns
+       1 if <span class="string">'I'</span> command is given.   So  you  can  repeat  calling
+       G__pause() until <span class="string">'i'</span> input by following example.
+
+         while(G__pause()==0);
+
+# <a href="../ListOfTypes.html#int">int</a> G__tracemode(<a href="../ListOfTypes.html#int">int</a> on_off);
+
+      G__tracemode() sets trace mode.
+
+# <a href="../ListOfTypes.html#int">int</a> G__breakline(<a href="../ListOfTypes.html#int">int</a> line);
+
+      G__breakline()  sets break point.  If 0 is given as argument, 
+      break point is cleared.
+
+# <a href="../ListOfTypes.html#int">int</a> G__stepmode(<a href="../ListOfTypes.html#int">int</a> on_off);
+
+       G__stepmode() switchs on/off step execution mode.
+
+
+# [anytype] G__calc(<a href="../ListOfTypes.html#char">char</a> *expression);
+
+        G__calc() evaluates C expression.  It returns the type of
+       object  the  argument  expression  returns.  Variables and
+       function calls can be used in  the  expression.   Declara-
+       tion,  loop  and  conditional statement can not be used in
+       the expression.
+
+            <a href="../ListOfTypes.html#int">int</a> i;
+            <a href="../ListOfTypes.html#double">double</a> a;
+            i = G__calc(<span class="string">"1+2+3"</span>);  // returns <a href="../ListOfTypes.html#int">int</a>
+            a = G__calc(<span class="string">"3.14*i"</span>);  // returns <a href="../ListOfTypes.html#double">double</a>
+
+# [anytype] G__exec_tempfile(<a href="../ListOfTypes.html#char">char</a> *file);
+
+        G__exec_tempfile() opens temporal source file and execute
+       it  in  the  current  context.   The tempfile can contain,
+       variable   declaration,   struct,union,enum    definition.
+       expression,  loop and control statement and cannot contain
+       function definition.  G__exec_tempfile() executes a state-
+       ment or statement list surrounded by <span class="string">'{'</span> , <span class="string">'}'</span> and returns
+       the last evaluated value.
+
+            {    // example of tempfile
+                 <a href="../ListOfTypes.html#int">int</a> i;
+                 <a href="../ListOfTypes.html#double">double</a> ary[100];
+                 for(i=0;i&lt;100;i++) ary[i] = i;
+            }
+
+       Then in the main program, you can execute above  statement
+       by G__exec_tempfile.
+
+
+# <a href="../ListOfTypes.html#int">int</a> G__loadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+
+        G__loadfile() incrementally loads source file. If file
+
+# <a href="../ListOfTypes.html#int">int</a> G__unloadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+
+        G__unloadfile()  unloads source file. If any of the func-
+       tions  included  in  the  file  is  busy,  G__unloadfile()
+       returns error code (-1) and won't unload it.
+
+# <a href="../ListOfTypes.html#int">int</a> G__reloadfile(const <a href="../ListOfTypes.html#char">char</a> *file);
+
+        G__reloadfile() does G__unloadfile() and G__loadfile() at
+       once.
+
+# <a href="../ListOfTypes.html#char">char</a> *G__search_next_member(const <a href="../ListOfTypes.html#char">char</a> *name,<a href="../ListOfTypes.html#int">int</a> state);
+
+        G__search_next_member() searches for function  and  vari-
+       able  name in current scope which start with name. state=0
+       must be given at the first call of G__search_next_member()
+       for  initialization.  In consequitive calls, state must be 1.
+        G__search_next_member() returns malloced pointer. If  you
+       call  this  function, you must free() the returned pointer
+       afterwards.
+
+# <a href="../ListOfTypes.html#void">void</a> *G__what_type(const <a href="../ListOfTypes.html#char">char</a> *name,<a href="../ListOfTypes.html#char">char</a> *type,<a href="../ListOfTypes.html#char">char</a>  *tagname
+                     ,<a href="../ListOfTypes.html#char">char</a> *typename);
+
+        G__what_type()  returns  pointer  and type information of
+       the object of name.  Sufficient length of  string  pointer
+       must be given to typa,tagname and typename argument.
+
+# <a href="../ListOfTypes.html#int">int</a>  G__lock_variable(<a href="../ListOfTypes.html#char">char</a>  *varname); 
+# <a href="../ListOfTypes.html#int">int</a> G__unlock_variable(<a href="../ListOfTypes.html#char">char</a> *varname);
+
+       (THIS CAPABILITY IS OBSOLETED IN CINT-5.14.5)
+        G__lock_variable()   and   G__unlock_variable()   control
+       assignment  locking.  Assignement to specific variable can
+       be locked/unlocked.
+
+# G__graph(<a href="../ListOfTypes.html#double">double</a>  xdata[],<a href="../ListOfTypes.html#double">double</a>   ydata[],<a href="../ListOfTypes.html#int">int</a>   ndata,<a href="../ListOfTypes.html#char">char</a> *title,<a href="../ListOfTypes.html#int">int</a> mode);
+
+        G__graph()  uses  xgraph  to  plot 2 dimentinal graph. If
+       mode is 0, G__graph() waits for xgraph process to be  ter-
+       minated. If mode is 1, xgraph becomes a background job. If
+       mode is 3, G__graph() appends x and y data  to  <span class="string">"G__graph"</span>
+       file and will not invoke xgraph process.
+
+
+
+# ERTTI (Extensive Run Time Type Identification)
+        Many people are interested in Cint as basement for build-
+       ing class browser or program analyzer. For  those  people,
+       ERTTI  API which gives an access to Cint's symbol table is
+       a useful interface. Information about ERTTI is  documented
+       in doc/ref.txt
+
+
+
+# pragma compile
+        Source  file  can  be partially compiled by '#pragma com-
+       pile' statement.  In the following example, '<a href="../ListOfTypes.html#int">int</a> globals;'
+       and  'func()'  are  compiled  when they are updated.  When
+       this program  is  first  executed  by  cint,  makecint  is
+       invoked  and  source  code surrounded by '#pragma compile'
+       and '#pragma endcompile' will be compiled into  a  dynamic
+       link library 'G__autocc.sl'. The G__autocc.sl is automati-
+       cally loaded and compiled version of 'func()' will be exe-
+       cuted.
+        This feature is only available on HP-UX 8.0 or later ver-
+       sion.
+
+            // #pragma disablecomppile
+            #pragma compile
+            <a href="../ListOfTypes.html#int">int</a> globals; /* this global variable is compiled */</span>
+            #pragma endcompile
+
+            main(<a href="../ListOfTypes.html#int">int</a> argc,<a href="../ListOfTypes.html#char">char</a> **argv) {
+                 func(argv[1]);
+            }
+
+            #pragma compile
+            <a href="../ListOfTypes.html#int">int</a> func(<a href="../ListOfTypes.html#char">char</a> *string)
+            {
+                 /* this function is compiled and dynamically linked */</span>
+            }
+
+
+    #pragma compile
+        Specifies beginning of compiled  section  which  must  be
+       ended by '#pragma endcompile'. Multiple compile,endcompile
+       pair can appear in the source code.
+
+    #pragma endcompile
+        Specifies end of compiled section.
+
+    #pragma disablecompile
+        Turn off '#pragma compile'. Pragma compile is  turned  on
+       by  default. '#pragma disablecompile' must be described if
+       you turn off the mode.
+
+    #pragma enablecompile
+        Turn on '#pragma compile'.
+
+
+
+
+Undeclared symbol
+        Cint can execute C code which  includes  undeclared  sym-
+       bols.   Undeclared  symbols  are  detected  and handled by
+       interpreter at run time.  As cint detects undeclared  sym-
+       bols, warning message is printed out and execution will be
+       continued.
+
+       Assigning to undeclared variable:
+        If assignment to undeclared variable appears, cint  allo-
+       cates  automatic  variable.  If assignment value is <a href="../ListOfTypes.html#double">double</a>
+       or <a href="../ListOfTypes.html#float">float</a>, <a href="../ListOfTypes.html#double">double</a> type variable is  allocated.   Otherwise,
+       <a href="../ListOfTypes.html#int">int</a>  type  variable  is allocated.  For example, following
+       program works as intended.
+
+            main() {
+                 <a href="../ListOfTypes.html#double">double</a> dat[10];
+                 for(i=0;i&lt;10;i++) {    /* i allocated as <a href="../ListOfTypes.html#int">int</a> */</span>
+                      dat[i]=i;
+                      sum += dat[i]; /* sum allocated as <a href="../ListOfTypes.html#double">double</a> */</span>
+                 }
+                 printf(<span class="string">"sum=%g\n"</span>,sum);
+            }
+
+       If undeclared symbol first appears as array form, array of
+       appropriate  size  will  be  allocated.   For  example, if
+       'data[1][10]=3.14' appears without declaration of 'data' ,
+       '<a href="../ListOfTypes.html#double">double</a>  data[2][11]'  is allocated and 'data[1][10]=3.14'
+       is assigned.  Array can not be expanded  after  the  auto-
+       matic  allocation.  So, 'data[2][15]=15;' will be rejected
+       because array index is out of range.
+
+            main() {
+                 data[1][10]=3.14;  // <a href="../ListOfTypes.html#double">double</a> data[2][11]; data[1][10]=3.14;
+                 data[0][3]=153.3;  // OK
+                 data[2][15]=-15.0; // rejected, array can not be expanded
+            }
+
+       Pointer to automatically allocated  variable  can  not  be
+       used.   If  undeclared  variable  appears with referencing
+       operator <span class="string">'*'</span> or <span class="string">'&amp;'</span>, these operators are ignored.
+
+       Referencing undeclared variable:
+        If undeclared variable is referenced, cint  returns  NULL
+       or zero as its value.
+
+       Undeclared function:
+        If  undeclared  function is called, it is simply skipped.
+       Parameter list will be evaluated.
+
+            main() {
+                 <a href="../ListOfTypes.html#int">int</a> i=0;
+                 undeclaredfunc(i++); // function call skipped
+                 // i is 1 here because i++ was evaluated above
+            }
+
+
+
+
+
+BUGS
+        Report  bugs  and  requirements  to cint@pcroot.cern.ch. Bugs
+       tend to be fixed very quickly. Any  kind  of  comments  or
+       messages will be appreciated.
+
+SEE ALSO
+            doc/makecint.txt 
+
+
+AUTHOR
+       Masaharu Goto  (cint@pcroot.cern.ch)
+       Copyright  (c)  1995~1999 Masaharu Goto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2                            function                           6
+
+</pre>

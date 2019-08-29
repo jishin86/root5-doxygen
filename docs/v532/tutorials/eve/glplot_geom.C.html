@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:32:48 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title> Demonstrates how to combine Timur's GL plots with other scene elements.
+</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks"><div class="descrhead"><table class="descrtitle" id="contexttitle"><tr class="descrtitle"><td id="contextheadarrow_prev"><div id="divcontextheadar_prev"><a class="contextheadarrow" href="glplot.C.html">&lt;</a></div></td><td class="contextheadentry" id="contextheadentry_prev"><a class="contextheadentry" href="glplot.C.html">glplot.C:  Preliminary demo for showing Timur's GL plots in EVE.
+</a></td><td id="contextheadarrow_up"><div id="divcontextheadar_up"><a class="contextheadarrow" href="index.html">^</a></div></td><td class="contextheadentry" id="contextheadentry_up"><a class="contextheadentry" href="index.html">Event Display</a></td><td class="contextheadentry" id="contextheadentry_next"><a class="contextheadentry" href="hierarchical_scene.C.html">hierarchical_scene.C: </a></td><td id="contextheadarrow_next"><div id="divcontextheadar_next"><a class="contextheadarrow" href="hierarchical_scene.C.html">&gt;</a></div></td></tr></table></div><h1 class="convert">glplot_geom.C:  Demonstrates how to combine Timur's GL plots with other scene elements.
+</h1></div>
+<div class="location"><h2>From <a href="http://root.cern.ch/viewvc/trunk/tutorials/eve/glplot_geom.C?view=markup">$ROOTSYS/tutorials/eve/glplot_geom.C</a></h2></div>
+<table><tr><td style="vertical-align:top;padding-right:2em;">
+<div class="listing"><pre class="listing">
+<span class="comment">// Demonstrates how to combine Timur's GL plots with other scene elements.</span>
+<span class="comment">// Author: Matevz Tadel, Sept 2009</span>
+
+<span class="keyword">void</span> glplot_geom()
+{
+   <a href="../../TEveManager.html">TEveManager</a>::<a href="../../TEveManager.html#TEveManager:Create" title="TEveManager* TEveManager::Create(Bool_t map_window=kTRUE,Option_t* opt=&quot;FIV&quot;)">Create</a>();
+
+   <a href="../../TEveUtil.html">TEveUtil</a>::<a href="../../TEveUtil.html#TEveUtil:Macro" title="void TEveUtil::Macro(const char* mac)">Macro</a>(<span class="string">"show_extract.C"</span>);
+
+   <a href="../../TH3F.html">TH3F</a> *h31 = <span class="keyword">new</span> <a href="../../TH3F.html">TH3F</a>(<span class="string">"h31"</span>, <span class="string">"h31"</span>, 20, -3, 3, 20, -3, 3, 20, -3, 3);
+   h31-&gt;<a href="../../TH3.html#TH3:FillRandom" title="void TH3::FillRandom(const char* fname,Int_t ntimes=5000) or overloads">FillRandom</a>(<span class="string">"gaus"</span>, 20*20*20);
+   h31-&gt;<a href="../../TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(2);
+   x = <span class="keyword">new</span> <a href="../../TEvePlot3D.html">TEvePlot3D</a>(<span class="string">"EvePlot - TH3F"</span>);
+   x-&gt;<a href="../../TEvePlot3D.html#TEvePlot3D:SetPlot" title="void TEvePlot3D::SetPlot(TObject* obj,const TString&amp; opt)">SetPlot</a>(h31, <span class="string">"glbox"</span>);
+   x-&gt;<a href="../../TEveElement.html#TEveElement:RefMainTrans" title="TEveTrans&amp; TEveElement::RefMainTrans()">RefMainTrans</a>().<a href="../../TEveTrans.html#TEveTrans:Scale" title="void TEveTrans::Scale(Double_t sx,Double_t sy,Double_t sz)">Scale</a>(800, 800, 1000);
+   x-&gt;<a href="../../TEveElement.html#TEveElement:RefMainTrans" title="TEveTrans&amp; TEveElement::RefMainTrans()">RefMainTrans</a>().<a href="../../TEveTrans.html#TEveTrans:RotateLF" title="void TEveTrans::RotateLF(Int_t i1,Int_t i2,Double_t amount)">RotateLF</a>(1, 3, <a href="../../TMath.html">TMath</a>::<a href="../../TMath.html#TMath:PiOver2" title="Double_t TMath::PiOver2()">PiOver2</a>());
+   <a href="../../TEveManager.html">gEve</a>-><a href="../../TEveManager.html#TEveManager:AddElement" title="void TEveManager::AddElement(TEveElement* element,TEveElement* parent=0)">AddElement</a>(x);
+
+   <a href="../../TEveManager.html">gEve</a>-><a href="../../TEveManager.html#TEveManager:Redraw3D" title="void TEveManager::Redraw3D(Bool_t resetCameras=kFALSE,Bool_t dropLogicals=kFALSE)">Redraw3D</a>(<a href="../../ListOfTypes.html#Bool_t">kTRUE</a>);
+}
+</pre></div>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">glplot_geom.C:</span><a name="21" href="#21" class="ln">21</a></div></div>
+</td><td style="vertical-align:top;">
+<table>
+<tr><td><a href="glplot_geom.C_0.png">
+<img src="glplot_geom.C_0.png" id="canv0" alt="thumb" style="border:none;width:22em;" onmouseover="javascript:canv0.style.width='auto';" />
+</a></td></tr>
+</table>
+</td></tr></table>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:32 </em><em>&raquo; Last generated: 2011-12-02 14:32</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

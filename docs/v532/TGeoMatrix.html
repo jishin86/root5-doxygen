@@ -1,0 +1,622 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:17:05 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGeoMatrix</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGeoMatrix','libGeom','TGeoMatrix.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGeoMatrix.h.html">header file</a>
+<a class="descrheadentry" href="src/TGeoMatrix.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/inc/TGeoMatrix.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/src/TGeoMatrix.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGeoMatrix:description">class description</a> 
+<a class="descrheadentry" href="#TGeoMatrix:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGeoMatrix:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGeoMatrix:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="./GEOM_GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGeoMatrix</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGeoMatrix:description"></a>class TGeoMatrix: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+ Geometrical transformation package.
+
+   All geometrical transformations handled by the modeller are provided as a
+ built-in package. This was designed to minimize memory requirements and
+ optimize performance of point/vector master-to-local and local-to-master
+ computation. We need to have in mind that a transformation in TGeo has 2
+ major use-cases. The first one is for defining the placement of a volume
+ with respect to its container reference frame. This frame will be called
+ 'master' and the frame of the positioned volume - 'local'. If T is a
+ transformation used for positioning volume daughters, then:
+
+          MASTER = T * LOCAL
+
+   Therefore a local-to-master conversion will be performed by using T, while
+ a master-to-local by using its inverse. The second use case is the computation
+ of the global transformation of a given object in the geometry. Since the
+ geometry is built as 'volumes-inside-volumes', this global transformation
+ represent the pile-up of all local transformations in the corresponding
+ branch. The conversion from the global reference frame and the given object
+ is also called master-to-local, but it is handled by the manager class.
+   A general homogenous transformation is defined as a 4x4 matrix embeeding
+ a rotation, a translation and a scale. The advantage of this description
+ is that each basic transformation can be represented as a homogenous matrix,
+ composition being performed as simple matrix multiplication.
+   Rotation:                      <a href="./TGeoMatrix.html#TGeoMatrix:Inverse" title="TGeoMatrix&amp; TGeoMatrix::Inverse()">Inverse</a> rotation:
+         r11  r12  r13   0              r11  r21  r31   0
+         r21  r22  r23   0              r12  r22  r32   0
+         r31  r32  r33   0              r13  r23  r33   0
+          0    0    0    1               0    0    0    1
+
+   Translation:                   <a href="./TGeoMatrix.html#TGeoMatrix:Inverse" title="TGeoMatrix&amp; TGeoMatrix::Inverse()">Inverse</a> translation:
+          1    0    0    tx               1    0    0   -tx
+          0    1    0    ty               0    1    0   -ty
+          0    0    1    tz               0    0    1   -tz
+          0    0    0    1                0    0    0   1
+
+   Scale:                         <a href="./TGeoMatrix.html#TGeoMatrix:Inverse" title="TGeoMatrix&amp; TGeoMatrix::Inverse()">Inverse</a> scale:
+          sx   0    0    0              1/sx  0    0    0
+          0    sy   0    0               0   1/sy  0    0
+          0    0    sz   0               0    0   1/sz  0
+          0    0    0    1               0    0    0    1
+
+  where: rij are the 3x3 rotation matrix components,
+         tx, ty, tz are the translation components
+         sx, sy, sz are arbitrary scale constants on the eacks axis,
+
+   The disadvantage in using this approach is that computation for 4x4 matrices
+ is expensive. Even combining two translation would become a multiplication
+ of their corresponding matrices, which is quite an undesired effect. On the
+ other hand, it is not a good idea to store a translation as a block of 16
+ numbers. We have therefore chosen to implement each basic transformation type
+ as a class deriving from the same basic abstract class and handling its specific
+ data and point/vector transformation algorithms.
+
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/t_transf.jpg">
+*/
+<!-- TDocHtmlDirective end --><pre>
+
+ The base class <a href="./TGeoMatrix.html">TGeoMatrix</a> defines abstract metods for:
+
+ - translation, rotation and scale getters. Every derived class stores only
+   its specific data, e.g. a translation stores an array of 3 doubles and a
+   rotation an array of 9. However, asking which is the rotation array of a
+   <a href="./TGeoTranslation.html">TGeoTranslation</a> through the base <a href="./TGeoMatrix.html">TGeoMatrix</a> interface is a legal operation.
+   The answer in this case is a pointer to a global constant array representing
+   an identity rotation.
+      <a href="./ListOfTypes.html#Double_t">Double_t</a> *<a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:GetTranslation" title="const Double_t* TGeoMatrix::GetTranslation()">GetTranslation</a>()
+      <a href="./ListOfTypes.html#Double_t">Double_t</a> *<a href="./TGeoMatrix.html">TGeoMatrix</a>::GetRotation()
+      <a href="./ListOfTypes.html#Double_t">Double_t</a> *<a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:GetScale" title="const Double_t* TGeoMatrix::GetScale()">GetScale</a>()
+
+ - <a href="./TGeoMatrix.html#TGeoMatrix:MasterToLocal" title="void TGeoMatrix::MasterToLocal(const Double_t* master,Double_t* local)">MasterToLocal</a>() and <a href="./TGeoMatrix.html#TGeoMatrix:LocalToMaster" title="void TGeoMatrix::LocalToMaster(const Double_t* local,Double_t* master)">LocalToMaster</a>() point and vector transformations :
+      <a href="./ListOfTypes.html#void">void</a>      <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:MasterToLocal" title="void TGeoMatrix::MasterToLocal(const Double_t* master,Double_t* local)">MasterToLocal</a>(const <a href="./ListOfTypes.html#Double_t">Double_t</a> *master, <a href="./ListOfTypes.html#Double_t">Double_t</a> *local)
+      <a href="./ListOfTypes.html#void">void</a>      <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:LocalToMaster" title="void TGeoMatrix::LocalToMaster(const Double_t* local,Double_t* master)">LocalToMaster</a>(const <a href="./ListOfTypes.html#Double_t">Double_t</a> *local, <a href="./ListOfTypes.html#Double_t">Double_t</a> *master)
+      <a href="./ListOfTypes.html#void">void</a>      <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:MasterToLocalVect" title="void TGeoMatrix::MasterToLocalVect(const Double_t* master,Double_t* local)">MasterToLocalVect</a>(const <a href="./ListOfTypes.html#Double_t">Double_t</a> *master, <a href="./ListOfTypes.html#Double_t">Double_t</a> *local)
+      <a href="./ListOfTypes.html#void">void</a>      <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:LocalToMasterVect" title="void TGeoMatrix::LocalToMasterVect(const Double_t* local,Double_t* master)">LocalToMasterVect</a>(const <a href="./ListOfTypes.html#Double_t">Double_t</a> *local, <a href="./ListOfTypes.html#Double_t">Double_t</a> *master)
+   These allow correct conversion also for reflections.
+ - Transformation type getters :
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsIdentity" title="Bool_t TGeoMatrix::IsIdentity()">IsIdentity</a>()
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsTranslation" title="Bool_t TGeoMatrix::IsTranslation()">IsTranslation</a>()
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsRotation" title="Bool_t TGeoMatrix::IsRotation()">IsRotation</a>()
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsScale" title="Bool_t TGeoMatrix::IsScale()">IsScale</a>()
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsCombi" title="Bool_t TGeoMatrix::IsCombi()">IsCombi</a>() (translation + rotation)
+      <a href="./ListOfTypes.html#Bool_t">Bool_t</a>    <a href="./TGeoMatrix.html">TGeoMatrix</a>::<a href="./TGeoMatrix.html#TGeoMatrix:IsGeneral" title="Bool_t TGeoMatrix::IsGeneral()">IsGeneral</a>() (translation + rotation + scale)
+
+   Combinations of basic transformations are represented by specific classes
+ deriving from <a href="./TGeoMatrix.html">TGeoMatrix</a>. In order to define a matrix as a combination of several
+ others, a special class <a href="./TGeoHMatrix.html">TGeoHMatrix</a> is provided. Here is an example of matrix
+ creation :
+
+ Matrix creation example:
+
+   root[0] <a href="./TGeoRotation.html">TGeoRotation</a> r1,r2;
+           r1.SetAngles(90,0,30);        // rotation defined by Euler angles
+           r2.SetAngles(90,90,90,180,0,0); // rotation defined by GEANT3 angles
+           <a href="./TGeoTranslation.html">TGeoTranslation</a> t1(-10,10,0);
+           <a href="./TGeoTranslation.html">TGeoTranslation</a> t2(10,-10,5);
+           <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a> c1(t1,r1);
+           <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a> c2(t2,r2);
+           <a href="./TGeoHMatrix.html">TGeoHMatrix</a> h = c1 * c2; // composition is done via <a href="./TGeoHMatrix.html">TGeoHMatrix</a> class
+   root[7] <a href="./TGeoHMatrix.html">TGeoHMatrix</a> *ph = new <a href="./TGeoHMatrix.html">TGeoHMatrix</a>(hm); // this is the one we want to
+                                                // use for positioning a volume
+   root[8] ph-&gt;<a href="./TGeoMatrix.html#TGeoMatrix:Print" title="void TGeoMatrix::Print(Option_t* option=&quot;&quot;)">Print</a>();
+
+           pVolume-&gt;AddNode(pVolDaughter,id,ph) // now ph is owned by the manager
+
+ Rule for matrix creation:
+  - unless explicitly used for positioning nodes (<a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:AddNode" title="void TGeoVolume::AddNode(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNode</a>()) all
+ matrices deletion have to be managed by users. Matrices passed to geometry
+ have to be created by using new() operator and their deletion is done by
+ <a href="./TGeoManager.html">TGeoManager</a> class.
+
+ Available geometrical transformations
+
+   1. <a href="./TGeoTranslation.html">TGeoTranslation</a> - represent a (dx,dy,dz) translation. Data members:
+ <a href="./ListOfTypes.html#Double_t">Double_t</a> fTranslation[3]. Translations can be added/subtracted.
+         <a href="./TGeoTranslation.html">TGeoTranslation</a> t1;
+         t1-&gt;SetTranslation(-5,10,4);
+         <a href="./TGeoTranslation.html">TGeoTranslation</a> *t2 = new <a href="./TGeoTranslation.html">TGeoTranslation</a>(4,3,10);
+         t2-&gt;Subtract(&amp;t1);
+
+   2. Rotations - represent a pure rotation. Data members: <a href="./ListOfTypes.html#Double_t">Double_t</a> fRotationMatrix[3*3].
+ Rotations can be defined either by Euler angles, either, by GEANT3 angles :
+         <a href="./TGeoRotation.html">TGeoRotation</a> *r1 = new <a href="./TGeoRotation.html">TGeoRotation</a>();
+         r1-&gt;SetAngles(phi, theta, psi); // all angles in degrees
+      This represent the composition of : first a rotation about Z axis with
+      angle phi, then a rotation with theta about the rotated X axis, and
+      finally a rotation with psi about the new Z axis.
+
+         r1-&gt;SetAngles(th1,phi1, th2,phi2, th3,phi3)
+      This is a rotation defined in GEANT3 style. Theta and phi are the spherical
+      angles of each axis of the rotated coordinate system with respect to the
+      initial one. This construction allows definition of malformed rotations,
+      e.g. not orthogonal. A check is performed and an error message is issued
+      in this case.
+
+      Specific utilities : determinant, inverse.
+
+   3. Scale transformations - represent a scale shrinking/enlargement. Data
+      members :<a href="./ListOfTypes.html#Double_t">Double_t</a> fScale[3]. Not fully implemented yet.
+
+   4. Combined transformations - represent a rotation folowed by a translation.
+      Data members: <a href="./ListOfTypes.html#Double_t">Double_t</a> fTranslation[3], <a href="./TGeoRotation.html">TGeoRotation</a> *fRotation.
+         <a href="./TGeoRotation.html">TGeoRotation</a> *rot = new <a href="./TGeoRotation.html">TGeoRotation</a>(<span class="string">"rot"</span>,10,20,30);
+         <a href="./TGeoTranslation.html">TGeoTranslation</a> trans;
+
+         <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a> *c1 = new <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a>(trans, rot);
+         <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a> *c2 = new <a href="./TGeoCombiTrans.html">TGeoCombiTrans</a>(<span class="string">"somename"</span>,10,20,30,rot)
+
+   5. <a href="./TGeoGenTrans.html">TGeoGenTrans</a> - combined transformations including a scale. Not implemented.
+   6. <a href="./TGeoIdentity.html">TGeoIdentity</a> - a generic singleton matrix representing a identity transformation
+       NOTE: identified by the global variable <a href="./TGeoIdentity.html">gGeoIdentity</a>.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGeoMatrix:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="TGeoMatrix.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:_TGeoMatrix">~TGeoMatrix</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetByteCount">GetByteCount</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetHomogenousMatrix">GetHomogenousMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* hmat) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetPointerName">GetPointerName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetRotationMatrix">GetRotationMatrix</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetScale">GetScale</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:GetTranslation">GetTranslation</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:Inverse">Inverse</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsCombi">IsCombi</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsGeneral">IsGeneral</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsIdentity">IsIdentity</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsReflection">IsReflection</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsRegistered">IsRegistered</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsRotAboutZ">IsRotAboutZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsRotation">IsRotation</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsScale">IsScale</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:IsTranslation">IsTranslation</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:LocalToMaster">LocalToMaster</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:LocalToMasterBomb">LocalToMasterBomb</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:LocalToMasterVect">LocalToMasterVect</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoMatrix.html">TGeoMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:MakeClone">MakeClone</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:MasterToLocal">MasterToLocal</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:MasterToLocalBomb">MasterToLocalBomb</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:MasterToLocalVect">MasterToLocalVect</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:Normalize">Normalize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* vect)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoMatrix.html">TGeoMatrix</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:operator*">operator*</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; right) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoMatrix.html">TGeoMatrix</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoMatrix:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; matrix)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:operator__">operator==</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; other) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:ReflectX">ReflectX</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:ReflectY">ReflectY</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:ReflectZ">ReflectZ</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:RegisterYourself">RegisterYourself</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:RotateX">RotateX</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:RotateY">RotateY</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:RotateZ">RotateZ</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:SetDefaultName">SetDefaultName</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:SetDx">SetDx</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:SetDy">SetDy</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:SetDz">SetDz</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoMatrix:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGeoMatrix:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EGeoTransfTypes { </td><td class="dataname"><a name="TGeoMatrix:kGeoIdentity"></a>kGeoIdentity</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoTranslation"></a>kGeoTranslation</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoRotation"></a>kGeoRotation</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoScale"></a>kGeoScale</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoReflection"></a>kGeoReflection</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoRegistered"></a>kGeoRegistered</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoSavePrimitive"></a>kGeoSavePrimitive</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoMatrixOwned"></a>kGeoMatrixOwned</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoCombiTrans"></a>kGeoCombiTrans</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoMatrix:kGeoGenTrans"></a>kGeoGenTrans</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGeoMatrix:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGeoMatrix_Inh" id="MapTGeoMatrix_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="176,52,235,68"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="25,52,80,68"/>
+<area shape="rect" href="./TGeoCombiTrans.html" title="TGeoCombiTrans" alt="" coords="485,3,604,19"/>
+<area shape="rect" href="./TGeoHMatrix.html" title="TGeoHMatrix" alt="" coords="498,22,590,39"/>
+<area shape="rect" href="./TGeoIdentity.html" title="TGeoIdentity" alt="" coords="499,42,590,58"/>
+<area shape="rect" href="./TGeoRotation.html" title="TGeoRotation" alt="" coords="497,61,592,78"/>
+<area shape="rect" href="./TGeoScale.html" title="TGeoScale" alt="" coords="507,81,582,97"/>
+<area shape="rect" href="./TGeoTranslation.html" title="TGeoTranslation" alt="" coords="488,100,601,117"/>
+<area shape="rect" href="./TGeoGenTrans.html" title="TGeoGenTrans" alt="" coords="661,3,764,19"/>
+</map>
+<map name="MapTGeoMatrix_InhMem" id="MapTGeoMatrix_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGeoMatrix_Lib" id="MapTGeoMatrix_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="457,160,585,208"/>
+</map>
+<div class="tabs">
+<a id="imgTGeoMatrix_Inh" class="tabsel" href="inh/TGeoMatrix_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGeoMatrix_Inh.png');">Inheritance</a>
+<a id="imgTGeoMatrix_InhMem" class="tab" href="inhmem/TGeoMatrix_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGeoMatrix_InhMem.png');">Inherited Members</a>
+<a id="imgTGeoMatrix_Incl" class="tab" href="incl/TGeoMatrix_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGeoMatrix_Incl.png');">Includes</a>
+<a id="imgTGeoMatrix_Lib" class="tab" href="lib/TGeoMatrix_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGeoMatrix_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGeoMatrix_Inh" src="inh/TGeoMatrix_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoMatrix:_TGeoMatrix" href="src/TGeoMatrix.cxx.html#eaO0w">~TGeoMatrix</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMatrix.html">TGeoMatrix</a> &amp; <a class="funcname" name="TGeoMatrix:operator*" href="src/TGeoMatrix.cxx.html#xVb5yD">operator*</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; right) const</span><br />
+<div class="funccomm"><pre> Multiplication
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsRotAboutZ" href="src/TGeoMatrix.cxx.html#QAS8uE">IsRotAboutZ</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#bool">true</a> if no rotation or the rotation is about Z axis
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoMatrix:GetByteCount" href="src/TGeoMatrix.cxx.html#lMqKmB">GetByteCount</a>() const</span><br />
+<div class="funccomm"><pre> Get total size in bytes of this
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">char</span> * <a class="funcname" name="TGeoMatrix:GetPointerName" href="src/TGeoMatrix.cxx.html#s.mJC">GetPointerName</a>() const</span><br />
+<div class="funccomm"><pre> Provide a pointer name containing uid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:GetHomogenousMatrix" href="src/TGeoMatrix.cxx.html#hnez_D">GetHomogenousMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* hmat) const</span><br />
+<div class="funccomm"><pre> The homogenous matrix associated with the transformation is used for
+ piling up's and visualization. A homogenous matrix is a 4*4 array
+ containing the translation, the rotation and the scale components
+
+          | R00*sx  R01    R02    dx |
+          | R10    R11*sy  R12    dy |
+          | R20     R21   R22*sz  dz |
+          |  0       0      0      1 |
+
+   where Rij is the rotation matrix, (sx, sy, sz) is the scale
+ transformation and (dx, dy, dz) is the translation.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:LocalToMaster" href="src/TGeoMatrix.cxx.html#cs5oBC">LocalToMaster</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) const</span><br />
+<div class="funccomm"><pre> convert a point by multiplying its column vector (x, y, z, 1) to matrix inverse
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:LocalToMasterVect" href="src/TGeoMatrix.cxx.html#MFk5cE">LocalToMasterVect</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) const</span><br />
+<div class="funccomm"><pre> convert a vector by multiplying its column vector (x, y, z, 1) to matrix inverse
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:LocalToMasterBomb" href="src/TGeoMatrix.cxx.html#oaLyX">LocalToMasterBomb</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master) const</span><br />
+<div class="funccomm"><pre> convert a point by multiplying its column vector (x, y, z, 1) to matrix inverse
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:MasterToLocal" href="src/TGeoMatrix.cxx.html#uh3m4E">MasterToLocal</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) const</span><br />
+<div class="funccomm"><pre> convert a point by multiplying its column vector (x, y, z, 1) to matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:MasterToLocalVect" href="src/TGeoMatrix.cxx.html#ecEFlB">MasterToLocalVect</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) const</span><br />
+<div class="funccomm"><pre> convert a point by multiplying its column vector (x, y, z, 1) to matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:MasterToLocalBomb" href="src/TGeoMatrix.cxx.html#OITWMD">MasterToLocalBomb</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local) const</span><br />
+<div class="funccomm"><pre> convert a point by multiplying its column vector (x, y, z, 1) to matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:Normalize" href="src/TGeoMatrix.cxx.html#PiR_9B">Normalize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* vect)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoMatrix.html#TGeoMatrix:Normalize" title="void TGeoMatrix::Normalize(Double_t* vect)">Normalize</a> a vector.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:Print" href="src/TGeoMatrix.cxx.html#Sno5R">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> print the matrix in 4x4 format
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:ReflectX" href="src/TGeoMatrix.cxx.html#bwQOB">ReflectX</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Multiply by a reflection respect to YZ.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:ReflectY" href="src/TGeoMatrix.cxx.html#frVJB">ReflectY</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Multiply by a reflection respect to ZX.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:ReflectZ" href="src/TGeoMatrix.cxx.html#jmaEB">ReflectZ</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> leftside, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rotonly = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Multiply by a reflection respect to XY.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:RegisterYourself" href="src/TGeoMatrix.cxx.html#UDbUkB">RegisterYourself</a>()</span><br />
+<div class="funccomm"><pre> Register the matrix in the current manager, which will become the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:SetDefaultName" href="src/TGeoMatrix.cxx.html#xP4eMD">SetDefaultName</a>()</span><br />
+<div class="funccomm"><pre> If no name was supplied in the ctor, the type of transformation is checked.
+ A letter will be prepended to the name :
+   t - translation
+   r - rotation
+   s - scale
+   c - combi (translation + rotation)
+   g - general (tr+rot+scale)
+ The index of the transformation in <a href="./TGeoManager.html">gGeoManager</a> list of transformations will
+ be appended.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; <a class="funcname" name="TGeoMatrix:operator_" href="src/TGeoMatrix.h.html#oX3pn">operator=</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; matrix)</span><br />
+<div class="funccomm"><pre> Preventing warnings with -Weffc++ in GCC since the behaviour of operator * was chosen so by design.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsIdentity" href="src/TGeoMatrix.h.html#S9sClE">IsIdentity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> !<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoGenTrans" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoGenTrans">kGeoGenTrans</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsTranslation" href="src/TGeoMatrix.h.html#cKpb4B">IsTranslation</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoTranslation" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoTranslation">kGeoTranslation</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsRotation" href="src/TGeoMatrix.h.html#MzS_PD">IsRotation</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoRotation" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoRotation">kGeoRotation</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsReflection" href="src/TGeoMatrix.h.html#JxEps">IsReflection</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoReflection" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoReflection">kGeoReflection</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsScale" href="src/TGeoMatrix.h.html#xyuJS">IsScale</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoScale" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoScale">kGeoScale</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsCombi" href="src/TGeoMatrix.h.html#zpkPCD">IsCombi</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsGeneral" href="src/TGeoMatrix.h.html#VgqVyC">IsGeneral</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoMatrix:IsRegistered" href="src/TGeoMatrix.h.html#mcxmzE">IsRegistered</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoMatrix.html#TGeoMatrix:kGeoRegistered" title="const TGeoMatrix::EGeoTransfTypes TGeoMatrix::kGeoRegistered">kGeoRegistered</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>    * <a class="funcname" name="TGeoMatrix:GetTranslation" href="src/TGeoMatrix.h.html#ihs2OD">GetTranslation</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>    * <a class="funcname" name="TGeoMatrix:GetRotationMatrix" href="src/TGeoMatrix.h.html#CoZ6iD">GetRotationMatrix</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>    * <a class="funcname" name="TGeoMatrix:GetScale" href="src/TGeoMatrix.h.html#qV87t">GetScale</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; <a class="funcname" name="TGeoMatrix:Inverse" href="src/TGeoMatrix.h.html#U4mIQC">Inverse</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMatrix.html">TGeoMatrix</a>  * <a class="funcname" name="TGeoMatrix:MakeClone" href="src/TGeoMatrix.h.html#x1g65D">MakeClone</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:RotateX" href="src/TGeoMatrix.h.html#aayNK">RotateX</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:RotateY" href="src/TGeoMatrix.h.html#OpzNK">RotateY</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:RotateZ" href="src/TGeoMatrix.h.html#C40NK">RotateZ</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:SetDx" href="src/TGeoMatrix.h.html#d4nDYE">SetDx</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:SetDy" href="src/TGeoMatrix.h.html#JRPcXE">SetDy</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoMatrix:SetDz" href="src/TGeoMatrix.h.html#pp20WE">SetDz</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Andrei+Gheata"> Andrei Gheata   25/10/01</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/geom:$Id: TGeoMatrix.h 40116 2011-07-04 12:00:32Z agheata $ </em><em>&raquo; Last generated: 2011-11-03 20:17</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

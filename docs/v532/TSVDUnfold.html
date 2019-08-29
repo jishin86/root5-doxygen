@@ -1,0 +1,423 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:48 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TSVDUnfold</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TSVDUnfold','libHist','TSVDUnfold.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TSVDUnfold.h.html">header file</a>
+<a class="descrheadentry" href="src/TSVDUnfold.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TSVDUnfold.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TSVDUnfold.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TSVDUnfold:description">class description</a> 
+<a class="descrheadentry" href="#TSVDUnfold:Function_Members">function members</a>
+<a class="descrheadentry" href="#TSVDUnfold:Data_Members">data members</a>
+<a class="descrheadentry" href="#TSVDUnfold:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TSVDUnfold</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TSVDUnfold:description"></a>class TSVDUnfold: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>SVD Approach to Data Unfolding</h2></center>
+<p>
+Reference: <a href="http://arXiv.org/abs/hep-ph/9509307">Nucl. Instrum. Meth. A372, 469 (1996) [hep-ph/9509307]</a>
+<p>
+TSVDUnfold implements the singular value decomposition based unfolding method (see reference). Currently, the unfolding of one-dimensional histograms is supported, with the same number of bins for the measured and the unfolded spectrum.
+<p>
+The unfolding procedure is based on singular value decomposition of the response matrix. The regularisation of the unfolding is implemented via a discrete minimum-curvature condition.
+<p>
+Monte Carlo inputs:
+<ul>
+<li><tt>xini</tt>: true underlying spectrum (TH1D, n bins)
+<li><tt>bini</tt>: reconstructed spectrum (TH1D, n bins)
+<li><tt>Adet</tt>: response matrix (TH2D, nxn bins)
+</ul>
+Consider the unfolding of a measured spectrum <tt>bdat</tt> with covariance matrix <tt>Bcov</tt> (if not passed explicitely, a diagonal covariance will be built given the errors of <tt>bdat</tt>). The corresponding spectrum in the Monte Carlo is given by <tt>bini</tt>, with the true underlying spectrum given by <tt>xini</tt>. The detector response is described by <tt>Adet</tt>, with <tt>Adet</tt> filled with events (not probabilities) with the true observable on the y-axis and the reconstructed observable on the x-axis.
+<p>
+The measured distribution can be unfolded for any combination of resolution, efficiency and acceptance effects, provided an appropriate definition of <tt>xini</tt> and <tt>Adet</tt>.<br><br>
+<p>
+The unfolding can be performed by
+<ul>
+<pre>
+TSVDUnfold *tsvdunf = new TSVDUnfold( bdat, Bcov, bini, xini, Adet );
+TH1D* unfresult = tsvdunf->Unfold( kreg );
+</pre>
+</ul>
+where <tt>kreg</tt> determines the regularisation of the unfolding. In general, overregularisation (too small <tt>kreg</tt>) will bias the unfolded spectrum towards the Monte Carlo input, while underregularisation (too large <tt>kreg</tt>) will lead to large fluctuations in the unfolded spectrum. The optimal regularisation can be determined following guidelines in <a href="http://arXiv.org/abs/hep-ph/9509307">Nucl. Instrum. Meth. A372, 469 (1996) [hep-ph/9509307]</a> using the distribution of the <tt>|d_i|<\tt> that can be obtained by <tt>tsvdunf->GetD()</tt> and/or using pseudo-experiments.
+<p>
+Covariance matrices on the measured spectrum (for either the total uncertainties or individual sources of uncertainties) can be propagated to covariance matrices using the <tt>GetUnfoldCovMatrix</tt> method, which uses pseudo experiments for the propagation. In addition, <tt>GetAdetCovMatrix</tt> allows for the propagation of the statistical uncertainties on the response matrix using pseudo experiments. The covariance matrix corresponding to <tt>Bcov</tt> is also computed as described in <a href="http://arXiv.org/abs/hep-ph/9509307">Nucl. Instrum. Meth. A372, 469 (1996) [hep-ph/9509307]</a> and can be obtained from <tt>tsvdunf->GetXtau()</tt> and its (regularisation independent) inverse from  <tt>tsvdunf->GetXinv()</tt>. The distribution of singular values can be retrieved using <tt>tsvdunf->GetSV()</tt>.
+<p>
+See also the tutorial for a toy example.
+<!-- TDocHtmlDirective end --><pre> 
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TSVDUnfold:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:TSVDUnfold%2">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TSVDUnfold.html">TSVDUnfold</a>&amp; other)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:TSVDUnfold">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bdat, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bini, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* xini, <span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* Adet)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:TSVDUnfold%1">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bdat, <a href="./TH2D.html">TH2D</a>* Bcov, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bini, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* xini, <span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* Adet)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:_TSVDUnfold">~TSVDUnfold</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:ComputeChiSquared">ComputeChiSquared</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>&amp; truspec, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>&amp; unfspec)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetAdetCovMatrix">GetAdetCovMatrix</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntoys, <a href="./ListOfTypes.html#Int_t">Int_t</a> seed = 1)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetD">GetD</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetKReg">GetKReg</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetSV">GetSV</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetUnfoldCovMatrix">GetUnfoldCovMatrix</a>(<span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* cov, <a href="./ListOfTypes.html#Int_t">Int_t</a> ntoys, <a href="./ListOfTypes.html#Int_t">Int_t</a> seed = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetXinv">GetXinv</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetXtau">GetXtau</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>&amp;</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_"><span class="baseclass">TObject::</span>operator=</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:SetNormalize">SetNormalize</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> normalize)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="#TSVDUnfold:Unfold">Unfold</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> kreg)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret">static <a href="./TVectorD.html">TVectorD</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:CompProd">CompProd</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec1, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec2)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:FillCurvatureMatrix">FillCurvatureMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; tCurv, <a href="./TMatrixD.html">TMatrixD</a>&amp; tC) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:GetCurvature">GetCurvature</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; curv)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:H2M">H2M</a>(<span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* histo, <a href="./TMatrixD.html">TMatrixD</a>&amp; mat)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:H2V">H2V</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* histo, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:H2Verr">H2Verr</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* histo, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:InitHistos">InitHistos</a>()</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:M2H">M2H</a>(<span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; mat, <a href="./TH2D.html">TH2D</a>&amp; histo)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TMatrixD.html">TMatrixD</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:MatDivVec">MatDivVec</a>(<span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; mat, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <a href="./ListOfTypes.html#Int_t">Int_t</a> zero = 0)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:RegularisedSymMatInvert">RegularisedSymMatInvert</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; mat, <a href="./ListOfTypes.html#Double_t">Double_t</a> eps = 1e-3)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:V2H">V2H</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <a href="./TH1D.html">TH1D</a>&amp; histo)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TVectorD.html">TVectorD</a></td><td class="funcname"><a class="funcname" href="#TSVDUnfold:VecDiv">VecDiv</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec1, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec2, <a href="./ListOfTypes.html#Int_t">Int_t</a> zero = 0)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TSVDUnfold:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TSVDUnfold:fAdet"></a>fAdet</td><td class="datadesc">Detector response matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TSVDUnfold:fBcov"></a>fBcov</td><td class="datadesc">covariance matrix of measured distribution (data)</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fBdat"></a>fBdat</td><td class="datadesc">measured distribution (data)</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fBini"></a>fBini</td><td class="datadesc">reconstructed distribution (MC)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fDHist"></a>fDHist</td><td class="datadesc">! Distribution of d (for checking regularization)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TSVDUnfold:fDdim"></a>fDdim</td><td class="datadesc">! Derivative for curvature matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TSVDUnfold:fKReg"></a>fKReg</td><td class="datadesc">! Regularisation parameter</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TSVDUnfold:fMatToyMode"></a>fMatToyMode</td><td class="datadesc">! Internal switch for evaluation of statistical uncertainties from response matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TSVDUnfold:fNdim"></a>fNdim</td><td class="datadesc">! Truth and reconstructed dimensions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TSVDUnfold:fNormalize"></a>fNormalize</td><td class="datadesc">! Normalize unfolded spectrum to 1</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fSVHist"></a>fSVHist</td><td class="datadesc">! Distribution of singular values</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TSVDUnfold:fToyMode"></a>fToyMode</td><td class="datadesc">! Internal switch for covariance matrix propagation</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fToyhisto"></a>fToyhisto</td><td class="datadesc">! Toy MC histogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TSVDUnfold:fToymat"></a>fToymat</td><td class="datadesc">! Toy MC detector response matrix</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>*</td><td class="dataname"><a name="TSVDUnfold:fXini"></a>fXini</td><td class="datadesc">truth distribution (MC)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TSVDUnfold:fXinv"></a>fXinv</td><td class="datadesc">! Computed inverse of covariance matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH2D.html">TH2D</a>*</td><td class="dataname"><a name="TSVDUnfold:fXtau"></a>fXtau</td><td class="datadesc">! Computed regularized covariance matrix</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TSVDUnfold:Class_Charts"></a>Class Charts</h2>
+<map name="MapTSVDUnfold_Inh" id="MapTSVDUnfold_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="68,19,217,64"/>
+</map>
+<map name="MapTSVDUnfold_InhMem" id="MapTSVDUnfold_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTSVDUnfold_Lib" id="MapTSVDUnfold_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTSVDUnfold_Inh" class="tabsel" href="inh/TSVDUnfold_Inh.png" onclick="javascript:return SetImg('Charts','inh/TSVDUnfold_Inh.png');">Inheritance</a>
+<a id="imgTSVDUnfold_InhMem" class="tab" href="inhmem/TSVDUnfold_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TSVDUnfold_InhMem.png');">Inherited Members</a>
+<a id="imgTSVDUnfold_Incl" class="tab" href="incl/TSVDUnfold_Incl.png" onclick="javascript:return SetImg('Charts','incl/TSVDUnfold_Incl.png');">Includes</a>
+<a id="imgTSVDUnfold_Lib" class="tab" href="lib/TSVDUnfold_Lib.png" onclick="javascript:return SetImg('Charts','lib/TSVDUnfold_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTSVDUnfold_Inh" src="inh/TSVDUnfold_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TSVDUnfold:TSVDUnfold" href="src/TSVDUnfold.cxx.html#EqCzSC">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bdat, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bini, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* xini, <span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* Adet)</span><br />
+<div class="funccomm"><pre> Alternative constructor
+ User provides data and MC test spectra, as well as detector response matrix, diagonal covariance matrix of measured spectrum built from the uncertainties on measured spectrum
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TSVDUnfold:TSVDUnfold%1" href="src/TSVDUnfold.cxx.html#c2QPxD">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bdat, <a href="./TH2D.html">TH2D</a>* Bcov, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* bini, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* xini, <span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* Adet)</span><br />
+<div class="funccomm"><pre> Default constructor
+ Initialisation of <a href="./TSVDUnfold.html">TSVDUnfold</a>
+ User provides data and MC test spectra, as well as detector response matrix and the covariance matrix of the measured distribution
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TSVDUnfold:TSVDUnfold%2" href="src/TSVDUnfold.cxx.html#bsjxMD">TSVDUnfold</a>(<span class="keyword">const</span> <a href="./TSVDUnfold.html">TSVDUnfold</a>&amp; other)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Copy" title="void TObject::Copy(TObject&amp; object)">Copy</a> constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TSVDUnfold:_TSVDUnfold" href="src/TSVDUnfold.cxx.html#DeeTXE">~TSVDUnfold</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1D.html">TH1D</a>* <a class="funcname" name="TSVDUnfold:Unfold" href="src/TSVDUnfold.cxx.html#JdYTkD">Unfold</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> kreg)</span><br />
+<div class="funccomm"><pre> Perform the unfolding with regularisation parameter kreg
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a>* <a class="funcname" name="TSVDUnfold:GetUnfoldCovMatrix" href="src/TSVDUnfold.cxx.html#gO9nC">GetUnfoldCovMatrix</a>(<span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* cov, <a href="./ListOfTypes.html#Int_t">Int_t</a> ntoys, <a href="./ListOfTypes.html#Int_t">Int_t</a> seed = 1)</span><br />
+<div class="funccomm"><pre> Determine for given input error matrix covariance matrix of unfolded
+ spectrum from toy simulation given the passed covariance matrix on measured spectrum
+ <span class="string">"cov"</span>    - covariance matrix on the measured spectrum, to be propagated
+ <span class="string">"ntoys"</span>  - number of pseudo experiments used for the propagation
+ <span class="string">"seed"</span>   - seed for pseudo experiments
+ Note that this covariance matrix will contain effects of forced normalisation if spectrum is normalised to unit area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a>* <a class="funcname" name="TSVDUnfold:GetAdetCovMatrix" href="src/TSVDUnfold.cxx.html#uu6hxE">GetAdetCovMatrix</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntoys, <a href="./ListOfTypes.html#Int_t">Int_t</a> seed = 1)</span><br />
+<div class="funccomm"><pre> Determine covariance matrix of unfolded spectrum from finite statistics in
+ response matrix using pseudo experiments
+ <span class="string">"ntoys"</span>  - number of pseudo experiments used for the propagation
+ <span class="string">"seed"</span>   - seed for pseudo experiments
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1D.html">TH1D</a>* <a class="funcname" name="TSVDUnfold:GetD" href="src/TSVDUnfold.cxx.html#gWt8k">GetD</a>() const</span><br />
+<div class="funccomm"><pre> Returns d vector (for choosing appropriate regularisation)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1D.html">TH1D</a>* <a class="funcname" name="TSVDUnfold:GetSV" href="src/TSVDUnfold.cxx.html#Br511D">GetSV</a>() const</span><br />
+<div class="funccomm"><pre> Returns singular values vector
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a>* <a class="funcname" name="TSVDUnfold:GetXtau" href="src/TSVDUnfold.cxx.html#WWMAkD">GetXtau</a>() const</span><br />
+<div class="funccomm"><pre> Returns the computed regularized covariance matrix corresponding to total uncertainties on measured spectrum as passed in the constructor.
+ Note that this covariance matrix will not contain the effects of forced normalization if spectrum is normalized to unit area.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a>* <a class="funcname" name="TSVDUnfold:GetXinv" href="src/TSVDUnfold.cxx.html#UnvdGB">GetXinv</a>() const</span><br />
+<div class="funccomm"><pre> Returns the computed inverse of the covariance matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:H2V" href="src/TSVDUnfold.cxx.html#um33wC">H2V</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* histo, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</span><br />
+<div class="funccomm"><pre> Fill 1D histogram into vector
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:H2Verr" href="src/TSVDUnfold.cxx.html#iCMCc">H2Verr</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>* histo, <a href="./TVectorD.html">TVectorD</a>&amp; vec)</span><br />
+<div class="funccomm"><pre> Fill 1D histogram errors into vector
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:V2H" href="src/TSVDUnfold.cxx.html#zNUjUB">V2H</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <a href="./TH1D.html">TH1D</a>&amp; histo)</span><br />
+<div class="funccomm"><pre> Fill vector into 1D histogram
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:H2M" href="src/TSVDUnfold.cxx.html#EIzSTC">H2M</a>(<span class="keyword">const</span> <a href="./TH2D.html">TH2D</a>* histo, <a href="./TMatrixD.html">TMatrixD</a>&amp; mat)</span><br />
+<div class="funccomm"><pre> Fill 2D histogram into matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:M2H" href="src/TSVDUnfold.cxx.html#rgLGgB">M2H</a>(<span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; mat, <a href="./TH2D.html">TH2D</a>&amp; histo)</span><br />
+<div class="funccomm"><pre> Fill 2D histogram into matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVectorD.html">TVectorD</a> <a class="funcname" name="TSVDUnfold:VecDiv" href="src/TSVDUnfold.cxx.html#XVooqE">VecDiv</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec1, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec2, <a href="./ListOfTypes.html#Int_t">Int_t</a> zero = 0)</span><br />
+<div class="funccomm"><pre> Divide entries of two vectors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMatrixD.html">TMatrixD</a> <a class="funcname" name="TSVDUnfold:MatDivVec" href="src/TSVDUnfold.cxx.html#dlMBpC">MatDivVec</a>(<span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; mat, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <a href="./ListOfTypes.html#Int_t">Int_t</a> zero = 0)</span><br />
+<div class="funccomm"><pre> Divide matrix entries by vector
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVectorD.html">TVectorD</a> <a class="funcname" name="TSVDUnfold:CompProd" href="src/TSVDUnfold.cxx.html#Duv0PB">CompProd</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec1, <span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec2)</span><br />
+<div class="funccomm"><pre> Multiply entries of two vectors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TSVDUnfold:GetCurvature" href="src/TSVDUnfold.cxx.html#Zw4pbC">GetCurvature</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; vec, <span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>&amp; curv)</span><br />
+<div class="funccomm"><pre> Compute curvature of vector
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:FillCurvatureMatrix" href="src/TSVDUnfold.cxx.html#bj9htC">FillCurvatureMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; tCurv, <a href="./TMatrixD.html">TMatrixD</a>&amp; tC) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:InitHistos" href="src/TSVDUnfold.cxx.html#NRWPwE">InitHistos</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:RegularisedSymMatInvert" href="src/TSVDUnfold.cxx.html#iYDuuC">RegularisedSymMatInvert</a>(<a href="./TMatrixDSym.html">TMatrixDSym</a>&amp; mat, <a href="./ListOfTypes.html#Double_t">Double_t</a> eps = 1e-3)</span><br />
+<div class="funccomm"><pre> naive regularised inversion cuts off small elements
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TSVDUnfold:ComputeChiSquared" href="src/TSVDUnfold.cxx.html#YhTxkD">ComputeChiSquared</a>(<span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>&amp; truspec, <span class="keyword">const</span> <a href="./TH1D.html">TH1D</a>&amp; unfspec)</span><br />
+<div class="funccomm"><pre> Helper routine to compute chi-squared between distributions using the computed inverse of the covariance matrix for the unfolded spectrum as given in paper.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSVDUnfold:SetNormalize" href="src/TSVDUnfold.h.html#AJmhOE">SetNormalize</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> normalize)</span><br />
+<div class="funccomm"><pre> Set option to normalize unfolded spectrum to unit area
+ <span class="string">"normalize"</span> - switch
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./TSVDUnfold.html#TSVDUnfold:fNormalize" title="Bool_t TSVDUnfold::fNormalize">fNormalize</a> = normalize; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSVDUnfold:GetKReg" href="src/TSVDUnfold.h.html#KLBY7D">GetKReg</a>() const</span><br />
+<div class="funccomm"><pre> Regularisation parameter
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TSVDUnfold.html#TSVDUnfold:fKReg" title="Int_t TSVDUnfold::fKReg">fKReg</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Kerstin+Tackmann"> Kerstin Tackmann</a>, <a href="http://consult.cern.ch/xwho/people?Andreas+Hoecker"> Andreas Hoecker</a>, <a href="http://consult.cern.ch/xwho/people?Heiko+Lacker"> Heiko Lacker</a> </em><em>&raquo; Copyright   (c) 2010:                                                            *</em><br />
+<em>&raquo; Last changed: Thu Nov  3 20:22:48 2011 </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

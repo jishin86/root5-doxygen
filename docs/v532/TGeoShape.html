@@ -1,0 +1,762 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:27:52 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGeoShape</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGeoShape','libGeom','TGeoShape.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGeoShape.h.html">header file</a>
+<a class="descrheadentry" href="src/TGeoShape.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/inc/TGeoShape.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/src/TGeoShape.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGeoShape:description">class description</a> 
+<a class="descrheadentry" href="#TGeoShape:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGeoShape:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGeoShape:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="./GEOM_GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGeoShape</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGeoShape:description"></a>class TGeoShape: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+ <a href="./TGeoShape.html">TGeoShape</a> - Base abstract class for all shapes.
+
+
+
+   Shapes are geometrical objects that provide the basic modelling
+ functionality. They provide the definition of the LOCAL frame of coordinates,
+ with respect to which they are defined. Any implementation of a shape deriving
+ from the base <a href="./TGeoShape.html">TGeoShape</a> class has to provide methods for :
+  - finding out if a point defined in their local frame is or not contained
+ inside;
+  - computing the distance from a local point to getting outside/entering the
+ shape, given a known direction;
+  - computing the maximum distance in any direction from a local point that
+ does NOT result in a boundary crossing of the shape (safe distance);
+  - computing the cosines of the normal vector to the crossed shape surface,
+ given a starting local point and an ongoing direction.
+   All the features above are globally managed by the modeller in order to
+ provide navigation functionality. In addition to those, shapes have also to
+ implement additional specific abstract methods :
+  - computation of the minimal box bounding the shape, given that this box have
+ to be aligned with the local coordinates;
+  - algorithms for dividing the shape along a given axis and producing resulting
+ divisions volumes.
+
+   The modeler currently provides a set of 16 basic shapes, which we will call
+ primitives. It also provides a special class allowing the creation of shapes
+ made as a result of boolean operations between primitives. These are called
+ composite shapes and the composition operation can be recursive (composition
+ of composites). This allows the creation of a quite large number of different
+ shape topologies and combinations.
+
+   Shapes are named objects and register themselves to the manager class at
+ creation time. This is responsible for their final deletion. Shapes
+ can be created without name if their retreival by name is no needed. Generally
+ shapes are objects that are usefull only at geometry creation stage. The pointer
+ to a shape is in fact needed only when referring to a given volume and it is
+ always accessible at that level. A shape may be referenced by several volumes,
+ therefore its deletion is not possible once volumes were defined based on it.
+
+
+
+ Creating shapes
+
+   Shape objects embeed only the minimum set of parameters that are fully
+ describing a valid physical shape. For instance, a tube is represented by
+ its half length, the minimum radius and the maximum radius. Shapes are used
+ togeather with media in order to create volumes, which in their turn
+ are the main components of the geometrical tree. A specific shape can be created
+ stand-alone :
+
+   <a href="./TGeoBBox.html">TGeoBBox</a> *box = new <a href="./TGeoBBox.html">TGeoBBox</a>(<span class="string">"s_box"</span>, halfX, halfY, halfZ); // named
+   <a href="./TGeoTube.html">TGeoTube</a> *tub = new <a href="./TGeoTube.html">TGeoTube</a>(rmin, rmax, halfZ);            // no name
+   ...  (see each specific shape constructors)
+
+   Sometimes it is much easier to create a volume having a given shape in one
+ step, since shapes are not direcly linked in the geometrical tree but volumes
+ are :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a> *vol_box = <a href="./TGeoManager.html">gGeoManager</a>-><a href="./TGeoManager.html#TGeoManager:MakeBox" title="TGeoVolume* TGeoManager::MakeBox(const char* name,TGeoMedium* medium,Double_t dx,Double_t dy,Double_t dz)">MakeBox</a>(<span class="string">"BOX_VOL"</span>, <span class="string">"mat1"</span>, halfX, halfY, halfZ);
+   <a href="./TGeoVolume.html">TGeoVolume</a> *vol_tub = <a href="./TGeoManager.html">gGeoManager</a>-><a href="./TGeoManager.html#TGeoManager:MakeTube" title="TGeoVolume* TGeoManager::MakeTube(const char* name,TGeoMedium* medium,Double_t rmin,Double_t rmax,Double_t dz)">MakeTube</a>(<span class="string">"TUB_VOL"</span>, <span class="string">"mat2"</span>, rmin, rmax, halfZ);
+   ...  (see MakeXXX() utilities in <a href="./TGeoManager.html">TGeoManager</a> class)
+
+
+ Shape queries
+
+ Note that global queries related to a geometry are handled by the manager class.
+ However, shape-related queries might be sometimes usefull.
+
+ A) <a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Contains" title="Bool_t TGeoShape::Contains(Double_t* point)">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *point[3])
+   - this method returns <a href="./ListOfTypes.html#bool">true</a> if POINT is actually inside the shape. The point
+ has to be defined in the local shape reference. For instance, for a box having
+ DX, DY and DZ half-lengths a point will be considered inside if :
+   | -DX &lt;= point[0] &lt;= DX
+   | -DY &lt;= point[1] &lt;= DY
+   | -DZ &lt;= point[2] &lt;= DZ
+
+ B) <a href="./ListOfTypes.html#Double_t">Double_t</a> <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:DistFromInside" title="Double_t TGeoShape::DistFromInside(Double_t* point,Double_t* dir,Int_t iact=1,Double_t step=TGeoShape::Big(),Double_t* safe=0)">DistFromInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *point[3], <a href="./ListOfTypes.html#Double_t">Double_t</a> *dir[3],
+                                  <a href="./ListOfTypes.html#Int_t">Int_t</a> iact, <a href="./ListOfTypes.html#Double_t">Double_t</a> step, <a href="./ListOfTypes.html#Double_t">Double_t</a> *safe)
+   - computes the distance to exiting a shape from a given point INSIDE, along
+ a given direction. The direction is given by its director cosines with respect
+ to the local shape coordinate system. This method provides additional
+ information according the value of IACT input parameter :
+   IACT = 0     =&gt; compute only safe distance and fill it at the location
+                   given by SAFE
+   IACT = 1     =&gt; a proposed STEP is supplied. The safe distance is computed
+                   first. If this is bigger than STEP than the proposed step
+                   is approved and returned by the method since it does not
+                   cross the shape boundaries. Otherwise, the distance to
+                   exiting the shape is computed and returned.
+   IACT = 2     =&gt; compute both safe distance and distance to exiting, ignoring
+                   the proposed step.
+   IACT &gt; 2     =&gt; compute only the distance to exiting, ignoring anything else.
+
+ C) <a href="./ListOfTypes.html#Double_t">Double_t</a> <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:DistFromOutside" title="Double_t TGeoShape::DistFromOutside(Double_t* point,Double_t* dir,Int_t iact=1,Double_t step=TGeoShape::Big(),Double_t* safe=0)">DistFromOutside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *point[3], <a href="./ListOfTypes.html#Double_t">Double_t</a> *dir[3],
+                                  <a href="./ListOfTypes.html#Int_t">Int_t</a> iact, <a href="./ListOfTypes.html#Double_t">Double_t</a> step, <a href="./ListOfTypes.html#Double_t">Double_t</a> *safe)
+   - computes the distance to entering a shape from a given point OUTSIDE. Acts
+ in the same way as B).
+
+ D) <a href="./ListOfTypes.html#Double_t">Double_t</a> <a href="./TGeoShape.html#TGeoShape:Safety" title="Double_t TGeoShape::Safety(Double_t* point,Bool_t in=kTRUE)">Safety</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *point[3], <a href="./ListOfTypes.html#Bool_t">Bool_t</a> inside)
+
+   - compute maximum shift of a point in any direction that does not change its
+ INSIDE/OUTSIDE state (does not cross shape boundaries). The state of the point
+ have to be properly supplied.
+
+ E) <a href="./ListOfTypes.html#Double_t">Double_t</a> *Normal(<a href="./ListOfTypes.html#Double_t">Double_t</a> *point[3], <a href="./ListOfTypes.html#Double_t">Double_t</a> *dir[3], <a href="./ListOfTypes.html#Bool_t">Bool_t</a> inside)
+
+   - returns director cosines of normal to the crossed shape surface from a
+ given point towards a direction. One has to specify if the point is inside
+ or outside shape. According to this, the normal will be outwards or inwards
+ shape respectively. Normal components are statically stored by shape class,
+ so it has to be copied after retreival in a different array.
+
+ Dividing shapes
+
+   Shapes can generally be divided along a given axis. Supported axis are
+ X, Y, Z, Rxy, Phi, Rxyz. A given shape cannot be divided however on any axis.
+ The general rule is that that divisions are possible on whatever axis that
+ produces still known shapes as slices. The division of shapes should not be
+ performed by <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Divide" title="TGeoVolume* TGeoShape::Divide(TGeoVolume* voldiv,const char* divname,Int_t iaxis,Int_t ndiv,Double_t start,Double_t step)">Divide</a>() calls, but rather by <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:Divide" title="TGeoVolume* TGeoVolume::Divide(const char* divname,Int_t iaxis,Int_t ndiv,Double_t start,Double_t step,Int_t numed=0,Option_t* option=&quot;&quot;)">Divide</a>().
+ The algorithm for dividing a specific shape is known by the shape object, but
+ is always invoked in a generic way from the volume level. Details on how to
+ do that can be found in <a href="./TGeoVolume.html">TGeoVolume</a> class. One can see how all division options
+ are interpreted and which is their result inside specific shape classes.
+
+
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/t_shape.jpg">
+*/
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGeoShape:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="TGeoShape.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGeoShape:_TGeoShape">~TGeoShape</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:Big">Big</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:Capacity">Capacity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:CheckShape">CheckShape</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> testNo, <a href="./ListOfTypes.html#Int_t">Int_t</a> nsamples = 10000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ClearThreadData">ClearThreadData</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ComputeBBox">ComputeBBox</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:ComputeEpsMch">ComputeEpsMch</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ComputeNormal">ComputeNormal</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:Contains">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:CouldBeCrossed">CouldBeCrossed</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:DistancetoPrimitive">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:DistFromInside">DistFromInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:DistFromOutside">DistFromOutside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:DistToPhiMin">DistToPhiMin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> sm, <a href="./ListOfTypes.html#Double_t">Double_t</a> cm, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:Divide">Divide</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* voldiv, <span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:EpsMch">EpsMch</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ExecuteEvent">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetAxisName">GetAxisName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetAxisRange">GetAxisRange</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xlo, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xhi) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetBoundingCylinder">GetBoundingCylinder</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* param) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetBuffer3D">GetBuffer3D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetByteCount">GetByteCount</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetFittingBox">GetFittingBox</a>(<span class="keyword">const</span> <a href="./TGeoBBox.html">TGeoBBox</a>* parambox, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetId">GetId</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoShape.html">TGeoShape</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetMakeRuntimeShape">GetMakeRuntimeShape</a>(<a href="./TGeoShape.html">TGeoShape</a>* mother, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetMeshNumbers">GetMeshNumbers</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetName">GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetNmeshVertices">GetNmeshVertices</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetPointerName">GetPointerName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetPointsOnSegments">GetPointsOnSegments</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Double_t">Double_t</a>* array) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TGeoMatrix.html">TGeoMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:GetTransform">GetTransform</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:InspectShape">InspectShape</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:InvertShapeBit">InvertShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsAssembly">IsAssembly</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsCloseToPhi">IsCloseToPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> epsil, <a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsComposite">IsComposite</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsCrossingSemiplane">IsCrossingSemiplane</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> cphi, <a href="./ListOfTypes.html#Double_t">Double_t</a> sphi, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; snext, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rxy)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsCylType">IsCylType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsInPhiRange">IsInPhiRange</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsReflected">IsReflected</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsRunTimeShape">IsRunTimeShape</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsSameWithinTolerance">IsSameWithinTolerance</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Double_t">Double_t</a> b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsSegCrossing">IsSegCrossing</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2, <a href="./ListOfTypes.html#Double_t">Double_t</a> x3, <a href="./ListOfTypes.html#Double_t">Double_t</a> y3, <a href="./ListOfTypes.html#Double_t">Double_t</a> x4, <a href="./ListOfTypes.html#Double_t">Double_t</a> y4)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsValid">IsValid</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:IsValidBox">IsValidBox</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TBuffer3D.html">TBuffer3D</a>*</td><td class="funcname"><a class="funcname" href="#TGeoShape:MakeBuffer3D">MakeBuffer3D</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:NormalPhi">NormalPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoShape.html">TGeoShape</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoShape:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGeoShape.html">TGeoShape</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:Paint">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ResetShapeBit">ResetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:Safety">Safety</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:SafetyPhi">SafetyPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetDimensions">SetDimensions</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* param)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetId">SetId</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetPoints">SetPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetPoints%1">SetPoints</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* points) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetRuntime">SetRuntime</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetSegsAndPols">SetSegsAndPols</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buff) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetShapeBit%1">SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetShapeBit">SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetTransform">SetTransform</a>(<a href="./TGeoMatrix.html">TGeoMatrix</a>* matrix)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:ShapeDistancetoPrimitive">ShapeDistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numpoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:Sizeof3D">Sizeof3D</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:TestShapeBit">TestShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:TestShapeBits">TestShapeBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:Tolerance">Tolerance</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:FillBuffer3D">FillBuffer3D</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoShape:GetBasicColor">GetBasicColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:SetOnBoundary">SetOnBoundary</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoShape:TransformPoints">TransformPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> NbPoints) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGeoShape:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EShapeType { </td><td class="dataname"><a name="TGeoShape:kBitMask32"></a>kBitMask32</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoNoShape"></a>kGeoNoShape</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoBad"></a>kGeoBad</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoRSeg"></a>kGeoRSeg</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoPhiSeg"></a>kGeoPhiSeg</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoThetaSeg"></a>kGeoThetaSeg</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoVisX"></a>kGeoVisX</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoVisY"></a>kGeoVisY</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoVisZ"></a>kGeoVisZ</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoRunTimeShape"></a>kGeoRunTimeShape</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoInvalidShape"></a>kGeoInvalidShape</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTorus"></a>kGeoTorus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoBox"></a>kGeoBox</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoPara"></a>kGeoPara</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoSph"></a>kGeoSph</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTube"></a>kGeoTube</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTubeSeg"></a>kGeoTubeSeg</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoCone"></a>kGeoCone</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoConeSeg"></a>kGeoConeSeg</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoPcon"></a>kGeoPcon</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoPgon"></a>kGeoPgon</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoArb8"></a>kGeoArb8</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoEltu"></a>kGeoEltu</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTrap"></a>kGeoTrap</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoCtub"></a>kGeoCtub</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTrd1"></a>kGeoTrd1</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoTrd2"></a>kGeoTrd2</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoComb"></a>kGeoComb</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoClosedShape"></a>kGeoClosedShape</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoXtru"></a>kGeoXtru</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoParaboloid"></a>kGeoParaboloid</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoHalfSpace"></a>kGeoHalfSpace</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoHype"></a>kGeoHype</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoShape:kGeoSavePrimitive"></a>kGeoSavePrimitive</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TGeoShape:fShapeBits"></a>fShapeBits</td><td class="datadesc">shape bits</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGeoShape:fShapeId"></a>fShapeId</td><td class="datadesc">shape id</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeoShape:fgEpsMch"></a>fgEpsMch</td><td class="datadesc">Machine round-off error</td></tr>
+<tr class="data"><td class="datatype">static <a href="./TGeoMatrix.html">TGeoMatrix</a>*</td><td class="dataname"><a name="TGeoShape:fgTransform"></a>fgTransform</td><td class="datadesc">current transformation matrix that applies to shape</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGeoShape:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGeoShape_Inh" id="MapTGeoShape_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="122,103,163,115"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="17,103,55,115"/>
+<area shape="rect" href="./TGeoBBox.html" title="TGeoBBox" alt="" coords="344,103,394,115"/>
+<area shape="rect" href="./TEveGeoPolyShape.html" title="TEveGeoPolyShape" alt="" coords="449,2,543,13"/>
+<area shape="rect" href="./TGeoArb8.html" title="TGeoArb8" alt="" coords="472,15,520,27"/>
+<area shape="rect" href="./TGeoCompositeShape.html" title="TGeoCompositeShape" alt="" coords="442,29,550,40"/>
+<area shape="rect" href="./TGeoCone.html" title="TGeoCone" alt="" coords="471,42,521,54"/>
+<area shape="rect" href="./TGeoTube.html" title="TGeoTube" alt="" coords="472,56,520,67"/>
+<area shape="rect" href="./TGeoHalfSpace.html" title="TGeoHalfSpace" alt="" coords="459,69,533,81"/>
+<area shape="rect" href="./TGeoPara.html" title="TGeoPara" alt="" coords="473,83,519,94"/>
+<area shape="rect" href="./TGeoParaboloid.html" title="TGeoParaboloid" alt="" coords="458,96,534,108"/>
+<area shape="rect" href="./TGeoPcon.html" title="TGeoPcon" alt="" coords="472,110,520,121"/>
+<area shape="rect" href="./TGeoScaledShape.html" title="TGeoScaledShape" alt="" coords="452,123,540,135"/>
+<area shape="rect" href="./TGeoShapeAssembly.html" title="TGeoShapeAssembly" alt="" coords="444,137,548,149"/>
+<area shape="rect" href="./TGeoSphere.html" title="TGeoSphere" alt="" coords="466,150,526,162"/>
+<area shape="rect" href="./TGeoTorus.html" title="TGeoTorus" alt="" coords="470,164,522,176"/>
+<area shape="rect" href="./TGeoTrd1.html" title="TGeoTrd1" alt="" coords="473,178,519,189"/>
+<area shape="rect" href="./TGeoTrd2.html" title="TGeoTrd2" alt="" coords="473,191,519,203"/>
+<area shape="rect" href="./TGeoXtru.html" title="TGeoXtru" alt="" coords="473,205,519,216"/>
+<area shape="rect" href="./TGeoConeSeg.html" title="TGeoConeSeg" alt="" coords="590,36,659,47"/>
+<area shape="rect" href="./TGeoTubeSeg.html" title="TGeoTubeSeg" alt="" coords="591,49,658,61"/>
+<area shape="rect" href="./TGeoEltu.html" title="TGeoEltu" alt="" coords="602,63,647,74"/>
+<area shape="rect" href="./TGeoTrap.html" title="TGeoTrap" alt="" coords="601,15,647,27"/>
+<area shape="rect" href="./TGeoHype.html" title="TGeoHype" alt="" coords="599,76,650,88"/>
+<area shape="rect" href="./TGeoPgon.html" title="TGeoPgon" alt="" coords="599,110,649,121"/>
+<area shape="rect" href="./TGeoCtub.html" title="TGeoCtub" alt="" coords="707,49,756,61"/>
+<area shape="rect" href="./TGeoGtra.html" title="TGeoGtra" alt="" coords="708,15,755,27"/>
+</map>
+<map name="MapTGeoShape_InhMem" id="MapTGeoShape_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGeoShape_Lib" id="MapTGeoShape_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="457,160,585,208"/>
+</map>
+<div class="tabs">
+<a id="imgTGeoShape_Inh" class="tabsel" href="inh/TGeoShape_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGeoShape_Inh.png');">Inheritance</a>
+<a id="imgTGeoShape_InhMem" class="tab" href="inhmem/TGeoShape_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGeoShape_InhMem.png');">Inherited Members</a>
+<a id="imgTGeoShape_Incl" class="tab" href="incl/TGeoShape_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGeoShape_Incl.png');">Includes</a>
+<a id="imgTGeoShape_Lib" class="tab" href="lib/TGeoShape_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGeoShape_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGeoShape_Inh" src="inh/TGeoShape_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoShape:_TGeoShape" href="src/TGeoShape.cxx.html#qkd6BC">~TGeoShape</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:CheckShape" href="src/TGeoShape.cxx.html#K2k2rB">CheckShape</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> testNo, <a href="./ListOfTypes.html#Int_t">Int_t</a> nsamples = 10000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Test for shape navigation methods. Summary for test numbers:
+  1: <a href="./TGeoShape.html#TGeoShape:DistFromInside" title="Double_t TGeoShape::DistFromInside(Double_t* point,Double_t* dir,Int_t iact=1,Double_t step=TGeoShape::Big(),Double_t* safe=0)">DistFromInside</a>/Outside. Sample points inside the shape. Generate
+    directions randomly in cos(theta). Compute <a href="./TGeoShape.html#TGeoShape:DistFromInside" title="Double_t TGeoShape::DistFromInside(Double_t* point,Double_t* dir,Int_t iact=1,Double_t step=TGeoShape::Big(),Double_t* safe=0)">DistFromInside</a> and move the
+    point with bigger distance. Compute <a href="./TGeoShape.html#TGeoShape:DistFromOutside" title="Double_t TGeoShape::DistFromOutside(Double_t* point,Double_t* dir,Int_t iact=1,Double_t step=TGeoShape::Big(),Double_t* safe=0)">DistFromOutside</a> back from new point.
+    Plot d-(d1+d2)
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:ComputeEpsMch" href="src/TGeoShape.cxx.html#bxYpP">ComputeEpsMch</a>()</span><br />
+<div class="funccomm"><pre> Compute machine round-off <a href="./ListOfTypes.html#double">double</a> precision error as the smallest number that
+ if added to 1.0 is different than 1.0.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:EpsMch" href="src/TGeoShape.cxx.html#kxzkyD">EpsMch</a>()</span><br />
+<div class="funccomm"><pre>static function returning the machine round-off error
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TGeoShape:GetName" href="src/TGeoShape.cxx.html#Qw1nbD">GetName</a>() const</span><br />
+<div class="funccomm"><pre> Get the shape name.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:ShapeDistancetoPrimitive" href="src/TGeoShape.cxx.html#aYq_Y">ShapeDistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numpoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) const</span><br />
+<div class="funccomm"><pre> Returns distance to shape primitive mesh.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsCloseToPhi" href="src/TGeoShape.cxx.html#xn8NOD">IsCloseToPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> epsil, <a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</span><br />
+<div class="funccomm"><pre> True if point is closer than epsil to one of the phi planes defined by c1,s1 or c2,s2
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsInPhiRange" href="src/TGeoShape.cxx.html#vHu2nB">IsInPhiRange</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</span><br />
+<div class="funccomm"><pre> Static method to check if a point is in the phi range (phi1, phi2) [degrees]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsCrossingSemiplane" href="src/TGeoShape.cxx.html#TxuWOD">IsCrossingSemiplane</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> cphi, <a href="./ListOfTypes.html#Double_t">Double_t</a> sphi, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; snext, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rxy)</span><br />
+<div class="funccomm"><pre> Compute distance from POINT to semiplane defined by PHI angle along DIR. Computes
+ also radius at crossing point. This might be negative in case the crossing is
+ on the other side of the semiplane.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsSameWithinTolerance" href="src/TGeoShape.cxx.html#bhNvr">IsSameWithinTolerance</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Double_t">Double_t</a> b)</span><br />
+<div class="funccomm"><pre> Check if two numbers differ with less than a tolerance.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsSegCrossing" href="src/TGeoShape.cxx.html#mxmZVD">IsSegCrossing</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2, <a href="./ListOfTypes.html#Double_t">Double_t</a> x3, <a href="./ListOfTypes.html#Double_t">Double_t</a> y3, <a href="./ListOfTypes.html#Double_t">Double_t</a> x4, <a href="./ListOfTypes.html#Double_t">Double_t</a> y4)</span><br />
+<div class="funccomm"><pre> Check if segments (A,B) and (C,D) are crossing,
+ where: A(x1,y1), B(x2,y2), C(x3,y3), D(x4,y4)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:DistToPhiMin" href="src/TGeoShape.cxx.html#Gk6ExC">DistToPhiMin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> sm, <a href="./ListOfTypes.html#Double_t">Double_t</a> cm, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> compute distance from point (inside phi) to both phi planes. Return minimum.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:NormalPhi" href="src/TGeoShape.cxx.html#be5qq">NormalPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</span><br />
+<div class="funccomm"><pre> Static method to compute normal to phi planes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:SafetyPhi" href="src/TGeoShape.cxx.html#os60uB">SafetyPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</span><br />
+<div class="funccomm"><pre> Static method to compute safety w.r.t a phi corner defined by cosines/sines
+ of the angles phi1, phi2.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetShapeBit" href="src/TGeoShape.cxx.html#HpRXUD">SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</span><br />
+<div class="funccomm"><pre> Equivalent of <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMatrix.html">TGeoMatrix</a> * <a class="funcname" name="TGeoShape:GetTransform" href="src/TGeoShape.cxx.html#yTGVFC">GetTransform</a>()</span><br />
+<div class="funccomm"><pre> Returns current transformation matrix that applies to shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetTransform" href="src/TGeoShape.cxx.html#y3OboC">SetTransform</a>(<a href="./TGeoMatrix.html">TGeoMatrix</a>* matrix)</span><br />
+<div class="funccomm"><pre> Set current transformation matrix that applies to shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:TransformPoints" href="src/TGeoShape.cxx.html#lePdvC">TransformPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> NbPoints) const</span><br />
+<div class="funccomm"><pre> Tranform a set of points (LocalToMaster)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:FillBuffer3D" href="src/TGeoShape.cxx.html#BQyxC">FillBuffer3D</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) const</span><br />
+<div class="funccomm"><pre> Fill the supplied buffer, with sections in desired frame
+ See <a href="./TBuffer3D.html">TBuffer3D</a>.h for explanation of sections, frame etc.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:GetBasicColor" href="src/TGeoShape.cxx.html#Yc.4TC">GetBasicColor</a>() const</span><br />
+<div class="funccomm"><pre> Get the basic color (0-7).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a> &amp; <a class="funcname" name="TGeoShape:GetBuffer3D" href="src/TGeoShape.cxx.html#Yyp6EB">GetBuffer3D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) const</span><br />
+<div class="funccomm"><pre> Stub implementation to avoid forcing implementation at this stage
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TGeoShape:GetPointerName" href="src/TGeoShape.cxx.html#QFVIi">GetPointerName</a>() const</span><br />
+<div class="funccomm"><pre> Provide a pointer name containing uid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:ExecuteEvent" href="src/TGeoShape.cxx.html#R7vYlB">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Execute" title="void TObject::Execute(const char* method,const char* params,Int_t* error=0) or overloads">Execute</a> mouse actions on this shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:Draw" href="src/TGeoShape.cxx.html#Unhh.B">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoShape.html#TGeoShape:Draw" title="void TGeoShape::Draw(Option_t* option=&quot;&quot;)">Draw</a> this shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:Paint" href="src/TGeoShape.cxx.html#ANGXnB">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoShape.html#TGeoShape:Paint" title="void TGeoShape::Paint(Option_t* option=&quot;&quot;)">Paint</a> this shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:ClearThreadData" href="src/TGeoShape.h.html#mFjTYE">ClearThreadData</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetOnBoundary" href="src/TGeoShape.h.html#Z.h.QE">SetOnBoundary</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:Big" href="src/TGeoShape.h.html#OCwwS">Big</a>()</span><br />
+<div class="funccomm"><pre> methods
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 1.E30;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:Tolerance" href="src/TGeoShape.h.html#kDpbGB">Tolerance</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 1.E-10;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:Capacity" href="src/TGeoShape.h.html#xCIXxB">Capacity</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:ComputeBBox" href="src/TGeoShape.h.html#r_sXDB">ComputeBBox</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:ComputeNormal" href="src/TGeoShape.h.html#Uh15zB">ComputeNormal</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:Contains" href="src/TGeoShape.h.html#gKlPDE">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:CouldBeCrossed" href="src/TGeoShape.h.html#ygB08B">CouldBeCrossed</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:DistancetoPrimitive" href="src/TGeoShape.h.html#BcWl_D">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:DistFromInside" href="src/TGeoShape.h.html#RvolCD">DistFromInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a>   * <a class="funcname" name="TGeoShape:Divide" href="src/TGeoShape.h.html#Yf1JmE">Divide</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* voldiv, <span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>   * <a class="funcname" name="TGeoShape:GetAxisName" href="src/TGeoShape.h.html#XgQvb">GetAxisName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:GetAxisRange" href="src/TGeoShape.h.html#qlgSME">GetAxisRange</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xlo, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xhi) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:GetBoundingCylinder" href="src/TGeoShape.h.html#TKjhlE">GetBoundingCylinder</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* param) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:GetByteCount" href="src/TGeoShape.h.html#wvVq7">GetByteCount</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:GetPointsOnSegments" href="src/TGeoShape.h.html#qiIzp">GetPointsOnSegments</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Double_t">Double_t</a>* array) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:GetFittingBox" href="src/TGeoShape.h.html#ph00kD">GetFittingBox</a>(<span class="keyword">const</span> <a href="./TGeoBBox.html">TGeoBBox</a>* parambox, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dz) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:GetId" href="src/TGeoShape.h.html#uJ4gC">GetId</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoShape.html#TGeoShape:fShapeId" title="Int_t TGeoShape::fShapeId">fShapeId</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoShape.html">TGeoShape</a>    * <a class="funcname" name="TGeoShape:GetMakeRuntimeShape" href="src/TGeoShape.h.html#ekNTqD">GetMakeRuntimeShape</a>(<a href="./TGeoShape.html">TGeoShape</a>* mother, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:GetMeshNumbers" href="src/TGeoShape.h.html#PfAIM">GetMeshNumbers</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ) const</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:GetNmeshVertices" href="src/TGeoShape.h.html#v2xF2B">GetNmeshVertices</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsAssembly" href="src/TGeoShape.h.html#JoFXRC">IsAssembly</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsComposite" href="src/TGeoShape.h.html#MfTQN">IsComposite</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsCylType" href="src/TGeoShape.h.html#IIEosC">IsCylType</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsReflected" href="src/TGeoShape.h.html#UAck3D">IsReflected</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsRunTimeShape" href="src/TGeoShape.h.html#reRMm">IsRunTimeShape</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoShape.html#TGeoShape:TestShapeBit" title="Bool_t TGeoShape::TestShapeBit(UInt_t f)">TestShapeBit</a>(<a href="./TGeoShape.html#TGeoShape:kGeoRunTimeShape" title="const TGeoShape::EShapeType TGeoShape::kGeoRunTimeShape">kGeoRunTimeShape</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsValid" href="src/TGeoShape.h.html#XPYlgE">IsValid</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> !<a href="./TGeoShape.html#TGeoShape:TestShapeBit" title="Bool_t TGeoShape::TestShapeBit(UInt_t f)">TestShapeBit</a>(<a href="./TGeoShape.html#TGeoShape:kGeoInvalidShape" title="const TGeoShape::EShapeType TGeoShape::kGeoInvalidShape">kGeoInvalidShape</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:IsValidBox" href="src/TGeoShape.h.html#vufBUC">IsValidBox</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:InspectShape" href="src/TGeoShape.h.html#xyX71D">InspectShape</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TBuffer3D.html">TBuffer3D</a>    * <a class="funcname" name="TGeoShape:MakeBuffer3D" href="src/TGeoShape.h.html#wlootD">MakeBuffer3D</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoShape:Safety" href="src/TGeoShape.h.html#xQ4xoD">Safety</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetDimensions" href="src/TGeoShape.h.html#gXNJrC">SetDimensions</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* param)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetId" href="src/TGeoShape.h.html#CLGJxB">SetId</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoShape.html#TGeoShape:fShapeId" title="Int_t TGeoShape::fShapeId">fShapeId</a> = id;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetPoints" href="src/TGeoShape.h.html#Zpss6E">SetPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetPoints%1" href="src/TGeoShape.h.html#Qd9LyE">SetPoints</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* points) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetSegsAndPols" href="src/TGeoShape.h.html#L40gXE">SetSegsAndPols</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buff) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetRuntime" href="src/TGeoShape.h.html#MfV.WE">SetRuntime</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoShape.html#TGeoShape:SetShapeBit" title="void TGeoShape::SetShapeBit(UInt_t f,Bool_t set) or overloads">SetShapeBit</a>(<a href="./TGeoShape.html#TGeoShape:kGeoRunTimeShape" title="const TGeoShape::EShapeType TGeoShape::kGeoRunTimeShape">kGeoRunTimeShape</a>, flag);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:Sizeof3D" href="src/TGeoShape.h.html#oq6i7B">Sizeof3D</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:SetShapeBit" href="src/TGeoShape.h.html#iwA2jD">SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</span><br />
+<div class="funccomm"><pre>----- bit manipulation
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:ResetShapeBit" href="src/TGeoShape.h.html#dm_llE">ResetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TGeoShape.html#TGeoShape:fShapeBits" title="UInt_t TGeoShape::fShapeBits">fShapeBits</a> &amp;= ~(f &amp; <a href="./TGeoShape.html#TGeoShape:kBitMask32" title="const TGeoShape::EShapeType TGeoShape::kBitMask32">kBitMask32</a>); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoShape:TestShapeBit" href="src/TGeoShape.h.html#QIyIYC">TestShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<a href="./ListOfTypes.html#Bool_t">Bool_t</a>) ((<a href="./TGeoShape.html#TGeoShape:fShapeBits" title="UInt_t TGeoShape::fShapeBits">fShapeBits</a> &amp; f) != 0); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoShape:TestShapeBits" href="src/TGeoShape.h.html#vLt82C">TestShapeBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a>) (<a href="./TGeoShape.html#TGeoShape:fShapeBits" title="UInt_t TGeoShape::fShapeBits">fShapeBits</a> &amp; f); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoShape:InvertShapeBit" href="src/TGeoShape.h.html#wkIgBB">InvertShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TGeoShape.html#TGeoShape:fShapeBits" title="UInt_t TGeoShape::fShapeBits">fShapeBits</a> ^= f &amp; <a href="./TGeoShape.html#TGeoShape:kBitMask32" title="const TGeoShape::EShapeType TGeoShape::kBitMask32">kBitMask32</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Andrei+Gheata"> Andrei Gheata   31/01/02</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/geom:$Id: TGeoShape.h 41234 2011-10-06 15:48:52Z agheata $ </em><em>&raquo; Last generated: 2011-12-02 14:27</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

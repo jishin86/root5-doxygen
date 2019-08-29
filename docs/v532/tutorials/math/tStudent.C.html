@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:29:50 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title> Example macro describing the student t distribution
+</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks"><div class="descrhead"><table class="descrtitle" id="contexttitle"><tr class="descrtitle"><td id="contextheadarrow_prev"><div id="divcontextheadar_prev"><a class="contextheadarrow" href="quantiles.C.html">&lt;</a></div></td><td class="contextheadentry" id="contextheadentry_prev"><a class="contextheadentry" href="quantiles.C.html">quantiles.C:  demo for quantiles
+</a></td><td id="contextheadarrow_up"><div id="divcontextheadar_up"><a class="contextheadarrow" href="index.html">^</a></div></td><td class="contextheadentry" id="contextheadentry_up"><a class="contextheadentry" href="index.html">Math tutorials</a></td><td class="contextheadentry" id="contextheadentry_next"><a class="contextheadentry" href="testUnfold1.C.html">testUnfold1.C:  Test program for the classes TUnfold, TUnfoldSys
+</a></td><td id="contextheadarrow_next"><div id="divcontextheadar_next"><a class="contextheadarrow" href="testUnfold1.C.html">&gt;</a></div></td></tr></table></div><h1 class="convert">tStudent.C:  Example macro describing the student t distribution
+</h1></div>
+<div class="location"><h2>From <a href="http://root.cern.ch/viewvc/trunk/tutorials/math/tStudent.C?view=markup">$ROOTSYS/tutorials/math/tStudent.C</a></h2></div>
+<table><tr><td style="vertical-align:top;padding-right:2em;">
+<div class="listing"><pre class="listing">
+<span class="comment">// Example macro describing the student t distribution</span>
+<span class="comment">//</span>
+<span class="comment">// root[0]: .x tStudent.C </span>
+<span class="comment">//</span>
+<span class="comment">// It draws the pdf, the cdf and then 10 quantiles of the t Student distribution</span>
+<span class="comment">//</span>
+<span class="comment">// Author: Magdalena Slawinska</span>
+
+<span class="cpp">#include "<a href="../../TH1.h">TH1.h</a>"</span>
+<span class="cpp">#include "<a href="../../TF1.h">TF1.h</a>"</span>
+<span class="cpp">#include "<a href="../../TCanvas.h">TCanvas.h</a>"</span>
+<span class="cpp">#include "<a href="../../TSystem.h">TSystem.h</a>"</span>
+<span class="cpp">#include "<a href="../../TLegend.h">TLegend.h</a>"</span>
+<span class="cpp">#include "<a href="../../TLegendEntry.h">TLegendEntry.h</a>"</span>
+<span class="cpp">#ifndef __CINT__</span>
+<span class="cpp">#include "<a href="../../DistFunc.h">Math/DistFunc.h</a>"</span>
+<span class="cpp">#endif</span>
+
+
+<span class="keyword">void</span> tStudent()
+{
+   <a href="../../TSystem.html">gSystem</a>-><a href="../../TSystem.html#TSystem:Load" title="int TSystem::Load(const char* module,const char* entry=&quot;&quot;,Bool_t system=kFALSE)">Load</a>(<span class="string">"libMathCore"</span>);
+   <a href="../../TSystem.html">gSystem</a>-><a href="../../TSystem.html#TSystem:Load" title="int TSystem::Load(const char* module,const char* entry=&quot;&quot;,Bool_t system=kFALSE)">Load</a>(<span class="string">"libMathMore"</span>);
+
+  <span class="keyword">int</span> n=100;
+  <span class="keyword">double</span> a=-5.;
+  <span class="keyword">double</span> b=5.;
+  <span class="comment">//<a href="../../ListOfTypes.html#double">double</a> r  = 3; </span>
+  <a href="../../TF1.html">TF1</a>* pdf = <span class="keyword">new</span> <a href="../../TF1.html">TF1</a>(<span class="string">"pdf"</span>, <span class="string">"ROOT::Math::tdistribution_pdf(x,3.0)"</span>, a,b);
+  <a href="../../TF1.html">TF1</a>* cum = <span class="keyword">new</span> <a href="../../TF1.html">TF1</a>(<span class="string">"cum"</span>, <span class="string">"ROOT::Math::tdistribution_cdf(x,3.0)"</span>, a,b);
+
+
+  <a href="../../TH1D.html">TH1D</a>* quant = <span class="keyword">new</span> <a href="../../TH1D.html">TH1D</a>(<span class="string">"quant"</span>, <span class="string">""</span>, 9, 0, 0.9);
+  
+
+  <span class="keyword">for</span>(<span class="keyword">int</span> i=1; i &lt; 10; i++)
+     quant-&gt;<a href="../../TH1.html#TH1:Fill" title="Int_t TH1::Fill(Double_t x) or overloads">Fill</a>((i-0.5)/10.0, <a href="../../ROOT.html">ROOT</a>::<a href="../../ROOT__Math.html">Math</a>::<a href="../../ROOT__Math.html#ROOT__Math:tdistribution_quantile" title="double ROOT::Math::tdistribution_quantile(double z,double r)">tdistribution_quantile</a>((1.0*i)/10, 3.0 ) );
+
+  <span class="keyword">double</span> xx[10];
+  xx[0] = -1.5;
+  <span class="keyword">for</span>(<span class="keyword">int</span> i=1; i&lt;9; i++)
+    xx[i]= quant-&gt;GetBinContent(i);
+  xx[9] = 1.5;
+  <a href="../../TH1D.html">TH1D</a>* pdfq[10];
+  <span class="comment">//<a href="../../ListOfTypes.html#int">int</a> nbin = n/10.0;</span>
+  <span class="keyword">for</span>(<span class="keyword">int</span> i=0; i &lt; 10; i++)
+  {
+    <span class="keyword">int</span> nbin = n * (xx[i+1]-xx[i])/3.0+1.0; 
+    <a href="../../TString.html">TString</a> name = <span class="string">"pdf"</span> + i; 
+    pdfq[i]= <span class="keyword">new</span> <a href="../../TH1D.html">TH1D</a>(name, <span class="string">""</span>, nbin,xx[i],xx[i+1] );
+    <span class="keyword">for</span>(<span class="keyword">int</span> j=1; j&lt;nbin; j++)
+    {
+       <span class="keyword">double</span> x= j*(xx[i+1]-xx[i])/nbin + xx[i];
+       pdfq[i]-&gt;<a href="../../TH1D.html#TH1D:SetBinContent" title="void TH1D::SetBinContent(Int_t bin,Double_t content) or overloads">SetBinContent</a>(j, <a href="../../ROOT.html">ROOT</a>::<a href="../../ROOT__Math.html">Math</a>::<a href="../../ROOT__Math.html#ROOT__Math:tdistribution_pdf" title="double ROOT::Math::tdistribution_pdf(double x,double r,double x0=0)">tdistribution_pdf</a>(x,3));
+
+    }
+ 
+  }
+
+ <a href="../../TCanvas.html">TCanvas</a> *Canvas = <span class="keyword">new</span> <a href="../../TCanvas.html">TCanvas</a>(<span class="string">"DistCanvas"</span>, <span class="string">"Student Distribution graphs"</span>, 10, 10, 1000, 800); 
+ pdf-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Student t distribution function"</span>);
+ cum-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Cumulative for Student t"</span>);
+ quant-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"10-quantiles  for Student t"</span>);
+ Canvas-&gt;<a href="../../TPad.html#TPad:Divide" title="void TPad::Divide(Int_t nx=1,Int_t ny=1,Float_t xmargin=0.01,Float_t ymargin=0.01,Int_t color=0)">Divide</a>(2, 2);
+ Canvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(1);
+ pdf-&gt;<a href="../../TAttLine.html#TAttLine:SetLineWidth" title="void TAttLine::SetLineWidth(Width_t lwidth)">SetLineWidth</a>(2);
+ pdf-&gt;DrawCopy();
+ Canvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(2);
+ cum-&gt;<a href="../../TAttLine.html#TAttLine:SetLineWidth" title="void TAttLine::SetLineWidth(Width_t lwidth)">SetLineWidth</a>(2);
+ cum-&gt;<a href="../../TAttLine.html#TAttLine:SetLineColor" title="void TAttLine::SetLineColor(Color_t lcolor)">SetLineColor</a>(kRed);
+ cum-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+ Canvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(3);
+ quant-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+ quant-&gt;<a href="../../TAttLine.html#TAttLine:SetLineWidth" title="void TAttLine::SetLineWidth(Width_t lwidth)">SetLineWidth</a>(2);
+ quant-&gt;<a href="../../TAttLine.html#TAttLine:SetLineColor" title="void TAttLine::SetLineColor(Color_t lcolor)">SetLineColor</a>(kBlue);
+ quant-&gt;SetStats(0);
+ Canvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(4);
+ pdfq[0]-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Student t &amp; its quantiles"</span>);
+ pdf-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">""</span>);
+ pdf-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+ <span class="comment">//pdfq[0]-&gt;SetAxisRange(-1.5, 0, 1.5,1.0);</span>
+ pdfq[0]-&gt;<a href="../../TCanvas.html#TCanvas:SetTitle" title="void TCanvas::SetTitle(const char* title=&quot;&quot;)">SetTitle</a>(<span class="string">"Student t &amp; its quantiles"</span>);
+ <span class="keyword">for</span>(<span class="keyword">int</span> i=0; i &lt; 10; i++)
+ {
+   pdfq[i]-&gt;SetStats(0);
+   pdfq[i]-&gt;<a href="../../TAttFill.html#TAttFill:SetFillColor" title="void TAttFill::SetFillColor(Color_t fcolor)">SetFillColor</a>(i+1);
+   pdfq[i]-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"same"</span>);
+ }
+ Canvas-&gt;<a href="../../TPad.html#TPad:Modified" title="void TPad::Modified(Bool_t flag=1)">Modified</a>();
+ Canvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>();
+}
+</pre></div>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="87" href="#87" class="ln">87</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="88" href="#88" class="ln">88</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="89" href="#89" class="ln">89</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="90" href="#90" class="ln">90</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="91" href="#91" class="ln">91</a></div><div class="ln">&nbsp;<span class="lnfile">tStudent.C:</span><a name="92" href="#92" class="ln">92</a></div></div>
+</td><td style="vertical-align:top;">
+<table>
+<tr><td><a href="tStudent.C_0.png">
+<img src="tStudent.C_0.png" id="canv0" alt="thumb" style="border:none;width:22em;" onmouseover="javascript:canv0.style.width='auto';" />
+</a></td></tr>
+</table>
+</td></tr></table>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:29 </em><em>&raquo; Last generated: 2011-12-02 14:29</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:05:18 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>ROOT::Math::RichardsonDerivator - source file</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="codeAndLineNumbers"><pre class="listing">
+<span class="comment">// @(#)root/mathcore:$Id: <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a>.h 24482 2008-06-23 15:33:08Z moneta $</span>
+<span class="comment">// Authors: David Gonzalez Maline    01/2008 </span>
+
+<span class="comment">/**********************************************************************
+ *                                                                    *
+ * Copyright (c) 2006 , LCG <a href="../ROOT.html">ROOT</a> MathLib Team                         *
+ *                                                                    *
+ *                                                                    *
+ **********************************************************************/</span>
+
+<span class="comment">// Header file for <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a></span>
+<span class="comment">// </span>
+<span class="comment">// Created by: David Gonzalez Maline  : Mon Feb 4 2008</span>
+<span class="comment">// </span>
+
+<span class="cpp">#ifndef ROOT_Math_RichardsonDerivator</span>
+<span class="cpp">#define ROOT_Math_RichardsonDerivator</span>
+
+<span class="cpp">#include &lt;<a href="../IFunction.h">Math/IFunction.h</a>&gt;</span>
+
+<span class="keyword">namespace</span> <a href="../ROOT.html">ROOT</a> {
+<span class="keyword">namespace</span> Math {
+
+<span class="comment">//___________________________________________________________________________________________</span>
+<span class="comment">/**
+   User class for calculating the derivatives of a function. It can calculate first (method <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative1" title="double ROOT::Math::RichardsonDerivator::Derivative1(double x) or overloads">Derivative1</a>),
+   second (method <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative2" title="double ROOT::Math::RichardsonDerivator::Derivative2(double x) or overloads">Derivative2</a>) and third (method <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative3" title="double ROOT::Math::RichardsonDerivator::Derivative3(double x) or overloads">Derivative3</a>) of a function.  
+   
+   It uses the Richardson extrapolation method for function derivation in a given interval. 
+   The method use 2 derivative estimates (one computed with step h and one computed with step h/2) 
+   to compute a third, more accurate estimation. It is equivalent to the 
+   &lt;a href = http://en.wikipedia.org/wiki/Five-point_stencil&gt;5-point method&lt;/a&gt;,
+   which can be obtained with a Taylor expansion. 
+   A step size should be given, depending on x and f(x). 
+   An optimal step size value minimizes the truncation error of the expansion and the rounding  
+   error in evaluating x+h and f(x+h). A too small h will yield a too large rounding error while a too large 
+   h will give a large truncation error in the derivative approximation. 
+   A good discussion can be found in discussed in 
+   &lt;a href=http://www.nrbook.com/a/bookcpdf/c5-7.pdf&gt;Chapter 5.7&lt;/a&gt;  of Numerical Recipes in C.
+   By default a value of 0.001 is uses, acceptable in many cases.
+
+   This class is implemented using code previosuly in  <a href="../TF1.html">TF1</a>::Derivate{,2,3}(). Now <a href="../TF1.html">TF1</a> uses this class.
+
+   @ingroup Deriv
+  
+ */</span>
+
+<span class="keyword">class</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a> {
+<span class="keyword">public</span>:
+
+   <span class="comment">/** Destructor: Removes function if needed. */</span>
+<a name="AbKuuE"></a>   <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:_RichardsonDerivator" title="void ROOT::Math::RichardsonDerivator::~RichardsonDerivator()">~RichardsonDerivator</a>();
+
+   <span class="comment">/** Default Constructor.
+       Give optionally the step size for derivation. By default is 0.001, which is fine for x ~ 1  
+       Increase if x is in averga larger or decrease if x is smaller 
+    */</span>
+<a name="B7fc9"></a>   <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a>(<span class="keyword">double</span> h = 0.001);
+   
+   <span class="comment">/** Construct from function and step size 
+    */</span>
+<a name="VZYjVE"></a>   <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a>(<span class="keyword">const</span> <a href="../ROOT.html">ROOT</a>::<a href="../ROOT__Math.html">Math</a>::<a href="../ROOT__Math__IGenFunction.html">IGenFunction</a> &amp; f, <span class="keyword">double</span> h = 0.001, <span class="keyword">bool</span> copyFunc = <span class="keyword">false</span>);
+
+   <span class="comment">/**
+      Copy constructor
+    */</span>
+<a name="if6r0E"></a>   <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a>(<span class="keyword">const</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a> &amp; rhs);
+
+   <span class="comment">/**
+      Assignment operator
+    */</span>
+<a name="EAOq4D"></a>   <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a> &amp; <span class="keyword">operator</span>= ( <span class="keyword">const</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:RichardsonDerivator" title="ROOT::Math::RichardsonDerivator ROOT::Math::RichardsonDerivator::RichardsonDerivator(double h=0.001) or overloads">RichardsonDerivator</a> &amp; rhs);
+
+
+   <span class="comment">/** Returns the estimate of the absolute <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Error" title="double ROOT::Math::RichardsonDerivator::Error()">Error</a> of the last derivative calculation. */</span>
+<a name="QXuRUD"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Error" title="double ROOT::Math::RichardsonDerivator::Error()">Error</a> () <span class="keyword">const</span> {  <span class="keyword">return</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fLastError" title="double ROOT::Math::RichardsonDerivator::fLastError">fLastError</a>; }
+
+
+   <span class="comment">/**
+      Returns the first derivative of the function at point x,
+      computed by Richardson's extrapolation method (use 2 derivative estimates
+      to compute a third, more accurate estimation)
+      first, derivatives with steps h and h/2 are computed by central difference formulas
+     Begin_Latex
+      D(h) = #frac{f(x+h) - f(x-h)}{2h}
+     End_Latex
+      the final estimate Begin_Latex D = #frac{4D(h/2) - D(h)}{3} End_Latex
+       <span class="string">"Numerical Methods for Scientists and Engineers"</span>, H.M.Antia, 2nd edition<span class="string">"</span>
+     
+      the argument eps may be specified to control the step size (precision).
+      the step size is taken as eps*(xmax-xmin).
+      the default value (0.001) should be good enough for the vast majority
+      of functions. Give a smaller value if your function has many changes
+      of the second derivative in the function range.
+     
+      Getting the error via <a href="../TF1.html">TF1</a>::<a href="../TF1.html#TF1:DerivativeError" title="Double_t TF1::DerivativeError()">DerivativeError</a>:
+        (total error = roundoff error + interpolation error)
+      the estimate of the roundoff error is taken as follows:
+     Begin_Latex
+         err = k#sqrt{f(x)^{2} + x^{2}deriv^{2}}#sqrt{#sum ai^{2}},
+     End_Latex
+      where k is the <a href="../ListOfTypes.html#double">double</a> precision, ai are coefficients used in
+      central difference formulas
+      interpolation error is decreased by making the step size h smaller.
+   */</span>
+<a name="mAt0XB"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative1" title="double ROOT::Math::RichardsonDerivator::Derivative1(double x) or overloads">Derivative1</a> (<span class="keyword">double</span> x);
+<a name="ZulAGB"></a>   <span class="keyword">double</span> <span class="keyword">operator</span>() (<span class="keyword">double</span> x) { <span class="keyword">return</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative1" title="double ROOT::Math::RichardsonDerivator::Derivative1(double x) or overloads">Derivative1</a>(x); }
+
+   <span class="comment">/**
+      First Derivative calculation passing function and step-size 
+    */</span>
+<a name="r7DcZC"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative1" title="double ROOT::Math::RichardsonDerivator::Derivative1(double x) or overloads">Derivative1</a>(<span class="keyword">const</span> IGenFunction &amp; f, <span class="keyword">double</span> x, <span class="keyword">double</span> h) { 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunction" title="const ROOT::Math::IGenFunction* ROOT::Math::RichardsonDerivator::fFunction">fFunction</a> = &amp;f; 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fStepSize" title="double ROOT::Math::RichardsonDerivator::fStepSize">fStepSize</a> = h; 
+      <span class="keyword">return</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative1" title="double ROOT::Math::RichardsonDerivator::Derivative1(double x) or overloads">Derivative1</a>(x);
+   }
+
+   <span class="comment">/**
+      Returns the second derivative of the function at point x,
+      computed by Richardson's extrapolation method (use 2 derivative estimates
+      to compute a third, more accurate estimation)
+      first, derivatives with steps h and h/2 are computed by central difference formulas
+     Begin_Latex
+         D(h) = #frac{f(x+h) - 2f(x) + f(x-h)}{h^{2}}
+     End_Latex
+      the final estimate Begin_Latex D = #frac{4D(h/2) - D(h)}{3} End_Latex
+       <span class="string">"Numerical Methods for Scientists and Engineers"</span>, H.M.Antia, 2nd edition<span class="string">"</span>
+     
+      the argument eps may be specified to control the step size (precision).
+      the step size is taken as eps*(xmax-xmin).
+      the default value (0.001) should be good enough for the vast majority
+      of functions. Give a smaller value if your function has many changes
+      of the second derivative in the function range.
+     
+      Getting the error via <a href="../TF1.html">TF1</a>::<a href="../TF1.html#TF1:DerivativeError" title="Double_t TF1::DerivativeError()">DerivativeError</a>:
+        (total error = roundoff error + interpolation error)
+      the estimate of the roundoff error is taken as follows:
+     Begin_Latex
+         err = k#sqrt{f(x)^{2} + x^{2}deriv^{2}}#sqrt{#sum ai^{2}},
+     End_Latex
+      where k is the <a href="../ListOfTypes.html#double">double</a> precision, ai are coefficients used in
+      central difference formulas
+      interpolation error is decreased by making the step size h smaller.
+   */</span>
+<a name="SZUNXB"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative2" title="double ROOT::Math::RichardsonDerivator::Derivative2(double x) or overloads">Derivative2</a> (<span class="keyword">double</span> x);
+
+   <span class="comment">/**
+      Second Derivative calculation passing function and step-size 
+    */</span>
+<a name="Oeh_2E"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative2" title="double ROOT::Math::RichardsonDerivator::Derivative2(double x) or overloads">Derivative2</a>(<span class="keyword">const</span> IGenFunction &amp; f, <span class="keyword">double</span> x, <span class="keyword">double</span> h) { 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunction" title="const ROOT::Math::IGenFunction* ROOT::Math::RichardsonDerivator::fFunction">fFunction</a> = &amp;f; 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fStepSize" title="double ROOT::Math::RichardsonDerivator::fStepSize">fStepSize</a> = h; 
+      <span class="keyword">return</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative2" title="double ROOT::Math::RichardsonDerivator::Derivative2(double x) or overloads">Derivative2</a>(x);
+   }
+
+   <span class="comment">/**
+      Returns the third derivative of the function at point x,
+      computed by Richardson's extrapolation method (use 2 derivative estimates
+      to compute a third, more accurate estimation)
+      first, derivatives with steps h and h/2 are computed by central difference formulas
+     Begin_Latex
+         D(h) = #frac{f(x+2h) - 2f(x+h) + 2f(x-h) - f(x-2h)}{2h^{3}}
+     End_Latex
+      the final estimate Begin_Latex D = #frac{4D(h/2) - D(h)}{3} End_Latex
+       <span class="string">"Numerical Methods for Scientists and Engineers"</span>, H.M.Antia, 2nd edition<span class="string">"</span>
+     
+      the argument eps may be specified to control the step size (precision).
+      the step size is taken as eps*(xmax-xmin).
+      the default value (0.001) should be good enough for the vast majority
+      of functions. Give a smaller value if your function has many changes
+      of the second derivative in the function range.
+     
+      Getting the error via <a href="../TF1.html">TF1</a>::<a href="../TF1.html#TF1:DerivativeError" title="Double_t TF1::DerivativeError()">DerivativeError</a>:
+        (total error = roundoff error + interpolation error)
+      the estimate of the roundoff error is taken as follows:
+     Begin_Latex
+         err = k#sqrt{f(x)^{2} + x^{2}deriv^{2}}#sqrt{#sum ai^{2}},
+     End_Latex
+      where k is the <a href="../ListOfTypes.html#double">double</a> precision, ai are coefficients used in
+      central difference formulas
+      interpolation error is decreased by making the step size h smaller.
+   */</span>
+<a name="yx7lWB"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative3" title="double ROOT::Math::RichardsonDerivator::Derivative3(double x) or overloads">Derivative3</a> (<span class="keyword">double</span> x);
+
+   <span class="comment">/**
+      Third Derivative calculation passing function and step-size 
+    */</span>
+<a name="q7DcZC"></a>   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative3" title="double ROOT::Math::RichardsonDerivator::Derivative3(double x) or overloads">Derivative3</a>(<span class="keyword">const</span> IGenFunction &amp; f, <span class="keyword">double</span> x, <span class="keyword">double</span> h) { 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunction" title="const ROOT::Math::IGenFunction* ROOT::Math::RichardsonDerivator::fFunction">fFunction</a> = &amp;f; 
+      <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fStepSize" title="double ROOT::Math::RichardsonDerivator::fStepSize">fStepSize</a> = h; 
+      <span class="keyword">return</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:Derivative3" title="double ROOT::Math::RichardsonDerivator::Derivative3(double x) or overloads">Derivative3</a>(x);
+   }
+
+   <span class="comment">/** Set function for derivative calculation (function is not copied in)
+
+       \@param f Function to be differentiated
+   */</span>
+<a name="xfWeRE"></a>   <span class="keyword">void</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:SetFunction" title="void ROOT::Math::RichardsonDerivator::SetFunction(const ROOT::Math::IGenFunction&amp; f)">SetFunction</a> (<span class="keyword">const</span> IGenFunction &amp; f) { <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunction" title="const ROOT::Math::IGenFunction* ROOT::Math::RichardsonDerivator::fFunction">fFunction</a> = &amp;f; }
+
+   <span class="comment">/** Set step size for derivative calculation
+
+       \@param h step size for calculation
+   */</span>
+<a name="WMBlFC"></a>   <span class="keyword">void</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:SetStepSize" title="void ROOT::Math::RichardsonDerivator::SetStepSize(double h)">SetStepSize</a> (<span class="keyword">double</span> h) { <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fStepSize" title="double ROOT::Math::RichardsonDerivator::fStepSize">fStepSize</a> = h; }
+
+<span class="keyword">protected</span>:
+
+   <span class="keyword">bool</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunctionCopied" title="bool ROOT::Math::RichardsonDerivator::fFunctionCopied">fFunctionCopied</a>;     <span class="comment">// flag to control if function is copied in the class</span>
+   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fStepSize" title="double ROOT::Math::RichardsonDerivator::fStepSize">fStepSize</a>;         <span class="comment">// step size used for derivative calculation</span>
+   <span class="keyword">double</span> <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fLastError" title="double ROOT::Math::RichardsonDerivator::fLastError">fLastError</a>;        <span class="comment">//  error estimate of last derivative calculation</span>
+   <span class="keyword">const</span> IGenFunction* <a href="../ROOT__Math__RichardsonDerivator.html#ROOT__Math__RichardsonDerivator:fFunction" title="const ROOT::Math::IGenFunction* ROOT::Math::RichardsonDerivator::fFunction">fFunction</a>;  <span class="comment">// pointer to function</span>
+
+};
+
+} <span class="comment">// end namespace Math</span>
+   
+} <span class="comment">// end namespace <a href="../ROOT.html">ROOT</a></span>
+
+<span class="cpp">#endif /* ROOT_Math_RichardsonDerivator */</span>
+
+</pre>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="87" href="#87" class="ln">87</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="88" href="#88" class="ln">88</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="89" href="#89" class="ln">89</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="90" href="#90" class="ln">90</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="91" href="#91" class="ln">91</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="92" href="#92" class="ln">92</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="93" href="#93" class="ln">93</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="94" href="#94" class="ln">94</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="95" href="#95" class="ln">95</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="96" href="#96" class="ln">96</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="97" href="#97" class="ln">97</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="98" href="#98" class="ln">98</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="99" href="#99" class="ln">99</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="100" href="#100" class="ln">100</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="101" href="#101" class="ln">101</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="102" href="#102" class="ln">102</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="103" href="#103" class="ln">103</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="104" href="#104" class="ln">104</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="105" href="#105" class="ln">105</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="106" href="#106" class="ln">106</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="107" href="#107" class="ln">107</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="108" href="#108" class="ln">108</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="109" href="#109" class="ln">109</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="110" href="#110" class="ln">110</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="111" href="#111" class="ln">111</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="112" href="#112" class="ln">112</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="113" href="#113" class="ln">113</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="114" href="#114" class="ln">114</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="115" href="#115" class="ln">115</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="116" href="#116" class="ln">116</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="117" href="#117" class="ln">117</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="118" href="#118" class="ln">118</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="119" href="#119" class="ln">119</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="120" href="#120" class="ln">120</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="121" href="#121" class="ln">121</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="122" href="#122" class="ln">122</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="123" href="#123" class="ln">123</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="124" href="#124" class="ln">124</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="125" href="#125" class="ln">125</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="126" href="#126" class="ln">126</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="127" href="#127" class="ln">127</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="128" href="#128" class="ln">128</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="129" href="#129" class="ln">129</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="130" href="#130" class="ln">130</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="131" href="#131" class="ln">131</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="132" href="#132" class="ln">132</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="133" href="#133" class="ln">133</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="134" href="#134" class="ln">134</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="135" href="#135" class="ln">135</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="136" href="#136" class="ln">136</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="137" href="#137" class="ln">137</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="138" href="#138" class="ln">138</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="139" href="#139" class="ln">139</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="140" href="#140" class="ln">140</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="141" href="#141" class="ln">141</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="142" href="#142" class="ln">142</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="143" href="#143" class="ln">143</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="144" href="#144" class="ln">144</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="145" href="#145" class="ln">145</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="146" href="#146" class="ln">146</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="147" href="#147" class="ln">147</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="148" href="#148" class="ln">148</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="149" href="#149" class="ln">149</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="150" href="#150" class="ln">150</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="151" href="#151" class="ln">151</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="152" href="#152" class="ln">152</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="153" href="#153" class="ln">153</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="154" href="#154" class="ln">154</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="155" href="#155" class="ln">155</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="156" href="#156" class="ln">156</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="157" href="#157" class="ln">157</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="158" href="#158" class="ln">158</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="159" href="#159" class="ln">159</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="160" href="#160" class="ln">160</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="161" href="#161" class="ln">161</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="162" href="#162" class="ln">162</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="163" href="#163" class="ln">163</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="164" href="#164" class="ln">164</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="165" href="#165" class="ln">165</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="166" href="#166" class="ln">166</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="167" href="#167" class="ln">167</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="168" href="#168" class="ln">168</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="169" href="#169" class="ln">169</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="170" href="#170" class="ln">170</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="171" href="#171" class="ln">171</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="172" href="#172" class="ln">172</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="173" href="#173" class="ln">173</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="174" href="#174" class="ln">174</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="175" href="#175" class="ln">175</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="176" href="#176" class="ln">176</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="177" href="#177" class="ln">177</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="178" href="#178" class="ln">178</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="179" href="#179" class="ln">179</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="180" href="#180" class="ln">180</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="181" href="#181" class="ln">181</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="182" href="#182" class="ln">182</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="183" href="#183" class="ln">183</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="184" href="#184" class="ln">184</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="185" href="#185" class="ln">185</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="186" href="#186" class="ln">186</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="187" href="#187" class="ln">187</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="188" href="#188" class="ln">188</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="189" href="#189" class="ln">189</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="190" href="#190" class="ln">190</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="191" href="#191" class="ln">191</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="192" href="#192" class="ln">192</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="193" href="#193" class="ln">193</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="194" href="#194" class="ln">194</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="195" href="#195" class="ln">195</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="196" href="#196" class="ln">196</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="197" href="#197" class="ln">197</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="198" href="#198" class="ln">198</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="199" href="#199" class="ln">199</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="200" href="#200" class="ln">200</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="201" href="#201" class="ln">201</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="202" href="#202" class="ln">202</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="203" href="#203" class="ln">203</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="204" href="#204" class="ln">204</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="205" href="#205" class="ln">205</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="206" href="#206" class="ln">206</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="207" href="#207" class="ln">207</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="208" href="#208" class="ln">208</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="209" href="#209" class="ln">209</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="210" href="#210" class="ln">210</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="211" href="#211" class="ln">211</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="212" href="#212" class="ln">212</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="213" href="#213" class="ln">213</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="214" href="#214" class="ln">214</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="215" href="#215" class="ln">215</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="216" href="#216" class="ln">216</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="217" href="#217" class="ln">217</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="218" href="#218" class="ln">218</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="219" href="#219" class="ln">219</a></div><div class="ln">&nbsp;<span class="lnfile">RichardsonDerivator.h:</span><a name="220" href="#220" class="ln">220</a></div></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-11-03 20:05 </em><em>&raquo; Last generated: 2011-11-03 20:05</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

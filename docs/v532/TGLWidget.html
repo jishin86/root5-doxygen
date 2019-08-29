@@ -1,0 +1,693 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:15:07 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGLWidget</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGLWidget','libRGL','TGLWidget.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGLWidget.h.html">header file</a>
+<a class="descrheadentry" href="src/TGLWidget.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/gl/inc/TGLWidget.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/gl/src/TGLWidget.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGLWidget:description">class description</a> 
+<a class="descrheadentry" href="#TGLWidget:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGLWidget:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGLWidget:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_Index.html">GRAF3D</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_GL_Index.html">GL</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGLWidget</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGLWidget:description"></a>class TGLWidget: public <a href="./TGFrame.html">TGFrame</a>, public <a href="./TGLPaintDevice.html">TGLPaintDevice</a></h1>
+<div class="classdescr">
+<pre>
+
+ GL window with context. _Must_ _have_ a parent window
+ (the 'parent' parameter of ctors). The current version inherits
+ <a href="./TGCanvas.html">TGCanvas</a> (I'm not sure about future versions), probably, in future
+ multiple inheritance will be added - the second
+ base class will be <a href="./TGLPaintDevice.html">TGLPaintDevice</a> or something like this.
+
+ Usage:
+ - Simply create <a href="./TGLWidget.html">TGLWidget</a> as an embedded widget, and
+   connect your slots to signals you need: <a href="./TGWindow.html#TGWindow:HandleExpose" title="Bool_t TGWindow::HandleExpose(Event_t* event)">HandleExpose</a>, <a href="./TGLWidget.html#TGLWidget:HandleConfigureNotify" title="Bool_t TGLWidget::HandleConfigureNotify(Event_t* ev)">HandleConfigureNotify</a>, etc.
+   In your slots you can use gl API directly - under Win32 <a href="./TGLWidget.html">TGLWidget</a> switches
+   between threads internally (look <a href="./TGLPShapeObjEditor.html">TGLPShapeObjEditor</a> for such usage).
+ - You can write your own class, derived from <a href="./TGLWidget.html">TGLWidget</a>, with <a href="./TGLWidget.html#TGLWidget:PaintGL" title="void TGLWidget::PaintGL()">PaintGL</a> and <a href="./TGLWidget.html#TGLWidget:InitGL" title="void TGLWidget::InitGL()">InitGL</a>
+   overriden.
+
+ Resources (and invariants):
+ -fContainer (TGLWidgetContainer) - controlled by std::auto_ptr
+ -<a href="./TGLWidget.html#TGLWidget:fWindowIndex" title="Int_t TGLWidget::fWindowIndex">fWindowIndex</a> - controlled manually (see CreateWidget and dtor)
+ -<a href="./TGLWidget.html#TGLWidget:fGLContext" title="TGLContext* TGLWidget::fGLContext">fGLContext</a> - controlled manually (see CreateWidget and dtor)
+ -visual info for X11 version, controlled manually (see CreateGLContainer and dtor)
+
+ Exceptions:
+ -can be thrown only during construction.
+ -under win32 class does not throw itself (but some internal operations can throw)
+ -under X11 can throw std::runtime_error (from CreateGLContext).
+ -In case of exceptions resources will be freed.
+
+ <a href="./TGLWidget.html">TGLWidget</a> object is immutable as far as it was created.
+
+ Boolean parameter defines, if you want to grab user's input or not.
+ By default you want, but for example when not - see <a href="./TGLPShapeObjEditor.html">TGLPShapeObjEditor</a>.
+
+ Non-copyable.
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGLWidget:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGLWidget:_TGLWidget">~TGLWidget</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Activate"><span class="baseclass">TGFrame::</span>Activate</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:AddInput"><span class="baseclass">TGFrame::</span>AddInput</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> emask)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreAllSignalsBlocked"><span class="baseclass">TQObject::</span>AreAllSignalsBlocked</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:AreSignalsBlocked"><span class="baseclass">TQObject::</span>AreSignalsBlocked</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockAllSignals"><span class="baseclass">TQObject::</span>BlockAllSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:BlockSignals"><span class="baseclass">TQObject::</span>BlockSignals</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ChangeBackground"><span class="baseclass">TGFrame::</span>ChangeBackground</a>(<a href="./ListOfTypes.html#Pixel_t">Pixel_t</a> back)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ChangedBy"><span class="baseclass">TQObject::</span>ChangedBy</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ChangeOptions"><span class="baseclass">TGFrame::</span>ChangeOptions</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> options)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:ClearCurrent">ClearCurrent</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CollectClassSignalLists"><span class="baseclass">TQObject::</span>CollectClassSignalLists</a>(<a href="./TList.html">TList</a>&amp; list, <a href="./TClass.html">TClass</a>* cls)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%1"><span class="baseclass">TQObject::</span>Connect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connect%2"><span class="baseclass">TQObject::</span>Connect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Connected"><span class="baseclass">TQObject::</span>Connected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Contains"><span class="baseclass">TGFrame::</span>Contains</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TGLWidget.html">TGLWidget</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:Create">Create</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> shareDefault, <span class="keyword">const</span> <a href="./TGLPaintDevice.html">TGLPaintDevice</a>* shareDevice, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TGLWidget.html">TGLWidget</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:Create%1">Create</a>(<span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a>&amp; format, <span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> shareDefault, <span class="keyword">const</span> <a href="./TGLPaintDevice.html">TGLPaintDevice</a>* shareDevice, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TGLWidget.html">TGLWidget</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:CreateDummy">CreateDummy</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Delete"><span class="baseclass">TGFrame::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:DeleteWindow"><span class="baseclass">TGFrame::</span>DeleteWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Destroyed"><span class="baseclass">TQObject::</span>Destroyed</a>()<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:DestroySubwindows"><span class="baseclass">TGWindow::</span>DestroySubwindows</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:DestroyWindow"><span class="baseclass">TGWindow::</span>DestroyWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%1"><span class="baseclass">TQObject::</span>Disconnect</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal = 0, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnect%2"><span class="baseclass">TQObject::</span>Disconnect</a>(<span class="keyword">const</span> <span class="keyword">char</span>* class_name, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">void</span>* receiver = 0, <span class="keyword">const</span> <span class="keyword">char</span>* slot = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Disconnected"><span class="baseclass">TQObject::</span>Disconnected</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:DoRedraw">DoRedraw</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:DrawBorder"><span class="baseclass">TGFrame::</span>DrawBorder</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:DrawClass"><span class="baseclass">TGFrame::</span>DrawClass</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:DrawClone"><span class="baseclass">TGFrame::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:DrawCopy"><span class="baseclass">TGFrame::</span>DrawCopy</a>(<a href="./ListOfTypes.html#Handle_t">Handle_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Dump"><span class="baseclass">TGFrame::</span>Dump</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%1"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a>* paramArr)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%2"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <span class="keyword">const</span> <span class="keyword">char</span>* params)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%3"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Double_t">Double_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%4"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long_t">Long_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%5"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%6"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%7"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Char_t">Char_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%8"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UChar_t">UChar_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%9"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Short_t">Short_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%10"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UShort_t">UShort_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%11"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%12"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%13"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong_t">ULong_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%14"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Emit%15"><span class="baseclass">TQObject::</span>Emit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Float_t">Float_t</a> param)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:EmitVA%1"><span class="baseclass">TQObject::</span>EmitVA</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs, va_list va)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:ExtractViewport">ExtractViewport</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* vp) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetBackground"><span class="baseclass">TGFrame::</span>GetBackground</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetBckgndGC"><span class="baseclass">TGFrame::</span>GetBckgndGC</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetBlackGC"><span class="baseclass">TGFrame::</span>GetBlackGC</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetBlackPixel"><span class="baseclass">TGFrame::</span>GetBlackPixel</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetBorderWidth"><span class="baseclass">TGFrame::</span>GetBorderWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TGClient.html">TGClient</a>*</td><td class="funcname"><a class="funcname" href="./TGObject.html#TGObject:GetClient"><span class="baseclass">TGObject::</span>GetClient</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TGLContext.html">TGLContext</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:GetContext">GetContext</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:GetCounter"><span class="baseclass">TGWindow::</span>GetCounter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDefaultFrameBackground"><span class="baseclass">TGFrame::</span>GetDefaultFrameBackground</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDefaultHeight"><span class="baseclass">TGFrame::</span>GetDefaultHeight</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDefaultSelectedBackground"><span class="baseclass">TGFrame::</span>GetDefaultSelectedBackground</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TGDimension.html">TGDimension</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDefaultSize"><span class="baseclass">TGFrame::</span>GetDefaultSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDefaultWidth"><span class="baseclass">TGFrame::</span>GetDefaultWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TDNDData.html">TDNDData</a>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDNDData"><span class="baseclass">TGFrame::</span>GetDNDData</a>(<a href="./ListOfTypes.html#Atom_t">Atom_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDragType"><span class="baseclass">TGFrame::</span>GetDragType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetDropType"><span class="baseclass">TGFrame::</span>GetDropType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:GetEditDisabled"><span class="baseclass">TGWindow::</span>GetEditDisabled</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGEventHandler.html">TGEventHandler</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:GetEventHandler">GetEventHandler</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetEventMask"><span class="baseclass">TGFrame::</span>GetEventMask</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetForeground"><span class="baseclass">TGFrame::</span>GetForeground</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TGFrameElement.html">TGFrameElement</a>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetFrameElement"><span class="baseclass">TGFrame::</span>GetFrameElement</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TGFrame.html">TGFrame</a>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetFrameFromPoint"><span class="baseclass">TGFrame::</span>GetFrameFromPoint</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetHeight"><span class="baseclass">TGFrame::</span>GetHeight</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetHilightGC"><span class="baseclass">TGFrame::</span>GetHilightGC</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Handle_t">Handle_t</a></td><td class="funcname"><a class="funcname" href="./TGObject.html#TGObject:GetId"><span class="baseclass">TGObject::</span>GetId</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfClassSignals"><span class="baseclass">TQObject::</span>GetListOfClassSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfConnections"><span class="baseclass">TQObject::</span>GetListOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetListOfSignals"><span class="baseclass">TQObject::</span>GetListOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>*</td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:GetMainFrame"><span class="baseclass">TGWindow::</span>GetMainFrame</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetMaxHeight"><span class="baseclass">TGFrame::</span>GetMaxHeight</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetMaxWidth"><span class="baseclass">TGFrame::</span>GetMaxWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetMinHeight"><span class="baseclass">TGFrame::</span>GetMinHeight</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetMinWidth"><span class="baseclass">TGFrame::</span>GetMinWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:GetName"><span class="baseclass">TGWindow::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetOptions"><span class="baseclass">TGFrame::</span>GetOptions</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>*</td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:GetParent"><span class="baseclass">TGWindow::</span>GetParent</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:GetPixelFormat">GetPixelFormat</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetShadowGC"><span class="baseclass">TGFrame::</span>GetShadowGC</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TGDimension.html">TGDimension</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetSize"><span class="baseclass">TGFrame::</span>GetSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetWhiteGC"><span class="baseclass">TGFrame::</span>GetWhiteGC</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetWhitePixel"><span class="baseclass">TGFrame::</span>GetWhitePixel</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetWidth"><span class="baseclass">TGFrame::</span>GetWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetX"><span class="baseclass">TGFrame::</span>GetX</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetY"><span class="baseclass">TGFrame::</span>GetY</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleButton">HandleButton</a>(<a href="./Event_t.html">Event_t</a>* ev)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleClientMessage"><span class="baseclass">TGFrame::</span>HandleClientMessage</a>(<a href="./Event_t.html">Event_t</a>* event)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleColormapChange"><span class="baseclass">TGFrame::</span>HandleColormapChange</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleConfigureNotify">HandleConfigureNotify</a>(<a href="./Event_t.html">Event_t</a>* ev)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleCrossing">HandleCrossing</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDNDDrop"><span class="baseclass">TGFrame::</span>HandleDNDDrop</a>(<a href="./TDNDData.html">TDNDData</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Atom_t">Atom_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDNDEnter"><span class="baseclass">TGFrame::</span>HandleDNDEnter</a>(<a href="./ListOfTypes.html#Atom_t">Atom_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDNDFinished"><span class="baseclass">TGFrame::</span>HandleDNDFinished</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDNDLeave"><span class="baseclass">TGFrame::</span>HandleDNDLeave</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Atom_t">Atom_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDNDPosition"><span class="baseclass">TGFrame::</span>HandleDNDPosition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Atom_t">Atom_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleDoubleClick">HandleDoubleClick</a>(<a href="./Event_t.html">Event_t</a>* ev)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDragDrop"><span class="baseclass">TGFrame::</span>HandleDragDrop</a>(<a href="./TGFrame.html">TGFrame</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./TGLayoutHints.html">TGLayoutHints</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDragEnter"><span class="baseclass">TGFrame::</span>HandleDragEnter</a>(<a href="./TGFrame.html">TGFrame</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDragLeave"><span class="baseclass">TGFrame::</span>HandleDragLeave</a>(<a href="./TGFrame.html">TGFrame</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleDragMotion"><span class="baseclass">TGFrame::</span>HandleDragMotion</a>(<a href="./TGFrame.html">TGFrame</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleEvent"><span class="baseclass">TGFrame::</span>HandleEvent</a>(<a href="./Event_t.html">Event_t</a>* event)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:HandleExpose"><span class="baseclass">TGWindow::</span>HandleExpose</a>(<a href="./Event_t.html">Event_t</a>* event)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleFocusChange">HandleFocusChange</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:HandleIdleEvent"><span class="baseclass">TGWindow::</span>HandleIdleEvent</a>(<a href="./TGIdleHandler.html">TGIdleHandler</a>*)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleKey">HandleKey</a>(<a href="./Event_t.html">Event_t</a>* ev)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:HandleMotion">HandleMotion</a>(<a href="./Event_t.html">Event_t</a>* ev)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleSelection"><span class="baseclass">TGFrame::</span>HandleSelection</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleSelectionClear"><span class="baseclass">TGFrame::</span>HandleSelectionClear</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:HandleSelectionRequest"><span class="baseclass">TGFrame::</span>HandleSelectionRequest</a>(<a href="./Event_t.html">Event_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:HandleTimer"><span class="baseclass">TGWindow::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HasConnection"><span class="baseclass">TQObject::</span>HasConnection</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TGObject.html#TGObject:Hash"><span class="baseclass">TGObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:HighPriority"><span class="baseclass">TQObject::</span>HighPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:IconifyWindow"><span class="baseclass">TGWindow::</span>IconifyWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:InitGL">InitGL</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Inspect"><span class="baseclass">TGFrame::</span>Inspect</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGLWidget:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsActive"><span class="baseclass">TGFrame::</span>IsActive</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsComposite"><span class="baseclass">TGFrame::</span>IsComposite</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsDNDSource"><span class="baseclass">TGFrame::</span>IsDNDSource</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsDNDTarget"><span class="baseclass">TGFrame::</span>IsDNDTarget</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsEditable"><span class="baseclass">TGFrame::</span>IsEditable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGObject.html#TGObject:IsEqual"><span class="baseclass">TGObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:IsLayoutBroken"><span class="baseclass">TGFrame::</span>IsLayoutBroken</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:IsMapped"><span class="baseclass">TGWindow::</span>IsMapped</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:IsMapSubwindows"><span class="baseclass">TGWindow::</span>IsMapSubwindows</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Layout"><span class="baseclass">TGFrame::</span>Layout</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LoadRQ_OBJECT"><span class="baseclass">TQObject::</span>LoadRQ_OBJECT</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:LowerWindow"><span class="baseclass">TGWindow::</span>LowerWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:LowPriority"><span class="baseclass">TQObject::</span>LowPriority</a>(<span class="keyword">const</span> <span class="keyword">char</span>* signal_name, <span class="keyword">const</span> <span class="keyword">char</span>* slot_name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:MakeCurrent">MakeCurrent</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:MapRaised"><span class="baseclass">TGFrame::</span>MapRaised</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:MapSubwindows"><span class="baseclass">TGFrame::</span>MapSubwindows</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:MapWindow"><span class="baseclass">TGFrame::</span>MapWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:Message"><span class="baseclass">TQObject::</span>Message</a>(<span class="keyword">const</span> <span class="keyword">char</span>* msg)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Move"><span class="baseclass">TGFrame::</span>Move</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:MoveResize"><span class="baseclass">TGFrame::</span>MoveResize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> w = 0, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> h = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:MustCleanup"><span class="baseclass">TGWindow::</span>MustCleanup</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfConnections"><span class="baseclass">TQObject::</span>NumberOfConnections</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:NumberOfSignals"><span class="baseclass">TQObject::</span>NumberOfSignals</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:PaintGL">PaintGL</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Print"><span class="baseclass">TGFrame::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ProcessedConfigure"><span class="baseclass">TGFrame::</span>ProcessedConfigure</a>(<a href="./Event_t.html">Event_t</a>* event)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ProcessedEvent"><span class="baseclass">TGFrame::</span>ProcessedEvent</a>(<a href="./Event_t.html">Event_t</a>* event)<span class="funcprop"><abbr title="emits a signal">SIGNAL</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ProcessMessage"><span class="baseclass">TGFrame::</span>ProcessMessage</a>(<a href="./ListOfTypes.html#Long_t">Long_t</a>, <a href="./ListOfTypes.html#Long_t">Long_t</a>, <a href="./ListOfTypes.html#Long_t">Long_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:RaiseWindow"><span class="baseclass">TGWindow::</span>RaiseWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ReallyDelete"><span class="baseclass">TGFrame::</span>ReallyDelete</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:RemoveInput"><span class="baseclass">TGFrame::</span>RemoveInput</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> emask)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:ReparentWindow"><span class="baseclass">TGFrame::</span>ReparentWindow</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* p, <a href="./ListOfTypes.html#Int_t">Int_t</a> x = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> y = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:RequestFocus"><span class="baseclass">TGWindow::</span>RequestFocus</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Resize%1"><span class="baseclass">TGFrame::</span>Resize</a>(<a href="./TGDimension.html">TGDimension</a> size)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Resize"><span class="baseclass">TGFrame::</span>Resize</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> w = 0, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> h = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGObject.html#TGObject:SaveAs"><span class="baseclass">TGObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SavePrimitive"><span class="baseclass">TGFrame::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SaveUserColor"><span class="baseclass">TGFrame::</span>SaveUserColor</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SendMessage"><span class="baseclass">TGFrame::</span>SendMessage</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* w, <a href="./ListOfTypes.html#Long_t">Long_t</a> msg, <a href="./ListOfTypes.html#Long_t">Long_t</a> parm1, <a href="./ListOfTypes.html#Long_t">Long_t</a> parm2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetBackgroundColor"><span class="baseclass">TGFrame::</span>SetBackgroundColor</a>(<a href="./ListOfTypes.html#Pixel_t">Pixel_t</a> back)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:SetBackgroundPixmap"><span class="baseclass">TGWindow::</span>SetBackgroundPixmap</a>(<a href="./ListOfTypes.html#Pixmap_t">Pixmap_t</a> pixmap)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetCleanup"><span class="baseclass">TGFrame::</span>SetCleanup</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> = kLocalCleanup)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetDNDSource"><span class="baseclass">TGFrame::</span>SetDNDSource</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> onoff)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetDNDTarget"><span class="baseclass">TGFrame::</span>SetDNDTarget</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> onoff)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetDragType"><span class="baseclass">TGFrame::</span>SetDragType</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> type)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetDrawOption"><span class="baseclass">TGFrame::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetDropType"><span class="baseclass">TGFrame::</span>SetDropType</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> type)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetEditable"><span class="baseclass">TGFrame::</span>SetEditable</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:SetEditDisabled"><span class="baseclass">TGWindow::</span>SetEditDisabled</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> on = kEditDisable)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:SetEventHandler">SetEventHandler</a>(<a href="./TGEventHandler.html">TGEventHandler</a>* eh)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetForegroundColor"><span class="baseclass">TGFrame::</span>SetForegroundColor</a>(<a href="./ListOfTypes.html#Pixel_t">Pixel_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:SetFormat">SetFormat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetFrameElement"><span class="baseclass">TGFrame::</span>SetFrameElement</a>(<a href="./TGFrameElement.html">TGFrameElement</a>* fe)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetHeight"><span class="baseclass">TGFrame::</span>SetHeight</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> h)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetLayoutBroken"><span class="baseclass">TGFrame::</span>SetLayoutBroken</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:SetMapSubwindows"><span class="baseclass">TGWindow::</span>SetMapSubwindows</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetMaxHeight"><span class="baseclass">TGFrame::</span>SetMaxHeight</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> h)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetMaxWidth"><span class="baseclass">TGFrame::</span>SetMaxWidth</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> w)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetMinHeight"><span class="baseclass">TGFrame::</span>SetMinHeight</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> h)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetMinWidth"><span class="baseclass">TGFrame::</span>SetMinWidth</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> w)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:SetName"><span class="baseclass">TGWindow::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetSize"><span class="baseclass">TGFrame::</span>SetSize</a>(<span class="keyword">const</span> <a href="./TGDimension.html">TGDimension</a>&amp; s)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetWidth"><span class="baseclass">TGFrame::</span>SetWidth</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> w)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGWindow.html#TGWindow:SetWindowName"><span class="baseclass">TGWindow::</span>SetWindowName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetX"><span class="baseclass">TGFrame::</span>SetX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> x)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:SetY"><span class="baseclass">TGFrame::</span>SetY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> y)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:SwapBuffers">SwapBuffers</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:UnmapWindow"><span class="baseclass">TGFrame::</span>UnmapWindow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGLWidget:TGLWidget%1">TGLWidget</a>(<a href="./ListOfTypes.html#Window_t">Window_t</a> glw, <span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:AddContext">AddContext</a>(<a href="./TGLContext.html">TGLContext</a>* ctx)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:CheckConnectArgs"><span class="baseclass">TQObject::</span>CheckConnectArgs</a>(<a href="./TQObject.html">TQObject</a>* sender, <a href="./TClass.html">TClass</a>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<a href="./TQObject.html">TQObject</a>* sender, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:ConnectToClass%1"><span class="baseclass">TQObject::</span>ConnectToClass</a>(<span class="keyword">const</span> <span class="keyword">char</span>* sender_class, <span class="keyword">const</span> <span class="keyword">char</span>* signal, <a href="./TClass.html">TClass</a>* receiver_class, <span class="keyword">void</span>* receiver, <span class="keyword">const</span> <span class="keyword">char</span>* slot)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Window_t">Window_t</a></td><td class="funcname"><a class="funcname" href="#TGLWidget:CreateWindow">CreateWindow</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a>&amp; format, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height, pair&lt;<span class="keyword">void</span>*,<span class="keyword">void</span>*&gt;&amp; innerData)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:Draw3dRectangle"><span class="baseclass">TGFrame::</span>Draw3dRectangle</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> type, <a href="./ListOfTypes.html#Int_t">Int_t</a> x, <a href="./ListOfTypes.html#Int_t">Int_t</a> y, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> w, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> h)</td></tr>
+<tr class="func"><td class="funcret">pair&lt;<span class="keyword">void</span>*,<span class="keyword">void</span>*&gt;</td><td class="funcname"><a class="funcname" href="#TGLWidget:GetInnerData">GetInnerData</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Time_t">Time_t</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetLastClick"><span class="baseclass">TGFrame::</span>GetLastClick</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetOptionString"><span class="baseclass">TGFrame::</span>GetOptionString</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <a href="./TGResourcePool.html">TGResourcePool</a>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetResourcePool"><span class="baseclass">TGFrame::</span>GetResourcePool</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:GetSender"><span class="baseclass">TGFrame::</span>GetSender</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TQObject.html#TQObject:GetSenderClassName"><span class="baseclass">TQObject::</span>GetSenderClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGLWidget:RemoveContext">RemoveContext</a>(<a href="./TGLContext.html">TGLContext</a>* ctx)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGFrame.html#TGFrame:StartGuiBuilding"><span class="baseclass">TGFrame::</span>StartGuiBuilding</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> on = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGLWidget:TGLWidget">TGLWidget</a>(<span class="keyword">const</span> <a href="./TGLWidget.html">TGLWidget</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGLWidget.html">TGLWidget</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGLWidget:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGLWidget.html">TGLWidget</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGLWidget:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGFrame::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TGFrame.html#TGFrame:kDeleteWindowCalled">kDeleteWindowCalled</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGWindow::</span>EEditMode { </td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditEnable">kEditEnable</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisable">kEditDisable</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableEvents">kEditDisableEvents</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableGrab">kEditDisableGrab</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableLayout">kEditDisableLayout</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableResize">kEditDisableResize</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableHeight">kEditDisableHeight</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableWidth">kEditDisableWidth</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableBtnEnable">kEditDisableBtnEnable</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGWindow.html#TGWindow:kEditDisableKeyEnable">kEditDisableKeyEnable</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fBackground"><span class="baseclass">TGFrame::</span>fBackground</a></td><td class="datadesc">frame background color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fBorderWidth"><span class="baseclass">TGFrame::</span>fBorderWidth</a></td><td class="datadesc">frame border width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TGClient.html">TGClient</a>*</td><td class="dataname"><a href="./TGObject.html#TGObject:fClient"><span class="baseclass">TGObject::</span>fClient</a></td><td class="datadesc">Connection to display server</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fDNDState"><span class="baseclass">TGFrame::</span>fDNDState</a></td><td class="datadesc">EDNDFlags</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGWindow.html#TGWindow:fEditDisabled"><span class="baseclass">TGWindow::</span>fEditDisabled</a></td><td class="datadesc">flags used for "guibuilding"</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fEventMask"><span class="baseclass">TGFrame::</span>fEventMask</a></td><td class="datadesc">currenty active event mask</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TGFrameElement.html">TGFrameElement</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fFE"><span class="baseclass">TGFrame::</span>fFE</a></td><td class="datadesc">pointer to frame element</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fHeight"><span class="baseclass">TGFrame::</span>fHeight</a></td><td class="datadesc">frame height</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Handle_t">Handle_t</a></td><td class="dataname"><a href="./TGObject.html#TGObject:fId"><span class="baseclass">TGObject::</span>fId</a></td><td class="datadesc">X11/Win32 Window identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfConnections"><span class="baseclass">TQObject::</span>fListOfConnections</a></td><td class="datadesc">! list of connections to this object</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TQObject.html#TQObject:fListOfSignals"><span class="baseclass">TQObject::</span>fListOfSignals</a></td><td class="datadesc">! list of signals from this object</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fMaxHeight"><span class="baseclass">TGFrame::</span>fMaxHeight</a></td><td class="datadesc">maximal frame height</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fMaxWidth"><span class="baseclass">TGFrame::</span>fMaxWidth</a></td><td class="datadesc">maximal frame width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fMinHeight"><span class="baseclass">TGFrame::</span>fMinHeight</a></td><td class="datadesc">minimal frame height</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fMinWidth"><span class="baseclass">TGFrame::</span>fMinWidth</a></td><td class="datadesc">minimal frame width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TGWindow.html#TGWindow:fName"><span class="baseclass">TGWindow::</span>fName</a></td><td class="datadesc">name of the window used in SavePrimitive()</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TGWindow.html#TGWindow:fNeedRedraw"><span class="baseclass">TGWindow::</span>fNeedRedraw</a></td><td class="datadesc">kTRUE if window needs to be redrawn</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fOptions"><span class="baseclass">TGFrame::</span>fOptions</a></td><td class="datadesc">frame options</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>*</td><td class="dataname"><a href="./TGWindow.html#TGWindow:fParent"><span class="baseclass">TGWindow::</span>fParent</a></td><td class="datadesc">Parent window</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fSignalsBlocked"><span class="baseclass">TQObject::</span>fSignalsBlocked</a></td><td class="datadesc">! flag used for suppression of signals</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fWidth"><span class="baseclass">TGFrame::</span>fWidth</a></td><td class="datadesc">frame width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fX"><span class="baseclass">TGFrame::</span>fX</a></td><td class="datadesc">frame x position</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fY"><span class="baseclass">TGFrame::</span>fY</a></td><td class="datadesc">frame y position</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TQObject.html#TQObject:fgAllSignalsBlocked"><span class="baseclass">TQObject::</span>fgAllSignalsBlocked</a></td><td class="datadesc">flag used for suppression of all signals</td></tr>
+<tr class="datainh"><td class="datatype">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgBckgndGC"><span class="baseclass">TGFrame::</span>fgBckgndGC</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgBlackGC"><span class="baseclass">TGFrame::</span>fgBlackGC</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgBlackPixel"><span class="baseclass">TGFrame::</span>fgBlackPixel</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGWindow.html#TGWindow:fgCounter"><span class="baseclass">TGWindow::</span>fgCounter</a></td><td class="datadesc">counter of created windows in SavePrimitive</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Window_t">Window_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgDbw"><span class="baseclass">TGFrame::</span>fgDbw</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgDbx"><span class="baseclass">TGFrame::</span>fgDbx</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgDby"><span class="baseclass">TGFrame::</span>fgDby</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgDefaultFrameBackground"><span class="baseclass">TGFrame::</span>fgDefaultFrameBackground</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgDefaultSelectedBackground"><span class="baseclass">TGFrame::</span>fgDefaultSelectedBackground</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgHilightGC"><span class="baseclass">TGFrame::</span>fgHilightGC</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgInit"><span class="baseclass">TGFrame::</span>fgInit</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgLastButton"><span class="baseclass">TGFrame::</span>fgLastButton</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Time_t">Time_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgLastClick"><span class="baseclass">TGFrame::</span>fgLastClick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgShadowGC"><span class="baseclass">TGFrame::</span>fgShadowGC</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgUserColor"><span class="baseclass">TGFrame::</span>fgUserColor</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <span class="keyword">const</span> <a href="./TGGC.html">TGGC</a>*</td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgWhiteGC"><span class="baseclass">TGFrame::</span>fgWhiteGC</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Pixel_t">Pixel_t</a></td><td class="dataname"><a href="./TGFrame.html#TGFrame:fgWhitePixel"><span class="baseclass">TGFrame::</span>fgWhitePixel</a></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TGEventHandler.html">TGEventHandler</a>*</td><td class="dataname"><a name="TGLWidget:fEventHandler"></a>fEventHandler</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TGLWidget:fFromInit"></a>fFromInit</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TGLContext.html">TGLContext</a>*</td><td class="dataname"><a name="TGLWidget:fGLContext"></a>fGLContext</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TGLFormat.html">TGLFormat</a></td><td class="dataname"><a name="TGLWidget:fGLFormat"></a>fGLFormat</td><td></td></tr>
+<tr class="data"><td class="datatype">pair&lt;<span class="keyword">void</span>*,<span class="keyword">void</span>*&gt;</td><td class="dataname"><a name="TGLWidget:fInnerData"></a>fInnerData</td><td></td></tr>
+<tr class="data"><td class="datatype">set&lt;<a href="./TGLContext.html">TGLContext</a>*&gt;</td><td class="dataname"><a name="TGLWidget:fValidContexts"></a>fValidContexts</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGLWidget:fWindowIndex"></a>fWindowIndex</td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGLWidget:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGLWidget_Inh" id="MapTGLWidget_Inh">
+<area shape="rect" href="./TGFrame.html" title="TGFrame" alt="" coords="502,13,567,30"/>
+<area shape="rect" href="./TGLPaintDevice.html" title="TGLPaintDevice" alt="" coords="477,33,591,50"/>
+<area shape="rect" href="./TGWindow.html" title="TGWindow" alt="" coords="330,3,408,20"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="335,23,403,40"/>
+<area shape="rect" href="./TGObject.html" title="TGObject" alt="" coords="178,3,245,20"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="26,3,82,20"/>
+</map>
+<map name="MapTGLWidget_InhMem" id="MapTGLWidget_InhMem">
+<area shape="rect" href="./TGFrame.html" alt="" coords="1176,60,1264,241"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="1077,60,1165,256"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="979,60,1067,256"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="1208,252,1232,287"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="1176,297,1264,973"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="1077,297,1165,973"/>
+<area shape="rect" href="./TGFrame.html" alt="" coords="979,297,1067,973"/>
+<area shape="rect" href="./TGFrame.html" title="TGFrame" alt="" coords="968,16,1275,984"/>
+<area shape="rect" href="./TGLPaintDevice.html" alt="" coords="1011,1039,1264,1088"/>
+<area shape="rect" href="./TGLPaintDevice.html" alt="" coords="1176,1099,1264,1232"/>
+<area shape="rect" href="./TGLPaintDevice.html" alt="" coords="1077,1099,1165,1232"/>
+<area shape="rect" href="./TGLPaintDevice.html" alt="" coords="979,1099,1067,1232"/>
+<area shape="rect" href="./TGLPaintDevice.html" title="TGLPaintDevice" alt="" coords="968,995,1275,1243"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="859,60,947,153"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="760,60,848,183"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="661,60,749,183"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="891,164,915,199"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="859,209,947,489"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="760,209,848,489"/>
+<area shape="rect" href="./TGWindow.html" alt="" coords="661,209,749,489"/>
+<area shape="rect" href="./TGWindow.html" title="TGWindow" alt="" coords="651,16,957,500"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="859,723,947,772"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="760,723,848,787"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="661,723,749,787"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="891,783,915,817"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="859,828,947,1064"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="760,828,848,1064"/>
+<area shape="rect" href="./TQObject.html" alt="" coords="661,828,749,1064"/>
+<area shape="rect" href="./TQObject.html" title="TQObject" alt="" coords="651,679,957,1075"/>
+<area shape="rect" href="./TGObject.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TGObject.html" alt="" coords="541,120,629,239"/>
+<area shape="rect" href="./TGObject.html" alt="" coords="443,120,531,253"/>
+<area shape="rect" href="./TGObject.html" alt="" coords="344,120,432,253"/>
+<area shape="rect" href="./TGObject.html" title="TGObject" alt="" coords="333,16,640,264"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGLWidget_Lib" id="MapTGLWidget_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="449,353,577,401"/>
+</map>
+<div class="tabs">
+<a id="imgTGLWidget_Inh" class="tabsel" href="inh/TGLWidget_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGLWidget_Inh.png');">Inheritance</a>
+<a id="imgTGLWidget_InhMem" class="tab" href="inhmem/TGLWidget_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGLWidget_InhMem.png');">Inherited Members</a>
+<a id="imgTGLWidget_Incl" class="tab" href="incl/TGLWidget_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGLWidget_Incl.png');">Includes</a>
+<a id="imgTGLWidget_Lib" class="tab" href="lib/TGLWidget_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGLWidget_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGLWidget_Inh" src="inh/TGLWidget_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><a href="./TGLWidget.html">TGLWidget</a>* <a class="funcname" name="TGLWidget:CreateDummy" href="src/TGLWidget.cxx.html#nG4gEC">CreateDummy</a>()</span><br />
+<div class="funccomm"><pre> Static constructor for creating widget with default pixel format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGLWidget.html">TGLWidget</a>* <a class="funcname" name="TGLWidget:Create" href="src/TGLWidget.cxx.html#qA1Z7">Create</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> shareDefault, <span class="keyword">const</span> <a href="./TGLPaintDevice.html">TGLPaintDevice</a>* shareDevice, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height)</span><br />
+<div class="funccomm"><pre> Static constructor for creating widget with default pixel format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGLWidget.html">TGLWidget</a>* <a class="funcname" name="TGLWidget:Create%1" href="src/TGLWidget.cxx.html#Sq23FC">Create</a>(<span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a>&amp; format, <span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> shareDefault, <span class="keyword">const</span> <a href="./TGLPaintDevice.html">TGLPaintDevice</a>* shareDevice, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height)</span><br />
+<div class="funccomm"><pre> Static constructor for creating widget with given pixel format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGLWidget:TGLWidget%1" href="src/TGLWidget.cxx.html#fyy4q">TGLWidget</a>(<a href="./ListOfTypes.html#Window_t">Window_t</a> glw, <span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> selectInput)</span><br />
+<div class="funccomm"><pre> Creates widget with default pixel format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGLWidget:_TGLWidget" href="src/TGLWidget.cxx.html#cDZzWD">~TGLWidget</a>()</span><br />
+<div class="funccomm"><pre>Destructor. Deletes window ???? and XVisualInfo
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:InitGL" href="src/TGLWidget.cxx.html#ibreJE">InitGL</a>()</span><br />
+<div class="funccomm"><pre>Call glEnable(... in overrider of <a href="./TGLWidget.html#TGLWidget:InitGL" title="void TGLWidget::InitGL()">InitGL</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:PaintGL" href="src/TGLWidget.cxx.html#jEVSNE">PaintGL</a>()</span><br />
+<div class="funccomm"><pre>Do actual drawing in overrider of <a href="./TGLWidget.html#TGLWidget:PaintGL" title="void TGLWidget::PaintGL()">PaintGL</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:MakeCurrent" href="src/TGLWidget.cxx.html#NEXBX">MakeCurrent</a>()</span><br />
+<div class="funccomm"><pre>Make the gl-context current.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:ClearCurrent" href="src/TGLWidget.cxx.html#kAOWBD">ClearCurrent</a>()</span><br />
+<div class="funccomm"><pre><a href="./TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a> the current gl-context.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:SwapBuffers" href="src/TGLWidget.cxx.html#vrRVtE">SwapBuffers</a>()</span><br />
+<div class="funccomm"><pre>Swap buffers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TGLContext.html">TGLContext</a> * <a class="funcname" name="TGLWidget:GetContext" href="src/TGLWidget.cxx.html#gL7TuE">GetContext</a>() const</span><br />
+<div class="funccomm"><pre>Get gl context.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a> * <a class="funcname" name="TGLWidget:GetPixelFormat" href="src/TGLWidget.cxx.html#nj5HuB">GetPixelFormat</a>() const</span><br />
+<div class="funccomm"><pre>Pixel format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">std::pair&lt;<span class="keyword">void</span> *, <span class="keyword">void</span> *&gt; <a class="funcname" name="TGLWidget:GetInnerData" href="src/TGLWidget.cxx.html#s2CbJD">GetInnerData</a>() const</span><br />
+<div class="funccomm"><pre>Dpy*, XVisualInfo *
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:AddContext" href="src/TGLWidget.cxx.html#pN5PAC">AddContext</a>(<a href="./TGLContext.html">TGLContext</a>* ctx)</span><br />
+<div class="funccomm"><pre>Register gl-context created for this window.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:RemoveContext" href="src/TGLWidget.cxx.html#nhkt6D">RemoveContext</a>(<a href="./TGLContext.html">TGLContext</a>* ctx)</span><br />
+<div class="funccomm"><pre>Remove context (no real deletion, done by TGLContex dtor).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:ExtractViewport" href="src/TGLWidget.cxx.html#rsfOkE">ExtractViewport</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* vp) const</span><br />
+<div class="funccomm"><pre>For camera.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Window_t">Window_t</a> <a class="funcname" name="TGLWidget:CreateWindow" href="src/TGLWidget.cxx.html#ZBU3zC">CreateWindow</a>(<span class="keyword">const</span> <a href="./TGWindow.html">TGWindow</a>* parent, <span class="keyword">const</span> <a href="./TGLFormat.html">TGLFormat</a>&amp; format, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> width, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> height, pair&lt;<span class="keyword">void</span>*,<span class="keyword">void</span>*&gt;&amp; innerData)</span><br />
+<div class="funccomm"><pre> CreateWidget.
+ Static function called prior to widget construction,
+ I've extracted this code from ctors to make WIN32/X11
+ separation simpler and because of gInterpreter usage.
+ new, <a href="./TGLContext.html">TGLContext</a> can throw
+ std::bad_alloc and std::runtime_error. Before try block, the only
+ resource allocated is pointed by <a href="./TGLWidget.html#TGLWidget:fWindowIndex" title="Int_t TGLWidget::fWindowIndex">fWindowIndex</a> (InitWindow cannot throw).
+ In try block (and after successful constraction)
+ resources are controlled by std::auto_ptrs and dtor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:SetFormat" href="src/TGLWidget.cxx.html#WZVgqC">SetFormat</a>()</span><br />
+<div class="funccomm"><pre> Set pixel format.
+ Resource - hDC, owned and freed by guard object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:SetEventHandler" href="src/TGLWidget.cxx.html#gc50i">SetEventHandler</a>(<a href="./TGEventHandler.html">TGEventHandler</a>* eh)</span><br />
+<div class="funccomm"><pre>Set event-handler. All events are passed to this object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleCrossing" href="src/TGLWidget.cxx.html#JdswLB">HandleCrossing</a>(<a href="./Event_t.html">Event_t</a>* )</span><br />
+<div class="funccomm"><pre> Handle mouse crossing event.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleButton" href="src/TGLWidget.cxx.html#fThenC">HandleButton</a>(<a href="./Event_t.html">Event_t</a>* ev)</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleDoubleClick" href="src/TGLWidget.cxx.html#RudSbD">HandleDoubleClick</a>(<a href="./Event_t.html">Event_t</a>* ev)</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleConfigureNotify" href="src/TGLWidget.cxx.html#cqlci">HandleConfigureNotify</a>(<a href="./Event_t.html">Event_t</a>* ev)</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleFocusChange" href="src/TGLWidget.cxx.html#kmJUHE">HandleFocusChange</a>(<a href="./Event_t.html">Event_t</a>* )</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleKey" href="src/TGLWidget.cxx.html#elWDPD">HandleKey</a>(<a href="./Event_t.html">Event_t</a>* ev)</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGLWidget:HandleMotion" href="src/TGLWidget.cxx.html#u.kUy">HandleMotion</a>(<a href="./Event_t.html">Event_t</a>* ev)</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGLWidget:DoRedraw" href="src/TGLWidget.cxx.html#gXjGEE">DoRedraw</a>()</span><br />
+<div class="funccomm"><pre>Delegate call to the owner.
+   if (!gVirtualX-&gt;IsCmdThread()) {
+      <a href="./TROOT.html">gROOT</a>-><a href="./TROOT.html#TROOT:ProcessLineFast" title="Long_t TROOT::ProcessLineFast(const char* line,Int_t* error=0)">ProcessLineFast</a>(Form(<span class="string">"((TGLWidget *)0x%lx)-&gt;DoRedraw()"</span>, this));
+      return;
+   }
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGEventHandler.html">TGEventHandler</a>   * <a class="funcname" name="TGLWidget:GetEventHandler" href="src/TGLWidget.h.html#JAlFED">GetEventHandler</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TGLWidget.html#TGLWidget:fEventHandler" title="TGEventHandler* TGLWidget::fEventHandler">fEventHandler</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGLWidget:TGLWidget" href="src/TGLWidget.h.html#zbnDFB">TGLWidget</a>(<span class="keyword">const</span> <a href="./TGLWidget.html">TGLWidget</a>&amp; )</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Timur+Pocheptsov">  Timur Pocheptsov</a>, <a href="http://consult.cern.ch/xwho/people?Jun"> Jun 2007</a> </em><em>&raquo; Copyright   (C) 1995-2004, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/gl:$Id: TGLWidget.h 36675 2010-11-15 20:33:58Z matevz $ </em><em>&raquo; Last generated: 2011-11-03 20:15</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,2667 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:20:38 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMultiDimFit</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMultiDimFit','libHist','TMultiDimFit.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMultiDimFit.h.html">header file</a>
+<a class="descrheadentry" href="src/TMultiDimFit.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TMultiDimFit.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TMultiDimFit.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMultiDimFit:description">class description</a> 
+<a class="descrheadentry" href="#TMultiDimFit:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMultiDimFit:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMultiDimFit:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMultiDimFit</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMultiDimFit:description"></a>class TMultiDimFit: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+
+
+
+</pre><!-- TDocHtmlDirective start -->/*
+</pre>
+<H1><A NAME="SECTION00010000000000000000">
+Multidimensional Fits in ROOT</A>
+</H1>
+<H1><A NAME="SECTION00020000000000000000"></A>
+<A NAME="sec:overview"></A><BR>
+Overview
+</H1>
+<P>
+A common problem encountered in different fields of applied science is
+to find an expression for one physical quantity in terms of several
+others, which are directly measurable.
+<P>
+An example in high energy physics is the evaluation of the momentum of
+a charged particle from the observation of its trajectory in a magnetic
+field.  The problem is to relate the momentum of the particle to the
+observations, which may consists of of positional measurements at
+intervals along the particle trajectory.
+<P>
+The exact functional relationship between the measured quantities
+(e.g., the space-points) and the dependent quantity (e.g., the
+momentum) is in general not known, but one possible way of solving the
+problem, is to find an expression which reliably approximates the
+dependence of the momentum on the observations.
+<P>
+This explicit function of the observations can be obtained by a
+<I>least squares</I> fitting procedure applied to a representive
+sample of the data, for which the dependent quantity (e.g., momentum)
+and the independent observations are known. The function can then be
+used to compute the quantity of interest for new observations of the
+independent variables.
+<P>
+This class <TT>TMultiDimFit</TT> implements such a procedure in
+ROOT. It is largely based on the CERNLIB MUDIFI package
+[<A
+ HREF="TMultiFimFit.html#mudifi">2</A>]. Though the basic concepts are still sound, and
+therefore kept, a few implementation details have changed, and this
+class can take advantage of MINUIT [<A
+ HREF="TMultiFimFit.html#minuit">4</A>] to improve the errors
+of the fitting, thanks to the class <TT>TMinuit</TT>.
+<P>
+In [<A
+ HREF="TMultiFimFit.html#wind72">5</A>] and [<A
+ HREF="TMultiFimFit.html#wind81">6</A>] H. Wind demonstrates the utility
+of this procedure in the context of tracking, magnetic field
+parameterisation, and so on. The outline of the method used in this
+class is based on Winds discussion, and I refer these two excellents
+text for more information.
+<P>
+And example of usage is given in
+<A NAME="tex2html1"
+  HREF="
+  ./examples/multidimfit.C"><TT>$ROOTSYS/tutorials/fit/multidimfit.C</TT></A>.
+<P>
+<H1><A NAME="SECTION00030000000000000000"></A>
+<A NAME="sec:method"></A><BR>
+The Method
+</H1>
+<P>
+Let <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img7.gif"
+ ALT="$ D$"> by the dependent quantity of interest, which depends smoothly
+on the observable quantities <!-- MATH
+ $x_1, \ldots, x_N$
+ -->
+<IMG
+ WIDTH="80" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img8.gif"
+ ALT="$ x_1, \ldots, x_N$">, which we'll denote by
+<!-- MATH
+ $\mathbf{x}$
+ -->
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img9.gif"
+ ALT="$ \mathbf{x}$">. Given a training sample of <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img10.gif"
+ ALT="$ M$"> tuples of the form,
+(<A NAME="tex2html2"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:AddRow"><TT>TMultiDimFit::AddRow</TT></A>)
+<!-- MATH
+ \begin{displaymath}
+\left(\mathbf{x}_j, D_j, E_j\right)\quad,
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="108" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img11.gif"
+ ALT="$\displaystyle \left(\mathbf{x}_j, D_j, E_j\right)\quad,
+$">
+</DIV><P></P>
+where <!-- MATH
+ $\mathbf{x}_j = (x_{1,j},\ldots,x_{N,j})$
+ -->
+<IMG
+ WIDTH="148" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img12.gif"
+ ALT="$ \mathbf{x}_j = (x_{1,j},\ldots,x_{N,j})$"> are <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img13.gif"
+ ALT="$ N$"> independent
+variables, <IMG
+ WIDTH="24" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img14.gif"
+ ALT="$ D_j$"> is the known, quantity dependent at <!-- MATH
+ $\mathbf{x}_j$
+ -->
+<IMG
+ WIDTH="20" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img15.gif"
+ ALT="$ \mathbf{x}_j$">,
+and <IMG
+ WIDTH="23" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img16.gif"
+ ALT="$ E_j$"> is the square error in <IMG
+ WIDTH="24" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img14.gif"
+ ALT="$ D_j$">, the class
+<A NAME="tex2html3"
+  HREF="./TMultiDimFit.html"><TT>TMultiDimFit</TT></A>
+will
+try to find the parameterization
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="Dp"></A><!-- MATH
+ \begin{equation}
+D_p(\mathbf{x}) = \sum_{l=1}^{L} c_l \prod_{i=1}^{N} p_{li}\left(x_i\right)
+  = \sum_{l=1}^{L} c_l F_l(\mathbf{x})
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="274" HEIGHT="65" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img17.gif"
+ ALT="$\displaystyle D_p(\mathbf{x}) = \sum_{l=1}^{L} c_l \prod_{i=1}^{N} p_{li}\left(x_i\right) = \sum_{l=1}^{L} c_l F_l(\mathbf{x})$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(1)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+such that
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="S"></A><!-- MATH
+ \begin{equation}
+S \equiv \sum_{j=1}^{M} \left(D_j - D_p\left(\mathbf{x}_j\right)\right)^2
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="172" HEIGHT="65" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img18.gif"
+ ALT="$\displaystyle S \equiv \sum_{j=1}^{M} \left(D_j - D_p\left(\mathbf{x}_j\right)\right)^2$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(2)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+is minimal. Here <!-- MATH
+ $p_{li}(x_i)$
+ -->
+<IMG
+ WIDTH="48" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img19.gif"
+ ALT="$ p_{li}(x_i)$"> are monomials, or Chebyshev or Legendre
+polynomials, labelled <!-- MATH
+ $l = 1, \ldots, L$
+ -->
+<IMG
+ WIDTH="87" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img20.gif"
+ ALT="$ l = 1, \ldots, L$">, in each variable
+<IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img21.gif"
+ ALT="$ x_i$">, <!-- MATH
+ $i=1, \ldots, N$
+ -->
+<IMG
+ WIDTH="91" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img22.gif"
+ ALT="$ i=1, \ldots, N$">.
+<P>
+So what <TT>TMultiDimFit</TT> does, is to determine the number of
+terms <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$">, and then <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$"> terms (or functions) <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">, and the <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$">
+coefficients <IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img25.gif"
+ ALT="$ c_l$">, so that <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> is minimal
+(<A NAME="tex2html4"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:FindParameterization"><TT>TMultiDimFit::FindParameterization</TT></A>).
+<P>
+Of course it's more than a little unlikely that <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> will ever become
+exact zero as a result of the procedure outlined below. Therefore, the
+user is asked to provide a minimum relative error <IMG
+ WIDTH="11" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img27.gif"
+ ALT="$ \epsilon$">
+(<A NAME="tex2html5"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetMinRelativeError"><TT>TMultiDimFit::SetMinRelativeError</TT></A>), and <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$">
+will be considered minimized when
+<!-- MATH
+ \begin{displaymath}
+R = \frac{S}{\sum_{j=1}^M D_j^2} < \epsilon
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="132" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img28.gif"
+ ALT="$\displaystyle R = \frac{S}{\sum_{j=1}^M D_j^2} &lt; \epsilon
+$">
+</DIV><P></P>
+<P>
+Optionally, the user may impose a functional expression by specifying
+the powers of each variable in <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$"> specified functions <!-- MATH
+ $F_1, \ldots,
+F_L$
+ -->
+<IMG
+ WIDTH="79" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img29.gif"
+ ALT="$ F_1, \ldots,
+F_L$"> (<A NAME="tex2html6"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetPowers"><TT>TMultiDimFit::SetPowers</TT></A>). In that case, only the
+coefficients <IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img25.gif"
+ ALT="$ c_l$"> is calculated by the class.
+<P>
+<H2><A NAME="SECTION00031000000000000000"></A>
+<A NAME="sec:selection"></A><BR>
+Limiting the Number of Terms
+</H2>
+<P>
+As always when dealing with fits, there's a real chance of
+<I>over fitting</I>. As is well-known, it's always possible to fit an
+<IMG
+ WIDTH="46" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img30.gif"
+ ALT="$ N-1$"> polynomial in <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img31.gif"
+ ALT="$ x$"> to <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img13.gif"
+ ALT="$ N$"> points <IMG
+ WIDTH="41" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img32.gif"
+ ALT="$ (x,y)$"> with <!-- MATH
+ $\chi^2 = 0$
+ -->
+<IMG
+ WIDTH="50" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img33.gif"
+ ALT="$ \chi^2 = 0$">, but
+the polynomial is not likely to fit new data at all
+[<A
+ HREF="TMultiFimFit.html#bevington">1</A>]. Therefore, the user is asked to provide an upper
+limit, <IMG
+ WIDTH="41" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img34.gif"
+ ALT="$ L_{max}$"> to the number of terms in <IMG
+ WIDTH="25" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img35.gif"
+ ALT="$ D_p$">
+(<A NAME="tex2html7"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetMaxTerms"><TT>TMultiDimFit::SetMaxTerms</TT></A>).
+<P>
+However, since there's an infinite number of <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$"> to choose from, the
+user is asked to give the maximum power. <IMG
+ WIDTH="49" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img36.gif"
+ ALT="$ P_{max,i}$">, of each variable
+<IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img21.gif"
+ ALT="$ x_i$"> to be considered in the minimization of <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$">
+(<A NAME="tex2html8"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetMaxPowers"><TT>TMultiDimFit::SetMaxPowers</TT></A>).
+<P>
+One way of obtaining values for the maximum power in variable <IMG
+ WIDTH="10" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img37.gif"
+ ALT="$ i$">, is
+to perform a regular fit to the dependent quantity <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img7.gif"
+ ALT="$ D$">, using a
+polynomial only in <IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img21.gif"
+ ALT="$ x_i$">. The maximum power is <IMG
+ WIDTH="49" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img36.gif"
+ ALT="$ P_{max,i}$"> is then the
+power that does not significantly improve the one-dimensional
+least-square fit over <IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img21.gif"
+ ALT="$ x_i$"> to <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img7.gif"
+ ALT="$ D$"> [<A
+ HREF="TMultiFimFit.html#wind72">5</A>].
+<P>
+There are still a huge amount of possible choices for <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">; in fact
+there are <!-- MATH
+ $\prod_{i=1}^{N} (P_{max,i} + 1)$
+ -->
+<IMG
+ WIDTH="125" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img38.gif"
+ ALT="$ \prod_{i=1}^{N} (P_{max,i} + 1)$"> possible
+choices. Obviously we need to limit this. To this end, the user is
+asked to set a <I>power control limit</I>, <IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img39.gif"
+ ALT="$ Q$">
+(<A NAME="tex2html9"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetPowerLimit"><TT>TMultiDimFit::SetPowerLimit</TT></A>), and a function
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$"> is only accepted if
+<!-- MATH
+ \begin{displaymath}
+Q_l = \sum_{i=1}^{N} \frac{P_{li}}{P_{max,i}} < Q
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="151" HEIGHT="65" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img40.gif"
+ ALT="$\displaystyle Q_l = \sum_{i=1}^{N} \frac{P_{li}}{P_{max,i}} &lt; Q
+$">
+</DIV><P></P>
+where <IMG
+ WIDTH="24" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img41.gif"
+ ALT="$ P_{li}$"> is the leading power of variable <IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img21.gif"
+ ALT="$ x_i$"> in function
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">. (<A NAME="tex2html10"
+  HREF="
+./TMultiDimFit.html#TMultiDimFit:MakeCandidates"><TT>TMultiDimFit::MakeCandidates</TT></A>). So the number of
+functions increase with <IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img39.gif"
+ ALT="$ Q$"> (1, 2 is fine, 5 is way out).
+<P>
+<H2><A NAME="SECTION00032000000000000000">
+Gram-Schmidt Orthogonalisation</A>
+</H2>
+<P>
+To further reduce the number of functions in the final expression,
+only those functions that significantly reduce <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> is chosen. What
+`significant' means, is chosen by the user, and will be
+discussed below (see&nbsp;<A HREF="TMultiFimFit.html#sec:selectiondetail">2.3</A>).
+<P>
+The functions <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$"> are generally not orthogonal, which means one will
+have to evaluate all possible <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">'s over all data-points before
+finding the most significant [<A
+ HREF="TMultiFimFit.html#bevington">1</A>]. We can, however, do
+better then that. By applying the <I>modified Gram-Schmidt
+  orthogonalisation</I> algorithm [<A
+ HREF="TMultiFimFit.html#wind72">5</A>] [<A
+ HREF="TMultiFimFit.html#golub">3</A>] to the
+functions <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">, we can evaluate the contribution to the reduction of
+<IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> from each function in turn, and we may delay the actual inversion
+of the curvature-matrix
+(<A NAME="tex2html11"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:MakeGramSchmidt"><TT>TMultiDimFit::MakeGramSchmidt</TT></A>).
+<P>
+So we are let to consider an <IMG
+ WIDTH="52" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img42.gif"
+ ALT="$ M\times L$"> matrix <!-- MATH
+ $\mathsf{F}$
+ -->
+<IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img43.gif"
+ ALT="$ \mathsf{F}$">, an
+element of which is given by
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:Felem"></A><!-- MATH
+ \begin{equation}
+f_{jl} = F_j\left(x_{1j} , x_{2j}, \ldots, x_{Nj}\right)
+  = F_l(\mathbf{x}_j)\,  \quad\mbox{with}~j=1,2,\ldots,M,
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="260" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img44.gif"
+ ALT="$\displaystyle f_{jl} = F_j\left(x_{1j} , x_{2j}, \ldots, x_{Nj}\right) = F_l(\mathbf{x}_j) $">&nbsp; &nbsp;with<IMG
+ WIDTH="120" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img45.gif"
+ ALT="$\displaystyle &nbsp;j=1,2,\ldots,M,$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(3)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where <IMG
+ WIDTH="12" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img46.gif"
+ ALT="$ j$"> labels the <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img10.gif"
+ ALT="$ M$"> rows in the training sample and <IMG
+ WIDTH="9" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img47.gif"
+ ALT="$ l$"> labels
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$"> functions of <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img13.gif"
+ ALT="$ N$"> variables, and <IMG
+ WIDTH="53" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img48.gif"
+ ALT="$ L \leq M$">. That is, <IMG
+ WIDTH="23" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img49.gif"
+ ALT="$ f_{jl}$"> is
+the term (or function) numbered <IMG
+ WIDTH="9" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img47.gif"
+ ALT="$ l$"> evaluated at the data point
+<IMG
+ WIDTH="12" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img46.gif"
+ ALT="$ j$">. We have to normalise <!-- MATH
+ $\mathbf{x}_j$
+ -->
+<IMG
+ WIDTH="20" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img15.gif"
+ ALT="$ \mathbf{x}_j$"> to <IMG
+ WIDTH="48" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img50.gif"
+ ALT="$ [-1,1]$"> for this to
+succeed [<A
+ HREF="TMultiFimFit.html#wind72">5</A>]
+(<A NAME="tex2html12"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:MakeNormalized"><TT>TMultiDimFit::MakeNormalized</TT></A>). We then define a
+matrix <!-- MATH
+ $\mathsf{W}$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img51.gif"
+ ALT="$ \mathsf{W}$"> of which the columns <!-- MATH
+ $\mathbf{w}_j$
+ -->
+<IMG
+ WIDTH="24" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img52.gif"
+ ALT="$ \mathbf{w}_j$"> are given by
+<BR>
+<DIV ALIGN="CENTER"><A NAME="eq:wj"></A><!-- MATH
+ \begin{eqnarray}
+\mathbf{w}_1 &=& \mathbf{f}_1 = F_1\left(\mathbf x_1\right)\\
+  \mathbf{w}_l &=& \mathbf{f}_l - \sum^{l-1}_{k=1} \frac{\mathbf{f}_l \bullet
+  \mathbf{w}_k}{\mathbf{w}_k^2}\mathbf{w}_k\,.
+\end{eqnarray}
+ -->
+<TABLE CELLPADDING="0" ALIGN="CENTER" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="25" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img53.gif"
+ ALT="$\displaystyle \mathbf{w}_1$"></TD>
+<TD WIDTH="10" ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img54.gif"
+ ALT="$\displaystyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="87" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img55.gif"
+ ALT="$\displaystyle \mathbf{f}_1 = F_1\left(\mathbf x_1\right)$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(4)</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="22" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img56.gif"
+ ALT="$\displaystyle \mathbf{w}_l$"></TD>
+<TD WIDTH="10" ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img54.gif"
+ ALT="$\displaystyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="138" HEIGHT="66" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img57.gif"
+ ALT="$\displaystyle \mathbf{f}_l - \sum^{l-1}_{k=1} \frac{\mathbf{f}_l \bullet
+\mathbf{w}_k}{\mathbf{w}_k^2}\mathbf{w}_k .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+and <!-- MATH
+ $\mathbf{w}_{l}$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img58.gif"
+ ALT="$ \mathbf{w}_{l}$"> is the component of <!-- MATH
+ $\mathbf{f}_{l}$
+ -->
+<IMG
+ WIDTH="15" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img59.gif"
+ ALT="$ \mathbf{f}_{l}$"> orthogonal
+to <!-- MATH
+ $\mathbf{w}_{1}, \ldots, \mathbf{w}_{l-1}$
+ -->
+<IMG
+ WIDTH="97" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img60.gif"
+ ALT="$ \mathbf{w}_{1}, \ldots, \mathbf{w}_{l-1}$">. Hence we obtain
+[<A
+ HREF="TMultiFimFit.html#golub">3</A>],
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:worto"></A><!-- MATH
+ \begin{equation}
+\mathbf{w}_k\bullet\mathbf{w}_l = 0\quad\mbox{if}~k \neq l\quad.
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="87" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img61.gif"
+ ALT="$\displaystyle \mathbf{w}_k\bullet\mathbf{w}_l = 0$">&nbsp; &nbsp;if<IMG
+ WIDTH="65" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img62.gif"
+ ALT="$\displaystyle &nbsp;k \neq l\quad.$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(6)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+We now take as a new model <!-- MATH
+ $\mathsf{W}\mathbf{a}$
+ -->
+<IMG
+ WIDTH="28" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img63.gif"
+ ALT="$ \mathsf{W}\mathbf{a}$">. We thus want to
+minimize
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:S"></A><!-- MATH
+ \begin{equation}
+S\equiv \left(\mathbf{D} - \mathsf{W}\mathbf{a}\right)^2\quad,
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="136" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img64.gif"
+ ALT="$\displaystyle S\equiv \left(\mathbf{D} - \mathsf{W}\mathbf{a}\right)^2\quad,$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(7)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where <!-- MATH
+ $\mathbf{D} = \left(D_1,\ldots,D_M\right)$
+ -->
+<IMG
+ WIDTH="137" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img65.gif"
+ ALT="$ \mathbf{D} = \left(D_1,\ldots,D_M\right)$"> is a vector of the
+dependent quantity in the sample. Differentiation with respect to
+<IMG
+ WIDTH="19" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img66.gif"
+ ALT="$ a_j$"> gives, using&nbsp;(<A HREF="TMultiFimFit.html#eq:worto">6</A>),
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:dS"></A><!-- MATH
+ \begin{equation}
+\mathbf{D}\bullet\mathbf{w}_l - a_l\mathbf{w}_l^2 = 0
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="134" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img67.gif"
+ ALT="$\displaystyle \mathbf{D}\bullet\mathbf{w}_l - a_l\mathbf{w}_l^2 = 0$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(8)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+or
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:dS2"></A><!-- MATH
+ \begin{equation}
+a_l = \frac{\mathbf{D}_l\bullet\mathbf{w}_l}{\mathbf{w}_l^2}
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="95" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img68.gif"
+ ALT="$\displaystyle a_l = \frac{\mathbf{D}_l\bullet\mathbf{w}_l}{\mathbf{w}_l^2}$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(9)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+Let <IMG
+ WIDTH="21" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img69.gif"
+ ALT="$ S_j$"> be the sum of squares of residuals when taking <IMG
+ WIDTH="12" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img46.gif"
+ ALT="$ j$"> functions
+into account. Then
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:Sj"></A><!-- MATH
+ \begin{equation}
+S_l = \left[\mathbf{D} - \sum^l_{k=1} a_k\mathbf{w}_k\right]^2
+      = \mathbf{D}^2 - 2\mathbf{D} \sum^l_{k=1} a_k\mathbf{w}_k
+        + \sum^l_{k=1} a_k^2\mathbf{w}_k^2
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="394" HEIGHT="72" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img70.gif"
+ ALT="$\displaystyle S_l = \left[\mathbf{D} - \sum^l_{k=1} a_k\mathbf{w}_k\right]^2 = ...
+...2 - 2\mathbf{D} \sum^l_{k=1} a_k\mathbf{w}_k + \sum^l_{k=1} a_k^2\mathbf{w}_k^2$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(10)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+Using (<A HREF="TMultiFimFit.html#eq:dS2">9</A>), we see that
+<BR>
+<DIV ALIGN="CENTER"><A NAME="eq:sj2"></A><!-- MATH
+ \begin{eqnarray}
+S_l &=& \mathbf{D}^2 - 2 \sum^l_{k=1} a_k^2\mathbf{w}_k^2 +
+          \sum^j_{k=1} a_k^2\mathbf{w}_k^2\nonumber\\
+      &=& \mathbf{D}^2 - \sum^l_{k=1} a_k^2\mathbf{w}_k^2\nonumber\\
+      &=& \mathbf{D}^2 - \sum^l_{k=1} \frac{\left(\mathbf D\bullet \mathbf
+  w_k\right)}{\mathbf w_k^2}
+\end{eqnarray}
+ -->
+<TABLE CELLPADDING="0" ALIGN="CENTER" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img71.gif"
+ ALT="$\displaystyle S_l$"></TD>
+<TD WIDTH="10" ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img54.gif"
+ ALT="$\displaystyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="201" HEIGHT="67" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img72.gif"
+ ALT="$\displaystyle \mathbf{D}^2 - 2 \sum^l_{k=1} a_k^2\mathbf{w}_k^2 +
+\sum^j_{k=1} a_k^2\mathbf{w}_k^2$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD WIDTH="10" ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img54.gif"
+ ALT="$\displaystyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="108" HEIGHT="66" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img73.gif"
+ ALT="$\displaystyle \mathbf{D}^2 - \sum^l_{k=1} a_k^2\mathbf{w}_k^2$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD WIDTH="10" ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img54.gif"
+ ALT="$\displaystyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="137" HEIGHT="66" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img74.gif"
+ ALT="$\displaystyle \mathbf{D}^2 - \sum^l_{k=1} \frac{\left(\mathbf D\bullet \mathbf
+w_k\right)}{\mathbf w_k^2}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(11)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+So for each new function <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$"> included in the model, we get a
+reduction of the sum of squares of residuals of <!-- MATH
+ $a_l^2\mathbf{w}_l^2$
+ -->
+<IMG
+ WIDTH="40" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img75.gif"
+ ALT="$ a_l^2\mathbf{w}_l^2$">,
+where <!-- MATH
+ $\mathbf{w}_l$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img76.gif"
+ ALT="$ \mathbf{w}_l$"> is given by (<A HREF="TMultiFimFit.html#eq:wj">4</A>) and <IMG
+ WIDTH="17" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img77.gif"
+ ALT="$ a_l$"> by
+(<A HREF="TMultiFimFit.html#eq:dS2">9</A>). Thus, using the Gram-Schmidt orthogonalisation, we
+can decide if we want to include this function in the final model,
+<I>before</I> the matrix inversion.
+<P>
+<H2><A NAME="SECTION00033000000000000000"></A>
+<A NAME="sec:selectiondetail"></A><BR>
+Function Selection Based on Residual
+</H2>
+<P>
+Supposing that <IMG
+ WIDTH="42" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img78.gif"
+ ALT="$ L-1$"> steps of the procedure have been performed, the
+problem now is to consider the <!-- MATH
+ $L^{\mbox{th}}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img79.gif"
+ ALT="$ L^{\mbox{th}}$"> function.
+<P>
+The sum of squares of residuals can be written as
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:sums"></A><!-- MATH
+ \begin{equation}
+S_L = \textbf{D}^T\bullet\textbf{D} -
+  \sum^L_{l=1}a^2_l\left(\textbf{w}_l^T\bullet\textbf{w}_l\right)
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="232" HEIGHT="65" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img80.gif"
+ ALT="$\displaystyle S_L = \textbf{D}^T\bullet\textbf{D} - \sum^L_{l=1}a^2_l\left(\textbf{w}_l^T\bullet\textbf{w}_l\right)$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(12)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where the relation (<A HREF="TMultiFimFit.html#eq:dS2">9</A>) have been taken into account. The
+contribution of the <!-- MATH
+ $L^{\mbox{th}}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img79.gif"
+ ALT="$ L^{\mbox{th}}$"> function to the reduction of S, is
+given by
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:dSN"></A><!-- MATH
+ \begin{equation}
+\Delta S_L = a^2_L\left(\textbf{w}_L^T\bullet\textbf{w}_L\right)
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="154" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img81.gif"
+ ALT="$\displaystyle \Delta S_L = a^2_L\left(\textbf{w}_L^T\bullet\textbf{w}_L\right)$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(13)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+Two test are now applied to decide whether this <!-- MATH
+ $L^{\mbox{th}}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img79.gif"
+ ALT="$ L^{\mbox{th}}$">
+function is to be included in the final expression, or not.
+<P>
+<H3><A NAME="SECTION00033100000000000000"></A>
+<A NAME="testone"></A><BR>
+Test 1
+</H3>
+<P>
+Denoting by <IMG
+ WIDTH="43" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img82.gif"
+ ALT="$ H_{L-1}$"> the subspace spanned by
+<!-- MATH
+ $\textbf{w}_1,\ldots,\textbf{w}_{L-1}$
+ -->
+<IMG
+ WIDTH="102" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img83.gif"
+ ALT="$ \textbf{w}_1,\ldots,\textbf{w}_{L-1}$"> the function <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$"> is
+by construction (see (<A HREF="TMultiFimFit.html#eq:wj">4</A>)) the projection of the function
+<IMG
+ WIDTH="24" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img84.gif"
+ ALT="$ F_L$"> onto the direction perpendicular to <IMG
+ WIDTH="43" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img82.gif"
+ ALT="$ H_{L-1}$">. Now, if the
+length of <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$"> (given by <!-- MATH
+ $\textbf{w}_L\bullet\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="65" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img85.gif"
+ ALT="$ \textbf{w}_L\bullet\textbf{w}_L$">)
+is very small compared to the length of <!-- MATH
+ $\textbf{f}_L$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img3.gif"
+ ALT="$ \textbf {f}_L$"> this new
+function can not contribute much to the reduction of the sum of
+squares of residuals. The test consists then in calculating the angle
+<IMG
+ WIDTH="12" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img1.gif"
+ ALT="$ \theta $"> between the two vectors <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$"> and <!-- MATH
+ $\textbf{f}_L$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img3.gif"
+ ALT="$ \textbf {f}_L$">
+(see also figure&nbsp;<A HREF="TMultiFimFit.html#fig:thetaphi">1</A>) and requiring that it's
+<I>greater</I> then a threshold value which the user must set
+(<A NAME="tex2html14"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetMinAngle"><TT>TMultiDimFit::SetMinAngle</TT></A>).
+<P>
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="fig:thetaphi"></A><A NAME="519"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
+(a) Angle <IMG
+ WIDTH="12" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img1.gif"
+ ALT="$ \theta $"> between <!-- MATH
+ $\textbf{w}_l$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img2.gif"
+ ALT="$ \textbf {w}_l$"> and
+      <!-- MATH
+ $\textbf{f}_L$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img3.gif"
+ ALT="$ \textbf {f}_L$">, (b) angle <IMG
+ WIDTH="14" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img4.gif"
+ ALT="$ \phi $"> between <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$"> and
+      <!-- MATH
+ $\textbf{D}$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img6.gif"
+ ALT="$ \textbf {D}$"></CAPTION>
+<TR><TD><IMG
+ WIDTH="466" HEIGHT="172" BORDER="0"
+ SRC="gif/multidimfit_img86.gif"
+ ALT="\begin{figure}\begin{center}
+\begin{tabular}{p{.4\textwidth}p{.4\textwidth}}
+\...
+... \put(80,100){$\mathbf{D}$}
+\end{picture} \end{tabular} \end{center}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+<P>
+<H3><A NAME="SECTION00033200000000000000"></A> <A NAME="testtwo"></A><BR>
+Test 2
+</H3>
+<P>
+Let <!-- MATH
+ $\textbf{D}$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img6.gif"
+ ALT="$ \textbf {D}$"> be the data vector to be fitted. As illustrated in
+figure&nbsp;<A HREF="TMultiFimFit.html#fig:thetaphi">1</A>, the <!-- MATH
+ $L^{\mbox{th}}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img79.gif"
+ ALT="$ L^{\mbox{th}}$"> function <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$">
+will contribute significantly to the reduction of <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$">, if the angle
+<!-- MATH
+ $\phi^\prime$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img87.gif"
+ ALT="$ \phi^\prime$"> between <!-- MATH
+ $\textbf{w}_L$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img5.gif"
+ ALT="$ \textbf {w}_L$"> and <!-- MATH
+ $\textbf{D}$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img6.gif"
+ ALT="$ \textbf {D}$"> is smaller than
+an upper limit <IMG
+ WIDTH="14" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img4.gif"
+ ALT="$ \phi $">, defined by the user
+(<A NAME="tex2html15"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:SetMaxAngle"><TT>TMultiDimFit::SetMaxAngle</TT></A>)
+<P>
+However, the method automatically readjusts the value of this angle
+while fitting is in progress, in order to make the selection criteria
+less and less difficult to be fulfilled. The result is that the
+functions contributing most to the reduction of <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> are chosen first
+(<A NAME="tex2html16"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:TestFunction"><TT>TMultiDimFit::TestFunction</TT></A>).
+<P>
+In case <IMG
+ WIDTH="14" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img4.gif"
+ ALT="$ \phi $"> isn't defined, an alternative method of
+performing this second test is used: The <!-- MATH
+ $L^{\mbox{th}}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img79.gif"
+ ALT="$ L^{\mbox{th}}$"> function
+<!-- MATH
+ $\textbf{f}_L$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img3.gif"
+ ALT="$ \textbf {f}_L$"> is accepted if (refer also to equation&nbsp;(<A HREF="TMultiFimFit.html#eq:dSN">13</A>))
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:dSN2"></A><!-- MATH
+ \begin{equation}
+\Delta S_L > \frac{S_{L-1}}{L_{max}-L}
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="129" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img88.gif"
+ ALT="$\displaystyle \Delta S_L &gt; \frac{S_{L-1}}{L_{max}-L}$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(14)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where  <IMG
+ WIDTH="40" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img89.gif"
+ ALT="$ S_{L-1}$"> is the sum of the <IMG
+ WIDTH="42" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img78.gif"
+ ALT="$ L-1$"> first residuals from the
+<IMG
+ WIDTH="42" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img78.gif"
+ ALT="$ L-1$"> functions previously accepted; and <IMG
+ WIDTH="41" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img34.gif"
+ ALT="$ L_{max}$"> is the total number
+of functions allowed in the final expression of the fit (defined by
+user).
+<P>
+>From this we see, that by restricting <IMG
+ WIDTH="41" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img34.gif"
+ ALT="$ L_{max}$"> -- the number of
+terms in the final model -- the fit is more difficult to perform,
+since the above selection criteria is more limiting.
+<P>
+The more coefficients we evaluate, the more the sum of squares of
+residuals <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> will be reduced. We can evaluate <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$"> before inverting
+<!-- MATH
+ $\mathsf{B}$
+ -->
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img90.gif"
+ ALT="$ \mathsf{B}$"> as shown below.
+<P>
+<H2><A NAME="SECTION00034000000000000000">
+Coefficients and Coefficient Errors</A>
+</H2>
+<P>
+Having found a parameterization, that is the <IMG
+ WIDTH="19" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img24.gif"
+ ALT="$ F_l$">'s and <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img23.gif"
+ ALT="$ L$">, that
+minimizes <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img26.gif"
+ ALT="$ S$">, we still need to determine the coefficients
+<IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img25.gif"
+ ALT="$ c_l$">. However, it's a feature of how we choose the significant
+functions, that the evaluation of the <IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img25.gif"
+ ALT="$ c_l$">'s becomes trivial
+[<A
+ HREF="TMultiFimFit.html#wind72">5</A>]. To derive <!-- MATH
+ $\mathbf{c}$
+ -->
+<IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img91.gif"
+ ALT="$ \mathbf{c}$">, we first note that
+equation&nbsp;(<A HREF="TMultiFimFit.html#eq:wj">4</A>) can be written as
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:FF"></A><!-- MATH
+ \begin{equation}
+\mathsf{F} = \mathsf{W}\mathsf{B}
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="60" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img92.gif"
+ ALT="$\displaystyle \mathsf{F} = \mathsf{W}\mathsf{B}$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(15)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:bij"></A><!-- MATH
+ \begin{equation}
+b_{ij} = \left\{\begin{array}{rcl}
+    \frac{\mathbf{f}_j \bullet \mathbf{w}_i}{\mathbf{w}_i^2}
+    & \mbox{if} & i < j\\
+    1 & \mbox{if} & i = j\\
+    0 & \mbox{if} & i > j
+  \end{array}\right.
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="187" HEIGHT="79" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img93.gif"
+ ALT="$\displaystyle b_{ij} = \left\{\begin{array}{rcl} \frac{\mathbf{f}_j \bullet \ma...
+...f} &amp; i &lt; j\  1 &amp; \mbox{if} &amp; i = j\  0 &amp; \mbox{if} &amp; i &gt; j \end{array}\right.$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(16)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+Consequently, <!-- MATH
+ $\mathsf{B}$
+ -->
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img90.gif"
+ ALT="$ \mathsf{B}$"> is an upper triangle matrix, which can be
+readily inverted. So we now evaluate
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:FFF"></A><!-- MATH
+ \begin{equation}
+\mathsf{F}\mathsf{B}^{-1} = \mathsf{W}
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="77" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img94.gif"
+ ALT="$\displaystyle \mathsf{F}\mathsf{B}^{-1} = \mathsf{W}$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(17)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+The model <!-- MATH
+ $\mathsf{W}\mathbf{a}$
+ -->
+<IMG
+ WIDTH="28" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img63.gif"
+ ALT="$ \mathsf{W}\mathbf{a}$"> can therefore be written as
+<!-- MATH
+ \begin{displaymath}
+(\mathsf{F}\mathsf{B}^{-1})\mathbf{a} =
+\mathsf{F}(\mathsf{B}^{-1}\mathbf{a})\,.
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="148" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img95.gif"
+ ALT="$\displaystyle (\mathsf{F}\mathsf{B}^{-1})\mathbf{a} =
+\mathsf{F}(\mathsf{B}^{-1}\mathbf{a}) .
+$">
+</DIV><P></P>
+The original model <!-- MATH
+ $\mathsf{F}\mathbf{c}$
+ -->
+<IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img96.gif"
+ ALT="$ \mathsf{F}\mathbf{c}$"> is therefore identical with
+this if
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="eq:id:cond"></A><!-- MATH
+ \begin{equation}
+\mathbf{c} = \left(\mathsf{B}^{-1}\mathbf{a}\right) =
+  \left[\mathbf{a}^T\left(\mathsf{B}^{-1}\right)^T\right]^T\,.
+\end{equation}
+ -->
+<TABLE CELLPADDING="0" WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE">
+<TD NOWRAP ALIGN="CENTER"><IMG
+ WIDTH="214" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img97.gif"
+ ALT="$\displaystyle \mathbf{c} = \left(\mathsf{B}^{-1}\mathbf{a}\right) = \left[\mathbf{a}^T\left(\mathsf{B}^{-1}\right)^T\right]^T .$"></TD>
+<TD NOWRAP WIDTH="10" ALIGN="RIGHT">
+(18)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+The reason we use <!-- MATH
+ $\left(\mathsf{B}^{-1}\right)^T$
+ -->
+<IMG
+ WIDTH="56" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img98.gif"
+ ALT="$ \left(\mathsf{B}^{-1}\right)^T$"> rather then
+<!-- MATH
+ $\mathsf{B}^{-1}$
+ -->
+<IMG
+ WIDTH="32" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img99.gif"
+ ALT="$ \mathsf{B}^{-1}$"> is to save storage, since
+<!-- MATH
+ $\left(\mathsf{B}^{-1}\right)^T$
+ -->
+<IMG
+ WIDTH="56" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img98.gif"
+ ALT="$ \left(\mathsf{B}^{-1}\right)^T$"> can be stored in the same matrix as
+<!-- MATH
+ $\mathsf{B}$
+ -->
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img90.gif"
+ ALT="$ \mathsf{B}$">
+(<A NAME="tex2html17"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:MakeCoefficients"><TT>TMultiDimFit::MakeCoefficients</TT></A>). The errors in
+the coefficients is calculated by inverting the curvature matrix
+of the non-orthogonal functions <IMG
+ WIDTH="23" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img100.gif"
+ ALT="$ f_{lj}$"> [<A
+ HREF="TMultiFimFit.html#bevington">1</A>]
+(<A NAME="tex2html18"
+  HREF="
+./TMultiDimFit.html#TMultiDimFit:MakeCoefficientErrors"><TT>TMultiDimFit::MakeCoefficientErrors</TT></A>).
+<P>
+<H2><A NAME="SECTION00035000000000000000"></A>
+<A NAME="sec:considerations"></A><BR>
+Considerations
+</H2>
+<P>
+It's important to realize that the training sample should be
+representive of the problem at hand, in particular along the borders
+of the region of interest. This is because the algorithm presented
+here, is a <I>interpolation</I>, rahter then a <I>extrapolation</I>
+[<A
+ HREF="TMultiFimFit.html#wind72">5</A>].
+<P>
+Also, the independent variables <IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img101.gif"
+ ALT="$ x_{i}$"> need to be linear
+independent, since the procedure will perform poorly if they are not
+[<A
+ HREF="TMultiFimFit.html#wind72">5</A>]. One can find an linear transformation from ones
+original variables <IMG
+ WIDTH="16" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img102.gif"
+ ALT="$ \xi_{i}$"> to a set of linear independent variables
+<IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img101.gif"
+ ALT="$ x_{i}$">, using a <I>Principal Components Analysis</I>
+<A NAME="tex2html19"
+  HREF="./TPrincipal.html">(see <TT>TPrincipal</TT>)</A>, and
+then use the transformed variable as input to this class [<A
+ HREF="TMultiFimFit.html#wind72">5</A>]
+[<A
+ HREF="TMultiFimFit.html#wind81">6</A>].
+<P>
+H. Wind also outlines a method for parameterising a multidimensional
+dependence over a multidimensional set of variables. An example
+of the method from [<A
+ HREF="TMultiFimFit.html#wind72">5</A>], is a follows (please refer to
+[<A
+ HREF="TMultiFimFit.html#wind72">5</A>] for a full discussion):
+<P>
+<OL>
+<LI>Define <!-- MATH
+ $\mathbf{P} = (P_1, \ldots, P_5)$
+ -->
+<IMG
+ WIDTH="123" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img103.gif"
+ ALT="$ \mathbf{P} = (P_1, \ldots, P_5)$"> are the 5 dependent
+  quantities that define a track.
+</LI>
+<LI>Compute, for <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img10.gif"
+ ALT="$ M$"> different values of <!-- MATH
+ $\mathbf{P}$
+ -->
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img104.gif"
+ ALT="$ \mathbf{P}$">, the tracks
+  through the magnetic field, and determine the corresponding
+  <!-- MATH
+ $\mathbf{x} = (x_1, \ldots, x_N)$
+ -->
+<IMG
+ WIDTH="123" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img105.gif"
+ ALT="$ \mathbf{x} = (x_1, \ldots, x_N)$">.
+</LI>
+<LI>Use the simulated observations to determine, with a simple
+  approximation, the values of <!-- MATH
+ $\mathbf{P}_j$
+ -->
+<IMG
+ WIDTH="23" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img106.gif"
+ ALT="$ \mathbf{P}_j$">. We call these values
+  <!-- MATH
+ $\mathbf{P}^\prime_j, j = 1, \ldots, M$
+ -->
+<IMG
+ WIDTH="122" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img107.gif"
+ ALT="$ \mathbf{P}^\prime_j, j = 1, \ldots, M$">.
+</LI>
+<LI>Determine from <!-- MATH
+ $\mathbf{x}$
+ -->
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img9.gif"
+ ALT="$ \mathbf{x}$"> a set of at least five relevant
+  coordinates <!-- MATH
+ $\mathbf{x}^\prime$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img108.gif"
+ ALT="$ \mathbf{x}^\prime$">, using contrains, <I>or
+    alternative:</I>
+</LI>
+<LI>Perform a Principal Component Analysis (using
+  <A NAME="tex2html20"
+  HREF="./TPrincipal.html"><TT>TPrincipal</TT></A>), and use
+to get a linear transformation
+  <!-- MATH
+ $\mathbf{x} \rightarrow \mathbf{x}^\prime$
+ -->
+<IMG
+ WIDTH="53" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img109.gif"
+ ALT="$ \mathbf{x} \rightarrow \mathbf{x}^\prime$">, so that
+  <!-- MATH
+ $\mathbf{x}^\prime$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img108.gif"
+ ALT="$ \mathbf{x}^\prime$"> are constrained and linear independent.
+</LI>
+<LI>Perform a Principal Component Analysis on
+  <!-- MATH
+ $Q_i = P_i / P^\prime_i\, i = 1, \ldots, 5$
+ -->
+<IMG
+ WIDTH="210" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img110.gif"
+ ALT="$ Q_i = P_i / P^prime_i  i = 1, \ldots, 5$">, to get linear
+  indenpendent (among themselves, but not independent of
+  <!-- MATH
+ $\mathbf{x}$
+ -->
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img9.gif"
+ ALT="$ \mathbf{x}$">) quantities <!-- MATH
+ $\mathbf{Q}^\prime$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img111.gif"
+ ALT="$ \mathbf{Q}^\prime$">
+</LI>
+<LI>For each component <!-- MATH
+ $Q^\prime_i$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img112.gif"
+ ALT="$ Q^\prime_i$"> make a mutlidimensional fit,
+  using <!-- MATH
+ $\mathbf{x}^\prime$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img108.gif"
+ ALT="$ \mathbf{x}^\prime$"> as the variables, thus determing a set of
+  coefficents <!-- MATH
+ $\mathbf{c}_i$
+ -->
+<IMG
+ WIDTH="17" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img113.gif"
+ ALT="$ \mathbf{c}_i$">.
+</LI>
+</OL>
+<P>
+To process data, using this parameterisation, do
+<OL>
+<LI>Test wether the observation <!-- MATH
+ $\mathbf{x}$
+ -->
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img9.gif"
+ ALT="$ \mathbf{x}$"> within the domain of
+  the parameterization, using the result from the Principal Component
+  Analysis.
+</LI>
+<LI>Determine <!-- MATH
+ $\mathbf{P}^\prime$
+ -->
+<IMG
+ WIDTH="21" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img114.gif"
+ ALT="$ \mathbf{P}^\prime$"> as before.
+</LI>
+<LI>Detetmine <!-- MATH
+ $\mathbf{x}^\prime$
+ -->
+<IMG
+ WIDTH="18" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img108.gif"
+ ALT="$ \mathbf{x}^\prime$"> as before.
+</LI>
+<LI>Use the result of the fit to determind <!-- MATH
+ $\mathbf{Q}^\prime$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img111.gif"
+ ALT="$ \mathbf{Q}^\prime$">.
+</LI>
+<LI>Transform back to <!-- MATH
+ $\mathbf{P}$
+ -->
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img104.gif"
+ ALT="$ \mathbf{P}$"> from <!-- MATH
+ $\mathbf{Q}^\prime$
+ -->
+<IMG
+ WIDTH="22" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img111.gif"
+ ALT="$ \mathbf{Q}^\prime$">, using
+  the result from the Principal Component Analysis.
+</LI>
+</OL>
+<P>
+<H2><A NAME="SECTION00036000000000000000"></A>
+<A NAME="sec:testing"></A><BR>
+Testing the parameterization
+</H2>
+<P>
+The class also provides functionality for testing the, over the
+training sample, found parameterization
+(<A NAME="tex2html21"
+  HREF="
+  ./TMultiDimFit.html#TMultiDimFit:Fit"><TT>TMultiDimFit::Fit</TT></A>). This is done by passing
+the class a test sample of <IMG
+ WIDTH="25" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img115.gif"
+ ALT="$ M_t$"> tuples of the form <!-- MATH
+ $(\mathbf{x}_{t,j},
+D_{t,j}, E_{t,j})$
+ -->
+<IMG
+ WIDTH="111" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img116.gif"
+ ALT="$ (\mathbf{x}_{t,j},
+D_{t,j}, E_{t,j})$">, where <!-- MATH
+ $\mathbf{x}_{t,j}$
+ -->
+<IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img117.gif"
+ ALT="$ \mathbf{x}_{t,j}$"> are the independent
+variables, <IMG
+ WIDTH="33" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img118.gif"
+ ALT="$ D_{t,j}$"> the known, dependent quantity, and <IMG
+ WIDTH="31" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img119.gif"
+ ALT="$ E_{t,j}$"> is
+the square error in <IMG
+ WIDTH="33" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img118.gif"
+ ALT="$ D_{t,j}$">
+(<A NAME="tex2html22"
+  HREF="
+./TMultiDimFit.html#TMultiDimFit:AddTestRow"><TT>TMultiDimFit::AddTestRow</TT></A>).
+<P>
+The parameterization is then evaluated at every <!-- MATH
+ $\mathbf{x}_t$
+ -->
+<IMG
+ WIDTH="19" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img120.gif"
+ ALT="$ \mathbf{x}_t$"> in the
+test sample, and
+<!-- MATH
+ \begin{displaymath}
+S_t \equiv \sum_{j=1}^{M_t} \left(D_{t,j} -
+  D_p\left(\mathbf{x}_{t,j}\right)\right)^2
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="194" HEIGHT="66" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img121.gif"
+ ALT="$\displaystyle S_t \equiv \sum_{j=1}^{M_t} \left(D_{t,j} -
+D_p\left(\mathbf{x}_{t,j}\right)\right)^2
+$">
+</DIV><P></P>
+is evaluated. The relative error over the test sample
+<!-- MATH
+ \begin{displaymath}
+R_t = \frac{S_t}{\sum_{j=1}^{M_t} D_{t,j}^2}
+\end{displaymath}
+ -->
+<P></P><DIV ALIGN="CENTER">
+<IMG
+ WIDTH="118" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img122.gif"
+ ALT="$\displaystyle R_t = \frac{S_t}{\sum_{j=1}^{M_t} D_{t,j}^2}
+$">
+</DIV><P></P>
+should not be to low or high compared to <IMG
+ WIDTH="16" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="gif/multidimfit_img123.gif"
+ ALT="$ R$"> from the training
+sample. Also, multiple correlation coefficient from both samples should
+be fairly close, otherwise one of the samples is not representive of
+the problem. A large difference in the reduced <IMG
+ WIDTH="21" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="gif/multidimfit_img124.gif"
+ ALT="$ \chi^2$"> over the two
+samples indicate an over fit, and the maximum number of terms in the
+parameterisation should be reduced.
+<P>
+It's possible to use <A NAME="tex2html23"
+  HREF="./TMinuit.html"><I>Minuit</I></A>
+[<A
+ HREF="TMultiFimFit.html#minuit">4</A>] to further improve the fit, using the test sample.
+<P>
+<DIV ALIGN="RIGHT">
+Christian Holm
+<BR>  November 2000, NBI
+</DIV>
+<P>
+<H2><A NAME="SECTION00040000000000000000">
+Bibliography</A>
+</H2><DL COMPACT><DD><P></P><DT><A NAME="bevington">1</A>
+<DD>
+Philip&nbsp;R. Bevington and D.&nbsp;Keith Robinson.
+<BR><EM>Data Reduction and Error Analysis for the Physical Sciences</EM>.
+<BR>McGraw-Hill, 2 edition, 1992.
+<P></P><DT><A NAME="mudifi">2</A>
+<DD>
+Ren&#233; Brun et&nbsp;al.
+<BR>Mudifi.
+<BR>Long writeup DD/75-23, CERN, 1980.
+<P></P><DT><A NAME="golub">3</A>
+<DD>
+Gene&nbsp;H. Golub and Charles&nbsp;F. van Loan.
+<BR><EM>Matrix Computations</EM>.
+<BR>John Hopkins Univeristy Press, Baltimore, 3 edition, 1996.
+<P></P><DT><A NAME="minuit">4</A>
+<DD>
+F.&nbsp;James.
+<BR>Minuit.
+<BR>Long writeup D506, CERN, 1998.
+<P></P><DT><A NAME="wind72">5</A>
+<DD>
+H.&nbsp;Wind.
+<BR>Function parameterization.
+<BR>In <EM>Proceedings of the 1972 CERN Computing and Data Processing
+  School</EM>, volume 72-21 of <EM>Yellow report</EM>. CERN, 1972.
+<P></P><DT><A NAME="wind81">6</A>
+<DD>
+H.&nbsp;Wind.
+<BR>1. principal component analysis, 2. pattern recognition for track
+  finding, 3. interpolation and functional representation.
+<BR>Yellow report EP/81-12, CERN, 1981.
+</DL>
+<pre>
+ */
+<!-- TDocHtmlDirective end --><pre>
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMultiDimFit:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:TMultiDimFit">TMultiDimFit</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:TMultiDimFit%2">TMultiDimFit</a>(<span class="keyword">const</span> <a href="./TMultiDimFit.html">TMultiDimFit</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:TMultiDimFit%1">TMultiDimFit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dimension, <a href="./TMultiDimFit.html">TMultiDimFit</a>::EMDFPolyType type = <a href="./TMultiDimFit.html#TMultiDimFit:kMonomials" title="const TMultiDimFit::EMDFPolyType TMultiDimFit::kMonomials">kMonomials</a>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:_TMultiDimFit">~TMultiDimFit</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:AddRow">AddRow</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> D, <a href="./ListOfTypes.html#Double_t">Double_t</a> E = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:AddTestRow">AddTestRow</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> D, <a href="./ListOfTypes.html#Double_t">Double_t</a> E = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Browse">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">"d"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Eval">Eval</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:EvalError">EvalError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:FindParameterization">FindParameterization</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Fit">Fit</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetChi2">GetChi2</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetCoefficients">GetCoefficients</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetCorrelationMatrix">GetCorrelationMatrix</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetError">GetError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetFunctionCodes">GetFunctionCodes</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetFunctions">GetFunctions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetHistograms">GetHistograms</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxAngle">GetMaxAngle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxFunctions">GetMaxFunctions</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxPowers">GetMaxPowers</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxQuantity">GetMaxQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxStudy">GetMaxStudy</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxTerms">GetMaxTerms</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMaxVariables">GetMaxVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMeanQuantity">GetMeanQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMeanVariables">GetMeanVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMinAngle">GetMinAngle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMinQuantity">GetMinQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMinRelativeError">GetMinRelativeError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetMinVariables">GetMinVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetNCoefficients">GetNCoefficients</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetNVariables">GetNVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetPolyType">GetPolyType</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetPowerIndex">GetPowerIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetPowerLimit">GetPowerLimit</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetPowers">GetPowers</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetPrecision">GetPrecision</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetQuantity">GetQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetResidualMax">GetResidualMax</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetResidualMaxRow">GetResidualMaxRow</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetResidualMin">GetResidualMin</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetResidualMinRow">GetResidualMinRow</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetResidualSumSq">GetResidualSumSq</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetRMS">GetRMS</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetSampleSize">GetSampleSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetSqError">GetSqError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetSumSqAvgQuantity">GetSumSqAvgQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetSumSqQuantity">GetSumSqQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestError">GetTestError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestPrecision">GetTestPrecision</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestQuantity">GetTestQuantity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestSampleSize">GetTestSampleSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestSqError">GetTestSqError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetTestVariables">GetTestVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:GetVariables">GetVariables</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TMultiDimFit.html">TMultiDimFit</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Instance">Instance</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:IsFolder">IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeChi2">MakeChi2</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeCode">MakeCode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* functionName = <span class="string">"MDF"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeHistograms">MakeHistograms</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"A"</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeMethod">MakeMethod</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Char_t">Char_t</a>* className = <span class="string">"MDF"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMultiDimFit.html">TMultiDimFit</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMultiDimFit:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TMultiDimFit.html">TMultiDimFit</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"ps"</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetBinVarX">SetBinVarX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbbinvarx)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetBinVarY">SetBinVarY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbbinvary)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMaxAngle">SetMaxAngle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> angle = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMaxFunctions">SetMaxFunctions</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMaxPowers">SetMaxPowers</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMaxStudy">SetMaxStudy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMaxTerms">SetMaxTerms</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> terms)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMinAngle">SetMinAngle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> angle = 1)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetMinRelativeError">SetMinRelativeError</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> error)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetPowerLimit">SetPowerLimit</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> limit = 1e-3)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:SetPowers">SetPowers</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers, <a href="./ListOfTypes.html#Int_t">Int_t</a> terms)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:EvalControl">EvalControl</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:EvalFactor">EvalFactor</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> p, <a href="./ListOfTypes.html#Double_t">Double_t</a> x) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeCandidates">MakeCandidates</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeCoefficientErrors">MakeCoefficientErrors</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeCoefficients">MakeCoefficients</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeCorrelation">MakeCorrelation</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeGramSchmidt">MakeGramSchmidt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> function)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeNormalized">MakeNormalized</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeParameterization">MakeParameterization</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:MakeRealCode">MakeRealCode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* classname, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:Select">Select</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* iv)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMultiDimFit:TestFunction">TestFunction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> squareResidual, <a href="./ListOfTypes.html#Double_t">Double_t</a> dResidur)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMultiDimFit:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EMDFPolyType { </td><td class="dataname"><a name="TMultiDimFit:kMonomials"></a>kMonomials</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiDimFit:kChebyshev"></a>kChebyshev</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiDimFit:kLegendre"></a>kLegendre</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fBinVarX"></a>fBinVarX</td><td class="datadesc">Number of bin in independent variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fBinVarY"></a>fBinVarY</td><td class="datadesc">Number of bin in dependent variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fChi2"></a>fChi2</td><td class="datadesc">Chi square of fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fCoefficients"></a>fCoefficients</td><td class="datadesc">Vector of the final coefficients</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fCoefficientsRMS"></a>fCoefficientsRMS</td><td class="datadesc">Vector of RMS of coefficients</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fCorrelationCoeff"></a>fCorrelationCoeff</td><td class="datadesc">Multi Correlation coefficient</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TMultiDimFit:fCorrelationMatrix"></a>fCorrelationMatrix</td><td class="datadesc">Correlation matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fError"></a>fError</td><td class="datadesc">Error from parameterization</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVirtualFitter.html">TVirtualFitter</a>*</td><td class="dataname"><a name="TMultiDimFit:fFitter"></a>fFitter</td><td class="datadesc">! Fit object (MINUIT)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMultiDimFit:fFunctionCodes"></a>fFunctionCodes</td><td class="datadesc">[fMaxFunctions] acceptance code</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TMultiDimFit:fFunctions"></a>fFunctions</td><td class="datadesc">Functions evaluated over sample</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Byte_t">Byte_t</a></td><td class="dataname"><a name="TMultiDimFit:fHistogramMask"></a>fHistogramMask</td><td class="datadesc">Bit pattern of hisograms used</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TMultiDimFit:fHistograms"></a>fHistograms</td><td class="datadesc">List of histograms</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMultiDimFit:fIsUserFunction"></a>fIsUserFunction</td><td class="datadesc">Flag for user defined function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMultiDimFit:fIsVerbose"></a>fIsVerbose</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxAngle"></a>fMaxAngle</td><td class="datadesc">Max angle for acepting new function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxFuncNV"></a>fMaxFuncNV</td><td class="datadesc">fMaxFunctions*fNVariables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxFunctions"></a>fMaxFunctions</td><td class="datadesc">max number of functions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMultiDimFit:fMaxPowers"></a>fMaxPowers</td><td class="datadesc">[fNVariables] maximum powers</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMultiDimFit:fMaxPowersFinal"></a>fMaxPowersFinal</td><td class="datadesc">[fNVariables] maximum powers from fit;</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxQuantity"></a>fMaxQuantity</td><td class="datadesc">Max value of dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxResidual"></a>fMaxResidual</td><td class="datadesc">Max redsidual value</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxResidualRow"></a>fMaxResidualRow</td><td class="datadesc">Row giving max residual</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxStudy"></a>fMaxStudy</td><td class="datadesc">max functions to study</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMaxTerms"></a>fMaxTerms</td><td class="datadesc">Max terms expected in final expr.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fMaxVariables"></a>fMaxVariables</td><td class="datadesc">max value of independent variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMeanQuantity"></a>fMeanQuantity</td><td class="datadesc">Mean of dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fMeanVariables"></a>fMeanVariables</td><td class="datadesc">mean value of independent variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMinAngle"></a>fMinAngle</td><td class="datadesc">Min angle for acepting new function</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMinQuantity"></a>fMinQuantity</td><td class="datadesc">Min value of dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMinRelativeError"></a>fMinRelativeError</td><td class="datadesc">Min relative error accepted</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fMinResidual"></a>fMinResidual</td><td class="datadesc">Min redsidual value</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fMinResidualRow"></a>fMinResidualRow</td><td class="datadesc">Row giving min residual</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fMinVariables"></a>fMinVariables</td><td class="datadesc">min value of independent variables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fNCoefficients"></a>fNCoefficients</td><td class="datadesc">Dimension of model coefficients</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fNVariables"></a>fNVariables</td><td class="datadesc">Number of independent variables</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fOrthCoefficients"></a>fOrthCoefficients</td><td class="datadesc">The model coefficients</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TMultiDimFit:fOrthCurvatureMatrix"></a>fOrthCurvatureMatrix</td><td class="datadesc">Model matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fOrthFunctionNorms"></a>fOrthFunctionNorms</td><td class="datadesc">Norm of the evaluated functions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TMultiDimFit:fOrthFunctions"></a>fOrthFunctions</td><td class="datadesc">As above, but orthogonalised</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fParameterisationCode"></a>fParameterisationCode</td><td class="datadesc">Exit code of parameterisation</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMultiDimFit.html">TMultiDimFit</a>::EMDFPolyType</td><td class="dataname"><a name="TMultiDimFit:fPolyType"></a>fPolyType</td><td class="datadesc">Type of polynomials to use</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMultiDimFit:fPowerIndex"></a>fPowerIndex</td><td class="datadesc">[fMaxTerms] Index of accepted powers</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fPowerLimit"></a>fPowerLimit</td><td class="datadesc">Control parameter</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMultiDimFit:fPowers"></a>fPowers</td><td class="datadesc">[fMaxFuncNV] where fMaxFuncNV = fMaxFunctions*fNVariables</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fPrecision"></a>fPrecision</td><td class="datadesc">Relative precision of param</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fQuantity"></a>fQuantity</td><td class="datadesc">Training sample, dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fRMS"></a>fRMS</td><td class="datadesc">Root mean square of fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fResiduals"></a>fResiduals</td><td class="datadesc">Vector of the final residuals</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fSampleSize"></a>fSampleSize</td><td class="datadesc">Size of training sample</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMultiDimFit:fShowCorrelation"></a>fShowCorrelation</td><td class="datadesc">print correlation matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fSqError"></a>fSqError</td><td class="datadesc">Training sample, error in quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fSumSqAvgQuantity"></a>fSumSqAvgQuantity</td><td class="datadesc">Sum of squares away from mean</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fSumSqQuantity"></a>fSumSqQuantity</td><td class="datadesc">SumSquare of dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fSumSqResidual"></a>fSumSqResidual</td><td class="datadesc">Sum of Square residuals</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fTestCorrelationCoeff"></a>fTestCorrelationCoeff</td><td class="datadesc">Multi Correlation coefficient</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fTestError"></a>fTestError</td><td class="datadesc">Error from test</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiDimFit:fTestPrecision"></a>fTestPrecision</td><td class="datadesc">Relative precision of test</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fTestQuantity"></a>fTestQuantity</td><td class="datadesc">Test sample, dependent quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiDimFit:fTestSampleSize"></a>fTestSampleSize</td><td class="datadesc">Size of test sample</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fTestSqError"></a>fTestSqError</td><td class="datadesc">Test sample, Error in quantity</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fTestVariables"></a>fTestVariables</td><td class="datadesc">Test sample, independent variables</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TMultiDimFit:fVariables"></a>fVariables</td><td class="datadesc">Training sample, independent variables</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype">static <a href="./TMultiDimFit.html">TMultiDimFit</a>*</td><td class="dataname"><a name="TMultiDimFit:fgInstance"></a>fgInstance</td><td class="datadesc">Static instance</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMultiDimFit:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMultiDimFit_Inh" id="MapTMultiDimFit_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="306,12,408,41"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="43,12,139,41"/>
+</map>
+<map name="MapTMultiDimFit_InhMem" id="MapTMultiDimFit_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTMultiDimFit_Lib" id="MapTMultiDimFit_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTMultiDimFit_Inh" class="tabsel" href="inh/TMultiDimFit_Inh.png" onclick="javascript:return SetImg('Charts','inh/TMultiDimFit_Inh.png');">Inheritance</a>
+<a id="imgTMultiDimFit_InhMem" class="tab" href="inhmem/TMultiDimFit_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMultiDimFit_InhMem.png');">Inherited Members</a>
+<a id="imgTMultiDimFit_Incl" class="tab" href="incl/TMultiDimFit_Incl.png" onclick="javascript:return SetImg('Charts','incl/TMultiDimFit_Incl.png');">Includes</a>
+<a id="imgTMultiDimFit_Lib" class="tab" href="lib/TMultiDimFit_Lib.png" onclick="javascript:return SetImg('Charts','lib/TMultiDimFit_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMultiDimFit_Inh" src="inh/TMultiDimFit_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiDimFit:TMultiDimFit" href="src/TMultiDimFit.cxx.html#JZh2oD">TMultiDimFit</a>()</span><br />
+<div class="funccomm"><pre> Empty CTOR. Do not use
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiDimFit:TMultiDimFit%1" href="src/TMultiDimFit.cxx.html#UxAvO">TMultiDimFit</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dimension, <a href="./TMultiDimFit.html">TMultiDimFit</a>::EMDFPolyType type = <a href="./TMultiDimFit.html#TMultiDimFit:kMonomials" title="const TMultiDimFit::EMDFPolyType TMultiDimFit::kMonomials">kMonomials</a>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Constructor
+ Second argument is the type of polynomials to use in
+ parameterisation, one of:
+      <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:kMonomials" title="const TMultiDimFit::EMDFPolyType TMultiDimFit::kMonomials">kMonomials</a>
+      <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:kChebyshev" title="const TMultiDimFit::EMDFPolyType TMultiDimFit::kChebyshev">kChebyshev</a>
+      <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:kLegendre" title="const TMultiDimFit::EMDFPolyType TMultiDimFit::kLegendre">kLegendre</a>
+
+ Options:
+   K      Compute (k)correlation matrix
+   V      Be verbose
+
+ Default is no options.
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiDimFit:_TMultiDimFit" href="src/TMultiDimFit.cxx.html#eY3IzC">~TMultiDimFit</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:AddRow" href="src/TMultiDimFit.cxx.html#o443WD">AddRow</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> D, <a href="./ListOfTypes.html#Double_t">Double_t</a> E = 0)</span><br />
+<div class="funccomm"><pre> Add a row consisting of <a href="./TMultiDimFit.html#TMultiDimFit:fNVariables" title="Int_t TMultiDimFit::fNVariables">fNVariables</a> independent variables, the
+ known, dependent quantity, and optionally, the square error in
+ the dependent quantity, to the training sample to be used for the
+ parameterization.
+ The mean of the variables and quantity is calculated on the fly,
+ as outlined in <a href="./TPrincipal.html">TPrincipal</a>::<a href="./TPrincipal.html#TPrincipal:AddRow" title="void TPrincipal::AddRow(const Double_t* x)">AddRow</a>.
+ This sample should be representive of the problem at hand.
+ Please note, that if no error is given Poisson statistics is
+ assumed and the square error is set to the value of dependent
+ quantity.  See also the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:AddTestRow" href="src/TMultiDimFit.cxx.html#Jq8t2B">AddTestRow</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> D, <a href="./ListOfTypes.html#Double_t">Double_t</a> E = 0)</span><br />
+<div class="funccomm"><pre> Add a row consisting of <a href="./TMultiDimFit.html#TMultiDimFit:fNVariables" title="Int_t TMultiDimFit::fNVariables">fNVariables</a> independent variables, the
+ known, dependent quantity, and optionally, the square error in
+ the dependent quantity, to the test sample to be used for the
+ test of the parameterization.
+ This sample needn't be representive of the problem at hand.
+ Please note, that if no error is given Poisson statistics is
+ assumed and the square error is set to the value of dependent
+ quantity.  See also the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:Browse" href="src/TMultiDimFit.cxx.html#MDVD5D">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</span><br />
+<div class="funccomm"><pre> <a href="./TMultiDimFit.html#TMultiDimFit:Browse" title="void TMultiDimFit::Browse(TBrowser* b)">Browse</a> the <a href="./TMultiDimFit.html">TMultiDimFit</a> object in the <a href="./TBrowser.html">TBrowser</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:Clear" href="src/TMultiDimFit.cxx.html#HWtDCC">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TMultiDimFit.html#TMultiDimFit:Clear" title="void TMultiDimFit::Clear(Option_t* option=&quot;&quot;)">Clear</a> internal structures and variables
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:Eval" href="src/TMultiDimFit.cxx.html#NrSRt">Eval</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0) const</span><br />
+<div class="funccomm"><pre> Evaluate parameterization at point x. Optional argument coeff is
+ a vector of coefficients for the parameterisation, <a href="./TMultiDimFit.html#TMultiDimFit:fNCoefficients" title="Int_t TMultiDimFit::fNCoefficients">fNCoefficients</a>
+ elements <a href="./ListOfTypes.html#long">long</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:EvalError" href="src/TMultiDimFit.cxx.html#wS6rMC">EvalError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0) const</span><br />
+<div class="funccomm"><pre> Evaluate parameterization error at point x. Optional argument coeff is
+ a vector of coefficients for the parameterisation, <a href="./TMultiDimFit.html#TMultiDimFit:fNCoefficients" title="Int_t TMultiDimFit::fNCoefficients">fNCoefficients</a>
+ elements <a href="./ListOfTypes.html#long">long</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:EvalControl" href="src/TMultiDimFit.cxx.html#rnEp6">EvalControl</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers) const</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Calculate the control parameter from the passed powers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:EvalFactor" href="src/TMultiDimFit.cxx.html#MXp7lE">EvalFactor</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> p, <a href="./ListOfTypes.html#Double_t">Double_t</a> x) const</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Evaluate function with power p at variable value x
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:FindParameterization" href="src/TMultiDimFit.cxx.html#cHkvpC">FindParameterization</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Find the parameterization
+
+ Options:
+     None so far
+
+ For detailed description of what this entails, please refer to the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:Fit" href="src/TMultiDimFit.cxx.html#hAzrXC">Fit</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Try to fit the found parameterisation to the test sample.
+
+ Options
+     M     use Minuit to improve coefficients
+
+ Also, refer to
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMultiDimFit.html">TMultiDimFit</a>* <a class="funcname" name="TMultiDimFit:Instance" href="src/TMultiDimFit.cxx.html#JGLexE">Instance</a>()</span><br />
+<div class="funccomm"><pre> Return the static instance.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeCandidates" href="src/TMultiDimFit.cxx.html#bDp_3">MakeCandidates</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Create list of candidate functions for the parameterisation. See
+ also
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:MakeChi2" href="src/TMultiDimFit.cxx.html#DqWZaD">MakeChi2</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* coeff = 0)</span><br />
+<div class="funccomm"><pre> Calculate Chi square over either the test sample. The optional
+ argument coeff is a vector of coefficients to use in the
+ evaluation of the parameterisation. If coeff == 0, then the found
+ coefficients is used.
+ Used my MINUIT for fit (see TMultDimFit::<a href="./TMultiDimFit.html#TMultiDimFit:Fit" title="void TMultiDimFit::Fit(Option_t* option=&quot;&quot;)">Fit</a>)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeCode" href="src/TMultiDimFit.cxx.html#tvSSnB">MakeCode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* functionName = <span class="string">"MDF"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Generate the file &lt;filename&gt; with .C appended if argument doesn't
+ end in .cxx or .C. The contains the implementation of the
+ function:
+
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;funcname&gt;(<a href="./ListOfTypes.html#Double_t">Double_t</a> *x)
+
+ which does the same as <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:Eval" title="Double_t TMultiDimFit::Eval(const Double_t* x,const Double_t* coeff=0)">Eval</a>. Please refer to this
+ method.
+
+ Further, the static variables:
+
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    gNVariables
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    gNCoefficients
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> gDMean
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> gXMean[]
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> gXMin[]
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> gXMax[]
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> gCoefficient[]
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    gPower[]
+
+ are initialized. The only <a href="./ROOT.html">ROOT</a> header file needed is Rtypes.h
+
+ See <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:MakeRealCode" title="void TMultiDimFit::MakeRealCode(const char* filename,const char* classname,Option_t* option=&quot;&quot;)">MakeRealCode</a> for a list of options
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeCoefficientErrors" href="src/TMultiDimFit.cxx.html#gZ6_EC">MakeCoefficientErrors</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Compute the errors on the coefficients. For this to be done, the
+ curvature matrix of the non-orthogonal functions, is computed.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeCoefficients" href="src/TMultiDimFit.cxx.html#MDBYSE">MakeCoefficients</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Invert the model matrix B, and compute final coefficients. For a
+ more thorough discussion of what this means, please refer to the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+
+ First we invert the lower triangle matrix <a href="./TMultiDimFit.html#TMultiDimFit:fOrthCurvatureMatrix" title="TMatrixD TMultiDimFit::fOrthCurvatureMatrix">fOrthCurvatureMatrix</a>
+ and store the inverted matrix in the upper triangle.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeCorrelation" href="src/TMultiDimFit.cxx.html#o_2JPE">MakeCorrelation</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Compute the correlation matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:MakeGramSchmidt" href="src/TMultiDimFit.cxx.html#b.Bf7C">MakeGramSchmidt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> function)</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Make Gram-Schmidt orthogonalisation. The class description gives
+ a thorough account of this algorithm, as well as
+ references. Please refer to the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeHistograms" href="src/TMultiDimFit.cxx.html#Spt_g">MakeHistograms</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"A"</span>)</span><br />
+<div class="funccomm"><pre> Make histograms of the result of the analysis. This message
+ should be sent after having read all data points, but before
+ finding the parameterization
+
+ Options:
+     A         All the below
+     X         Original independent variables
+     D         Original dependent variables
+     N         Normalised independent variables
+     S         Shifted dependent variables
+     R1        Residuals versus normalised independent variables
+     R2        Residuals versus dependent variable
+     R3        Residuals computed on training sample
+     R4        Residuals computed on test sample
+
+ For a description of these quantities, refer to
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeMethod" href="src/TMultiDimFit.cxx.html#RmCCTB">MakeMethod</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Char_t">Char_t</a>* className = <span class="string">"MDF"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Generate the file &lt;classname&gt;MDF.cxx which contains the
+ implementation of the method:
+
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::MDF(<a href="./ListOfTypes.html#Double_t">Double_t</a> *x)
+
+ which does the same as  <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:Eval" title="Double_t TMultiDimFit::Eval(const Double_t* x,const Double_t* coeff=0)">Eval</a>. Please refer to this
+ method.
+
+ Further, the public static members:
+
+   <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgNVariables
+   <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgNCoefficients
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgDMean
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMean[]       //[fgNVariables]
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMin[]        //[fgNVariables]
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMax[]        //[fgNVariables]
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgCoefficient[] //[fgNCoeffficents]
+   <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgPower[]       //[fgNCoeffficents*fgNVariables]
+
+ are initialized, and assumed to exist. The class declaration is
+ assumed to be in &lt;classname&gt;.h and assumed to be provided by the
+ user.
+
+ See <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:MakeRealCode" title="void TMultiDimFit::MakeRealCode(const char* filename,const char* classname,Option_t* option=&quot;&quot;)">MakeRealCode</a> for a list of options
+
+ The minimal class definition is:
+
+   class &lt;classname&gt; {
+   public:
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgNVariables;     // Number of variables
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgNCoefficients;  // Number of terms
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgDMean;          // Mean from training sample
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMean[];        // Mean from training sample
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMin[];         // Min from training sample
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgXMax[];         // Max from training sample
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> &lt;classname&gt;::fgCoefficient[];  // Coefficients
+     <a href="./ListOfTypes.html#Int_t">Int_t</a>    &lt;classname&gt;::fgPower[];        // Function powers
+
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> <a href="./TMultiDimFit.html#TMultiDimFit:Eval" title="Double_t TMultiDimFit::Eval(const Double_t* x,const Double_t* coeff=0)">Eval</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> *x);
+   };
+
+ Whether the method &lt;classname&gt;::<a href="./TMultiDimFit.html#TMultiDimFit:Eval" title="Double_t TMultiDimFit::Eval(const Double_t* x,const Double_t* coeff=0)">Eval</a> should be static or not, is
+ up to the user.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeNormalized" href="src/TMultiDimFit.cxx.html#b7W6K">MakeNormalized</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Normalize data to the interval [-1;1]. This is needed for the
+ classes method to work.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeParameterization" href="src/TMultiDimFit.cxx.html#wgJaaE">MakeParameterization</a>()</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Find the parameterization over the training sample. A full account
+ of the algorithm is given in the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:MakeRealCode" href="src/TMultiDimFit.cxx.html#gYV9wB">MakeRealCode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* classname, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ This is the method that actually generates the code for the
+ evaluation the parameterization on some point.
+ It's called by <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:MakeCode" title="void TMultiDimFit::MakeCode(const char* functionName=&quot;MDF&quot;,Option_t* option=&quot;&quot;)">MakeCode</a> and <a href="./TMultiDimFit.html">TMultiDimFit</a>::<a href="./TMultiDimFit.html#TMultiDimFit:MakeMethod" title="void TMultiDimFit::MakeMethod(const Char_t* className=&quot;MDF&quot;,Option_t* option=&quot;&quot;)">MakeMethod</a>.
+
+ The options are: NONE so far
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:Print" href="src/TMultiDimFit.cxx.html#MzglAD">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"ps"</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TMultiDimFit.html#TMultiDimFit:Print" title="void TMultiDimFit::Print(Option_t* option=&quot;ps&quot;)">Print</a> statistics etc.
+ Options are
+   P        Parameters
+   S        Statistics
+   C        Coefficients
+   R        Result of parameterisation
+   F        Result of fit
+   K        Correlation Matrix
+   M        Pretty print formula
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMultiDimFit:Select" href="src/TMultiDimFit.cxx.html#wdo7JC">Select</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* iv)</span><br />
+<div class="funccomm"><pre> Selection method. User can override this method for specialized
+ selection of acceptable functions in fit. Default is to select
+ all. This message is sent during the build-up of the function
+ candidates table once for each set of powers in
+ variables. Notice, that the argument array contains the powers
+ PLUS ONE. For example, to De select the function
+     f = x1^2 * x2^4 * x3^5,
+ this method should return <a href="./ListOfTypes.html#Bool_t">kFALSE</a> if given the argument
+     { 3, 4, 6 }
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMaxAngle" href="src/TMultiDimFit.cxx.html#ywWnSC">SetMaxAngle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> angle = 0)</span><br />
+<div class="funccomm"><pre> Set the max angle (in degrees) between the initial data vector to
+ be fitted, and the new candidate function to be included in the
+ fit.  By default it is 0, which automatically chooses another
+ selection criteria. See also
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMinAngle" href="src/TMultiDimFit.cxx.html#q6MxRC">SetMinAngle</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> angle = 1)</span><br />
+<div class="funccomm"><pre> Set the min angle (in degrees) between a new candidate function
+ and the subspace spanned by the previously accepted
+ functions. See also
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetPowers" href="src/TMultiDimFit.cxx.html#GldrvE">SetPowers</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers, <a href="./ListOfTypes.html#Int_t">Int_t</a> terms)</span><br />
+<div class="funccomm"><pre> Define a user function. The input array must be of the form
+ (p11, ..., p1N, ... ,pL1, ..., pLN)
+ Where N is the dimension of the data sample, L is the number of
+ terms (given in terms) and the first number, labels the term, the
+ second the variable.  More information is given in the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetPowerLimit" href="src/TMultiDimFit.cxx.html#kl1IbB">SetPowerLimit</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> limit = 1e-3)</span><br />
+<div class="funccomm"><pre> Set the user parameter for the function selection. The bigger the
+ limit, the more functions are used. The meaning of this variable
+ is defined in the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMaxPowers" href="src/TMultiDimFit.cxx.html#O3PC5E">SetMaxPowers</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* powers)</span><br />
+<div class="funccomm"><pre> Set the maximum power to be considered in the fit for each
+ variable. See also
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMinRelativeError" href="src/TMultiDimFit.cxx.html#J6FnyC">SetMinRelativeError</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> error)</span><br />
+<div class="funccomm"><pre> Set the acceptable relative error for when sum of square
+ residuals is considered minimized. For a full account, refer to
+ the
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMultiDimFit:TestFunction" href="src/TMultiDimFit.cxx.html#S3nb7B">TestFunction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> squareResidual, <a href="./ListOfTypes.html#Double_t">Double_t</a> dResidur)</span><br />
+<div class="funccomm"><pre> PRIVATE METHOD:
+ Test whether the currently considered function contributes to the
+ fit. See also
+ </pre><!-- TDocHtmlDirective start --><a href="#TMultiDimFit:description">class description</a>
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiDimFit:TMultiDimFit" href="src/TMultiDimFit.h.html#CKFnIB">TMultiDimFit</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:Draw" href="src/TMultiDimFit.h.html#FmETYE">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">"d"</span>)</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetChi2" href="src/TMultiDimFit.h.html#ae_LPE">GetChi2</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fChi2" title="Double_t TMultiDimFit::fChi2">fChi2</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>* <a class="funcname" name="TMultiDimFit:GetCorrelationMatrix" href="src/TMultiDimFit.h.html#YdL74C">GetCorrelationMatrix</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fCorrelationMatrix" title="TMatrixD TMultiDimFit::fCorrelationMatrix">fCorrelationMatrix</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetCoefficients" href="src/TMultiDimFit.h.html#nPZNBE">GetCoefficients</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fCoefficients" title="TVectorD TMultiDimFit::fCoefficients">fCoefficients</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetError" href="src/TMultiDimFit.h.html#PvijbB">GetError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fError" title="Double_t TMultiDimFit::fError">fError</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a>* <a class="funcname" name="TMultiDimFit:GetFunctionCodes" href="src/TMultiDimFit.h.html#qQ7ZeC">GetFunctionCodes</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fFunctionCodes" title="Int_t* TMultiDimFit::fFunctionCodes">fFunctionCodes</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMatrixD.html">TMatrixD</a>* <a class="funcname" name="TMultiDimFit:GetFunctions" href="src/TMultiDimFit.h.html#rdHj3B">GetFunctions</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fFunctions" title="TMatrixD TMultiDimFit::fFunctions">fFunctions</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>* <a class="funcname" name="TMultiDimFit:GetHistograms" href="src/TMultiDimFit.h.html#e4TbvD">GetHistograms</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fHistograms" title="TList* TMultiDimFit::fHistograms">fHistograms</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMaxAngle" href="src/TMultiDimFit.h.html#Xj9vFE">GetMaxAngle</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxAngle" title="Double_t TMultiDimFit::fMaxAngle">fMaxAngle</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetMaxFunctions" href="src/TMultiDimFit.h.html#DXVqq">GetMaxFunctions</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxFunctions" title="Int_t TMultiDimFit::fMaxFunctions">fMaxFunctions</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a>* <a class="funcname" name="TMultiDimFit:GetMaxPowers" href="src/TMultiDimFit.h.html#MEY2DE">GetMaxPowers</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxPowers" title="Int_t* TMultiDimFit::fMaxPowers">fMaxPowers</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMaxQuantity" href="src/TMultiDimFit.h.html#O5J37C">GetMaxQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxQuantity" title="Double_t TMultiDimFit::fMaxQuantity">fMaxQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetMaxStudy" href="src/TMultiDimFit.h.html#Cm5NcE">GetMaxStudy</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxStudy" title="Int_t TMultiDimFit::fMaxStudy">fMaxStudy</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetMaxTerms" href="src/TMultiDimFit.h.html#flb0mD">GetMaxTerms</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxTerms" title="Int_t TMultiDimFit::fMaxTerms">fMaxTerms</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetMaxVariables" href="src/TMultiDimFit.h.html#PyIYrE">GetMaxVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fMaxVariables" title="TVectorD TMultiDimFit::fMaxVariables">fMaxVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMeanQuantity" href="src/TMultiDimFit.h.html#IKRjJ">GetMeanQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMeanQuantity" title="Double_t TMultiDimFit::fMeanQuantity">fMeanQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetMeanVariables" href="src/TMultiDimFit.h.html#de22XE">GetMeanVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fMeanVariables" title="TVectorD TMultiDimFit::fMeanVariables">fMeanVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMinAngle" href="src/TMultiDimFit.h.html#Xov_sC">GetMinAngle</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMinAngle" title="Double_t TMultiDimFit::fMinAngle">fMinAngle</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMinQuantity" href="src/TMultiDimFit.h.html#Jo4xAD">GetMinQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMinQuantity" title="Double_t TMultiDimFit::fMinQuantity">fMinQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetMinRelativeError" href="src/TMultiDimFit.h.html#IXWdVE">GetMinRelativeError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMinRelativeError" title="Double_t TMultiDimFit::fMinRelativeError">fMinRelativeError</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetMinVariables" href="src/TMultiDimFit.h.html#rqVYrE">GetMinVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fMinVariables" title="TVectorD TMultiDimFit::fMinVariables">fMinVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetNVariables" href="src/TMultiDimFit.h.html#S59YY">GetNVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fNVariables" title="Int_t TMultiDimFit::fNVariables">fNVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetNCoefficients" href="src/TMultiDimFit.h.html#n3BGL">GetNCoefficients</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fNCoefficients" title="Int_t TMultiDimFit::fNCoefficients">fNCoefficients</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetPolyType" href="src/TMultiDimFit.h.html#OG5nM">GetPolyType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fPolyType" title="TMultiDimFit::EMDFPolyType TMultiDimFit::fPolyType">fPolyType</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a>* <a class="funcname" name="TMultiDimFit:GetPowerIndex" href="src/TMultiDimFit.h.html#o4nltE">GetPowerIndex</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fPowerIndex" title="Int_t* TMultiDimFit::fPowerIndex">fPowerIndex</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetPowerLimit" href="src/TMultiDimFit.h.html#xwDaEB">GetPowerLimit</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fPowerLimit" title="Double_t TMultiDimFit::fPowerLimit">fPowerLimit</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* <a class="funcname" name="TMultiDimFit:GetPowers" href="src/TMultiDimFit.h.html#xVFbIB">GetPowers</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fPowers" title="Int_t* TMultiDimFit::fPowers">fPowers</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetPrecision" href="src/TMultiDimFit.h.html#hhv_5B">GetPrecision</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fPrecision" title="Double_t TMultiDimFit::fPrecision">fPrecision</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetQuantity" href="src/TMultiDimFit.h.html#HDqQF">GetQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fQuantity" title="TVectorD TMultiDimFit::fQuantity">fQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetResidualMax" href="src/TMultiDimFit.h.html#RjGfz">GetResidualMax</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxResidual" title="Double_t TMultiDimFit::fMaxResidual">fMaxResidual</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetResidualMin" href="src/TMultiDimFit.h.html#SHkBR">GetResidualMin</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMinResidual" title="Double_t TMultiDimFit::fMinResidual">fMinResidual</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetResidualMaxRow" href="src/TMultiDimFit.h.html#GnqjSC">GetResidualMaxRow</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMaxResidualRow" title="Int_t TMultiDimFit::fMaxResidualRow">fMaxResidualRow</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetResidualMinRow" href="src/TMultiDimFit.h.html#OqHGwE">GetResidualMinRow</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fMinResidualRow" title="Int_t TMultiDimFit::fMinResidualRow">fMinResidualRow</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetResidualSumSq" href="src/TMultiDimFit.h.html#gZ80YE">GetResidualSumSq</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fSumSqResidual" title="Double_t TMultiDimFit::fSumSqResidual">fSumSqResidual</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetRMS" href="src/TMultiDimFit.h.html#TiAwHC">GetRMS</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fRMS" title="Double_t TMultiDimFit::fRMS">fRMS</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetSampleSize" href="src/TMultiDimFit.h.html#HII3WB">GetSampleSize</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fSampleSize" title="Int_t TMultiDimFit::fSampleSize">fSampleSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetSqError" href="src/TMultiDimFit.h.html#BXoKaD">GetSqError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fSqError" title="TVectorD TMultiDimFit::fSqError">fSqError</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetSumSqAvgQuantity" href="src/TMultiDimFit.h.html#TEbnRC">GetSumSqAvgQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fSumSqAvgQuantity" title="Double_t TMultiDimFit::fSumSqAvgQuantity">fSumSqAvgQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetSumSqQuantity" href="src/TMultiDimFit.h.html#VRvig">GetSumSqQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fSumSqQuantity" title="Double_t TMultiDimFit::fSumSqQuantity">fSumSqQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetTestError" href="src/TMultiDimFit.h.html#mfVnqD">GetTestError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fTestError" title="Double_t TMultiDimFit::fTestError">fTestError</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiDimFit:GetTestPrecision" href="src/TMultiDimFit.h.html#n1SK7D">GetTestPrecision</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fTestPrecision" title="Double_t TMultiDimFit::fTestPrecision">fTestPrecision</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetTestQuantity" href="src/TMultiDimFit.h.html#vfMyQE">GetTestQuantity</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fTestQuantity" title="TVectorD TMultiDimFit::fTestQuantity">fTestQuantity</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiDimFit:GetTestSampleSize" href="src/TMultiDimFit.h.html#t5_nAE">GetTestSampleSize</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiDimFit.html#TMultiDimFit:fTestSampleSize" title="Int_t TMultiDimFit::fTestSampleSize">fTestSampleSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetTestSqError" href="src/TMultiDimFit.h.html#xVounB">GetTestSqError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fTestSqError" title="TVectorD TMultiDimFit::fTestSqError">fTestSqError</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetTestVariables" href="src/TMultiDimFit.h.html#qTgvXB">GetTestVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fTestVariables" title="TVectorD TMultiDimFit::fTestVariables">fTestVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>* <a class="funcname" name="TMultiDimFit:GetVariables" href="src/TMultiDimFit.h.html#xnT_6E">GetVariables</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./TMultiDimFit.html#TMultiDimFit:fVariables" title="TVectorD TMultiDimFit::fVariables">fVariables</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMultiDimFit:IsFolder" href="src/TMultiDimFit.h.html#IhmXrB">IsFolder</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetBinVarX" href="src/TMultiDimFit.h.html#nMfuO">SetBinVarX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbbinvarx)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TMultiDimFit.html#TMultiDimFit:fBinVarX" title="Int_t TMultiDimFit::fBinVarX">fBinVarX</a> = nbbinvarx;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetBinVarY" href="src/TMultiDimFit.h.html#XbLHO">SetBinVarY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbbinvary)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TMultiDimFit.html#TMultiDimFit:fBinVarY" title="Int_t TMultiDimFit::fBinVarY">fBinVarY</a> = nbbinvary;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMaxFunctions" href="src/TMultiDimFit.h.html#ySlsb">SetMaxFunctions</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMultiDimFit.html#TMultiDimFit:fMaxFunctions" title="Int_t TMultiDimFit::fMaxFunctions">fMaxFunctions</a> = n; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMaxStudy" href="src/TMultiDimFit.h.html#bdd6VD">SetMaxStudy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMultiDimFit.html#TMultiDimFit:fMaxStudy" title="Int_t TMultiDimFit::fMaxStudy">fMaxStudy</a>  = n; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiDimFit:SetMaxTerms" href="src/TMultiDimFit.h.html#x_1ZjD">SetMaxTerms</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> terms)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMultiDimFit.html#TMultiDimFit:fMaxTerms" title="Int_t TMultiDimFit::fMaxTerms">fMaxTerms</a> = terms; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/hist:$Id: TMultiDimFit.h 20882 2007-11-19 11:31:26Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:20</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

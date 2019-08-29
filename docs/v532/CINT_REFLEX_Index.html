@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:26:13 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Index of CINT/REFLEX</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CINT_Index.html">CINT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">REFLEX</a>
+</div>
+<h2>Index of CINT/REFLEX</h2>
+<p>Reflex is ROOT's (or actually CINT's) reflection database. It knows everything about all classes, types, and members in the system.
+We are currently in the process of a major update of Reflex, including changes in the API and its internal structures.
+Bare with us - you will get proper documentation once this upgrade is finished. Until then this is what you need to know:</p>
+<h3>Filling Reflex</h3>
+<p>Reflex is a container - it does not know anything by itself.
+You can use genreflex, a python script wrapping <a href="http://gccxml.org">GCCXML</a>, or <tt>rootcint -reflex</tt> or regular <a href="http://root.cern.ch/root/RootCintMan.html">rootcint</a> and Cintex, by calling <tt>Cintex::Enable()</tt>.
+In the near future, CINT will use Reflex directly; any dictionary loaded by CINT will automatically populate Reflex.</p>
+<h3>Retrieving data</h3>
+<p>The main user interface to the Reflex data consists of
+<dl>
+<dt><a href="Reflex__Type.html"><tt>Reflex::Type</tt></a></dt>
+<dd>represents any type, from basic ones like <tt>int</tt> to e.g. <tt>Reflex::Type</tt> itself.</dd>
+<dt><a href="Reflex__Scope.html"><tt>Reflex::Scope</tt></a></dt>
+<dd>represents a namespace, class, struct, union, etc - anything that can have members, e.g. the global scope <tt>::</tt> or <tt>Reflex::Type</tt>.</dd>
+<dt><a href="Reflex__Member.html"><tt>Reflex::Member</tt></a></dt>
+<dd>represents a data or function member of a scope.</dd>
+</dl>
+</p>
+<p>Note that conversions exist, e.g. <tt>Reflex::Member</tt> is both a scope and a type, thus a <tt>Reflex::Scope</tt> representing <tt>Reflex::Member</tt> can be converted to a <tt>Reflex::Type</tt>. 
+Just check the list of member functions for these types - they are easy to understand.</p>
+<h3>Example</h3>
+Once you have filled your reflection data into Reflex you can e.g. query it for the first parameter of the function <tt><a href="Reflex__Scope.html">Reflex::Scope</a>::<a href="Reflex__Scope.html#Reflex__Scope:SubTypeByName">SubTypeByName()</a></tt>:
+<div class="code"><code class="inlinecode">using Reflex; <span class="comment">// save typing</span><br/>
+&nbsp;<br/>
+<a href="Reflex__Scope.html">Scope</a>  s = <a href="Reflex__Scope.html">Scope</a>::<a href="Reflex__Scope.html#Reflex__Scope:ByName">ByName("Reflex::Scope");</a> <span class="comment">// the scope containing the member we want to query</span><br/>
+<a href="Reflex__Member.html">Member</a> m = s.<a href="Reflex__Scope.html#Reflex__Scope:FunctionMemberByName">FunctionMemberByName</a>("SubTypeByName"); <span class="comment">// get the function member</span><br/>
+<a href="Reflex__Type.html">Type</a>  mt = m.<a href="Reflex__Member.html#Reflex__Member:TypeOf">TypeOf()</a>; <span class="comment">// we need its type</span><br/>
+<a href="Reflex__Type.html">Type</a> arg = mt.<a href="Reflex__Type.html#Reflex__Type:FunctionParameterAt">FunctionParameterAt(0)</a>; <span class="comment">// the type of the first function parameter</span><br/>
+&nbsp;<br/>
+cout << arg.<a href="Reflex__Type.html#Reflex__Type:Name">Name(SCOPED | QUALIFIED)</a> << endl; <span class="comment">// print the scoped and qualified name</span></code></div>
+<div style="clear: both;"></div>
+<p>&nbsp;</p>
+<h3>Class reference</h3>
+<h3>Further Reading</h3><div id="furtherreading">
+<a class="linkeddoc" href="cint/reflex/CMakeLists.html">CMakeLists</a> 
+</div><h3>List of Classes</h3>
+<h2>Class Index</h2>
+<div id="indxShortX"><h4>Jump to</h4>
+<a href="#idx0">R</a>
+<a href="#idx1">Reflex:</a>
+<a href="#idx2">Reflex::M</a>
+<a href="#idx3">Reflex::O</a>
+<a href="#idx4">Reflex::P</a>
+<a href="#idx5">Reflex::S</a>
+<a href="#idx6">Reflex::T</a>
+<a href="#idx7">Reflex::U</a>
+<a href="#idx8">Reflex::V</a>
+</div><br />
+<ul id="indx">
+<li class="idxl0"><a name="idx0"></a><a href="./Reflex.html"><span class="typename">Reflex</span></a> </li>
+<li class="idxl1"><a name="idx1"></a><a href="./Reflex__Any.html"><span class="typename">Reflex::Any</span></a> </li>
+<li class="idxl0"><a href="./Reflex__Base.html"><span class="typename">Reflex::Base</span></a> </li>
+<li class="idxl1"><a href="./Reflex__ClassBuilder.html"><span class="typename">Reflex::ClassBuilder</span></a> </li>
+<li class="idxl0"><a href="./Reflex__ClassBuilderImpl.html"><span class="typename">Reflex::ClassBuilderImpl</span></a> </li>
+<li class="idxl1"><a href="./Reflex__CollFuncTable.html"><span class="typename">Reflex::CollFuncTable</span></a> </li>
+<li class="idxl0"><a href="./Reflex__Dummy.html"><span class="typename">Reflex::Dummy</span></a> </li>
+<li class="idxl1"><a href="./Reflex__EnumBuilder.html"><span class="typename">Reflex::EnumBuilder</span></a> </li>
+<li class="idxl0"><a href="./Reflex__FunctionBuilder.html"><span class="typename">Reflex::FunctionBuilder</span></a> </li>
+<li class="idxl1"><a href="./Reflex__FunctionBuilderImpl.html"><span class="typename">Reflex::FunctionBuilderImpl</span></a> </li>
+<li class="idxl0"><a href="./Reflex__ICallback.html"><span class="typename">Reflex::ICallback</span></a> </li>
+<li class="idxl1"><a href="./Reflex__Instance.html"><span class="typename">Reflex::Instance</span></a> </li>
+<li class="idxl0"><a name="idx2"></a><a href="./Reflex__Member.html"><span class="typename">Reflex::Member</span></a> </li>
+<li class="idxl1"><a href="./Reflex__MemberTemplate.html"><span class="typename">Reflex::MemberTemplate</span></a> </li>
+<li class="idxl0"><a href="./Reflex__NamespaceBuilder.html"><span class="typename">Reflex::NamespaceBuilder</span></a> </li>
+<li class="idxl1"><a href="./Reflex__NewDelFunctions.html"><span class="typename">Reflex::NewDelFunctions</span></a> </li>
+<li class="idxl0"><a href="./Reflex__NullType.html"><span class="typename">Reflex::NullType</span></a> </li>
+<li class="idxl1"><a name="idx3"></a><a href="./Reflex__Object.html"><span class="typename">Reflex::Object</span></a> </li>
+<li class="idxl0"><a name="idx4"></a><a href="./Reflex__PrivateClass.html"><span class="typename">Reflex::PrivateClass</span></a> </li>
+<li class="idxl1"><a href="./Reflex__PrivateEnum.html"><span class="typename">Reflex::PrivateEnum</span></a> </li>
+<li class="idxl0"><a href="./Reflex__PrivateStruct.html"><span class="typename">Reflex::PrivateStruct</span></a> </li>
+<li class="idxl1"><a href="./Reflex__PrivateUnion.html"><span class="typename">Reflex::PrivateUnion</span></a> </li>
+<li class="idxl0"><a href="./Reflex__ProtectedClass.html"><span class="typename">Reflex::ProtectedClass</span></a> </li>
+<li class="idxl1"><a href="./Reflex__ProtectedEnum.html"><span class="typename">Reflex::ProtectedEnum</span></a> </li>
+<li class="idxl0"><a href="./Reflex__ProtectedStruct.html"><span class="typename">Reflex::ProtectedStruct</span></a> </li>
+<li class="idxl1"><a href="./Reflex__ProtectedUnion.html"><span class="typename">Reflex::ProtectedUnion</span></a> </li>
+<li class="idxl0"><a href="./Reflex__RuntimeError.html"><span class="typename">Reflex::RuntimeError</span></a> </li>
+<li class="idxl1"><a name="idx5"></a><a href="./Reflex__Scope.html"><span class="typename">Reflex::Scope</span></a> </li>
+<li class="idxl0"><a href="./Reflex__Selection__AUTOSELECT.html"><span class="typename">Reflex::Selection::AUTOSELECT</span></a> </li>
+<li class="idxl1"><a href="./Reflex__Selection__NODEFAULT.html"><span class="typename">Reflex::Selection::NODEFAULT</span></a> </li>
+<li class="idxl0"><a href="./Reflex__Selection__NO_SELF_AUTOSELECT.html"><span class="typename">Reflex::Selection::NO_SELF_AUTOSELECT</span></a> </li>
+<li class="idxl1"><a href="./Reflex__Selection__TRANSIENT.html"><span class="typename">Reflex::Selection::TRANSIENT</span></a> </li>
+<li class="idxl0"><a name="idx6"></a><a href="./Reflex__Tools.html"><span class="typename">Reflex::Tools</span></a> </li>
+<li class="idxl1"><a href="./Reflex__Type.html"><span class="typename">Reflex::Type</span></a> </li>
+<li class="idxl0"><a href="./Reflex__TypeTemplate.html"><span class="typename">Reflex::TypeTemplate</span></a> </li>
+<li class="idxl1"><a href="./Reflex__TypedefBuilderImpl.html"><span class="typename">Reflex::TypedefBuilderImpl</span></a> </li>
+<li class="idxl0"><a name="idx7"></a><a href="./Reflex__UnionBuilderImpl.html"><span class="typename">Reflex::UnionBuilderImpl</span></a> </li>
+<li class="idxl1"><a href="./Reflex__UnknownType.html"><span class="typename">Reflex::UnknownType</span></a> </li>
+<li class="idxl0"><a href="./Reflex__UnnamedClass.html"><span class="typename">Reflex::UnnamedClass</span></a> </li>
+<li class="idxl1"><a href="./Reflex__UnnamedEnum.html"><span class="typename">Reflex::UnnamedEnum</span></a> </li>
+<li class="idxl0"><a href="./Reflex__UnnamedNamespace.html"><span class="typename">Reflex::UnnamedNamespace</span></a> </li>
+<li class="idxl1"><a href="./Reflex__UnnamedStruct.html"><span class="typename">Reflex::UnnamedStruct</span></a> </li>
+<li class="idxl0"><a href="./Reflex__UnnamedUnion.html"><span class="typename">Reflex::UnnamedUnion</span></a> </li>
+<li class="idxl1"><a name="idx8"></a><a href="./Reflex__VariableBuilder.html"><span class="typename">Reflex::VariableBuilder</span></a> </li>
+<li class="idxl0"><a href="./Reflex__VariableBuilderImpl.html"><span class="typename">Reflex::VariableBuilderImpl</span></a> </li>
+</ul>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:26 </em><em>&raquo; Last generated: 2011-12-02 14:26</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

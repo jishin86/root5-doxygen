@@ -1,0 +1,459 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:11:13 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TDecompBase</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TDecompBase','libMatrix','TDecompBase.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TDecompBase.h.html">header file</a>
+<a class="descrheadentry" href="src/TDecompBase.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/matrix/inc/TDecompBase.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/matrix/src/TDecompBase.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TDecompBase:description">class description</a> 
+<a class="descrheadentry" href="#TDecompBase:Function_Members">function members</a>
+<a class="descrheadentry" href="#TDecompBase:Data_Members">data members</a>
+<a class="descrheadentry" href="#TDecompBase:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MATRIX_Index.html">MATRIX</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TDecompBase</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TDecompBase:description"></a>class TDecompBase: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+Decomposition Base class
+
+This class forms the base for all the decompositions methods in the
+linear algebra package .
+It or its derived classes have installed the methods to solve
+equations,invert matrices and calculate determinants while monitoring
+the accuracy.
+
+Each derived class has always the following methods available:
+
+<a href="./TDecompBase.html#TDecompBase:Condition" title="Double_t TDecompBase::Condition()">Condition</a>() :
+In an iterative scheme the condition number for matrix inversion is
+calculated . This number is of interest for estimating the accuracy
+of x in the equation Ax=b
+For example:
+A is a (10x10) Hilbert matrix which looks deceivingly innocent
+and simple, A(i,j) = 1/(i+j+1)
+b(i) = Sum_j A(i,j), so a sum of a row in A
+
+the solution is x(i) = 1. i=0,.,9
+
+However,
+<a href="./TMatrixD.html">TMatrixD</a> m....; <a href="./TVectorD.html">TVectorD</a> b.....
+<a href="./TDecompLU.html">TDecompLU</a> lu(m); lu.<a href="./TDecompBase.html#TDecompBase:SetTol" title="Double_t TDecompBase::SetTol(Double_t newTol)">SetTol</a>(1.0e-12); lu.<a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a>(b); b.<a href="./TDecompBase.html#TDecompBase:Print" title="void TDecompBase::Print(Option_t* opt=&quot;&quot;)">Print</a>()
+gives,
+
+{1.000,1.000,1.000,1.000,0.998,1.000,0.993,1.001,0.996,1.000}
+
+Looking at the condition number, this is in line with expected the
+accuracy . The condition number is 3.957e+12 . As a simple rule of
+thumb, a condition number of 1.0e+n means that you lose up to n
+digits of accuracy in a solution . Since doubles are stored with 15
+digits, we can expect the accuracy to be as small as 3 digits .
+
+<a href="./TDecompBase.html#TDecompBase:Det" title="void TDecompBase::Det(Double_t&amp; d1,Double_t&amp; d2)">Det</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> &amp;d1,<a href="./ListOfTypes.html#Double_t">Double_t</a> &amp;d2)
+The determinant is d1*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Power" title="Double_t TMath::Power(Double_t x,Double_t y) or overloads">Power</a>(2.,d2)
+Expressing the determinant this way makes under/over-flow very
+unlikely .
+
+<a href="./TDecompBase.html#TDecompBase:Decompose" title="Bool_t TDecompBase::Decompose()">Decompose</a>()
+Here the actually decomposition is performed . One can change the
+matrix A after the decomposition constructor has been called
+without effecting the decomposition result
+
+<a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a>(<a href="./TVectorD.html">TVectorD</a> &amp;b)
+<a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a> A x = b . x is supplied through the argument and replaced with
+the solution .
+
+<a href="./TDecompBase.html#TDecompBase:TransSolve" title="Bool_t TDecompBase::TransSolve(TVectorD&amp; b) or overloads">TransSolve</a>(<a href="./TVectorD.html">TVectorD</a> &amp;b)
+<a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a> A^T x = b . x is supplied through the argument and replaced
+with the solution .
+
+<a href="./TDecompBase.html#TDecompBase:MultiSolve" title="Bool_t TDecompBase::MultiSolve(TMatrixD&amp; B)">MultiSolve</a>(<a href="./TMatrixD.html">TMatrixD</a>    &amp;B)
+<a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a> A X = B . where X and are now matrices . X is supplied through
+the argument and replaced with the solution .
+
+Invert(<a href="./TMatrixD.html">TMatrixD</a> &amp;inv)
+This is of course just a call to <a href="./TDecompBase.html#TDecompBase:MultiSolve" title="Bool_t TDecompBase::MultiSolve(TMatrixD&amp; B)">MultiSolve</a> with as input argument
+the unit matrix . Note that for a matrix a(m,n) with m &gt; n  a
+pseudo-inverse is calculated .
+
+Tolerances and Scaling
+
+The tolerance parameter (which is a member of this base class) plays
+a crucial role in all operations of the decomposition classes . It
+gives the user a powerful tool to monitor and steer the operations
+Its default value is sqrt(epsilon) where 1+epsilon = 1
+
+If you do not want to be bothered by the following considerations,
+like in most other linear algebra packages, just set the tolerance
+with <a href="./TDecompBase.html#TDecompBase:SetTol" title="Double_t TDecompBase::SetTol(Double_t newTol)">SetTol</a> to an arbitrary small number .
+
+The tolerance number is used by each decomposition method to decide
+whether the matrix is near singular, except of course SVD which can
+handle singular matrices .
+For each decomposition this will be checked in a different way; in LU
+the matrix is considered singular when, at some point in the
+ decomposition, a diagonal element &lt; <a href="./TDecompBase.html#TDecompBase:fTol" title="Double_t TDecompBase::fTol">fTol</a> . Therefore, we had to set in
+the example above of the (10x10) Hilbert, which is near singular, the
+tolerance on 10e-12 . (The fact that we have to set the tolerance &lt;
+sqrt(epsilon) is a clear indication that we are losing precision .)
+
+If the matrix is flagged as being singular, operations with the
+decomposition will fail and will return matrices/vectors that are
+invalid .
+
+The observant reader will notice that by scaling the complete matrix
+ by some small number the decomposition will detect a singular matrix .
+ In this case the user will have to reduce the tolerance number by this
+ factor . (For CPU time saving we decided not to make this an automatic
+procedure) .
+
+Code for this could look as follows:
+const <a href="./ListOfTypes.html#Double_t">Double_t</a> max_abs = Abs(a).Max();
+const <a href="./ListOfTypes.html#Double_t">Double_t</a> scale = <a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Min" title="Short_t TMath::Min(Short_t a,Short_t b) or overloads">Min</a>(max_abs,1.);
+a.<a href="./TDecompBase.html#TDecompBase:SetTol" title="Double_t TDecompBase::SetTol(Double_t newTol)">SetTol</a>(a.<a href="./TDecompBase.html#TDecompBase:GetTol" title="Double_t TDecompBase::GetTol()">GetTol</a>()*scale);
+
+For usage examples see $ROOTSYS/test/stressLinear.cxx
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TDecompBase:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="TDecompBase.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TDecompBase:_TDecompBase">~TDecompBase</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TDecompBase:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Condition">Condition</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Decompose">Decompose</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:Det">Det</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetColLwb">GetColLwb</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetCondition">GetCondition</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetDet1">GetDet1</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetDet2">GetDet2</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetNcols">GetNcols</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetNrows">GetNrows</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetRowLwb">GetRowLwb</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:GetTol">GetTol</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TDecompBase:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:MultiSolve">MultiSolve</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; B)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDecompBase.html">TDecompBase</a>&amp;</td><td class="funcname"><a class="funcname" href="#TDecompBase:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TDecompBase.html">TDecompBase</a>&amp; source)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:SetTol">SetTol</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> newTol)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Solve">Solve</a>(<a href="./TVectorD.html">TVectorD</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Solve%2">Solve</a>(<a href="./TMatrixDColumn.html">TMatrixDColumn</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TVectorD.html">TVectorD</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Solve%1">Solve</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; ok)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:TransSolve">TransSolve</a>(<a href="./TVectorD.html">TVectorD</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:TransSolve%2">TransSolve</a>(<a href="./TMatrixDColumn.html">TMatrixDColumn</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TVectorD.html">TVectorD</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:TransSolve%1">TransSolve</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; ok)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:DiagProd">DiagProd</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; diag, <a href="./ListOfTypes.html#Double_t">Double_t</a> tol, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TMatrixDBase.html">TMatrixDBase</a>&amp;</td><td class="funcname"><a class="funcname" href="#TDecompBase:GetDecompMatrix">GetDecompMatrix</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TDecompBase:Hager">Hager</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; est, <a href="./ListOfTypes.html#Int_t">Int_t</a> iter = 5)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TDecompBase:ResetStatus">ResetStatus</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TDecompBase:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EMatrixDecompStat { </td><td class="dataname"><a name="TDecompBase:kInit"></a>kInit</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kPatternSet"></a>kPatternSet</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kValuesSet"></a>kValuesSet</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kMatrixSet"></a>kMatrixSet</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kDecomposed"></a>kDecomposed</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kDetermined"></a>kDetermined</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kCondition"></a>kCondition</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TDecompBase:kSingular"></a>kSingular</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TDecompBase:kWorkMax"></a>kWorkMax</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TDecompBase:fColLwb"></a>fColLwb</td><td class="datadesc">Column lower bound of decomposed matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TDecompBase:fCondition"></a>fCondition</td><td class="datadesc">matrix condition number</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TDecompBase:fDet1"></a>fDet1</td><td class="datadesc">determinant mantissa</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TDecompBase:fDet2"></a>fDet2</td><td class="datadesc">determinant exponent for powers of 2</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TDecompBase:fRowLwb"></a>fRowLwb</td><td class="datadesc">Row    lower bound of decomposed matrix</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TDecompBase:fTol"></a>fTol</td><td class="datadesc">sqrt(epsilon); epsilon is smallest number number so that  1+epsilon &gt; 1</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TDecompBase:Class_Charts"></a>Class Charts</h2>
+<map name="MapTDecompBase_Inh" id="MapTDecompBase_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="40,82,128,109"/>
+<area shape="rect" href="./TDecompBK.html" title="TDecompBK" alt="" coords="600,4,737,31"/>
+<area shape="rect" href="./TDecompChol.html" title="TDecompChol" alt="" coords="590,35,747,62"/>
+<area shape="rect" href="./TDecompLU.html" title="TDecompLU" alt="" coords="601,66,736,93"/>
+<area shape="rect" href="./TDecompQRH.html" title="TDecompQRH" alt="" coords="590,98,747,124"/>
+<area shape="rect" href="./TDecompSVD.html" title="TDecompSVD" alt="" coords="591,129,746,155"/>
+<area shape="rect" href="./TDecompSparse.html" title="TDecompSparse" alt="" coords="576,160,761,186"/>
+</map>
+<map name="MapTDecompBase_InhMem" id="MapTDecompBase_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTDecompBase_Lib" id="MapTDecompBase_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="465,83,593,131"/>
+</map>
+<div class="tabs">
+<a id="imgTDecompBase_Inh" class="tabsel" href="inh/TDecompBase_Inh.png" onclick="javascript:return SetImg('Charts','inh/TDecompBase_Inh.png');">Inheritance</a>
+<a id="imgTDecompBase_InhMem" class="tab" href="inhmem/TDecompBase_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TDecompBase_InhMem.png');">Inherited Members</a>
+<a id="imgTDecompBase_Incl" class="tab" href="incl/TDecompBase_Incl.png" onclick="javascript:return SetImg('Charts','incl/TDecompBase_Incl.png');">Includes</a>
+<a id="imgTDecompBase_Lib" class="tab" href="lib/TDecompBase_Lib.png" onclick="javascript:return SetImg('Charts','lib/TDecompBase_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTDecompBase_Inh" src="inh/TDecompBase_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDecompBase:Hager" href="src/TDecompBase.cxx.html#wIyM3C">Hager</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; est, <a href="./ListOfTypes.html#Int_t">Int_t</a> iter = 5)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TDecompBase:DiagProd" href="src/TDecompBase.cxx.html#AU8qMB">DiagProd</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; diag, <a href="./ListOfTypes.html#Double_t">Double_t</a> tol, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d2)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:Condition" href="src/TDecompBase.cxx.html#N0Szy">Condition</a>()</span><br />
+<div class="funccomm"><pre> Matrix condition number
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:MultiSolve" href="src/TDecompBase.cxx.html#OIyPWB">MultiSolve</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; B)</span><br />
+<div class="funccomm"><pre> <a href="./TDecompBase.html#TDecompBase:Solve" title="Bool_t TDecompBase::Solve(TVectorD&amp; b) or overloads">Solve</a> set of equations with RHS in columns of B
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TDecompBase:Det" href="src/TDecompBase.cxx.html#lw64j">Det</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d2)</span><br />
+<div class="funccomm"><pre> Matrix determinant det = d1*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Power" title="Double_t TMath::Power(Double_t x,Double_t y) or overloads">Power</a>(2.,d2)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TDecompBase:Print" href="src/TDecompBase.cxx.html#UTHmiE">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TDecompBase.html#TDecompBase:Print" title="void TDecompBase::Print(Option_t* opt=&quot;&quot;)">Print</a> class members
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDecompBase.html">TDecompBase</a> &amp; <a class="funcname" name="TDecompBase:operator_" href="src/TDecompBase.cxx.html#SJAfCB">operator=</a>(<span class="keyword">const</span> <a href="./TDecompBase.html">TDecompBase</a>&amp; source)</span><br />
+<div class="funccomm"><pre> Assignment operator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:SetTol" href="src/TDecompBase.h.html#eZ.i.C">SetTol</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> newTol)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TDecompBase:ResetStatus" href="src/TDecompBase.h.html#nHfB.C">ResetStatus</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> i = 14; i &lt; 22; i++) <a href="./TObject.html#TObject:ResetBit" title="void TObject::ResetBit(UInt_t f)">ResetBit</a>(BIT(i)); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TMatrixDBase.html">TMatrixDBase</a> &amp; <a class="funcname" name="TDecompBase:GetDecompMatrix" href="src/TDecompBase.h.html#d5QzuE">GetDecompMatrix</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TDecompBase:_TDecompBase" href="src/TDecompBase.h.html#dgdS5">~TDecompBase</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:GetTol" href="src/TDecompBase.h.html#ZEF0RB">GetTol</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fTol" title="Double_t TDecompBase::fTol">fTol</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:GetDet1" href="src/TDecompBase.h.html#rfP_u">GetDet1</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fDet1" title="Double_t TDecompBase::fDet1">fDet1</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:GetDet2" href="src/TDecompBase.h.html#rfP_u">GetDet2</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fDet2" title="Double_t TDecompBase::fDet2">fDet2</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TDecompBase:GetCondition" href="src/TDecompBase.h.html#wNds4E">GetCondition</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fCondition" title="Double_t TDecompBase::fCondition">fCondition</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDecompBase:GetNrows" href="src/TDecompBase.h.html#hVpO0D">GetNrows</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDecompBase:GetNcols" href="src/TDecompBase.h.html#PG4H0D">GetNcols</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDecompBase:GetRowLwb" href="src/TDecompBase.h.html#o6pzn">GetRowLwb</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fRowLwb" title="Int_t TDecompBase::fRowLwb">fRowLwb</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TDecompBase:GetColLwb" href="src/TDecompBase.h.html#nWs2OB">GetColLwb</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TDecompBase.html#TDecompBase:fColLwb" title="Int_t TDecompBase::fColLwb">fColLwb</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:Decompose" href="src/TDecompBase.h.html#ObutnB">Decompose</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:Solve" href="src/TDecompBase.h.html#TDCpTC">Solve</a>(<a href="./TVectorD.html">TVectorD</a>&amp; b)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVectorD.html">TVectorD</a> <a class="funcname" name="TDecompBase:Solve%1" href="src/TDecompBase.h.html#d8AlXD">Solve</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; ok)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:Solve%2" href="src/TDecompBase.h.html#luKfyB">Solve</a>(<a href="./TMatrixDColumn.html">TMatrixDColumn</a>&amp; b)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:TransSolve" href="src/TDecompBase.h.html#MT_lG">TransSolve</a>(<a href="./TVectorD.html">TVectorD</a>&amp; b)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVectorD.html">TVectorD</a> <a class="funcname" name="TDecompBase:TransSolve%1" href="src/TDecompBase.h.html#WxJIRE">TransSolve</a>(<span class="keyword">const</span> <a href="./TVectorD.html">TVectorD</a>&amp; b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; ok)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TDecompBase:TransSolve%2" href="src/TDecompBase.h.html#ie6q6">TransSolve</a>(<a href="./TMatrixDColumn.html">TMatrixDColumn</a>&amp; b)</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/matrix:$Id: TDecompBase.h 20882 2007-11-19 11:31:26Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:11</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

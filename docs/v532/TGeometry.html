@@ -1,0 +1,590 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:17:50 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGeometry</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGeometry','libGraf3d','TGeometry.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGeometry.h.html">header file</a>
+<a class="descrheadentry" href="src/TGeometry.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/g3d/inc/TGeometry.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/g3d/src/TGeometry.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGeometry:description">class description</a> 
+<a class="descrheadentry" href="#TGeometry:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGeometry:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGeometry:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_Index.html">GRAF3D</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_G3D_Index.html">G3D</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGeometry</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGeometry:description"></a>class TGeometry: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+                    T G E O M E T R Y  description
+
+
+    The Geometry class describes the geometry of a detector.
+    The current implementation supports the GEANT3 style description.
+    A special program provided in the <a href="./ROOT.html">ROOT</a> utilities (toroot) can be used
+    to automatically translate a GEANT detector geometry into a <a href="./ROOT.html">ROOT</a> geometry.
+
+   a Geometry object is entered into the list of geometries into the
+     <a href="./ROOT.html">ROOT</a> main object (see <a href="./TROOT.html">TROOT</a> description) when the <a href="./TGeometry.html">TGeometry</a>
+     constructor is invoked.
+   Several geometries may coexist in memory.
+
+   A Geometry object consist of the following linked lists:
+        - the <a href="./TMaterial.html">TMaterial</a> list (material definition only).
+        - the TRotmatrix list (Rotation matrices definition only).
+        - the <a href="./TShape.html">TShape</a> list (volume definition only).
+        - the <a href="./TNode.html">TNode</a> list assembling all detector elements.
+
+   Only the Build and <a href="./TGeometry.html#TGeometry:Draw" title="void TGeometry::Draw(Option_t* option=&quot;&quot;)">Draw</a> functions for a geometry are currently supported.
+
+
+  The conversion program from Geant to Root has been added in the list
+  of utilities in utils directory.(see g2root)
+  The executable module of g2root can be found in $ROOTSYS/bin/g2root.
+
+  To use this conversion program, type the shell command:
+        g2root  geant_rzfile macro_name
+
+  for example
+        g2root na49.geom na49.C
+  will convert the GEANT RZ file na49.geom into a <a href="./ROOT.html">ROOT</a> macro na49.C
+
+  To generate the Geometry structure within Root, do:
+    Root &gt; .x na49.C
+    Root &gt; na49.<a href="./TGeometry.html#TGeometry:Draw" title="void TGeometry::Draw(Option_t* option=&quot;&quot;)">Draw</a>()
+    Root &gt; wh.x3d()    (this invokes the 3-d Root viewver)
+    Root &gt; <a href="./TFile.html">TFile</a> gna49(<span class="string">"na49.root"</span>,<span class="string">"NEW"</span>)  //open a new root file
+    Root &gt; na49.<a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a>()                    //<a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> the na49 geometry structure
+    Root &gt; gna49.<a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a>()                   //<a href="./TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a> all keys (in this case only one)
+  Note: all keys are also written on closing of the file, gna49.Close or
+  when the program exits, Root closes all open files correctly.
+  Once this file has been written, in a subsequent session, simply do:
+    Root &gt; <a href="./TFile.html">TFile</a> gna49(<span class="string">"na49.root"</span>)
+    Root &gt; na49.<a href="./TGeometry.html#TGeometry:Draw" title="void TGeometry::Draw(Option_t* option=&quot;&quot;)">Draw</a>()
+
+  The figure below shows the geometry above using the x3d viewer.
+  This x3d viewver is invoked by selecting <span class="string">"View x3d"</span> in the View menu
+  of a canvas (See example of this tool bar in <a href="./TCanvas.html">TCanvas</a>).
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/na49.gif">
+*/
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGeometry:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeometry:TGeometry%1">TGeometry</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeometry:TGeometry%2">TGeometry</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGeometry:_TGeometry">~TGeometry</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Browse">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:cd">cd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path = 0)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:FindObject">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:FindObject%1">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:GeomLevel">GeomLevel</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:Get">Get</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:GetBomb">GetBomb</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetCurrentMatrix">GetCurrentMatrix</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TNode.html">TNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetCurrentNode">GetCurrentNode</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetCurrentPosition">GetCurrentPosition</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetCurrentPosition%1">GetCurrentPosition</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y, <a href="./ListOfTypes.html#Float_t">Float_t</a>* z) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:GetCurrentReflection">GetCurrentReflection</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THashList.html">THashList</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetListOfMaterials">GetListOfMaterials</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THashList.html">THashList</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetListOfMatrices">GetListOfMatrices</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetListOfNodes">GetListOfNodes</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THashList.html">THashList</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetListOfShapes">GetListOfShapes</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMaterial.html">TMaterial</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetMaterial">GetMaterial</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMaterial.html">TMaterial</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetMaterialByNumber">GetMaterialByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TNode.html">TNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetNode">GetNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetRotMatrix">GetRotMatrix</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetRotMatrixByNumber">GetRotMatrixByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TShape.html">TShape</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetShape">GetShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TShape.html">TShape</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:GetShapeByNumber">GetShapeByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeometry:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:IsFolder">IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Local2Master">Local2Master</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Local2Master%1">Local2Master</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* local, <a href="./ListOfTypes.html#Float_t">Float_t</a>* master)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:ls">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"rsn2"</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Master2Local">Master2Local</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Master2Local%1">Master2Local</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* master, <a href="./ListOfTypes.html#Float_t">Float_t</a>* local)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Node">Node</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <span class="keyword">char</span>* shapename, <a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <span class="keyword">const</span> <span class="keyword">char</span>* matrixname = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:PopLevel">PopLevel</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeometry:PushLevel">PushLevel</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:RecursiveRemove">RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetBomb">SetBomb</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> bomb = 1.4)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetCurrentNode">SetCurrentNode</a>(<a href="./TNode.html">TNode</a>* node)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetGeomLevel">SetGeomLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetMatrix">SetMatrix</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetPosition%2">SetPosition</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetPosition%3">SetPosition</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> x, <a href="./ListOfTypes.html#Float_t">Float_t</a> y, <a href="./ListOfTypes.html#Float_t">Float_t</a> z)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetPosition">SetPosition</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix, <a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:SetPosition%1">SetPosition</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix, <a href="./ListOfTypes.html#Float_t">Float_t</a> x, <a href="./ListOfTypes.html#Float_t">Float_t</a> y, <a href="./ListOfTypes.html#Float_t">Float_t</a> z)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:UpdateMatrix">UpdateMatrix</a>(<a href="./TNode.html">TNode</a>* node)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:UpdateTempMatrix">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <a href="./TRotMatrix.html">TRotMatrix</a>* matrix = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:UpdateTempMatrix%1">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z, <a href="./ListOfTypes.html#Double_t">Double_t</a>* matrix, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> isReflection = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeometry:UpdateTempMatrix%2">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* dx1, <a href="./ListOfTypes.html#Double_t">Double_t</a>* rmat1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z, <a href="./ListOfTypes.html#Double_t">Double_t</a>* matrix, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dxnew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* rmatnew)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeometry:TGeometry">TGeometry</a>(<span class="keyword">const</span> <a href="./TGeometry.html">TGeometry</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeometry.html">TGeometry</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeometry:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGeometry.html">TGeometry</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGeometry:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TGeometry:fBomb"></a>fBomb</td><td class="datadesc">Bomb factor for exploded geometry</td></tr>
+<tr class="data"><td class="datatype"><a href="./TNode.html">TNode</a>*</td><td class="dataname"><a name="TGeometry:fCurrentNode"></a>fCurrentNode</td><td class="datadesc">!Pointer to current node</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGeometry:fGeomLevel"></a>fGeomLevel</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TGeometry:fIsReflection"></a>fIsReflection[20]</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMaterial.html">TMaterial</a>**</td><td class="dataname"><a name="TGeometry:fMaterialPointer"></a>fMaterialPointer</td><td class="datadesc">!Pointers to materials</td></tr>
+<tr class="data"><td class="datatype"><a href="./THashList.html">THashList</a>*</td><td class="dataname"><a name="TGeometry:fMaterials"></a>fMaterials</td><td class="datadesc">-&gt;Collection of materials</td></tr>
+<tr class="data"><td class="datatype"><a href="./THashList.html">THashList</a>*</td><td class="dataname"><a name="TGeometry:fMatrices"></a>fMatrices</td><td class="datadesc">-&gt;Collection of rotation matrices</td></tr>
+<tr class="data"><td class="datatype"><a href="./TRotMatrix.html">TRotMatrix</a>*</td><td class="dataname"><a name="TGeometry:fMatrix"></a>fMatrix</td><td class="datadesc">!Pointers to current rotation matrices</td></tr>
+<tr class="data"><td class="datatype"><a href="./TRotMatrix.html">TRotMatrix</a>**</td><td class="dataname"><a name="TGeometry:fMatrixPointer"></a>fMatrixPointer</td><td class="datadesc">!Pointers to rotation matrices</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TGeometry:fNodes"></a>fNodes</td><td class="datadesc">-&gt;Collection of nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeometry:fRotMatrix"></a>fRotMatrix[20][9]</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./TShape.html">TShape</a>**</td><td class="dataname"><a name="TGeometry:fShapePointer"></a>fShapePointer</td><td class="datadesc">!Pointers to shapes</td></tr>
+<tr class="data"><td class="datatype"><a href="./THashList.html">THashList</a>*</td><td class="dataname"><a name="TGeometry:fShapes"></a>fShapes</td><td class="datadesc">-&gt;Collection of shapes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeometry:fTranslation"></a>fTranslation[20][3]</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeometry:fX"></a>fX</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeometry:fY"></a>fY</td><td class="datadesc">! The global translation of the current node</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TGeometry:fZ"></a>fZ</td><td class="datadesc">!</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGeometry:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGeometry_Inh" id="MapTGeometry_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="315,12,421,42"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="45,12,143,42"/>
+</map>
+<map name="MapTGeometry_InhMem" id="MapTGeometry_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGeometry_Lib" id="MapTGeometry_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="471,199,599,247"/>
+</map>
+<div class="tabs">
+<a id="imgTGeometry_Inh" class="tabsel" href="inh/TGeometry_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGeometry_Inh.png');">Inheritance</a>
+<a id="imgTGeometry_InhMem" class="tab" href="inhmem/TGeometry_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGeometry_InhMem.png');">Inherited Members</a>
+<a id="imgTGeometry_Incl" class="tab" href="incl/TGeometry_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGeometry_Incl.png');">Includes</a>
+<a id="imgTGeometry_Lib" class="tab" href="lib/TGeometry_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGeometry_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGeometry_Inh" src="inh/TGeometry_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeometry:TGeometry%1" href="src/TGeometry.cxx.html#jwJioE">TGeometry</a>()</span><br />
+<div class="funccomm"><pre> Geometry default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeometry:TGeometry%2" href="src/TGeometry.cxx.html#qjhBOE">TGeometry</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</span><br />
+<div class="funccomm"><pre> Geometry normal constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeometry:TGeometry" href="src/TGeometry.cxx.html#F_PONC">TGeometry</a>(<span class="keyword">const</span> <a href="./TGeometry.html">TGeometry</a>&amp; )</span><br />
+<div class="funccomm"><pre>copy constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeometry.html">TGeometry</a>&amp; <a class="funcname" name="TGeometry:operator_" href="src/TGeometry.cxx.html#tLfm6C">operator=</a>(<span class="keyword">const</span> <a href="./TGeometry.html">TGeometry</a>&amp; )</span><br />
+<div class="funccomm"><pre>assignement operator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeometry:_TGeometry" href="src/TGeometry.cxx.html#ym7SyE">~TGeometry</a>()</span><br />
+<div class="funccomm"><pre> Geometry default destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Browse" href="src/TGeometry.cxx.html#NcshSE">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</span><br />
+<div class="funccomm"><pre> <a href="./TGeometry.html#TGeometry:Browse" title="void TGeometry::Browse(TBrowser* b)">Browse</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:cd" href="src/TGeometry.cxx.html#F25.nC">cd</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path = 0)</span><br />
+<div class="funccomm"><pre> Change Current Geometry to this.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Draw" href="src/TGeometry.cxx.html#AAKaiB">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeometry.html#TGeometry:Draw" title="void TGeometry::Draw(Option_t* option=&quot;&quot;)">Draw</a> this Geometry.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TGeometry:FindObject%1" href="src/TGeometry.cxx.html#bKnNY">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> Find object in a geometry node, material, etc
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TGeometry:FindObject" href="src/TGeometry.cxx.html#SYdmiB">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Search object identified by name in the geometry tree
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObjArray.html">TObjArray</a> * <a class="funcname" name="TGeometry:Get" href="src/TGeometry.cxx.html#xU3Di">Get</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span><br />
+<div class="funccomm"><pre> Static function called by <a href="./TROOT.html">TROOT</a> to search name in the geometry.
+ Returns a <a href="./TObjArray.html">TObjArray</a> containing a pointer to the found object
+ and a pointer to the container where the object was found.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMaterial.html">TMaterial</a> * <a class="funcname" name="TGeometry:GetMaterial" href="src/TGeometry.cxx.html#L0U9YC">GetMaterial</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Return pointer to Material with name.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMaterial.html">TMaterial</a> * <a class="funcname" name="TGeometry:GetMaterialByNumber" href="src/TGeometry.cxx.html#ej411B">GetMaterialByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) const</span><br />
+<div class="funccomm"><pre> Return pointer to Material with number.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TNode.html">TNode</a> * <a class="funcname" name="TGeometry:GetNode" href="src/TGeometry.cxx.html#qTCXd">GetNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Return pointer to node with name in the geometry tree.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRotMatrix.html">TRotMatrix</a> * <a class="funcname" name="TGeometry:GetRotMatrix" href="src/TGeometry.cxx.html#I3U._D">GetRotMatrix</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Return pointer to RotMatrix with name.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRotMatrix.html">TRotMatrix</a> * <a class="funcname" name="TGeometry:GetRotMatrixByNumber" href="src/TGeometry.cxx.html#XNzDjC">GetRotMatrixByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) const</span><br />
+<div class="funccomm"><pre> Return pointer to RotMatrix with number.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TShape.html">TShape</a> * <a class="funcname" name="TGeometry:GetShape" href="src/TGeometry.cxx.html#qJ7k2E">GetShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Return pointer to Shape with name.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TShape.html">TShape</a> * <a class="funcname" name="TGeometry:GetShapeByNumber" href="src/TGeometry.cxx.html#tEl7gE">GetShapeByNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number) const</span><br />
+<div class="funccomm"><pre> Return pointer to Shape with number.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Local2Master" href="src/TGeometry.cxx.html#HJTYaC">Local2Master</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* local, <a href="./ListOfTypes.html#Double_t">Double_t</a>* master)</span><br />
+<div class="funccomm"><pre> Convert one point from local system to master reference system.
+
+  Note that before invoking this function, the global rotation matrix
+  and translation vector for this node must have been computed.
+  This is automatically done by the <a href="./TObject.html#TObject:Paint" title="void TObject::Paint(Option_t* option=&quot;&quot;)">Paint</a> functions.
+  Otherwise <a href="./TNode.html">TNode</a>::<a href="./TNode.html#TNode:UpdateMatrix" title="void TNode::UpdateMatrix()">UpdateMatrix</a> should be called before.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Local2Master%1" href="src/TGeometry.cxx.html#XNUSs">Local2Master</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* local, <a href="./ListOfTypes.html#Float_t">Float_t</a>* master)</span><br />
+<div class="funccomm"><pre> Convert one point from local system to master reference system.
+
+  Note that before invoking this function, the global rotation matrix
+  and translation vector for this node must have been computed.
+  This is automatically done by the <a href="./TObject.html#TObject:Paint" title="void TObject::Paint(Option_t* option=&quot;&quot;)">Paint</a> functions.
+  Otherwise <a href="./TNode.html">TNode</a>::<a href="./TNode.html#TNode:UpdateMatrix" title="void TNode::UpdateMatrix()">UpdateMatrix</a> should be called before.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:ls" href="src/TGeometry.cxx.html#mp1nZD">ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"rsn2"</span>) const</span><br />
+<div class="funccomm"><pre> List this geometry.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Master2Local" href="src/TGeometry.cxx.html#dcnuCD">Master2Local</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* master, <a href="./ListOfTypes.html#Double_t">Double_t</a>* local)</span><br />
+<div class="funccomm"><pre> Convert one point from master system to local reference system.
+
+  Note that before invoking this function, the global rotation matrix
+  and translation vector for this node must have been computed.
+  This is automatically done by the <a href="./TObject.html#TObject:Paint" title="void TObject::Paint(Option_t* option=&quot;&quot;)">Paint</a> functions.
+  Otherwise <a href="./TNode.html">TNode</a>::<a href="./TNode.html#TNode:UpdateMatrix" title="void TNode::UpdateMatrix()">UpdateMatrix</a> should be called before.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Master2Local%1" href="src/TGeometry.cxx.html#KtJCeD">Master2Local</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* master, <a href="./ListOfTypes.html#Float_t">Float_t</a>* local)</span><br />
+<div class="funccomm"><pre> Convert one point from master system to local reference system.
+
+  Note that before invoking this function, the global rotation matrix
+  and translation vector for this node must have been computed.
+  This is automatically done by the <a href="./TObject.html#TObject:Paint" title="void TObject::Paint(Option_t* option=&quot;&quot;)">Paint</a> functions.
+  Otherwise <a href="./TNode.html">TNode</a>::<a href="./TNode.html#TNode:UpdateMatrix" title="void TNode::UpdateMatrix()">UpdateMatrix</a> should be called before.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Node" href="src/TGeometry.cxx.html#AOLQyE">Node</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <span class="keyword">char</span>* shapename, <a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <span class="keyword">const</span> <span class="keyword">char</span>* matrixname = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Add a node to the current node in this geometry.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:RecursiveRemove" href="src/TGeometry.cxx.html#OCPGtC">RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> Recursively remove object from a Geometry list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:Streamer" href="src/TGeometry.cxx.html#c1fBaE">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream a class object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:UpdateMatrix" href="src/TGeometry.cxx.html#ujco.B">UpdateMatrix</a>(<a href="./TNode.html">TNode</a>* node)</span><br />
+<div class="funccomm"><pre> Update global rotation matrix/translation vector for this node
+ this function must be called before invoking <a href="./TGeometry.html#TGeometry:Local2Master" title="void TGeometry::Local2Master(Double_t* local,Double_t* master) or overloads">Local2Master</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:UpdateTempMatrix" href="src/TGeometry.cxx.html#vCkNGD">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0, <a href="./TRotMatrix.html">TRotMatrix</a>* matrix = 0)</span><br />
+<div class="funccomm"><pre> Update temp matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:UpdateTempMatrix%1" href="src/TGeometry.cxx.html#uMvojC">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z, <a href="./ListOfTypes.html#Double_t">Double_t</a>* matrix, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> isReflection = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Update temp matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:UpdateTempMatrix%2" href="src/TGeometry.cxx.html#e7I4Y">UpdateTempMatrix</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* dx1, <a href="./ListOfTypes.html#Double_t">Double_t</a>* rmat1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z, <a href="./ListOfTypes.html#Double_t">Double_t</a>* matrix, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dxnew, <a href="./ListOfTypes.html#Double_t">Double_t</a>* rmatnew)</span><br />
+<div class="funccomm"><pre> Compute new translation vector and global matrix.
+
+  dx      old translation vector
+  rmat    old global matrix
+  x,y,z   offset of new local system with respect to mother
+  dxnew   new translation vector
+  rmatnew new global rotation matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRotMatrix.html">TRotMatrix</a> * <a class="funcname" name="TGeometry:GetCurrentMatrix" href="src/TGeometry.h.html#UjjWHE">GetCurrentMatrix</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRotMatrix.html">TRotMatrix</a> * <a class="funcname" name="TGeometry:GetCurrentPosition" href="src/TGeometry.h.html#KlveF">GetCurrentPosition</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* z) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRotMatrix.html">TRotMatrix</a> * <a class="funcname" name="TGeometry:GetCurrentPosition%1" href="src/TGeometry.h.html#Iw.U6">GetCurrentPosition</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x, <a href="./ListOfTypes.html#Float_t">Float_t</a>* y, <a href="./ListOfTypes.html#Float_t">Float_t</a>* z) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeometry:GetCurrentReflection" href="src/TGeometry.h.html#bCRyOC">GetCurrentReflection</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetPosition%2" href="src/TGeometry.h.html#nR5ahC">SetPosition</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetPosition%3" href="src/TGeometry.h.html#pSenID">SetPosition</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> x, <a href="./ListOfTypes.html#Float_t">Float_t</a> y, <a href="./ListOfTypes.html#Float_t">Float_t</a> z)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetPosition" href="src/TGeometry.h.html#IZtsSE">SetPosition</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix, <a href="./ListOfTypes.html#Double_t">Double_t</a> x = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetPosition%1" href="src/TGeometry.h.html#uy5t6E">SetPosition</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix, <a href="./ListOfTypes.html#Float_t">Float_t</a> x, <a href="./ListOfTypes.html#Float_t">Float_t</a> y, <a href="./ListOfTypes.html#Float_t">Float_t</a> z)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Float_t">Float_t</a> <a class="funcname" name="TGeometry:GetBomb" href="src/TGeometry.h.html#SF_NOC">GetBomb</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fBomb" title="Float_t TGeometry::fBomb">fBomb</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeometry:GeomLevel" href="src/TGeometry.h.html#ruxgIB">GeomLevel</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fGeomLevel" title="Int_t TGeometry::fGeomLevel">fGeomLevel</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THashList.html">THashList</a>        * <a class="funcname" name="TGeometry:GetListOfShapes" href="src/TGeometry.h.html#vtc1EC">GetListOfShapes</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fShapes" title="THashList* TGeometry::fShapes">fShapes</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>            * <a class="funcname" name="TGeometry:GetListOfNodes" href="src/TGeometry.h.html#aZNZ9D">GetListOfNodes</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fNodes" title="TList* TGeometry::fNodes">fNodes</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THashList.html">THashList</a>        * <a class="funcname" name="TGeometry:GetListOfMaterials" href="src/TGeometry.h.html#sZguWB">GetListOfMaterials</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fMaterials" title="THashList* TGeometry::fMaterials">fMaterials</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THashList.html">THashList</a>        * <a class="funcname" name="TGeometry:GetListOfMatrices" href="src/TGeometry.h.html#VOSx1E">GetListOfMatrices</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fMatrices" title="THashList* TGeometry::fMatrices">fMatrices</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TNode.html">TNode</a>            * <a class="funcname" name="TGeometry:GetCurrentNode" href="src/TGeometry.h.html#kzPbmD">GetCurrentNode</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fCurrentNode" title="TNode* TGeometry::fCurrentNode">fCurrentNode</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeometry:IsFolder" href="src/TGeometry.h.html#hhUDdD">IsFolder</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeometry:PushLevel" href="src/TGeometry.h.html#w67WWC">PushLevel</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fGeomLevel" title="Int_t TGeometry::fGeomLevel">fGeomLevel</a>++;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeometry:PopLevel" href="src/TGeometry.h.html#UZSUqD">PopLevel</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeometry.html#TGeometry:fGeomLevel" title="Int_t TGeometry::fGeomLevel">fGeomLevel</a>&gt;0?<a href="./TGeometry.html#TGeometry:fGeomLevel" title="Int_t TGeometry::fGeomLevel">fGeomLevel</a>--:0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetBomb" href="src/TGeometry.h.html#Ux6F6B">SetBomb</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> bomb = 1.4)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeometry.html#TGeometry:fBomb" title="Float_t TGeometry::fBomb">fBomb</a> = bomb;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetCurrentNode" href="src/TGeometry.h.html#SvMBgB">SetCurrentNode</a>(<a href="./TNode.html">TNode</a>* node)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeometry.html#TGeometry:fCurrentNode" title="TNode* TGeometry::fCurrentNode">fCurrentNode</a> = node;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetGeomLevel" href="src/TGeometry.h.html#JFAX_C">SetGeomLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeometry.html#TGeometry:fGeomLevel" title="Int_t TGeometry::fGeomLevel">fGeomLevel</a>=level;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeometry:SetMatrix" href="src/TGeometry.h.html#BCuQhB">SetMatrix</a>(<a href="./TRotMatrix.html">TRotMatrix</a>* matrix = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeometry.html#TGeometry:fMatrix" title="TRotMatrix* TGeometry::fMatrix">fMatrix</a> = matrix;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun   22/09/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/g3d:$Id: TGeometry.h 20882 2007-11-19 11:31:26Z rdm $ </em><em>&raquo; Last generated: 2011-11-03 20:17</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

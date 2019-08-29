@@ -1,0 +1,1263 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:17:45 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGeoVolume</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGeoVolume','libGeom','TGeoVolume.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGeoVolume.h.html">header file</a>
+<a class="descrheadentry" href="src/TGeoVolume.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/inc/TGeoVolume.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/src/TGeoVolume.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGeoVolume:description">class description</a> 
+<a class="descrheadentry" href="#TGeoVolume:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGeoVolume:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGeoVolume:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="./GEOM_GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGeoVolume</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGeoVolume:description"></a>class TGeoVolume: public <a href="./TNamed.html">TNamed</a>, public <a href="./TGeoAtt.html">TGeoAtt</a>, public <a href="./TAttLine.html">TAttLine</a>, public <a href="./TAttFill.html">TAttFill</a>, public <a href="./TAtt3D.html">TAtt3D</a></h1>
+<div class="classdescr">
+<pre>
+   <a href="./TGeoVolume.html">TGeoVolume</a> - the base class representing solids.
+
+   Volumes are the basic objects used in building the geometrical hierarchy.
+ They represent unpositioned objects but store all information about the
+ placement of the other volumes they may contain. Therefore a volume can
+ be replicated several times in the geometry. In order to create a volume, one
+ has to put togeather a shape and a medium which are already defined. Volumes
+ have to be named by users at creation time. Every different name may represent a
+ an unique volume object, but may also represent more general a family (class)
+ of volume objects having the same shape type and medium, but possibly
+ different shape parameters. It is the user's task to provide different names
+ for different volume families in order to avoid ambiguities at tracking time.
+ A generic family rather than a single volume is created only in two cases :
+ when a generic shape is provided to the volume constructor or when a division
+ operation is applied. Each volume in the geometry stores an unique
+ ID corresponding to its family. In order to ease-up their creation, the manager
+ class is providing an API that allows making a shape and a volume in a single step.
+
+   Volumes are objects that can be visualized, therefore having visibility,
+ colour, line and fill attributes that can be defined or modified any time after
+ the volume creation. It is advisable however to define these properties just
+ after the first creation of a volume namespace, since in case of volume families
+ any new member created by the modeler inherits these properties.
+
+    In order to provide navigation features, volumes have to be able to find
+ the proper container of any point defined in the local reference frame. This
+ can be the volume itself, one of its positioned daughter volumes or none if
+ the point is actually outside. On the other hand, volumes have to provide also
+ other navigation methods such as finding the distances to its shape boundaries
+ or which daughter will be crossed first. The implementation of these features
+ is done at shape level, but the local mother-daughters management is handled
+ by volumes that builds additional optimisation structures upon geometry closure.
+ In order to have navigation features properly working one has to follow the
+ general rules for building a valid geometry (see <a href="./TGeoManager.html">TGeoManager</a> class).
+
+   Now let's make a simple volume representing a copper wire. We suppose that
+ a medium is already created (see <a href="./TGeoMedium.html">TGeoMedium</a> class on how to create media).
+ We will create a TUBE shape for our wire, having Rmin=0cm, Rmax=0.01cm
+ and a half-length dZ=1cm :
+
+   <a href="./TGeoTube.html">TGeoTube</a> *tube = new <a href="./TGeoTube.html">TGeoTube</a>(<span class="string">"wire_tube"</span>, 0, 0.01, 1);
+
+ One may ommit the name for the shape if no retreiving by name is further needed
+ during geometry building. The same shape can be shared by different volumes
+ having different names and materials. Now let's make the volume for our wire.
+ The prototype for volumes constructor looks like :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:TGeoVolume" title="TGeoVolume TGeoVolume::TGeoVolume(const TGeoVolume&amp; ) or overloads">TGeoVolume</a>(const <a href="./ListOfTypes.html#char">char</a> *name, <a href="./TGeoShape.html">TGeoShape</a> *shape, <a href="./TGeoMedium.html">TGeoMedium</a> *med)
+
+ Since <a href="./TGeoTube.html">TGeoTube</a> derives brom the base shape class, we can provide it to the volume
+ constructor :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a> *wire_co = new <a href="./TGeoVolume.html">TGeoVolume</a>(<span class="string">"WIRE_CO"</span>, tube, ptrCOPPER);
+
+ Do not bother to delete neither the media, shapes or volumes that you have
+ created since all will be automatically cleaned on exit by the manager class.
+ If we would have taken a look inside <a href="./TGeoManager.html">TGeoManager</a>::<a href="./TGeoManager.html#TGeoManager:MakeTube" title="TGeoVolume* TGeoManager::MakeTube(const char* name,TGeoMedium* medium,Double_t rmin,Double_t rmax,Double_t dz)">MakeTube</a>() method, we would
+ have been able to create our wire with a single line :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a> *wire_co = <a href="./TGeoManager.html">gGeoManager</a>-><a href="./TGeoManager.html#TGeoManager:MakeTube" title="TGeoVolume* TGeoManager::MakeTube(const char* name,TGeoMedium* medium,Double_t rmin,Double_t rmax,Double_t dz)">MakeTube</a>(<span class="string">"WIRE_CO"</span>, ptrCOPPER, 0, 0.01, 1);
+
+ The same applies for all primitive shapes, for which there can be found
+ corresponding MakeSHAPE() methods. Their usage is much more convenient unless
+ a shape has to be shared between more volumes. Let's make now an aluminium wire
+ having the same shape, supposing that we have created the copper wire with the
+ line above :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a> *wire_al = new <a href="./TGeoVolume.html">TGeoVolume</a>(<span class="string">"WIRE_AL"</span>, wire_co-&gt;<a href="./TGeoVolume.html#TGeoVolume:GetShape" title="TGeoShape* TGeoVolume::GetShape()">GetShape</a>(), ptrAL);
+
+ Now that we have learned how to create elementary volumes, let's see how we
+ can create a geometrical hierarchy.
+
+
+   Positioning volumes
+
+
+   When creating a volume one does not specify if this will contain or not other
+ volumes. Adding daughters to a volume implies creating those and adding them
+ one by one to the list of daughters. Since the volume has to know the position
+ of all its daughters, we will have to supply at the same time a geometrical
+ transformation with respect to its local reference frame for each of them.
+ The objects referencing a volume and a transformation are called NODES and
+ their creation is fully handled by the modeler. They represent the link
+ elements in the hierarchy of volumes. Nodes are unique and distinct geometrical
+ objects ONLY from their container point of view. Since volumes can be replicated
+ in the geometry, the same node may be found on different branches.
+
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/t_example.jpg">
+*/
+<!-- TDocHtmlDirective end --><pre>
+
+   An important observation is that volume objects are owned by the <a href="./TGeoManager.html">TGeoManager</a>
+ class. This stores a list of all volumes in the geometry, that is cleaned
+ upon destruction.
+
+   Let's consider positioning now our wire in the middle of a gas chamber. We
+ need first to define the gas chamber :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a> *chamber = <a href="./TGeoManager.html">gGeoManager</a>-><a href="./TGeoManager.html#TGeoManager:MakeTube" title="TGeoVolume* TGeoManager::MakeTube(const char* name,TGeoMedium* medium,Double_t rmin,Double_t rmax,Double_t dz)">MakeTube</a>(<span class="string">"CHAMBER"</span>, ptrGAS, 0, 1, 1);
+
+ Now we can put the wire inside :
+
+   chamber-&gt;<a href="./TGeoVolume.html#TGeoVolume:AddNode" title="void TGeoVolume::AddNode(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNode</a>(wire_co, 1);
+
+ If we inspect now the chamber volume in a browser, we will notice that it has
+ one daughter. Of course the gas has some container also, but let's keep it like
+ that for the sake of simplicity. The full prototype of <a href="./TGeoVolume.html#TGeoVolume:AddNode" title="void TGeoVolume::AddNode(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNode</a>() is :
+
+   <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:AddNode" title="void TGeoVolume::AddNode(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNode</a>(<a href="./TGeoVolume.html">TGeoVolume</a> *daughter, <a href="./ListOfTypes.html#Int_t">Int_t</a> usernumber,
+                       <a href="./TGeoMatrix.html">TGeoMatrix</a> *matrix=<a href="./TGeoIdentity.html">gGeoIdentity</a>)
+
+ Since we did not supplied the third argument, the wire will be positioned with
+ an identity transformation inside the chamber. One will notice that the inner
+ radii of the wire and chamber are both zero - therefore, aren't the two volumes
+ overlapping ? The answer is no, the modeler is even relaying on the fact that
+ any daughter is fully contained by its mother. On the other hand, neither of
+ the nodes positioned inside a volume should overlap with each other. We will
+ see that there are allowed some exceptions to those rules.
+
+ Overlapping volumes
+
+
+   Positioning volumes that does not overlap their neighbours nor extrude
+ their container is sometimes quite strong contrain. Some parts of the geometry
+ might overlap naturally, e.g. two crossing tubes. The modeller supports such
+ cases only if the overlapping nodes are declared by the user. In order to do
+ that, one should use <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:AddNodeOverlap" title="void TGeoVolume::AddNodeOverlap(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNodeOverlap</a>() instead of <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:AddNode" title="void TGeoVolume::AddNode(const TGeoVolume* vol,Int_t copy_no,TGeoMatrix* mat=0,Option_t* option=&quot;&quot;)">AddNode</a>().
+   When 2 or more positioned volumes are overlapping, not all of them have to
+ be declared so, but at least one. A point inside an overlapping region equally
+ belongs to all overlapping nodes, but the way these are defined can enforce
+ the modeler to give priorities.
+   The general rule is that the deepest node in the hierarchy containing a point
+ have the highest priority. For the same geometry level, non-overlapping is
+ prioritized over overlapping. In order to illustrate this, we will consider
+ few examples. We will designate non-overlapping nodes as ONLY and the others
+ MANY as in GEANT3, where this concept was introduced:
+   1. The part of a MANY node B extruding its container A will never be <span class="string">"seen"</span>
+ during navigation, as if B was in fact the result of the intersection of A and B.
+   2. If we have two nodes A (ONLY) and B (MANY) inside the same container, all
+ points in the overlapping region of A and B will be designated as belonging to A.
+   3. If A an B in the above case were both MANY, points in the overlapping
+ part will be designated to the one defined first. Both nodes must have the
+ same medium.
+   4. The silces of a divided MANY will be as well MANY.
+
+ One needs to know that navigation inside geometry parts MANY nodes is much
+ slower. Any overlapping part can be defined based on composite shapes - this
+ is always recommended.
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGeoVolume:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoVolume:TGeoVolume%1">TGeoVolume</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoVolume:TGeoVolume%2">TGeoVolume</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <a href="./TGeoShape.html">TGeoShape</a>* shape, <span class="keyword">const</span> <a href="./TGeoMedium.html">TGeoMedium</a>* med = 0)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGeoVolume:_TGeoVolume">~TGeoVolume</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:AddNode">AddNode</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:AddNodeOffset">AddNodeOffset</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./ListOfTypes.html#Double_t">Double_t</a> offset = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:AddNodeOverlap">AddNodeOverlap</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Browse">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Capacity">Capacity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:cd">cd</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CheckGeometry">CheckGeometry</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrays = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> startx = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> starty = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> startz = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CheckOverlaps">CheckOverlaps</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ovlp = 0.1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CheckShape">CheckShape</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> testNo, <a href="./ListOfTypes.html#Int_t">Int_t</a> nsamples = 10000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CheckShapes">CheckShapes</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CleanAll">CleanAll</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ClearNodes">ClearNodes</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ClearShape">ClearShape</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ClearThreadData">ClearThreadData</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CloneNodesAndConnect">CloneNodesAndConnect</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* newmother) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:CloneVolume">CloneVolume</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Contains">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:CountNodes">CountNodes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nlevels = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:DistancetoLine"><span class="baseclass">TAttLine::</span>DistancetoLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp2, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp2)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:DistancetoPrimitive">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:Divide">Divide</a>(<span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step, <a href="./ListOfTypes.html#Int_t">Int_t</a> numed = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:DrawOnly">DrawOnly</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ExecuteEvent">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Export">Export</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:FindMatrixOfDaughterVolume">FindMatrixOfDaughterVolume</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* vol) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoNode.html">TGeoNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:FindNode">FindNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:FindOverlaps">FindOverlaps</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetByteCount">GetByteCount</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetCurrentNodeIndex">GetCurrentNodeIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetField">GetField</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillColor"><span class="baseclass">TAttFill::</span>GetFillColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillStyle"><span class="baseclass">TAttFill::</span>GetFillStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoPatternFinder.html">TGeoPatternFinder</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetFinder">GetFinder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoManager.html">TGeoManager</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetGeoManager">GetGeoManager</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetIconName">GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetIndex">GetIndex</a>(<span class="keyword">const</span> <a href="./TGeoNode.html">TGeoNode</a>* node) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineColor"><span class="baseclass">TAttLine::</span>GetLineColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineStyle"><span class="baseclass">TAttLine::</span>GetLineStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineWidth"><span class="baseclass">TAttLine::</span>GetLineWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoMaterial.html">TGeoMaterial</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetMaterial">GetMaterial</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoMedium.html">TGeoMedium</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetMedium">GetMedium</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNdaughters">GetNdaughters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNextNodeIndex">GetNextNodeIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoNode.html">TGeoNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNode">GetNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoNode.html">TGeoNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNode%1">GetNode</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNodeIndex">GetNodeIndex</a>(<span class="keyword">const</span> <a href="./TGeoNode.html">TGeoNode</a>* node, <a href="./ListOfTypes.html#Int_t">Int_t</a>* check_list, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncheck) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNodes">GetNodes</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNtotal">GetNtotal</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetNumber">GetNumber</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetObjectInfo">GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetOptimalVoxels">GetOptimalVoxels</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetOption">GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetPointerName">GetPointerName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoShape.html">TGeoShape</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetShape">GetShape</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Char_t">Char_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetTransparency">GetTransparency</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoVoxelFinder.html">TGeoVoxelFinder</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:GetVoxels">GetVoxels</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:GrabFocus">GrabFocus</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Gsord">Gsord</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:Import">Import</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:InspectMaterial">InspectMaterial</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:InspectShape">InspectShape</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:InvisibleAll">InvisibleAll</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsAllInvisible() as getter">GETTER</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsActive">IsActive</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsActiveDaughters">IsActiveDaughters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsAdded">IsAdded</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsAllInvisible">IsAllInvisible</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsAssembly">IsAssembly</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsCylVoxels">IsCylVoxels</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsFolder">IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsRaytracing">IsRaytracing</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsReplicated">IsReplicated</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsRunTime">IsRunTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsSelected">IsSelected</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsStyleDefault">IsStyleDefault</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsTopVolume">IsTopVolume</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:IsTransparent"><span class="baseclass">TAttFill::</span>IsTransparent</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsValid">IsValid</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:IsVisBranch"><span class="baseclass">TGeoAtt::</span>IsVisBranch</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVisContainers">IsVisContainers</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:IsVisDaughters"><span class="baseclass">TGeoAtt::</span>IsVisDaughters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVisible">IsVisible</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVisibleDaughters">IsVisibleDaughters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVisLeaves">IsVisLeaves</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVisOnly">IsVisOnly</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:IsVisRaytrace"><span class="baseclass">TGeoAtt::</span>IsVisRaytrace</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:IsVisStreamed"><span class="baseclass">TGeoAtt::</span>IsVisStreamed</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:IsVisTouched"><span class="baseclass">TGeoAtt::</span>IsVisTouched</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsVolumeMulti">IsVolumeMulti</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:IsXYZVoxels">IsXYZVoxels</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2F.html">TH2F</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:LegoPlot">LegoPlot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntheta = 20, <a href="./ListOfTypes.html#Double_t">Double_t</a> themin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> themax = 180., <a href="./ListOfTypes.html#Int_t">Int_t</a> nphi = 60, <a href="./ListOfTypes.html#Double_t">Double_t</a> phimin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> phimax = 360., <a href="./ListOfTypes.html#Double_t">Double_t</a> rmin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> rmax = 9999999, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:MakeCopyNodes">MakeCopyNodes</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* other)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:MakeCopyVolume">MakeCopyVolume</a>(<a href="./TGeoShape.html">TGeoShape</a>* newshape)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:MakeReflectedVolume">MakeReflectedVolume</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:Modify"><span class="baseclass">TAttLine::</span>Modify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:OptimizeVoxels">OptimizeVoxels</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Paint">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:PrintNodes">PrintNodes</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:PrintVoxels">PrintVoxels</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:RandomPoints">RandomPoints</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints = 1000000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:RandomRays">RandomRays</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrays = 10000, <a href="./ListOfTypes.html#Double_t">Double_t</a> startx = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> starty = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> startz = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Raytrace">Raytrace</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsRaytracing() as getter">GETTER</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:RegisterYourself">RegisterYourself</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:RemoveNode">RemoveNode</a>(<a href="./TGeoNode.html">TGeoNode</a>* node)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoNode.html">TGeoNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeoVolume:ReplaceNode">ReplaceNode</a>(<a href="./TGeoNode.html">TGeoNode</a>* nodeorig, <a href="./TGeoShape.html">TGeoShape</a>* newshape = 0, <a href="./TGeoMatrix.html">TGeoMatrix</a>* newpos = 0, <a href="./TGeoMedium.html">TGeoMedium</a>* newmed = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ReplayCreation">ReplayCreation</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* other)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:ResetAttBit"><span class="baseclass">TGeoAtt::</span>ResetAttBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:ResetAttFill"><span class="baseclass">TAttFill::</span>ResetAttFill</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:ResetAttLine"><span class="baseclass">TAttLine::</span>ResetAttLine</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SaveAs">SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SaveFillAttributes"><span class="baseclass">TAttFill::</span>SaveFillAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1001)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SaveLineAttributes"><span class="baseclass">TAttLine::</span>SaveLineAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> widdef = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SavePrimitive">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SelectVolume">SelectVolume</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> clear = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetActiveDaughters">SetActiveDaughters</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetActivity">SetActivity</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetAdded">SetAdded</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetAsTopVolume">SetAsTopVolume</a>()<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsTopVolume() as getter">GETTER</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetAttBit"><span class="baseclass">TGeoAtt::</span>SetAttBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetAttBit%1"><span class="baseclass">TGeoAtt::</span>SetAttBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetAttVisibility">SetAttVisibility</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetCurrentPoint">SetCurrentPoint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetCylVoxels">SetCylVoxels</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetField">SetField</a>(<a href="./TObject.html">TObject</a>* field)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillAttributes"><span class="baseclass">TAttFill::</span>SetFillAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillColor"><span class="baseclass">TAttFill::</span>SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> fcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillStyle"><span class="baseclass">TAttFill::</span>SetFillStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> fstyle)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetFinder">SetFinder</a>(<a href="./TGeoPatternFinder.html">TGeoPatternFinder</a>* finder)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetInvisible">SetInvisible</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineAttributes"><span class="baseclass">TAttLine::</span>SetLineAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetLineColor">SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> lcolor)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetLineStyle">SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> lstyle)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetLineWidth">SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> lwidth)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetMedium">SetMedium</a>(<a href="./TGeoMedium.html">TGeoMedium</a>* medium)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetNodes">SetNodes</a>(<a href="./TObjArray.html">TObjArray</a>* nodes)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetNtotal">SetNtotal</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetNumber">SetNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetOptimization"><span class="baseclass">TGeoAtt::</span>SetOptimization</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetOption">SetOption</a>(<span class="keyword">const</span> <span class="keyword">char</span>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetReplicated">SetReplicated</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetShape">SetShape</a>(<span class="keyword">const</span> <a href="./TGeoShape.html">TGeoShape</a>* shape)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetTransparency">SetTransparency</a>(<a href="./ListOfTypes.html#Char_t">Char_t</a> transparency = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetVisBranch"><span class="baseclass">TGeoAtt::</span>SetVisBranch</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetVisContainers">SetVisContainers</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsVisContainers() as getter">GETTER</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetVisDaughters"><span class="baseclass">TGeoAtt::</span>SetVisDaughters</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetVisibility">SetVisibility</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsVisible() as getter">GETTER</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetVisLeaves">SetVisLeaves</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsVisLeaves() as getter">GETTER</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetVisOnly">SetVisOnly</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsVisOnly() as getter">GETTER</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetVisRaytrace"><span class="baseclass">TGeoAtt::</span>SetVisRaytrace</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetVisStreamed"><span class="baseclass">TGeoAtt::</span>SetVisStreamed</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:SetVisTouched"><span class="baseclass">TGeoAtt::</span>SetVisTouched</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SetVoxelFinder">SetVoxelFinder</a>(<a href="./TGeoVoxelFinder.html">TGeoVoxelFinder</a>* finder)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAtt3D.html#TAtt3D:Sizeof3D"><span class="baseclass">TAtt3D::</span>Sizeof3D</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:SortNodes">SortNodes</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoAtt.html#TGeoAtt:TestAttBit"><span class="baseclass">TGeoAtt::</span>TestAttBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:UnmarkSaved">UnmarkSaved</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Valid">Valid</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:VisibleDaughters">VisibleDaughters</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="toggles a state">TOGGLE</abbr> <abbr title="use IsVisibleDaughters() as getter">GETTER</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Voxelize">Voxelize</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:Weight">Weight</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> precision = 0.01, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"va"</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoVolume:WeightA">WeightA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoVolume:TGeoVolume">TGeoVolume</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoVolume.html">TGeoVolume</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoVolume:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGeoVolume:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EGeoVolumeTypes { </td><td class="dataname"><a name="TGeoVolume:kVolumeReplicated"></a>kVolumeReplicated</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeSelected"></a>kVolumeSelected</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeDiv"></a>kVolumeDiv</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeOverlap"></a>kVolumeOverlap</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeImportNodes"></a>kVolumeImportNodes</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeMulti"></a>kVolumeMulti</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVoxelsXYZ"></a>kVoxelsXYZ</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVoxelsCyl"></a>kVoxelsCyl</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeClone"></a>kVolumeClone</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TGeoVolume:kVolumeAdded"></a>kVolumeAdded</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoAtt::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoAtt::</span>EGeoVisibilityAtt { </td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisOverride">kVisOverride</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisNone">kVisNone</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisThis">kVisThis</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisDaughters">kVisDaughters</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisOneLevel">kVisOneLevel</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisStreamed">kVisStreamed</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisTouched">kVisTouched</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisOnScreen">kVisOnScreen</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisContainers">kVisContainers</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisOnly">kVisOnly</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisBranch">kVisBranch</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kVisRaytrace">kVisRaytrace</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoAtt::</span>EGeoActivityAtt { </td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kActOverride">kActOverride</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kActNone">kActNone</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kActThis">kActThis</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kActDaughters">kActDaughters</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoAtt::</span>EGeoOptimizationAtt { </td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kUseBoundingBox">kUseBoundingBox</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kUseVoxels">kUseVoxels</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kUseGsord">kUseGsord</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoAtt::</span>EGeoSavePrimitiveAtt { </td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kSavePrimitiveAtt">kSavePrimitiveAtt</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:kSaveNodesAtt">kSaveNodesAtt</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TGeoVolume:fField"></a>fField</td><td class="datadesc">! just a hook for now</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillColor"><span class="baseclass">TAttFill::</span>fFillColor</a></td><td class="datadesc">fill area color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillStyle"><span class="baseclass">TAttFill::</span>fFillStyle</a></td><td class="datadesc">fill area style</td></tr>
+<tr class="data"><td class="datatype"><a href="./TGeoPatternFinder.html">TGeoPatternFinder</a>*</td><td class="dataname"><a name="TGeoVolume:fFinder"></a>fFinder</td><td class="datadesc">finder object for divisions</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGeoAtt.html#TGeoAtt:fGeoAtt"><span class="baseclass">TGeoAtt::</span>fGeoAtt</a></td><td class="datadesc">option flags</td></tr>
+<tr class="data"><td class="datatype"><a href="./TGeoManager.html">TGeoManager</a>*</td><td class="dataname"><a name="TGeoVolume:fGeoManager"></a>fGeoManager</td><td class="datadesc">! pointer to TGeoManager owning this volume</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineColor"><span class="baseclass">TAttLine::</span>fLineColor</a></td><td class="datadesc">line color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineStyle"><span class="baseclass">TAttLine::</span>fLineStyle</a></td><td class="datadesc">line style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineWidth"><span class="baseclass">TAttLine::</span>fLineWidth</a></td><td class="datadesc">line width</td></tr>
+<tr class="data"><td class="datatype"><a href="./TGeoMedium.html">TGeoMedium</a>*</td><td class="dataname"><a name="TGeoVolume:fMedium"></a>fMedium</td><td class="datadesc">tracking medium</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a>*</td><td class="dataname"><a name="TGeoVolume:fNodes"></a>fNodes</td><td class="datadesc">array of nodes inside this volume</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGeoVolume:fNtotal"></a>fNtotal</td><td class="datadesc">total number of physical nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TGeoVolume:fNumber"></a>fNumber</td><td class="datadesc">volume serial number in the list of volumes</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TGeoVolume:fOption"></a>fOption</td><td class="datadesc">! option - if any</td></tr>
+<tr class="data"><td class="datatype"><a href="./TGeoShape.html">TGeoShape</a>*</td><td class="dataname"><a name="TGeoVolume:fShape"></a>fShape</td><td class="datadesc">shape</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="data"><td class="datatype"><a href="./TGeoVoxelFinder.html">TGeoVoxelFinder</a>*</td><td class="dataname"><a name="TGeoVolume:fVoxels"></a>fVoxels</td><td class="datadesc">finder object for bounding boxes</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGeoVolume:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGeoVolume_Inh" id="MapTGeoVolume_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="205,3,274,23"/>
+<area shape="rect" href="./TGeoAtt.html" title="TGeoAtt" alt="" coords="206,26,273,45"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="206,49,273,68"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="212,71,267,91"/>
+<area shape="rect" href="./TAtt3D.html" title="TAtt3D" alt="" coords="212,94,268,113"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="29,3,93,23"/>
+<area shape="rect" href="./TGeoVolumeAssembly.html" title="TGeoVolumeAssembly" alt="" coords="579,37,763,56"/>
+<area shape="rect" href="./TGeoVolumeMulti.html" title="TGeoVolumeMulti" alt="" coords="599,60,743,79"/>
+</map>
+<map name="MapTGeoVolume_InhMem" id="MapTGeoVolume_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="541,363,629,515"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="443,363,531,515"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="344,363,432,515"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="573,525,597,560"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="541,571,629,792"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="443,556,531,792"/>
+<area shape="rect" href="./TGeoAtt.html" alt="" coords="344,556,432,792"/>
+<area shape="rect" href="./TGeoAtt.html" title="TGeoAtt" alt="" coords="333,319,640,803"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,857,629,921"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,857,531,921"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="376,857,400,892"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,932,629,1095"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,932,531,1095"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="344,932,432,1095"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="333,813,640,1105"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,1160,629,1209"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="541,1220,629,1353"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="443,1220,531,1383"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,1220,432,1383"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="333,1116,640,1393"/>
+<area shape="rect" href="./TAtt3D.html" alt="" coords="376,1448,629,1497"/>
+<area shape="rect" href="./TAtt3D.html" alt="" coords="541,1508,629,1597"/>
+<area shape="rect" href="./TAtt3D.html" alt="" coords="443,1508,531,1627"/>
+<area shape="rect" href="./TAtt3D.html" alt="" coords="344,1508,432,1627"/>
+<area shape="rect" href="./TAtt3D.html" title="TAtt3D" alt="" coords="333,1404,640,1637"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGeoVolume_Lib" id="MapTGeoVolume_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="457,160,585,208"/>
+</map>
+<div class="tabs">
+<a id="imgTGeoVolume_Inh" class="tabsel" href="inh/TGeoVolume_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGeoVolume_Inh.png');">Inheritance</a>
+<a id="imgTGeoVolume_InhMem" class="tab" href="inhmem/TGeoVolume_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGeoVolume_InhMem.png');">Inherited Members</a>
+<a id="imgTGeoVolume_Incl" class="tab" href="incl/TGeoVolume_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGeoVolume_Incl.png');">Includes</a>
+<a id="imgTGeoVolume_Lib" class="tab" href="lib/TGeoVolume_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGeoVolume_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGeoVolume_Inh" src="inh/TGeoVolume_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:ClearThreadData" href="src/TGeoVolume.cxx.html#BOrE_B">ClearThreadData</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoVolume:TGeoVolume%1" href="src/TGeoVolume.cxx.html#d8f9bC">TGeoVolume</a>()</span><br />
+<div class="funccomm"><pre> dummy constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoVolume:TGeoVolume%2" href="src/TGeoVolume.cxx.html#yKxwZD">TGeoVolume</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <a href="./TGeoShape.html">TGeoShape</a>* shape, <span class="keyword">const</span> <a href="./TGeoMedium.html">TGeoMedium</a>* med = 0)</span><br />
+<div class="funccomm"><pre> default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoVolume:TGeoVolume" href="src/TGeoVolume.cxx.html#MTg1GD">TGeoVolume</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>&amp; )</span><br />
+<div class="funccomm"><pre>copy constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a>&amp; <a class="funcname" name="TGeoVolume:operator_" href="src/TGeoVolume.cxx.html#vFlK8">operator=</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>&amp; )</span><br />
+<div class="funccomm"><pre>assignment operator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoVolume:_TGeoVolume" href="src/TGeoVolume.cxx.html#bYj5zE">~TGeoVolume</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Browse" href="src/TGeoVolume.cxx.html#ftJzUB">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</span><br />
+<div class="funccomm"><pre> How to browse a volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoVolume:Capacity" href="src/TGeoVolume.cxx.html#Oh0pHD">Capacity</a>() const</span><br />
+<div class="funccomm"><pre> Computes the capacity of this [cm^3] as the capacity of its shape.
+ In case of assemblies, the capacity is computed as the sum of daughter's capacities.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CheckGeometry" href="src/TGeoVolume.cxx.html#Y57taC">CheckGeometry</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrays = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> startx = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> starty = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> startz = 0) const</span><br />
+<div class="funccomm"><pre> Shoot nrays with random directions from starting point (startx, starty, startz)
+ in the reference frame of this volume. Track each ray until exiting geometry, then
+ shoot backwards from exiting point and compare boundary crossing points.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CheckOverlaps" href="src/TGeoVolume.cxx.html#F8DdhD">CheckOverlaps</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ovlp = 0.1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Overlap checking tool. Check for illegal overlaps within a limit OVLP.
+ Use option=<span class="string">"s[number]"</span> to force overlap checking by sampling volume with
+ [number] points.
+ Ex: myVol-&gt;<a href="./TGeoVolume.html#TGeoVolume:CheckOverlaps" title="void TGeoVolume::CheckOverlaps(Double_t ovlp=0.1,Option_t* option=&quot;&quot;)">CheckOverlaps</a>(0.01, <span class="string">"s10000000"</span>); // shoot 10000000 points
+     myVol-&gt;<a href="./TGeoVolume.html#TGeoVolume:CheckOverlaps" title="void TGeoVolume::CheckOverlaps(Double_t ovlp=0.1,Option_t* option=&quot;&quot;)">CheckOverlaps</a>(0.01, <span class="string">"s"</span>); // shoot the default value of 1e6 points
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CheckShape" href="src/TGeoVolume.cxx.html#sEIlXC">CheckShape</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> testNo, <a href="./ListOfTypes.html#Int_t">Int_t</a> nsamples = 10000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Tests for checking the shape navigation algorithms. See <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:CheckShape" title="void TGeoShape::CheckShape(Int_t testNo,Int_t nsamples=10000,Option_t* option=&quot;&quot;)">CheckShape</a>()
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CleanAll" href="src/TGeoVolume.cxx.html#z6YF8">CleanAll</a>()</span><br />
+<div class="funccomm"><pre> Clean data of the volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:ClearShape" href="src/TGeoVolume.cxx.html#u35qmB">ClearShape</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Clear" title="void TNamed::Clear(Option_t* option=&quot;&quot;)">Clear</a> the shape of this volume from the list held by the current manager.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CheckShapes" href="src/TGeoVolume.cxx.html#Dk81_">CheckShapes</a>()</span><br />
+<div class="funccomm"><pre> check for negative parameters in shapes.
+ THIS METHOD LEAVES SOME GARBAGE NODES -&gt; memory leak, to be fixed
+   printf(<span class="string">"---Checking daughters of volume %s\n"</span>, <a href="./TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>());
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:CountNodes" href="src/TGeoVolume.cxx.html#A1Vh6B">CountNodes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nlevels = 1000, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0)</span><br />
+<div class="funccomm"><pre> Count total number of subnodes starting from this volume, nlevels down
+ option = 0 (default) - count only once per volume
+ option = 1           - count every time
+ option = 2           - count volumes on visible branches
+ option = 3           - return maximum level counted already with option = 0
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsAllInvisible" href="src/TGeoVolume.cxx.html#eNmWR">IsAllInvisible</a>() const</span><br />
+<div class="funccomm"><pre> Return TRUE if volume and all daughters are invisible.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:InvisibleAll" href="src/TGeoVolume.cxx.html#r2NeJD">InvisibleAll</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Make volume and each of it daughters (in)visible.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsFolder" href="src/TGeoVolume.cxx.html#HHr5aE">IsFolder</a>() const</span><br />
+<div class="funccomm"><pre> Return TRUE if volume contains nodes
+   return (<a href="./TGeoVolume.html#TGeoVolume:GetNdaughters" title="Int_t TGeoVolume::GetNdaughters()">GetNdaughters</a>()?<a href="./ListOfTypes.html#Bool_t">kTRUE</a>:<a href="./ListOfTypes.html#Bool_t">kFALSE</a>);
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsStyleDefault" href="src/TGeoVolume.cxx.html#tIebFB">IsStyleDefault</a>() const</span><br />
+<div class="funccomm"><pre> check if the visibility and attributes are the default ones
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsTopVolume" href="src/TGeoVolume.cxx.html#a2x8NC">IsTopVolume</a>() const</span><br />
+<div class="funccomm"><pre> True if this is the top volume of the geometry
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsRaytracing" href="src/TGeoVolume.cxx.html#BEqldC">IsRaytracing</a>() const</span><br />
+<div class="funccomm"><pre> Check if the painter is currently ray-tracing the content of this volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:InspectMaterial" href="src/TGeoVolume.cxx.html#iYNEuD">InspectMaterial</a>() const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Inspect" title="void TObject::Inspect()">Inspect</a> the material for this volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoVolume:Import" href="src/TGeoVolume.cxx.html#L3r.2D">Import</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoVolume.html#TGeoVolume:Import" title="TGeoVolume* TGeoVolume::Import(const char* filename,const char* name=&quot;&quot;,Option_t* option=&quot;&quot;)">Import</a> a volume from a file.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:Export" href="src/TGeoVolume.cxx.html#V9Ls0C">Export</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoVolume.html#TGeoVolume:Export" title="Int_t TGeoVolume::Export(const char* filename,const char* name=&quot;&quot;,Option_t* option=&quot;&quot;)">Export</a> this volume to a file.
+
+ -Case 1: root file or root/xml file
+  if filename end with <span class="string">".root"</span>. The key will be named name
+  if filename end with <span class="string">".xml"</span> a root/xml file is produced.
+
+ -Case 2: C++ script
+  if filename end with <span class="string">".C"</span>
+
+ -Case 3: gdml file
+  if filename end with <span class="string">".gdml"</span>
+  NOTE that to use this option, the PYTHONPATH must be defined like
+      export PYTHONPATH=$ROOTSYS/lib:$ROOTSYS/gdml
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:cd" href="src/TGeoVolume.cxx.html#qbqem">cd</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) const</span><br />
+<div class="funccomm"><pre> Actualize matrix of node indexed &lt;inode&gt;
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:AddNode" href="src/TGeoVolume.cxx.html#DNmfkB">AddNode</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Add a <a href="./TGeoNode.html">TGeoNode</a> to the list of nodes. This is the usual method for adding
+ daughters inside the container volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:AddNodeOffset" href="src/TGeoVolume.cxx.html#W8LHfD">AddNodeOffset</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./ListOfTypes.html#Double_t">Double_t</a> offset = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Add a division node to the list of nodes. The method is called by
+ <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:Divide" title="TGeoVolume* TGeoVolume::Divide(const char* divname,Int_t iaxis,Int_t ndiv,Double_t start,Double_t step,Int_t numed=0,Option_t* option=&quot;&quot;)">Divide</a>() for creating the division nodes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:AddNodeOverlap" href="src/TGeoVolume.cxx.html#aLf.HE">AddNodeOverlap</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* vol, <a href="./ListOfTypes.html#Int_t">Int_t</a> copy_no, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Add a <a href="./TGeoNode.html">TGeoNode</a> to the list of nodes. This is the usual method for adding
+ daughters inside the container volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoVolume:Divide" href="src/TGeoVolume.cxx.html#hqBdSE">Divide</a>(<span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step, <a href="./ListOfTypes.html#Int_t">Int_t</a> numed = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Division a la G3. The volume will be divided along IAXIS (see shape classes), in NDIV
+ slices, from START with given STEP. The division volumes will have medium number NUMED.
+ If NUMED=0 they will get the medium number of the divided volume (this). If NDIV&lt;=0,
+ all range of IAXIS will be divided and the resulting number of divisions will be centered on
+ IAXIS. If STEP&lt;=0, the real STEP will be computed as the full range of IAXIS divided by NDIV.
+ Options (case insensitive):
+  N  - divide all range in NDIV cells (same effect as STEP&lt;=0) (GSDVN in G3)
+  NX - divide range starting with START in NDIV cells          (GSDVN2 in G3)
+  S  - divide all range with given STEP. NDIV is computed and divisions will be centered
+         in full range (same effect as NDIV&lt;=0)                (GSDVS, GSDVT in G3)
+  SX - same as DVS, but from START position.                   (GSDVS2, GSDVT2 in G3)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:DistancetoPrimitive" href="src/TGeoVolume.cxx.html#pOxS4D">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> compute the closest distance of approach from point px,py to this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Draw" href="src/TGeoVolume.cxx.html#XOylYD">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> draw top volume according to option
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:DrawOnly" href="src/TGeoVolume.cxx.html#ZOO5Y">DrawOnly</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> draw only this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:OptimizeVoxels" href="src/TGeoVolume.cxx.html#F0c2sD">OptimizeVoxels</a>()</span><br />
+<div class="funccomm"><pre> Perform an exensive sampling to find which type of voxelization is
+ most efficient.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Paint" href="src/TGeoVolume.cxx.html#D2D0kD">Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> paint volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:PrintVoxels" href="src/TGeoVolume.cxx.html#WsdXgE">PrintVoxels</a>() const</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a> the voxels for this volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:ReplayCreation" href="src/TGeoVolume.cxx.html#eBDFzC">ReplayCreation</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* other)</span><br />
+<div class="funccomm"><pre> Recreate the content of the other volume without pointer copying. Voxels are
+ ignored and supposed to be created in a later step via <a href="./TGeoVolume.html#TGeoVolume:Voxelize" title="void TGeoVolume::Voxelize(Option_t* option)">Voxelize</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:PrintNodes" href="src/TGeoVolume.cxx.html#oBmsCC">PrintNodes</a>() const</span><br />
+<div class="funccomm"><pre> print nodes
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2F.html">TH2F</a> * <a class="funcname" name="TGeoVolume:LegoPlot" href="src/TGeoVolume.cxx.html#CXg0Z">LegoPlot</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntheta = 20, <a href="./ListOfTypes.html#Double_t">Double_t</a> themin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> themax = 180., <a href="./ListOfTypes.html#Int_t">Int_t</a> nphi = 60, <a href="./ListOfTypes.html#Double_t">Double_t</a> phimin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> phimax = 360., <a href="./ListOfTypes.html#Double_t">Double_t</a> rmin = 0., <a href="./ListOfTypes.html#Double_t">Double_t</a> rmax = 9999999, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Generate a lego plot fot the top volume, according to option.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:RegisterYourself" href="src/TGeoVolume.cxx.html#FsSby">RegisterYourself</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Register the volume and all materials/media/matrices/shapes to the manager.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:RandomPoints" href="src/TGeoVolume.cxx.html#VIECLC">RandomPoints</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints = 1000000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoVolume.html#TGeoVolume:Draw" title="void TGeoVolume::Draw(Option_t* option=&quot;&quot;)">Draw</a> random points in the bounding box of this volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:RandomRays" href="src/TGeoVolume.cxx.html#pJ5f0C">RandomRays</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrays = 10000, <a href="./ListOfTypes.html#Double_t">Double_t</a> startx = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> starty = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> startz = 0)</span><br />
+<div class="funccomm"><pre> Random raytracing method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Raytrace" href="src/TGeoVolume.cxx.html#AyLDjB">Raytrace</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoVolume.html#TGeoVolume:Draw" title="void TGeoVolume::Draw(Option_t* option=&quot;&quot;)">Draw</a> this volume with current settings and perform raytracing in the pad.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SaveAs" href="src/TGeoVolume.cxx.html#be895D">SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre>  Save geometry having this as top volume as a C++ macro.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SavePrimitive" href="src/TGeoVolume.cxx.html#V4cYwB">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Save a primitive as a C++ statement(s) on output stream <span class="string">"out"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:UnmarkSaved" href="src/TGeoVolume.cxx.html#WSMcFB">UnmarkSaved</a>()</span><br />
+<div class="funccomm"><pre> Reset <a href="./TGeoVolume.html#TGeoVolume:SavePrimitive" title="void TGeoVolume::SavePrimitive(ostream&amp; out,Option_t* option=&quot;&quot;)">SavePrimitive</a> bits.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:ExecuteEvent" href="src/TGeoVolume.cxx.html#T.XtfB">ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Execute" title="void TObject::Execute(const char* method,const char* params,Int_t* error=0) or overloads">Execute</a> mouse actions on this volume.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoNode.html">TGeoNode</a> * <a class="funcname" name="TGeoVolume:FindNode" href="src/TGeoVolume.cxx.html#FiU0mD">FindNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> search a daughter inside the list of nodes
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetNodeIndex" href="src/TGeoVolume.cxx.html#slnchC">GetNodeIndex</a>(<span class="keyword">const</span> <a href="./TGeoNode.html">TGeoNode</a>* node, <a href="./ListOfTypes.html#Int_t">Int_t</a>* check_list, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncheck) const</span><br />
+<div class="funccomm"><pre> Get the index of a daugther within check_list by providing the node pointer.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetIndex" href="src/TGeoVolume.cxx.html#KRuMNB">GetIndex</a>(<span class="keyword">const</span> <a href="./TGeoNode.html">TGeoNode</a>* node) const</span><br />
+<div class="funccomm"><pre> get index number for a given daughter
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">char</span> * <a class="funcname" name="TGeoVolume:GetObjectInfo" href="src/TGeoVolume.cxx.html#Ik6xHB">GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) const</span><br />
+<div class="funccomm"><pre> Get volume info for the browser.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:GetOptimalVoxels" href="src/TGeoVolume.cxx.html#skggs">GetOptimalVoxels</a>() const</span><br />
+<div class="funccomm"><pre>--- Returns <a href="./ListOfTypes.html#bool">true</a> if cylindrical voxelization is optimal.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">char</span> * <a class="funcname" name="TGeoVolume:GetPointerName" href="src/TGeoVolume.cxx.html#GGiaRC">GetPointerName</a>() const</span><br />
+<div class="funccomm"><pre> Provide a pointer name containing uid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVoxelFinder.html">TGeoVoxelFinder</a> * <a class="funcname" name="TGeoVolume:GetVoxels" href="src/TGeoVolume.cxx.html#GlMYDD">GetVoxels</a>() const</span><br />
+<div class="funccomm"><pre> Getter for optimization structure.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:GrabFocus" href="src/TGeoVolume.cxx.html#KdfxiC">GrabFocus</a>()</span><br />
+<div class="funccomm"><pre> Move perspective view focus to this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsAssembly" href="src/TGeoVolume.cxx.html#LKMkmC">IsAssembly</a>() const</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#bool">true</a> if the volume is an assembly or a scaled assembly.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoVolume:CloneVolume" href="src/TGeoVolume.cxx.html#fWJFxC">CloneVolume</a>() const</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Clone" title="TObject* TNamed::Clone(const char* newname=&quot;&quot;)">Clone</a> this volume.
+ build a volume with same name, shape and medium
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:CloneNodesAndConnect" href="src/TGeoVolume.cxx.html#xbJZb">CloneNodesAndConnect</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* newmother) const</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Clone" title="TObject* TNamed::Clone(const char* newname=&quot;&quot;)">Clone</a> the array of nodes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:MakeCopyNodes" href="src/TGeoVolume.cxx.html#ZPJQQE">MakeCopyNodes</a>(<span class="keyword">const</span> <a href="./TGeoVolume.html">TGeoVolume</a>* other)</span><br />
+<div class="funccomm"><pre> make a new list of nodes and copy all nodes of other volume inside
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoVolume:MakeCopyVolume" href="src/TGeoVolume.cxx.html#z_H2UD">MakeCopyVolume</a>(<a href="./TGeoShape.html">TGeoShape</a>* newshape)</span><br />
+<div class="funccomm"><pre> make a copy of this volume
+ build a volume with same name, shape and medium
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoVolume:MakeReflectedVolume" href="src/TGeoVolume.cxx.html#bBlza">MakeReflectedVolume</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Make a copy of this volume which is reflected with respect to XY plane.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetAsTopVolume" href="src/TGeoVolume.cxx.html#Ad1X4D">SetAsTopVolume</a>()</span><br />
+<div class="funccomm"><pre> Set this volume as the TOP one (the whole geometry starts from here)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetCurrentPoint" href="src/TGeoVolume.cxx.html#NawNaD">SetCurrentPoint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> Set the current tracking point.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetShape" href="src/TGeoVolume.cxx.html#bGGps">SetShape</a>(<span class="keyword">const</span> <a href="./TGeoShape.html">TGeoShape</a>* shape)</span><br />
+<div class="funccomm"><pre> set the shape associated with this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SortNodes" href="src/TGeoVolume.cxx.html#yQzxT">SortNodes</a>()</span><br />
+<div class="funccomm"><pre> sort nodes by decreasing volume of the bounding box. ONLY nodes comes first,
+ then overlapping nodes and finally division nodes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Streamer" href="src/TGeoVolume.cxx.html#MKR1yD">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream an object of class <a href="./TGeoVolume.html">TGeoVolume</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetOption" href="src/TGeoVolume.cxx.html#d7_WaD">SetOption</a>(<span class="keyword">const</span> <span class="keyword">char</span>* option)</span><br />
+<div class="funccomm"><pre> Set the current options (none implemented)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetLineColor" href="src/TGeoVolume.cxx.html#wkWxyD">SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> lcolor)</span><br />
+<div class="funccomm"><pre> Set the line color.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetLineStyle" href="src/TGeoVolume.cxx.html#zHMxkC">SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> lstyle)</span><br />
+<div class="funccomm"><pre> Set the line style.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetLineWidth" href="src/TGeoVolume.cxx.html#AZ754">SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> lwidth)</span><br />
+<div class="funccomm"><pre> Set the line width.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoNode.html">TGeoNode</a> * <a class="funcname" name="TGeoVolume:GetNode" href="src/TGeoVolume.cxx.html#D7wYhC">GetNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> get the pointer to a daughter node
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetByteCount" href="src/TGeoVolume.cxx.html#PVlDt">GetByteCount</a>() const</span><br />
+<div class="funccomm"><pre> get the total size in bytes for this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:FindOverlaps" href="src/TGeoVolume.cxx.html#gH47kD">FindOverlaps</a>() const</span><br />
+<div class="funccomm"><pre> loop all nodes marked as overlaps and find overlaping brothers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:RemoveNode" href="src/TGeoVolume.cxx.html#rJhAq">RemoveNode</a>(<a href="./TGeoNode.html">TGeoNode</a>* node)</span><br />
+<div class="funccomm"><pre> Remove an existing daughter.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoNode.html">TGeoNode</a> * <a class="funcname" name="TGeoVolume:ReplaceNode" href="src/TGeoVolume.cxx.html#noYT2D">ReplaceNode</a>(<a href="./TGeoNode.html">TGeoNode</a>* nodeorig, <a href="./TGeoShape.html">TGeoShape</a>* newshape = 0, <a href="./TGeoMatrix.html">TGeoMatrix</a>* newpos = 0, <a href="./TGeoMedium.html">TGeoMedium</a>* newmed = 0)</span><br />
+<div class="funccomm"><pre> Replace an existing daughter with a new volume having the same name but
+ possibly a new shape, position or medium. Not allowed for positioned assemblies.
+ For division cells, the new shape/matrix are ignored.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SelectVolume" href="src/TGeoVolume.cxx.html#v5vmVD">SelectVolume</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> clear = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Select this volume as matching an arbitrary criteria. The volume is added to
+ a static list and the flag <a href="./TGeoVolume.html">TGeoVolume</a>::<a href="./TGeoVolume.html#TGeoVolume:kVolumeSelected" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeSelected">kVolumeSelected</a> is set. All flags need
+ to be reset at the end by calling the method with CLEAR=<a href="./ListOfTypes.html#bool">true</a>. This will also clear
+ the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetVisibility" href="src/TGeoVolume.cxx.html#rhuwzE">SetVisibility</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> set visibility of this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetVisContainers" href="src/TGeoVolume.cxx.html#itkt6D">SetVisContainers</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Set visibility for containers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetVisLeaves" href="src/TGeoVolume.cxx.html#f6yZCD">SetVisLeaves</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Set visibility for leaves.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetVisOnly" href="src/TGeoVolume.cxx.html#HfofPB">SetVisOnly</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Set visibility for leaves.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:Valid" href="src/TGeoVolume.cxx.html#rf55qB">Valid</a>() const</span><br />
+<div class="funccomm"><pre> Check if the shape of this volume is valid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:FindMatrixOfDaughterVolume" href="src/TGeoVolume.cxx.html#m2kpj">FindMatrixOfDaughterVolume</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* vol) const</span><br />
+<div class="funccomm"><pre> Find a daughter node having VOL as volume and fill <a href="./TGeoManager.html">TGeoManager</a>::fHMatrix
+ with its global matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:VisibleDaughters" href="src/TGeoVolume.cxx.html#IvthoD">VisibleDaughters</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> set visibility for daughters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Voxelize" href="src/TGeoVolume.cxx.html#fecZEB">Voxelize</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre> build the voxels for this volume
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoVolume:Weight" href="src/TGeoVolume.cxx.html#pdnS9B">Weight</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> precision = 0.01, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"va"</span>)</span><br />
+<div class="funccomm"><pre> Estimate the weight of a volume (in kg) with SIGMA(M)/M better than PRECISION.
+ Option can contain : v - verbose, a - analytical  (default)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoVolume:WeightA" href="src/TGeoVolume.cxx.html#bPR7UD">WeightA</a>() const</span><br />
+<div class="funccomm"><pre> Analytical computation of the weight.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetNdaughters" href="src/TGeoVolume.h.html#UY6IaC">GetNdaughters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">if</span> (!<a href="./TGeoVolume.html#TGeoVolume:fNodes" title="TObjArray* TGeoVolume::fNodes">fNodes</a>) <span class="keyword">return</span> 0; <span class="keyword">return</span> (<a href="./TGeoVolume.html#TGeoVolume:fNodes" title="TObjArray* TGeoVolume::fNodes">fNodes</a>-><a href="./TObjArray.html#TObjArray:GetEntriesFast" title="Int_t TObjArray::GetEntriesFast()">GetEntriesFast</a>());}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:ClearNodes" href="src/TGeoVolume.h.html#GK0M1">ClearNodes</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fNodes" title="TObjArray* TGeoVolume::fNodes">fNodes</a> = 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:Contains" href="src/TGeoVolume.h.html#YW4EEE">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>-><a href="./TGeoShape.html#TGeoShape:Contains" title="Bool_t TGeoShape::Contains(Double_t* point)">Contains</a>(point);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsRunTime" href="src/TGeoVolume.h.html#IBg4CE">IsRunTime</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>-><a href="./TGeoShape.html#TGeoShape:IsRunTimeShape" title="Bool_t TGeoShape::IsRunTimeShape()">IsRunTimeShape</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVolumeMulti" href="src/TGeoVolume.h.html#BSUp6E">IsVolumeMulti</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsActive" href="src/TGeoVolume.h.html#eR1maB">IsActive</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsActive" title="Bool_t TGeoAtt::IsActive()">IsActive</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsActiveDaughters" href="src/TGeoVolume.h.html#n8gvaB">IsActiveDaughters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsActiveDaughters" title="Bool_t TGeoAtt::IsActiveDaughters()">IsActiveDaughters</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsAdded" href="src/TGeoVolume.h.html#mJbMOC">IsAdded</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeAdded" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeAdded">kVolumeAdded</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsReplicated" href="src/TGeoVolume.h.html#QpnnKE">IsReplicated</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeReplicated" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeReplicated">kVolumeReplicated</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsSelected" href="src/TGeoVolume.h.html#cGDSTC">IsSelected</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeSelected" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeSelected">kVolumeSelected</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsCylVoxels" href="src/TGeoVolume.h.html#m7U3XD">IsCylVoxels</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVoxelsCyl" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVoxelsCyl">kVoxelsCyl</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsXYZVoxels" href="src/TGeoVolume.h.html#q7j4XD">IsXYZVoxels</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:TestBit" title="Bool_t TObject::TestBit(UInt_t f)">TestBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVoxelsXYZ" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVoxelsXYZ">kVoxelsXYZ</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsValid" href="src/TGeoVolume.h.html#IYOJxC">IsValid</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>-><a href="./TGeoShape.html#TGeoShape:IsValid" title="Bool_t TGeoShape::IsValid()">IsValid</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVisible" href="src/TGeoVolume.h.html#wt8D9B">IsVisible</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsVisible" title="Bool_t TGeoAtt::IsVisible()">IsVisible</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVisibleDaughters" href="src/TGeoVolume.h.html#NIZGkE">IsVisibleDaughters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsVisDaughters" title="Bool_t TGeoAtt::IsVisDaughters()">IsVisDaughters</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVisContainers" href="src/TGeoVolume.h.html#isRHY">IsVisContainers</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsVisContainers" title="Bool_t TGeoAtt::IsVisContainers()">IsVisContainers</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVisLeaves" href="src/TGeoVolume.h.html#QgRckC">IsVisLeaves</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsVisLeaves" title="Bool_t TGeoAtt::IsVisLeaves()">IsVisLeaves</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoVolume:IsVisOnly" href="src/TGeoVolume.h.html#kQRLlE">IsVisOnly</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:IsVisOnly" title="Bool_t TGeoAtt::IsVisOnly()">IsVisOnly</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetCurrentNodeIndex" href="src/TGeoVolume.h.html#XY7v5C">GetCurrentNodeIndex</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> -1;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetNextNodeIndex" href="src/TGeoVolume.h.html#PdQTb">GetNextNodeIndex</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> -1;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObjArray.html">TObjArray</a>      * <a class="funcname" name="TGeoVolume:GetNodes" href="src/TGeoVolume.h.html#eMnv6C">GetNodes</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fNodes" title="TObjArray* TGeoVolume::fNodes">fNodes</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetNtotal" href="src/TGeoVolume.h.html#izA6yC">GetNtotal</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fNtotal" title="Int_t TGeoVolume::fNtotal">fNtotal</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoManager.html">TGeoManager</a>    * <a class="funcname" name="TGeoVolume:GetGeoManager" href="src/TGeoVolume.h.html#vpjDPE">GetGeoManager</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fGeoManager" title="TGeoManager* TGeoVolume::fGeoManager">fGeoManager</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMaterial.html">TGeoMaterial</a>   * <a class="funcname" name="TGeoVolume:GetMaterial" href="src/TGeoVolume.h.html#XeBzVB">GetMaterial</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>-><a href="./TGeoMedium.html#TGeoMedium:GetMaterial" title="TGeoMaterial* TGeoMedium::GetMaterial()">GetMaterial</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoMedium.html">TGeoMedium</a>     * <a class="funcname" name="TGeoVolume:GetMedium" href="src/TGeoVolume.h.html#S7Mw5E">GetMedium</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>        * <a class="funcname" name="TGeoVolume:GetField" href="src/TGeoVolume.h.html#YEF2QC">GetField</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fField" title="TObject* TGeoVolume::fField">fField</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoPatternFinder.html">TGeoPatternFinder</a> * <a class="funcname" name="TGeoVolume:GetFinder" href="src/TGeoVolume.h.html#EM4DpC">GetFinder</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fFinder" title="TGeoPatternFinder* TGeoVolume::fFinder">fFinder</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>     * <a class="funcname" name="TGeoVolume:GetIconName" href="src/TGeoVolume.h.html#zChQ1C">GetIconName</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>-><a href="./TGeoShape.html#TGeoShape:GetName" title="const char* TGeoShape::GetName()">GetName</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoNode.html">TGeoNode</a>       * <a class="funcname" name="TGeoVolume:GetNode" href="src/TGeoVolume.h.html#wdSaU">GetNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoVolume:GetNumber" href="src/TGeoVolume.h.html#ttVjcD">GetNumber</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fNumber" title="Int_t TGeoVolume::fNumber">fNumber</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Option_t">Option_t</a>       * <a class="funcname" name="TGeoVolume:GetOption" href="src/TGeoVolume.h.html#uGv6oB">GetOption</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fOption" title="TString TGeoVolume::fOption">fOption</a>.<a href="./TString.html#TString:Data" title="const char* TString::Data()">Data</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Char_t">Char_t</a> <a class="funcname" name="TGeoVolume:GetTransparency" href="src/TGeoVolume.h.html#S3Kz0D">GetTransparency</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (<a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>==0)?0:(<a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>-><a href="./TGeoMedium.html#TGeoMedium:GetMaterial" title="TGeoMaterial* TGeoMedium::GetMaterial()">GetMaterial</a>()-><a href="./TGeoMaterial.html#TGeoMaterial:GetTransparency" title="Char_t TGeoMaterial::GetTransparency()">GetTransparency</a>());}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoShape.html">TGeoShape</a>      * <a class="funcname" name="TGeoVolume:GetShape" href="src/TGeoVolume.h.html#lBNzwE">GetShape</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:Gsord" href="src/TGeoVolume.h.html#wENaRC">Gsord</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:InspectShape" href="src/TGeoVolume.h.html#FYX.FE">InspectShape</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fShape" title="TGeoShape* TGeoVolume::fShape">fShape</a>-><a href="./TGeoShape.html#TGeoShape:InspectShape" title="void TGeoShape::InspectShape()">InspectShape</a>();}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetActivity" href="src/TGeoVolume.h.html#iBMBDE">SetActivity</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:SetActivity" title="void TGeoAtt::SetActivity(Bool_t flag=kTRUE)">SetActivity</a>(flag);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetActiveDaughters" href="src/TGeoVolume.h.html#DKyP4C">SetActiveDaughters</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:SetActiveDaughters" title="void TGeoAtt::SetActiveDaughters(Bool_t flag=kTRUE)">SetActiveDaughters</a>(flag);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetAdded" href="src/TGeoVolume.h.html#x.75yC">SetAdded</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeAdded" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeAdded">kVolumeAdded</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetReplicated" href="src/TGeoVolume.h.html#kfX7wB">SetReplicated</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeReplicated" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeReplicated">kVolumeReplicated</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetCylVoxels" href="src/TGeoVolume.h.html#oESw5">SetCylVoxels</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVoxelsCyl" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVoxelsCyl">kVoxelsCyl</a>, flag); <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVoxelsXYZ" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVoxelsXYZ">kVoxelsXYZ</a>, !flag);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetNodes" href="src/TGeoVolume.h.html#H8mzFC">SetNodes</a>(<a href="./TObjArray.html">TObjArray</a>* nodes)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fNodes" title="TObjArray* TGeoVolume::fNodes">fNodes</a> = nodes; <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TGeoVolume.html#TGeoVolume:kVolumeImportNodes" title="const TGeoVolume::EGeoVolumeTypes TGeoVolume::kVolumeImportNodes">kVolumeImportNodes</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetTransparency" href="src/TGeoVolume.h.html#JuCSaC">SetTransparency</a>(<a href="./ListOfTypes.html#Char_t">Char_t</a> transparency = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">if</span> (<a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>) <a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a>-><a href="./TGeoMedium.html#TGeoMedium:GetMaterial" title="TGeoMaterial* TGeoMedium::GetMaterial()">GetMaterial</a>()-><a href="./TGeoMaterial.html#TGeoMaterial:SetTransparency" title="void TGeoMaterial::SetTransparency(Char_t transparency=0)">SetTransparency</a>(transparency);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetField" href="src/TGeoVolume.h.html#qt2WGB">SetField</a>(<a href="./TObject.html">TObject</a>* field)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fField" title="TObject* TGeoVolume::fField">fField</a> = field;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetAttVisibility" href="src/TGeoVolume.h.html#bGOzvD">SetAttVisibility</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> vis)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoAtt.html">TGeoAtt</a>::<a href="./TGeoAtt.html#TGeoAtt:SetVisibility" title="void TGeoAtt::SetVisibility(Bool_t vis=kTRUE)">SetVisibility</a>(vis);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetInvisible" href="src/TGeoVolume.h.html#XcYRSD">SetInvisible</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:SetVisibility" title="void TGeoVolume::SetVisibility(Bool_t vis=kTRUE)">SetVisibility</a>(<a href="./ListOfTypes.html#Bool_t">kFALSE</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetMedium" href="src/TGeoVolume.h.html#ATnLTE">SetMedium</a>(<a href="./TGeoMedium.html">TGeoMedium</a>* medium)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fMedium" title="TGeoMedium* TGeoVolume::fMedium">fMedium</a> = medium;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetVoxelFinder" href="src/TGeoVolume.h.html#DwnDSB">SetVoxelFinder</a>(<a href="./TGeoVoxelFinder.html">TGeoVoxelFinder</a>* finder)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fVoxels" title="TGeoVoxelFinder* TGeoVolume::fVoxels">fVoxels</a> = finder;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetFinder" href="src/TGeoVolume.h.html#TD.4IC">SetFinder</a>(<a href="./TGeoPatternFinder.html">TGeoPatternFinder</a>* finder)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fFinder" title="TGeoPatternFinder* TGeoVolume::fFinder">fFinder</a> = finder;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetNumber" href="src/TGeoVolume.h.html#TCxdNC">SetNumber</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> number)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fNumber" title="Int_t TGeoVolume::fNumber">fNumber</a> = number;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoVolume:SetNtotal" href="src/TGeoVolume.h.html#LDMnDB">SetNtotal</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TGeoVolume.html#TGeoVolume:fNtotal" title="Int_t TGeoVolume::fNtotal">fNtotal</a> = ntotal;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Andrei+Gheata"> Andrei Gheata   30/05/02</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/geom:$Id: TGeoVolume.h 41234 2011-10-06 15:48:52Z agheata $ </em><em>&raquo; Last generated: 2011-11-03 20:17</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:16:45 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGeoCompositeShape</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGeoCompositeShape','libGeom','TGeoCompositeShape.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGeoCompositeShape.h.html">header file</a>
+<a class="descrheadentry" href="src/TGeoCompositeShape.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/inc/TGeoCompositeShape.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/geom/geom/src/TGeoCompositeShape.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGeoCompositeShape:description">class description</a> 
+<a class="descrheadentry" href="#TGeoCompositeShape:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGeoCompositeShape:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGeoCompositeShape:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="./GEOM_GEOM_Index.html">GEOM</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGeoCompositeShape</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGeoCompositeShape:description"></a>class TGeoCompositeShape: public <a href="./TGeoBBox.html">TGeoBBox</a></h1>
+<div class="classdescr">
+<pre>
+ <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a> - class handling Boolean composition of shapes
+
+   Composite shapes are Boolean combination of two or more shape
+ components. The supported boolean operations are union (+), intersection (*)
+ and subtraction. Composite shapes derive from the base <a href="./TGeoShape.html">TGeoShape</a> class,
+ therefore providing all shape features : computation of bounding box, finding
+ if a given point is inside or outside the combination, as well as computing the
+ distance to entering/exiting. It can be directly used for creating volumes or
+ used in the definition of other composite shapes.
+   Composite shapes are provided in order to complement and extend the set of
+ basic shape primitives. They have a binary tree internal structure, therefore
+ all shape-related geometry queries are signals propagated from top level down
+ to the final leaves, while the provided answers are assembled and interpreted
+ back at top. This CSG hierarchy is effective for small number of components,
+ while performance drops dramatically for large structures. Building a complete
+ geometry in this style is virtually possible but highly not recommended.
+
+   Structure of composite shapes
+
+   A composite shape can always be regarded as the result of a Boolean operation
+ between only two shape components. All information identifying these two
+ components as well as their positions with respect to the frame of the composite
+ is represented by an object called Boolean node. A composite shape just have
+ a pointer to such a Boolean node. Since the shape components may also be
+ composites, they will also contain binary Boolean nodes branching other two
+ shapes in the hierarcy. Any such branch ends-up when the final leaves are no
+ longer composite shapes, but basic primitives.
+
+
+</pre><!-- TDocHtmlDirective start -->/*
+<img src="gif/t_booltree.jpg">
+*/
+<!-- TDocHtmlDirective end --><pre>
+
+   Suppose that A, B, C and D represent basic shapes, we will illustrate
+ how the internal representation of few combinations look like. We do this
+ only for the sake of understanding how to create them in a proper way, since
+ the user interface for this purpose is in fact very simple. We will ignore
+ for the time being the positioning of components. The definition of a composite
+ shape takes an expression where the identifiers are shape names. The
+ expression is parsed and decomposed in 2 sub-expressions and the top-level
+ Boolean operator.
+
+ 1.     A+B+C
+   This represent the union of A, B and C. Both union operators are at the
+ same level. Since:
+        A+B+C = (A+B)+C = A+(B+C)
+ the first (+) is taken as separator, hence the expression splitted:
+        A and B+C
+ A Boolean node of type <a href="./TGeoUnion.html">TGeoUnion</a>(<span class="string">"A"</span>, <span class="string">"B+C"</span>) is created. This tries to replace
+ the 2 expressions by actual pointers to corresponding shapes.
+ The first expression (A) contains no operators therefore is interpreted as
+ representing a shape. The shape named <span class="string">"A"</span> is searched into the list of shapes
+ handled by the manager class and stored as the <span class="string">"left"</span> shape in the Boolean
+ union node. Since the second expression is not yet fully decomposed, the <span class="string">"right"</span>
+ shape in the combination is created as a new composite shape. This will split
+ at its turn B+C into B and C and create a <a href="./TGeoUnion.html">TGeoUnion</a>(<span class="string">"B"</span>,<span class="string">"C"</span>). The B and C
+ identifiers will be looked for and replaced by the pointers to the actual shapes
+ into the new node. Finally, the composite <span class="string">"A+B+C"</span> will be represented as:
+
+                 A
+                |
+   [A+B+C] = (+)             B
+                |           |
+                 [B+C] = (+)
+                            |
+                             C
+
+ where [] is a composite shape, (+) is a Boolean node of type union and A, B,
+ C are pointers to the corresponding shapes.
+   Building this composite shapes takes the following line :
+      <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a> *cs1 = new <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>(<span class="string">"CS1"</span>, <span class="string">"A+B+C"</span>);
+
+ 2.      (A+B)\(C+D)
+   This expression means: subtract the union of C and D from the union of A and
+ B. The usage of paranthesys to force operator precedence is always recommended.
+ The representation of the corresponding composite shape looks like:
+
+                                   A
+                                  |
+                       [A+B] = (+)
+                      |           |
+   [(A+B)\(C+D)] = (\)           C B
+                      |         |
+                       [C+D]=(+)
+                                |
+                                 D
+
+      <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a> *cs2 = new <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>(<span class="string">"CS2"</span>, <span class="string">"(A+B)\(C+D)"</span>);
+
+   Building composite shapes as in the 2 examples above is not always quite
+ usefull since we were using unpositioned shapes. When suplying just shape
+ names as identifiers, the created boolean nodes will assume that the shapes
+ are positioned with an identity transformation with respect to the frame of
+ the created composite. In order to provide some positioning of the combination
+ components, we have to attach after each shape identifier the name of an
+ existing transformation, separated by a colon. Obviously all transformations
+ created for this purpose have to be objects with unique names in order to be
+ properly substituted during parsing.
+   Let's look at the code implementing the second example :
+
+      <a href="./TGeoTranslation.html">TGeoTranslation</a> *t1 = new <a href="./TGeoTranslation.html">TGeoTranslation</a>(<span class="string">"T1"</span>,0,0,-20);
+      <a href="./TGeoTranslation.html">TGeoTranslation</a> *t2 = new <a href="./TGeoTranslation.html">TGeoTranslation</a>(<span class="string">"T2"</span>,0,0, 20);
+      <a href="./TGeoRotation.html">TGeoRotation</a> *r1 = new <a href="./TGeoRotation.html">TGeoRotation</a>(<span class="string">"R1"</span>); // transformations need names
+      r1-&gt;SetAngles(90,30,90,120,0,0); // rotation with 30 degrees about Z
+      <a href="./TGeoTube.html">TGeoTube</a> *a = new <a href="./TGeoTube.html">TGeoTube</a>(0, 10,20);
+      a-&gt;<a href="./TNamed.html#TNamed:SetName" title="void TNamed::SetName(const char* name)">SetName</a>(<span class="string">"A"</span>);                 // shapes need names too
+      <a href="./TGeoTube.html">TGeoTube</a> *b = new <a href="./TGeoTube.html">TGeoTube</a>(0, 20,20);
+      b-&gt;<a href="./TNamed.html#TNamed:SetName" title="void TNamed::SetName(const char* name)">SetName</a>(<span class="string">"B"</span>);
+      <a href="./TGeoBBox.html">TGeoBBox</a> *c = new <a href="./TGeoBBox.html">TGeoBBox</a>(10,10,50);
+      c-&gt;<a href="./TNamed.html#TNamed:SetName" title="void TNamed::SetName(const char* name)">SetName</a>(<span class="string">"C"</span>);
+      <a href="./TGeoBBox.html">TGeoBBox</a> *d = new <a href="./TGeoBBox.html">TGeoBBox</a>(50,10,10);
+      d-&gt;<a href="./TNamed.html#TNamed:SetName" title="void TNamed::SetName(const char* name)">SetName</a>(<span class="string">"D"</span>);
+
+      <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a> *cs;
+      cs = new <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>(<span class="string">"CS"</span>, <span class="string">"(A:t1+B:t2)\(C+D:r1)"</span>);
+
+   The newly created composite looks like 2 cylinders of different radii sitting
+ one on top of the other and having 2 rectangular holes : a longitudinal one
+ along Z axis corresponding to C and an other one in the XY plane due to D.
+   One should have in mind that the same shape or matrix identifier can be
+ used many times in the same expression. For instance:
+
+      (A:t1-A:t2)*B:t1
+
+ is a valid expression. Expressions that cannot be parsed or identifiers that
+ cannot be substituted by existing objects generate error messages.
+   Composite shapes can be subsequently used for defining volumes. Moreover,
+ these volumes may have daughters but these have to obbey overlapping/extruding
+ rules (see <a href="./TGeoVolume.html">TGeoVolume</a>). Volumes created based on composite shapes cannot be
+ divided. Visualization of such volumes is currently not implemented.
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGeoCompositeShape:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:TGeoCompositeShape%1">TGeoCompositeShape</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:TGeoCompositeShape%3">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:TGeoCompositeShape%2">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* expression)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:TGeoCompositeShape%4">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./TGeoBoolNode.html">TGeoBoolNode</a>* node)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:_TGeoCompositeShape">~TGeoCompositeShape</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:AreOverlapping"><span class="baseclass">TGeoBBox::</span>AreOverlapping</a>(<span class="keyword">const</span> <a href="./TGeoBBox.html">TGeoBBox</a>* box1, <span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat1, <span class="keyword">const</span> <a href="./TGeoBBox.html">TGeoBBox</a>* box2, <span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat2)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:Big"><span class="baseclass">TGeoShape::</span>Big</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Capacity">Capacity</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:CheckShape"><span class="baseclass">TGeoShape::</span>CheckShape</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> testNo, <a href="./ListOfTypes.html#Int_t">Int_t</a> nsamples = 10000, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:ClearThreadData">ClearThreadData</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:ComputeBBox">ComputeBBox</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:ComputeEpsMch"><span class="baseclass">TGeoShape::</span>ComputeEpsMch</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:ComputeNormal">ComputeNormal</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Contains">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:CouldBeCrossed"><span class="baseclass">TGeoBBox::</span>CouldBeCrossed</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:DistancetoPrimitive">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:DistFromInside">DistFromInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:DistFromOutside">DistFromOutside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:DistToPhiMin"><span class="baseclass">TGeoShape::</span>DistToPhiMin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> sm, <a href="./ListOfTypes.html#Double_t">Double_t</a> cm, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoVolume.html">TGeoVolume</a>*</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Divide">Divide</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* voldiv, <span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:Draw"><span class="baseclass">TGeoShape::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:EpsMch"><span class="baseclass">TGeoShape::</span>EpsMch</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:ExecuteEvent"><span class="baseclass">TGeoShape::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetAxisName"><span class="baseclass">TGeoBBox::</span>GetAxisName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetAxisRange"><span class="baseclass">TGeoBBox::</span>GetAxisRange</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xlo, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; xhi) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoBoolNode.html">TGeoBoolNode</a>*</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetBoolNode">GetBoolNode</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetBoundingCylinder">GetBoundingCylinder</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TBuffer3D.html">TBuffer3D</a>&amp;</td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetBuffer3D"><span class="baseclass">TGeoBBox::</span>GetBuffer3D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetByteCount"><span class="baseclass">TGeoBBox::</span>GetByteCount</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetDX"><span class="baseclass">TGeoBBox::</span>GetDX</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetDY"><span class="baseclass">TGeoBBox::</span>GetDY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetDZ"><span class="baseclass">TGeoBBox::</span>GetDZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetFacetArea"><span class="baseclass">TGeoBBox::</span>GetFacetArea</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetFittingBox"><span class="baseclass">TGeoBBox::</span>GetFittingBox</a>(<span class="keyword">const</span> <a href="./TGeoBBox.html">TGeoBBox</a>* parambox, <a href="./TGeoMatrix.html">TGeoMatrix</a>* mat, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; dz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:GetId"><span class="baseclass">TGeoShape::</span>GetId</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TGeoShape.html">TGeoShape</a>*</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetMakeRuntimeShape">GetMakeRuntimeShape</a>(<a href="./TGeoShape.html">TGeoShape</a>*, <a href="./TGeoMatrix.html">TGeoMatrix</a>*) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetMeshNumbers">GetMeshNumbers</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nvert, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nsegs, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npols) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:GetName"><span class="baseclass">TGeoShape::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetNmeshVertices">GetNmeshVertices</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetOrigin"><span class="baseclass">TGeoBBox::</span>GetOrigin</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:GetPointerName"><span class="baseclass">TGeoShape::</span>GetPointerName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:GetPointsOnFacet"><span class="baseclass">TGeoBBox::</span>GetPointsOnFacet</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Double_t">Double_t</a>* array) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:GetPointsOnSegments">GetPointsOnSegments</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TGeoMatrix.html">TGeoMatrix</a>*</td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:GetTransform"><span class="baseclass">TGeoShape::</span>GetTransform</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:InspectShape">InspectShape</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:InvertShapeBit"><span class="baseclass">TGeoShape::</span>InvertShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsAssembly"><span class="baseclass">TGeoShape::</span>IsAssembly</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsCloseToPhi"><span class="baseclass">TGeoShape::</span>IsCloseToPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> epsil, <a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:IsComposite">IsComposite</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsCrossingSemiplane"><span class="baseclass">TGeoShape::</span>IsCrossingSemiplane</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a> cphi, <a href="./ListOfTypes.html#Double_t">Double_t</a> sphi, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; snext, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; rxy)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:IsCylType">IsCylType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsInPhiRange"><span class="baseclass">TGeoShape::</span>IsInPhiRange</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:IsNullBox"><span class="baseclass">TGeoBBox::</span>IsNullBox</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsReflected"><span class="baseclass">TGeoShape::</span>IsReflected</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsRunTimeShape"><span class="baseclass">TGeoShape::</span>IsRunTimeShape</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsSameWithinTolerance"><span class="baseclass">TGeoShape::</span>IsSameWithinTolerance</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Double_t">Double_t</a> b)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsSegCrossing"><span class="baseclass">TGeoShape::</span>IsSegCrossing</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2, <a href="./ListOfTypes.html#Double_t">Double_t</a> x3, <a href="./ListOfTypes.html#Double_t">Double_t</a> y3, <a href="./ListOfTypes.html#Double_t">Double_t</a> x4, <a href="./ListOfTypes.html#Double_t">Double_t</a> y4)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:IsValid"><span class="baseclass">TGeoShape::</span>IsValid</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:IsValidBox"><span class="baseclass">TGeoBBox::</span>IsValidBox</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TBuffer3D.html">TBuffer3D</a>*</td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:MakeBuffer3D"><span class="baseclass">TGeoBBox::</span>MakeBuffer3D</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:MakeNode">MakeNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:NormalPhi"><span class="baseclass">TGeoShape::</span>NormalPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1, <a href="./ListOfTypes.html#Double_t">Double_t</a> s1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2, <a href="./ListOfTypes.html#Double_t">Double_t</a> s2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:Paint"><span class="baseclass">TGeoShape::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:PaintComposite">PaintComposite</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:RegisterYourself">RegisterYourself</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:ResetShapeBit"><span class="baseclass">TGeoShape::</span>ResetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Safety">Safety</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SafetyPhi"><span class="baseclass">TGeoShape::</span>SafetyPhi</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi1, <a href="./ListOfTypes.html#Double_t">Double_t</a> phi2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:SavePrimitive">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:SetBoxDimensions"><span class="baseclass">TGeoBBox::</span>SetBoxDimensions</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> dx, <a href="./ListOfTypes.html#Double_t">Double_t</a> dy, <a href="./ListOfTypes.html#Double_t">Double_t</a> dz, <a href="./ListOfTypes.html#Double_t">Double_t</a>* origin = 0)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:SetBoxPoints"><span class="baseclass">TGeoBBox::</span>SetBoxPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:SetDimensions">SetDimensions</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetId"><span class="baseclass">TGeoShape::</span>SetId</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:SetPoints">SetPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:SetPoints%1">SetPoints</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* points) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetRuntime"><span class="baseclass">TGeoShape::</span>SetRuntime</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:SetSegsAndPols"><span class="baseclass">TGeoBBox::</span>SetSegsAndPols</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetShapeBit%1"><span class="baseclass">TGeoShape::</span>SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetShapeBit"><span class="baseclass">TGeoShape::</span>SetShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetTransform"><span class="baseclass">TGeoShape::</span>SetTransform</a>(<a href="./TGeoMatrix.html">TGeoMatrix</a>* matrix)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:ShapeDistancetoPrimitive"><span class="baseclass">TGeoShape::</span>ShapeDistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numpoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Sizeof3D">Sizeof3D</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:TestShapeBit"><span class="baseclass">TGeoShape::</span>TestShapeBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:TestShapeBits"><span class="baseclass">TGeoShape::</span>TestShapeBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:Tolerance"><span class="baseclass">TGeoShape::</span>Tolerance</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:TGeoCompositeShape">TGeoCompositeShape</a>(<span class="keyword">const</span> <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp; gcs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoBBox.html#TGeoBBox:FillBuffer3D"><span class="baseclass">TGeoBBox::</span>FillBuffer3D</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buffer, <a href="./ListOfTypes.html#Int_t">Int_t</a> reqSections, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> localFrame) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:GetBasicColor"><span class="baseclass">TGeoShape::</span>GetBasicColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGeoCompositeShape:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp; gcs)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:SetOnBoundary"><span class="baseclass">TGeoShape::</span>SetOnBoundary</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TGeoShape.html#TGeoShape:TransformPoints"><span class="baseclass">TGeoShape::</span>TransformPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> NbPoints) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGeoCompositeShape:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TGeoShape::</span>EShapeType { </td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kBitMask32">kBitMask32</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoNoShape">kGeoNoShape</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoBad">kGeoBad</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoRSeg">kGeoRSeg</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoPhiSeg">kGeoPhiSeg</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoThetaSeg">kGeoThetaSeg</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoVisX">kGeoVisX</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoVisY">kGeoVisY</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoVisZ">kGeoVisZ</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoRunTimeShape">kGeoRunTimeShape</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoInvalidShape">kGeoInvalidShape</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTorus">kGeoTorus</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoBox">kGeoBox</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoPara">kGeoPara</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoSph">kGeoSph</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTube">kGeoTube</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTubeSeg">kGeoTubeSeg</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoCone">kGeoCone</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoConeSeg">kGeoConeSeg</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoPcon">kGeoPcon</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoPgon">kGeoPgon</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoArb8">kGeoArb8</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoEltu">kGeoEltu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTrap">kGeoTrap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoCtub">kGeoCtub</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTrd1">kGeoTrd1</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoTrd2">kGeoTrd2</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoComb">kGeoComb</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoClosedShape">kGeoClosedShape</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoXtru">kGeoXtru</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoParaboloid">kGeoParaboloid</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoHalfSpace">kGeoHalfSpace</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoHype">kGeoHype</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:kGeoSavePrimitive">kGeoSavePrimitive</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGeoBBox.html#TGeoBBox:fDX"><span class="baseclass">TGeoBBox::</span>fDX</a></td><td class="datadesc">X half-length</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGeoBBox.html#TGeoBBox:fDY"><span class="baseclass">TGeoBBox::</span>fDY</a></td><td class="datadesc">Y half-length</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGeoBBox.html#TGeoBBox:fDZ"><span class="baseclass">TGeoBBox::</span>fDZ</a></td><td class="datadesc">Z half-length</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TGeoBBox.html#TGeoBBox:fOrigin"><span class="baseclass">TGeoBBox::</span>fOrigin[3]</a></td><td class="datadesc">box origin</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:fShapeBits"><span class="baseclass">TGeoShape::</span>fShapeBits</a></td><td class="datadesc">shape bits</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TGeoShape.html#TGeoShape:fShapeId"><span class="baseclass">TGeoShape::</span>fShapeId</a></td><td class="datadesc">shape id</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TGeoBoolNode.html">TGeoBoolNode</a>*</td><td class="dataname"><a name="TGeoCompositeShape:fNode"></a>fNode</td><td class="datadesc">top boolean node</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGeoCompositeShape:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGeoCompositeShape_Inh" id="MapTGeoCompositeShape_Inh">
+<area shape="rect" href="./TGeoBBox.html" title="TGeoBBox" alt="" coords="432,6,498,21"/>
+<area shape="rect" href="./TGeoShape.html" title="TGeoShape" alt="" coords="289,6,363,21"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="160,6,214,21"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="23,6,73,21"/>
+</map>
+<map name="MapTGeoCompositeShape_InhMem" id="MapTGeoCompositeShape_InhMem">
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="1176,60,1264,109"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="1077,60,1165,124"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="979,60,1067,124"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="1208,120,1232,155"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="1176,165,1264,445"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="1077,136,1165,445"/>
+<area shape="rect" href="./TGeoBBox.html" alt="" coords="979,136,1067,445"/>
+<area shape="rect" href="./TGeoBBox.html" title="TGeoBBox" alt="" coords="968,16,1275,456"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="859,60,947,285"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="760,60,848,285"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="661,60,749,285"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="891,296,915,331"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="859,341,947,768"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="760,341,848,768"/>
+<area shape="rect" href="./TGeoShape.html" alt="" coords="661,341,749,768"/>
+<area shape="rect" href="./TGeoShape.html" title="TGeoShape" alt="" coords="651,16,957,779"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGeoCompositeShape_Lib" id="MapTGeoCompositeShape_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="457,160,585,208"/>
+</map>
+<div class="tabs">
+<a id="imgTGeoCompositeShape_Inh" class="tabsel" href="inh/TGeoCompositeShape_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGeoCompositeShape_Inh.png');">Inheritance</a>
+<a id="imgTGeoCompositeShape_InhMem" class="tab" href="inhmem/TGeoCompositeShape_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGeoCompositeShape_InhMem.png');">Inherited Members</a>
+<a id="imgTGeoCompositeShape_Incl" class="tab" href="incl/TGeoCompositeShape_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGeoCompositeShape_Incl.png');">Includes</a>
+<a id="imgTGeoCompositeShape_Lib" class="tab" href="lib/TGeoCompositeShape_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGeoCompositeShape_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGeoCompositeShape_Inh" src="inh/TGeoCompositeShape_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:ClearThreadData" href="src/TGeoCompositeShape.cxx.html#x0EpyB">ClearThreadData</a>() const</span><br />
+<div class="funccomm"><pre> Needed just for cleanup.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:TGeoCompositeShape%1" href="src/TGeoCompositeShape.cxx.html#fby9oD">TGeoCompositeShape</a>()</span><br />
+<div class="funccomm"><pre> Default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:TGeoCompositeShape%2" href="src/TGeoCompositeShape.cxx.html#F5BjxC">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* expression)</span><br />
+<div class="funccomm"><pre> Default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:TGeoCompositeShape%3" href="src/TGeoCompositeShape.cxx.html#cTBwu">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression)</span><br />
+<div class="funccomm"><pre> Default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:TGeoCompositeShape%4" href="src/TGeoCompositeShape.cxx.html#nJrBqC">TGeoCompositeShape</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./TGeoBoolNode.html">TGeoBoolNode</a>* node)</span><br />
+<div class="funccomm"><pre> Constructor with a Boolean node
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:_TGeoCompositeShape" href="src/TGeoCompositeShape.cxx.html#H.PlsE">~TGeoCompositeShape</a>()</span><br />
+<div class="funccomm"><pre> destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoCompositeShape:Capacity" href="src/TGeoCompositeShape.cxx.html#ZMa4lD">Capacity</a>() const</span><br />
+<div class="funccomm"><pre> Computes capacity of this shape [length^3] by sampling with 1% error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:ComputeBBox" href="src/TGeoCompositeShape.cxx.html#qHi4nC">ComputeBBox</a>()</span><br />
+<div class="funccomm"><pre> compute bounding box of the sphere
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:ComputeNormal" href="src/TGeoCompositeShape.cxx.html#Gx8_VE">ComputeNormal</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Double_t">Double_t</a>* norm)</span><br />
+<div class="funccomm"><pre> Computes normal vector in POINT to the composite shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoCompositeShape:Contains" href="src/TGeoCompositeShape.cxx.html#ARYinB">Contains</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point) const</span><br />
+<div class="funccomm"><pre> Tests if point is inside the shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoCompositeShape:DistancetoPrimitive" href="src/TGeoCompositeShape.cxx.html#DaMBSD">DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre> Compute closest distance from point px,py to each corner.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoCompositeShape:DistFromOutside" href="src/TGeoCompositeShape.cxx.html#zgoRnE">DistFromOutside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) const</span><br />
+<div class="funccomm"><pre> Compute distance from outside point to this composite shape.
+ Check if the bounding box is crossed within the requested distance
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoCompositeShape:DistFromInside" href="src/TGeoCompositeShape.cxx.html#y8UDNB">DistFromInside</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Double_t">Double_t</a>* dir, <a href="./ListOfTypes.html#Int_t">Int_t</a> iact = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> step = <a href="./TGeoShape.html">TGeoShape</a>::<a href="./TGeoShape.html#TGeoShape:Big" title="Double_t TGeoShape::Big()">Big</a>(), <a href="./ListOfTypes.html#Double_t">Double_t</a>* safe = 0) const</span><br />
+<div class="funccomm"><pre> Compute distance from inside point to outside of this composite shape.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoVolume.html">TGeoVolume</a> * <a class="funcname" name="TGeoCompositeShape:Divide" href="src/TGeoCompositeShape.cxx.html#VyrNkD">Divide</a>(<a href="./TGeoVolume.html">TGeoVolume</a>* voldiv, <span class="keyword">const</span> <span class="keyword">char</span>* divname, <a href="./ListOfTypes.html#Int_t">Int_t</a> iaxis, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndiv, <a href="./ListOfTypes.html#Double_t">Double_t</a> start, <a href="./ListOfTypes.html#Double_t">Double_t</a> step)</span><br />
+<div class="funccomm"><pre> <a href="./TGeoCompositeShape.html#TGeoCompositeShape:Divide" title="TGeoVolume* TGeoCompositeShape::Divide(TGeoVolume* voldiv,const char* divname,Int_t iaxis,Int_t ndiv,Double_t start,Double_t step)">Divide</a> all range of iaxis in range/step cells
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:GetMeshNumbers" href="src/TGeoCompositeShape.cxx.html#OwTSDE">GetMeshNumbers</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nvert, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nsegs, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npols) const</span><br />
+<div class="funccomm"><pre> Returns numbers of vertices, segments and polygons composing the shape mesh.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:InspectShape" href="src/TGeoCompositeShape.cxx.html#FJQ9pE">InspectShape</a>() const</span><br />
+<div class="funccomm"><pre> print shape parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:MakeNode" href="src/TGeoCompositeShape.cxx.html#b8MR1">MakeNode</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expression)</span><br />
+<div class="funccomm"><pre> Make a booleann node according to the top level boolean operation of expression.
+ Propagates signal to branches until expression is fully decomposed.
+   printf(<span class="string">"Making node for : %s\n"</span>, expression);
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoCompositeShape:PaintComposite" href="src/TGeoCompositeShape.cxx.html#tBLk4C">PaintComposite</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TGeoShape.html#TGeoShape:Paint" title="void TGeoShape::Paint(Option_t* option=&quot;&quot;)">Paint</a> this composite shape into the current 3D viewer
+ Returns <a href="./ListOfTypes.html#bool">bool</a> flag indicating if the caller should continue to
+ paint child objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:RegisterYourself" href="src/TGeoCompositeShape.cxx.html#gY8b4C">RegisterYourself</a>()</span><br />
+<div class="funccomm"><pre> Register the shape and all components to <a href="./TGeoManager.html">TGeoManager</a> class.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TGeoCompositeShape:Safety" href="src/TGeoCompositeShape.cxx.html#Clg6aE">Safety</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* point, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> in = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>) const</span><br />
+<div class="funccomm"><pre> computes the closest distance from given point to this shape, according
+ to option. The matching point on the shape is stored in spoint.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:SavePrimitive" href="src/TGeoCompositeShape.cxx.html#n_M7UD">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Save a primitive as a C++ statement(s) on output stream <span class="string">"out"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:SetPoints" href="src/TGeoCompositeShape.cxx.html#rvl_9">SetPoints</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* points) const</span><br />
+<div class="funccomm"><pre> create points for a composite shape
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:SetPoints%1" href="src/TGeoCompositeShape.cxx.html#kYs0PB">SetPoints</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* points) const</span><br />
+<div class="funccomm"><pre> create points for a composite shape
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:Sizeof3D" href="src/TGeoCompositeShape.cxx.html#qmacMC">Sizeof3D</a>() const</span><br />
+<div class="funccomm"><pre> compute size of this 3D object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGeoCompositeShape:GetNmeshVertices" href="src/TGeoCompositeShape.cxx.html#B7vwzC">GetNmeshVertices</a>() const</span><br />
+<div class="funccomm"><pre> Return number of vertices of the mesh representation
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGeoCompositeShape:TGeoCompositeShape" href="src/TGeoCompositeShape.h.html#bFfNBE">TGeoCompositeShape</a>(<span class="keyword">const</span> <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp; gcs)</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp; <a class="funcname" name="TGeoCompositeShape:operator_" href="src/TGeoCompositeShape.h.html#jbrmbD">operator=</a>(<span class="keyword">const</span> <a href="./TGeoCompositeShape.html">TGeoCompositeShape</a>&amp; gcs)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoBoolNode.html">TGeoBoolNode</a>         * <a class="funcname" name="TGeoCompositeShape:GetBoolNode" href="src/TGeoCompositeShape.h.html#XDqYf">GetBoolNode</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TGeoCompositeShape.html#TGeoCompositeShape:fNode" title="TGeoBoolNode* TGeoCompositeShape::fNode">fNode</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:GetBoundingCylinder" href="src/TGeoCompositeShape.h.html#Y8B.QD">GetBoundingCylinder</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* ) const</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TGeoShape.html">TGeoShape</a>    * <a class="funcname" name="TGeoCompositeShape:GetMakeRuntimeShape" href="src/TGeoCompositeShape.h.html#ska_E">GetMakeRuntimeShape</a>(<a href="./TGeoShape.html">TGeoShape</a>* , <a href="./TGeoMatrix.html">TGeoMatrix</a>* ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoCompositeShape:GetPointsOnSegments" href="src/TGeoCompositeShape.h.html#pG.DHE">GetPointsOnSegments</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a>* ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoCompositeShape:IsComposite" href="src/TGeoCompositeShape.h.html#DbTM2D">IsComposite</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TGeoCompositeShape:IsCylType" href="src/TGeoCompositeShape.h.html#gUEE6E">IsCylType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGeoCompositeShape:SetDimensions" href="src/TGeoCompositeShape.h.html#XZ2fIE">SetDimensions</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Andrei+Gheata"> Andrei Gheata   31/01/02</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/geom:$Id: TGeoCompositeShape.h 41234 2011-10-06 15:48:52Z agheata $ </em><em>&raquo; Last generated: 2011-11-03 20:16</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

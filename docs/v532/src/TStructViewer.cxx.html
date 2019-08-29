@@ -1,0 +1,548 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:23:25 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TStructViewer - source file</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="codeAndLineNumbers"><pre class="listing">
+<span class="comment">// @(#)root/gviz3d:$Id: <a href="../TStructViewer.html">TStructViewer</a>.cxx 34883 2010-08-20 13:32:33Z matevz $</span>
+<span class="comment">// Author: Tomasz Sosnicki   18/09/09</span>
+
+<span class="comment">/************************************************************************
+* Copyright (C) 1995-2009, Rene Brun and Fons Rademakers.               *
+* All rights reserved.                                                  *
+*                                                                       *
+* For the licensing terms see $ROOTSYS/LICENSE.                         *
+* For the list of contributors see $ROOTSYS/README/CREDITS.             *
+*************************************************************************/</span>
+
+<span class="cpp">#include "<a href="../TStructViewer.h">TStructViewer.h</a>"</span>
+<span class="cpp">#include "<a href="../TStructNodeProperty.h">TStructNodeProperty.h</a>"</span>
+<span class="cpp">#include "<a href="../TStructViewerGUI.h">TStructViewerGUI.h</a>"</span>
+<span class="cpp">#include "<a href="../TStructNode.h">TStructNode.h</a>"</span>
+
+<span class="cpp">#include &lt;<a href="../TDataMember.h">TDataMember.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="../TVirtualCollectionProxy.h">TVirtualCollectionProxy.h</a>&gt;</span>
+<span class="cpp">#include &lt;<a href="../TClassEdit.h">TClassEdit.h</a>&gt;</span>
+<span class="cpp">#include &lt;vector&gt;</span>
+
+ClassImp(<a href="../TStructViewer.html">TStructViewer</a>);
+
+<span class="keyword">class</span> TA {
+<span class="keyword">public</span>:
+   <span class="keyword">virtual</span> ~TA() {}
+};
+
+<span class="comment">//________________________________________________________________________</span>
+<span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+<span class="comment">//</span>
+<span class="comment">// <a href="../TStructViewer.html">TStructViewer</a> viewer represents class, struct or other type as an object in 3D space.</span>
+<span class="comment">// At the top of the scene we can see objects which is our pointer. Under it we see </span>
+<span class="comment">// pointers and collection elements. Collection must inherit from <a href="../TCollection.html">TCollection</a> </span>
+<span class="comment">// or be STL collecion. </span>
+<span class="comment">// </span>
+<span class="comment">// We can change the number of visible levels or objects on the scene with the  GUI or </span>
+<span class="comment">// methods. The size of geometry objects is proportional to the memory taken by this object</span>
+<span class="comment">// or to the number of members inside this object. </span>
+<span class="comment">// </span>
+<span class="comment">// An easy way to find some class in the viewer is to change the color of the type.</span>
+<span class="comment">// We can connect for example a <a href="../TF2.html">TF2</a> class with red color or connect all classes </span>
+<span class="comment">// inheriting from <a href="../TF2.html">TF2</a> by adding plus to name. For example typename <span class="string">"TF2+"</span> tells us </span>
+<span class="comment">// that all classes inheriting from <a href="../TF2.html">TF2</a> will be red.</span>
+<span class="comment">// </span>
+<span class="comment">// Navigation in viewer is very simple like in usual GLViewer. When you put the mouse over </span>
+<span class="comment">// some object you can see some information about it (e.g. name, size, actual level).</span>
+<span class="comment">// When you <a href="../ListOfTypes.html#double">double</a> click this object, it becames top object on scene.</span>
+<span class="comment">// Undo and redo operation are supported. </span>
+<span class="comment">// </span>
+<span class="comment">// Begin_Html</span>
+// &lt;p&gt; In this picture we can see TStructViewer with pointer to TList which contains
+// other collections and objects of various classes&lt;/p&gt;
+// &lt;img src="gif/TStructViewer1.jpg"&gt;
+// End_Html<span class="comment"></span>
+<span class="comment">// </span>
+<span class="comment">// Begin_Html</span>
+// &lt;p&gt; Other screenshot presents opened TStructNodeEditor&lt;/p&gt;
+// &lt;img src="gif/TStructViewer2.jpg"&gt;
+// End_Html<span class="comment"></span>
+<span class="comment">//</span>
+<span class="comment">//</span>
+<span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="tJDgsB"></a><a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:TStructViewer" title="TStructViewer TStructViewer::TStructViewer(void* ptr=NULL,const char* clname=NULL)">TStructViewer</a>(<span class="keyword">void</span>* ptr, <span class="keyword">const</span> <span class="keyword">char</span> * clname)
+{
+   <span class="comment">// Default constructor. An argument <span class="string">"ptr"</span> is a main pointer of type <span class="string">"clname"</span>, which should be shown in the viewer</span>
+
+   <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a> = NULL;
+   <a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a> = NULL;
+   <a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a> = NULL;
+
+   <span class="comment">// add default color </span>
+   <a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>.<a href="../TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a>(<span class="keyword">new</span> <a href="../TStructNodeProperty.html">TStructNodeProperty</a>(<span class="string">"+"</span>, 17));
+
+   <span class="comment">// creating GUI</span>
+   <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a> = <span class="keyword">new</span> <a href="../TStructViewerGUI.html">TStructViewerGUI</a>(<span class="keyword">this</span>, NULL, &amp;<a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>);
+   
+   <a href="../TStructViewer.html#TStructViewer:SetPointer" title="void TStructViewer::SetPointer(void* ptr,const char* clname=NULL)">SetPointer</a>(ptr, clname);
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="FHYXaE"></a><a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:_TStructViewer" title="void TStructViewer::~TStructViewer()">~TStructViewer</a>()
+{
+   <span class="comment">// Destructor. Clean all object after closing the viewer</span>
+
+   <a href="../TStructViewer.html#TStructViewer:Reset" title="void TStructViewer::Reset()">Reset</a>();
+   <a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>.<a href="../TCollection.html#TCollection:SetOwner" title="void TCollection::SetOwner(Bool_t enable=kTRUE)">SetOwner</a>();
+   <a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>.<a href="../TList.html#TList:Clear" title="void TList::Clear(Option_t* option=&quot;&quot;)">Clear</a>();
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="pJ9TPB"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:AddNode" title="void TStructViewer::AddNode(TStructNode* node,ULong_t size)">AddNode</a>(<a href="../TStructNode.html">TStructNode</a>* node, <a href="../ListOfTypes.html#ULong_t">ULong_t</a> size)
+{
+   <span class="comment">// Find list with nodes on specified level and add node to this list and increment list of sizes and list of members</span>
+
+   <a href="../TList.html">TList</a>* list = (<a href="../TList.html">TList</a>*)<a href="../TStructViewer.html#TStructViewer:fLevelArray" title="TObjArray TStructViewer::fLevelArray">fLevelArray</a>[node-&gt;GetLevel()];
+   <span class="comment">// if list doesn't exist -&gt; create one</span>
+   <span class="keyword">if</span>(!list) {
+      <a href="../TStructViewer.html#TStructViewer:fLevelArray" title="TObjArray TStructViewer::fLevelArray">fLevelArray</a>[node-&gt;GetLevel()] = list = <span class="keyword">new</span> <a href="../TList.html">TList</a>();
+   }
+   list-&gt;Add(node);
+
+   <span class="comment">// increase number of members on this level</span>
+   <a href="../TStructViewer.html#TStructViewer:fLevelMembersCount" title="TExMap TStructViewer::fLevelMembersCount">fLevelMembersCount</a>(node-&gt;GetLevel())++;
+   <span class="comment">// increase size of this level</span>
+   <a href="../TStructViewer.html#TStructViewer:fLevelSize" title="TExMap TStructViewer::fLevelSize">fLevelSize</a>(node-&gt;GetLevel()) += size;
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="yLgVLD"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(<a href="../TClass.html">TClass</a>* cl, <a href="../TStructNode.html">TStructNode</a>* parent, <span class="keyword">void</span>* pointer)
+{
+   <span class="comment">// Count allocated memory, increase member counters, find child nodes</span>
+
+   <span class="keyword">if</span>(!cl) {
+      <span class="keyword">return</span>;
+   }
+
+   <span class="keyword">if</span> (cl-&gt;<a href="../TObject.html#TObject:InheritsFrom" title="Bool_t TObject::InheritsFrom(const char* classname) or overloads">InheritsFrom</a>(<a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:Class" title="TClass* TClass::Class()">Class</a>())) {
+      <span class="keyword">return</span>;
+   }
+
+   <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+   <span class="comment">// DATA MEMBERS</span>
+   <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+   <span class="comment">// Set up list of RealData so <a href="../TClass.html">TClass</a> doesn't create a new object itself</span>
+   cl-&gt;BuildRealData(parent-&gt;<a href="../TStructViewer.html#TStructViewer:GetPointer" title="void* TStructViewer::GetPointer()">GetPointer</a>());
+   <a href="../TIter.html">TIter</a> it(cl-&gt;GetListOfDataMembers());
+   <a href="../TDataMember.html">TDataMember</a>* dm;
+   <span class="keyword">while</span> ((dm = (<a href="../TDataMember.html">TDataMember</a>*) it() ))
+   {
+      <span class="comment">// increase counters in parent node</span>
+      parent-&gt;SetAllMembersCount(parent-&gt;GetAllMembersCount() + 1);
+      parent-&gt;SetMembersCount(parent-&gt;GetMembersCount() + 1);
+
+      <span class="keyword">if</span> (dm-&gt;Property() &amp; kIsStatic) {
+         <span class="keyword">continue</span>;
+      }
+
+
+      <span class="keyword">void</span>* ptr = NULL;
+
+      <span class="keyword">if</span>(dm-&gt;IsaPointer()) {
+         <a href="../TString.html">TString</a> trueTypeName = dm-&gt;GetTrueTypeName();
+
+         <span class="comment">// skip if pointer to pointer</span>
+         <span class="keyword">if</span>(trueTypeName.EndsWith(<span class="string">"**"</span>)) {
+            <span class="keyword">continue</span>;
+         }
+
+         <span class="keyword">if</span> (!pointer) {
+            <span class="keyword">continue</span>;
+         }
+
+         <span class="keyword">void</span>** pptr = (<span class="keyword">void</span>**)((<a href="../ListOfTypes.html#ULong_t">ULong_t</a>)pointer + dm-&gt;GetOffset());
+         ptr = *pptr;
+
+         <span class="keyword">if</span> (!ptr) {
+            <span class="keyword">continue</span>;
+         }
+
+         <span class="keyword">if</span>(<a href="../TStructViewer.html#TStructViewer:fPointers" title="TExMap TStructViewer::fPointers">fPointers</a>.<a href="../TExMap.html#TExMap:GetValue" title="Long64_t TExMap::GetValue(ULong64_t hash,Long64_t key) or overloads">GetValue</a>((<a href="../ListOfTypes.html#ULong_t">ULong_t</a>)ptr)) {
+            <span class="keyword">continue</span>;
+         } <span class="keyword">else</span> {
+            <a href="../TStructViewer.html#TStructViewer:fPointers" title="TExMap TStructViewer::fPointers">fPointers</a>.<a href="../TExMap.html#TExMap:Add" title="void TExMap::Add(ULong64_t hash,Long64_t key,Long64_t value) or overloads">Add</a>((<a href="../ListOfTypes.html#ULong_t">ULong_t</a>)ptr, (<a href="../ListOfTypes.html#ULong_t">ULong_t</a>)ptr);
+         }
+
+         <a href="../ListOfTypes.html#ULong_t">ULong_t</a> size = 0;
+         <span class="keyword">if</span> (<a href="../TClass.html">TClass</a>* cl2 = <a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(dm-&gt;GetTypeName())) {
+            size = cl2-&gt;Size();
+         }
+
+         <span class="keyword">if</span>(size == 0) {
+            size = dm-&gt;GetUnitSize();
+         }
+
+         ENodeType type;
+         <span class="keyword">if</span>(dm-&gt;GetDataType()) {   <span class="comment">// pointer to basic type</span>
+            type = kBasic;
+         } <span class="keyword">else</span> {
+            type = kClass;
+         }
+            
+         <span class="comment">// creating <a href="../TStructNode.html">TStructNode</a></span>
+         <a href="../TStructNode.html">TStructNode</a>* node = <span class="keyword">new</span> <a href="../TStructNode.html">TStructNode</a>(dm-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>(), dm-&gt;GetTypeName(), ptr, parent, size, type);
+         <a href="../TStructViewer.html#TStructViewer:AddNode" title="void TStructViewer::AddNode(TStructNode* node,ULong_t size)">AddNode</a>(node, size);
+         
+         <a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(<a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(dm-&gt;GetTypeName()), node, ptr);
+
+         <span class="comment">// total size = size of parent + size of nodes daughters</span>
+         parent-&gt;SetTotalSize(parent-&gt;GetTotalSize() + node-&gt;GetTotalSize() - size);
+         <span class="comment">// all members of node = all nodes of parent + nodes of daughter - 1 because node is added twice</span>
+         parent-&gt;SetAllMembersCount(parent-&gt;GetAllMembersCount() + node-&gt;GetAllMembersCount() - 1);
+      } <span class="keyword">else</span> {
+         ptr = (<span class="keyword">void</span>*)((<a href="../ListOfTypes.html#ULong_t">ULong_t</a>)pointer + dm-&gt;GetOffset());
+
+         <span class="keyword">if</span> (!ptr) {
+            <span class="keyword">continue</span>;
+         }
+         <a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(<a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(dm-&gt;GetTypeName()), parent, ptr);
+      }
+         
+      <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+      <span class="comment">// STL COLLECTION</span>
+      <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+      <span class="keyword">if</span> (dm-&gt;IsSTLContainer()) {
+         parent-&gt;SetNodeType(kSTLCollection);
+
+         <span class="comment">//it works only for pointer in std object (not pointer)</span>
+         <a href="../TClass.html">TClass</a>* stlClass = <a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(dm-&gt;GetTypeName());
+         <span class="keyword">if</span> (!stlClass) {
+            <span class="keyword">continue</span>;
+         }
+
+         <a href="../TVirtualCollectionProxy.html">TVirtualCollectionProxy</a>* proxy = stlClass-&gt;GetCollectionProxy();
+         <span class="keyword">if</span> (!proxy) {
+            <span class="keyword">continue</span>;
+         }
+         <a href="../TVirtualCollectionProxy.html">TVirtualCollectionProxy</a>::TPushPop helper(proxy, ptr);
+
+         <a href="../ListOfTypes.html#UInt_t">UInt_t</a> count = proxy-&gt;Size();
+         parent-&gt;SetMembersCount(parent-&gt;GetMembersCount() + count);
+
+         <span class="keyword">if</span> (!proxy-&gt;HasPointers() || proxy-&gt;GetType() != kNoType_t) { <span class="comment">// only objects or pointers to basic type</span>
+            parent-&gt;SetTotalSize(parent-&gt;GetTotalSize() + count * proxy-&gt;Sizeof());
+            parent-&gt;SetAllMembersCount(parent-&gt;GetAllMembersCount() + count);
+         } <span class="keyword">else</span> {
+            <a href="../TClass.html">TClass</a>* clProxy = proxy-&gt;GetValueClass();
+            <a href="../TString.html">TString</a> name;
+            <a href="../TString.html">TString</a> typeName;
+            <span class="comment">// get size of element</span>
+            <a href="../ListOfTypes.html#ULong_t">ULong_t</a> size = 0;
+            <span class="keyword">if</span> (clProxy) {
+               name = clProxy-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>();
+               typeName = clProxy-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>();
+               size = clProxy-&gt;Size();
+            } <span class="keyword">else</span> {
+               <span class="keyword">continue</span>;
+            }
+
+            <span class="comment">// if there is no dictionary</span>
+            <span class="keyword">if</span> (size == 0) {
+               size = proxy-&gt;Sizeof();
+            }
+
+            <span class="comment">// searching pointer to pointer</span>
+            <a href="../ListOfTypes.html#Bool_t">Bool_t</a> ptp = <a href="../ListOfTypes.html#Bool_t">kFALSE</a>;
+            std::vector&lt;std::string&gt; parts;
+            <span class="keyword">int</span> loc;
+            <a href="../TClassEdit.html">TClassEdit</a>::<a href="../TClassEdit.html#TClassEdit:GetSplit" title="int TClassEdit::GetSplit(const char* type,vector&lt;std::string&gt;&amp; output,int&amp; nestedLoc,TClassEdit::EModType mode=TClassEdit::kNone)">GetSplit</a>(dm-&gt;GetTypeName(), parts, loc);
+            std::vector&lt;std::string&gt;::const_iterator iPart = parts.begin();
+            <span class="keyword">while</span> (iPart != parts.end() &amp;&amp; *iPart == <span class="string">""</span>)
+               ++iPart;
+            <span class="keyword">if</span> (iPart != parts.end() &amp;&amp; *iPart != dm-&gt;GetTypeName()) {
+               <span class="keyword">for</span> (std::vector&lt;std::string&gt;::const_iterator iP = iPart,
+                  iPE = parts.end(); iP != iPE; ++iP) {
+                     <span class="keyword">if</span> (<a href="../TString.html">TString</a>(<a href="../TClassEdit.html">TClassEdit</a>::<a href="../TClassEdit.html#TClassEdit:ResolveTypedef" title="string TClassEdit::ResolveTypedef(const char* tname,bool resolveAll=false)">ResolveTypedef</a>(iP-&gt;c_str(), <span class="keyword">true</span>).c_str()).<a href="../TString.html#TString:EndsWith" title="Bool_t TString::EndsWith(const char* pat,TString::ECaseCompare cmp=kExact)">EndsWith</a>(<span class="string">"**"</span>)){
+                        ptp = <a href="../ListOfTypes.html#Bool_t">kTRUE</a>;
+                        <span class="keyword">break</span>;
+                     }
+               }
+            }
+            <span class="keyword">if</span> (ptp) {
+               <span class="keyword">continue</span>;
+            }
+
+
+            <span class="keyword">void</span>* element;
+            <span class="keyword">for</span> (<a href="../ListOfTypes.html#UInt_t">UInt_t</a> i = 0; i &lt; count ; i++) {
+               element = *(<span class="keyword">void</span>**)proxy-&gt;At(i);
+
+               <span class="keyword">if</span> (!element) {
+                  <span class="keyword">continue</span>;
+               }
+               <span class="keyword">if</span> (clProxy-&gt;<a href="../TObject.html#TObject:InheritsFrom" title="Bool_t TObject::InheritsFrom(const char* classname) or overloads">InheritsFrom</a>(<a href="../TObject.html">TObject</a>::<a href="../TObject.html#TObject:Class" title="TClass* TObject::Class()">Class</a>())) {
+                  name = ((<a href="../TObject.html">TObject</a>*) element)-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>();
+               }
+               
+               <span class="comment">// create node</span>
+               <a href="../TStructNode.html">TStructNode</a>* node = <span class="keyword">new</span> <a href="../TStructNode.html">TStructNode</a>(name, typeName, element, parent, size, kClass);
+               <span class="comment">// add addition information</span>
+               <a href="../TStructViewer.html#TStructViewer:AddNode" title="void TStructViewer::AddNode(TStructNode* node,ULong_t size)">AddNode</a>(node, size);
+               <span class="comment">// increase parents counter</span>
+               parent-&gt;SetMembersCount(parent-&gt;GetMembersCount() + 1);
+
+               <a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(clProxy, node, element);
+               parent-&gt;SetTotalSize(parent-&gt;GetTotalSize() + node-&gt;GetTotalSize());
+               parent-&gt;SetAllMembersCount(parent-&gt;GetAllMembersCount() + node-&gt;GetAllMembersCount());
+            }
+         }
+      } 
+   }
+
+   <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+   <span class="comment">// COLLECTION</span>
+   <span class="comment">//////////////////////////////////////////////////////////////////////////</span>
+   <span class="comment">// if our parent node is collection</span>
+   <span class="keyword">if</span>(cl-&gt;<a href="../TObject.html#TObject:InheritsFrom" title="Bool_t TObject::InheritsFrom(const char* classname) or overloads">InheritsFrom</a>(<a href="../TCollection.html">TCollection</a>::<a href="../TCollection.html#TCollection:Class" title="TClass* TCollection::Class()">Class</a>())) {
+      <span class="comment">// we change type of node to collection</span>
+      parent-&gt;SetNodeType(kCollection);
+   
+      <span class="comment">// return if invalid pointer to collection</span>
+      <span class="keyword">if</span> (!pointer) {
+         <span class="keyword">return</span>;
+      }
+
+      <a href="../TIter.html">TIter</a> it2((<a href="../TCollection.html">TCollection</a>*)pointer);
+      <a href="../TObject.html">TObject</a>* item;
+      <span class="comment">// loop through all elements in collection</span>
+      <span class="keyword">while</span>((item = it2())) {
+         <span class="comment">// get size of element</span>
+         <a href="../ListOfTypes.html#ULong_t">ULong_t</a> size = 0;
+         <span class="keyword">if</span> (<a href="../TClass.html">TClass</a>* cl3 = item-&gt;<a href="../TStructViewer.html#TStructViewer:IsA" title="TClass* TStructViewer::IsA()">IsA</a>()){
+            size = cl3-&gt;Size();
+         }
+         
+         <span class="comment">// if there is no dictionary</span>
+         <span class="keyword">if</span> (size == 0) {
+            size = <span class="keyword">sizeof</span>(item);
+         }
+
+         <span class="comment">// create node</span>
+         <a href="../TStructNode.html">TStructNode</a>* node = <span class="keyword">new</span> <a href="../TStructNode.html">TStructNode</a>(item-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>(), item-&gt;<a href="../TObject.html#TObject:ClassName" title="const char* TObject::ClassName()">ClassName</a>(), item, parent, size, kClass);
+         <span class="comment">// add addition information</span>
+         <a href="../TStructViewer.html#TStructViewer:AddNode" title="void TStructViewer::AddNode(TStructNode* node,ULong_t size)">AddNode</a>(node, size);
+         <span class="comment">// increase parents counter</span>
+         parent-&gt;SetMembersCount(parent-&gt;GetMembersCount() + 1);
+         
+         <a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(item-&gt;<a href="../TStructViewer.html#TStructViewer:IsA" title="TClass* TStructViewer::IsA()">IsA</a>(), node, item);
+         
+         parent-&gt;SetTotalSize(parent-&gt;GetTotalSize() + node-&gt;GetTotalSize());
+         parent-&gt;SetAllMembersCount(parent-&gt;GetAllMembersCount() + node-&gt;GetAllMembersCount());
+      }
+   }
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="WSRdyB"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:Draw" title="void TStructViewer::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<a href="../ListOfTypes.html#Option_t">Option_t</a> *option)
+{
+   <span class="comment">// <a href="../TStructViewer.html#TStructViewer:Draw" title="void TStructViewer::Draw(Option_t* option=&quot;&quot;)">Draw</a> object if there is valid pointer</span>
+
+   <a href="../TString.html">TString</a> opt(option);
+   <span class="keyword">if</span>(opt == <span class="string">"count"</span>) {
+      
+   } <span class="keyword">else</span> <span class="keyword">if</span> (opt == <span class="string">"size"</span>) {
+
+   }
+
+
+   <span class="keyword">if</span> (<a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>) {
+      <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:SetNodePtr" title="void TStructViewerGUI::SetNodePtr(TStructNode* val)">SetNodePtr</a>(<a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>);
+   } <span class="keyword">else</span> {
+      
+   }
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="a96h7C"></a><a href="../TCanvas.html">TCanvas</a>* <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetCanvas" title="TCanvas* TStructViewer::GetCanvas()">GetCanvas</a>()
+{
+   <span class="comment">// Returns canvas used to keep TGeoVolumes</span>
+
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:GetCanvas" title="TCanvas* TStructViewerGUI::GetCanvas()">GetCanvas</a>();
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="XMX92C"></a><a href="../TGMainFrame.html">TGMainFrame</a>* <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetFrame" title="TGMainFrame* TStructViewer::GetFrame()">GetFrame</a>()
+{
+   <span class="comment">// Returns pointer to main window</span>
+  
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>;
+}
+<span class="comment">//________________________________________________________________________</span>
+<a name="CcGHPC"></a><span class="keyword">void</span>* <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetPointer" title="void* TStructViewer::GetPointer()">GetPointer</a>() <span class="keyword">const</span>
+{
+   <span class="comment">// Return main pointer</span>
+
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a>;
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="qqCte"></a><a href="../TExMap.html">TExMap</a> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetLevelMembersCount" title="TExMap TStructViewer::GetLevelMembersCount()">GetLevelMembersCount</a>() <span class="keyword">const</span>
+{
+   <span class="comment">// Returns <a href="../TExMap.html">TExMap</a> with pairs &lt;level number, number of objects&gt;</span>
+
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fLevelMembersCount" title="TExMap TStructViewer::fLevelMembersCount">fLevelMembersCount</a>;
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="Kb8oE"></a><a href="../TExMap.html">TExMap</a> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetLevelSize" title="TExMap TStructViewer::GetLevelSize()">GetLevelSize</a>() <span class="keyword">const</span>
+{
+   <span class="comment">// Returns <a href="../TExMap.html">TExMap</a> with pairs &lt;level number, size of level in bytes&gt;</span>
+
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fLevelSize" title="TExMap TStructViewer::fLevelSize">fLevelSize</a>;
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="L531aB"></a><a href="../ListOfTypes.html#Bool_t">Bool_t</a> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetLinksVisibility" title="Bool_t TStructViewer::GetLinksVisibility()">GetLinksVisibility</a>() <span class="keyword">const</span>
+{
+   <span class="comment">// Get visibility of links between objects</span>
+
+   <span class="keyword">return</span> <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:GetLinksVisibility" title="Bool_t TStructViewerGUI::GetLinksVisibility()">GetLinksVisibility</a>();
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="fm8ymE"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:Prepare" title="void TStructViewer::Prepare()">Prepare</a>()
+{
+   <span class="comment">// Create top node and find all member nodes</span>
+   <span class="keyword">if</span> (<a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>) {
+      <a href="../TStructViewer.html#TStructViewer:Reset" title="void TStructViewer::Reset()">Reset</a>();
+   }
+
+   <a href="../ListOfTypes.html#ULong_t">ULong_t</a> size = <a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a>-><a href="../TClass.html#TClass:Size" title="Int_t TClass::Size()">Size</a>();
+
+   <a href="../TString.html">TString</a> name = <span class="string">"Main pointer"</span>;
+   <span class="keyword">if</span> (<a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a>-><a href="../TClass.html#TClass:InheritsFrom" title="Bool_t TClass::InheritsFrom(const char* cl) or overloads">InheritsFrom</a>(<a href="../TObject.html">TObject</a>::<a href="../TObject.html#TObject:Class" title="TClass* TObject::Class()">Class</a>())) {
+      name = ((<a href="../TObject.html">TObject</a>*) <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a>)-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>();
+   }
+   <a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a> = <span class="keyword">new</span> <a href="../TStructNode.html">TStructNode</a>(name, <a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a>-><a href="../TNamed.html#TNamed:GetName" title="const char* TNamed::GetName()">GetName</a>(), <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a>, NULL, size, kClass);
+   <a href="../TStructViewer.html#TStructViewer:AddNode" title="void TStructViewer::AddNode(TStructNode* node,ULong_t size)">AddNode</a>(<a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>, size);
+   <a href="../TStructViewer.html#TStructViewer:CountMembers" title="void TStructViewer::CountMembers(TClass* cl,TStructNode* parent,void* pointer)">CountMembers</a>(<a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a>, <a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>, <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a>);
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="hlLsaC"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:Reset" title="void TStructViewer::Reset()">Reset</a>()
+{
+   <span class="comment">// Deleting nodes, maps and array</span>
+
+   <a href="../TList.html">TList</a>* lst;
+   <a href="../TIter.html">TIter</a> it(&amp;<a href="../TStructViewer.html#TStructViewer:fLevelArray" title="TObjArray TStructViewer::fLevelArray">fLevelArray</a>);
+   <span class="keyword">while</span> ((lst = (<a href="../TList.html">TList</a>*) it() )) {
+      lst-&gt;SetOwner();
+      lst-&gt;<a href="../TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a>();
+   }
+
+   <span class="comment">// deleting maps and array</span>
+   <a href="../TStructViewer.html#TStructViewer:fLevelMembersCount" title="TExMap TStructViewer::fLevelMembersCount">fLevelMembersCount</a>.<a href="../TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a>();
+   <a href="../TStructViewer.html#TStructViewer:fLevelSize" title="TExMap TStructViewer::fLevelSize">fLevelSize</a>.<a href="../TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a>();
+   <a href="../TStructViewer.html#TStructViewer:fPointers" title="TExMap TStructViewer::fPointers">fPointers</a>.<a href="../TObject.html#TObject:Clear" title="void TObject::Clear(Option_t* =&quot;&quot;)">Clear</a>();
+   <a href="../TStructViewer.html#TStructViewer:fLevelArray" title="TObjArray TStructViewer::fLevelArray">fLevelArray</a>.<a href="../TObjArray.html#TObjArray:Clear" title="void TObjArray::Clear(Option_t* option=&quot;&quot;)">Clear</a>();
+   
+   <a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a> = NULL;
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="F07RmC"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:SetColor" title="void TStructViewer::SetColor(TString name,Int_t color)">SetColor</a>(<a href="../TString.html">TString</a> name, <a href="../ListOfTypes.html#Int_t">Int_t</a> color)
+{
+   <span class="comment">// Sets color for the class <span class="string">"name"</span> to color <span class="string">"color"</span></span>
+
+   <a href="../TIter.html">TIter</a> it(&amp;<a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>);
+   <a href="../TStructNodeProperty.html">TStructNodeProperty</a>* prop;
+   <span class="keyword">while</span> ((prop = (<a href="../TStructNodeProperty.html">TStructNodeProperty</a>*) it() )) {
+      <span class="keyword">if</span> (name == prop-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>()) {
+         prop-&gt;<a href="../TStructViewer.html#TStructViewer:SetColor" title="void TStructViewer::SetColor(TString name,Int_t color)">SetColor</a>(<a href="../TColor.html">TColor</a>::<a href="../TColor.html#TColor:GetColor" title="Int_t TColor::GetColor(const char* hexcolor) or overloads">GetColor</a>(color));
+         <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:Update" title="void TStructViewerGUI::Update(Bool_t resetCamera=false)">Update</a>();
+         
+         <span class="keyword">return</span>;
+      }
+   }
+
+   <span class="comment">// add color</span>
+   prop = <span class="keyword">new</span> <a href="../TStructNodeProperty.html">TStructNodeProperty</a>(name.Data(), color);
+   <a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>.<a href="../TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a>(prop);
+   <a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>.<a href="../TList.html#TList:Sort" title="void TList::Sort(Bool_t order=kSortAscending)">Sort</a>();
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="m5re0C"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:SetLinksVisibility" title="void TStructViewer::SetLinksVisibility(Bool_t val)">SetLinksVisibility</a>(<a href="../ListOfTypes.html#Bool_t">Bool_t</a> val)
+{
+   <span class="comment">// ISets links visibility</span>
+
+   <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:SetLinksVisibility" title="void TStructViewerGUI::SetLinksVisibility(Bool_t val)">SetLinksVisibility</a>(val);
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="yjEBv"></a><span class="keyword">void</span> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:SetPointer" title="void TStructViewer::SetPointer(void* ptr,const char* clname=NULL)">SetPointer</a>(<span class="keyword">void</span>* ptr, <span class="keyword">const</span> <span class="keyword">char</span>* clname)
+{
+   <span class="comment">// Set main pointer of class <span class="string">"clname"</span></span>
+
+   <span class="keyword">if</span> (ptr) {
+      TA* a = (TA*) ptr;
+      <span class="keyword">if</span> (clname) {
+         <a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a> = <a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(clname);
+      } <span class="keyword">else</span> {
+         <a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a> = <a href="../TClass.html">TClass</a>::<a href="../TClass.html#TClass:GetClass" title="TClass* TClass::GetClass(const char* name,Bool_t load=kTRUE,Bool_t silent=kFALSE) or overloads">GetClass</a>(<span class="keyword">typeid</span>(*a));
+      }
+
+      <span class="keyword">if</span> (!<a href="../TStructViewer.html#TStructViewer:fPointerClass" title="TClass* TStructViewer::fPointerClass">fPointerClass</a>) {
+         <span class="keyword">return</span>;
+      }
+
+      <a href="../TStructViewer.html#TStructViewer:fPointer" title="void* TStructViewer::fPointer">fPointer</a> = ptr;
+      <a href="../TStructViewer.html#TStructViewer:Prepare" title="void TStructViewer::Prepare()">Prepare</a>();
+      <a href="../TStructViewer.html#TStructViewer:fGUI" title="TStructViewerGUI* TStructViewer::fGUI">fGUI</a>-><a href="../TStructViewerGUI.html#TStructViewerGUI:SetNodePtr" title="void TStructViewerGUI::SetNodePtr(TStructNode* val)">SetNodePtr</a>(<a href="../TStructViewer.html#TStructViewer:fTopNode" title="TStructNode* TStructViewer::fTopNode">fTopNode</a>);
+   }
+}
+
+<span class="comment">//________________________________________________________________________</span>
+<a name="dihIqB"></a><a href="../TColor.html">TColor</a> <a href="../TStructViewer.html">TStructViewer</a>::<a href="../TStructViewer.html#TStructViewer:GetColor" title="TColor TStructViewer::GetColor(const char* typeName)">GetColor</a>(<span class="keyword">const</span> <span class="keyword">char</span>* typeName)
+{
+   <span class="comment">// Returns color associated with type <span class="string">"typeName"</span></span>
+
+   <a href="../TIter.html">TIter</a> it(&amp;<a href="../TStructViewer.html#TStructViewer:fColors" title="TList TStructViewer::fColors">fColors</a>);
+   <a href="../TStructNodeProperty.html">TStructNodeProperty</a>* prop;
+   <span class="keyword">while</span>((prop = (<a href="../TStructNodeProperty.html">TStructNodeProperty</a>*) it())) {
+      <span class="keyword">if</span> (!strcmp(prop-&gt;<a href="../TObject.html#TObject:GetName" title="const char* TObject::GetName()">GetName</a>(), typeName)) {
+         <span class="keyword">return</span> prop-&gt;<a href="../TStructViewer.html#TStructViewer:GetColor" title="TColor TStructViewer::GetColor(const char* typeName)">GetColor</a>();
+      }
+   }
+
+   <span class="keyword">return</span> <a href="../TColor.html">TColor</a>();
+}
+</pre>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="87" href="#87" class="ln">87</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="88" href="#88" class="ln">88</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="89" href="#89" class="ln">89</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="90" href="#90" class="ln">90</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="91" href="#91" class="ln">91</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="92" href="#92" class="ln">92</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="93" href="#93" class="ln">93</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="94" href="#94" class="ln">94</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="95" href="#95" class="ln">95</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="96" href="#96" class="ln">96</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="97" href="#97" class="ln">97</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="98" href="#98" class="ln">98</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="99" href="#99" class="ln">99</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="100" href="#100" class="ln">100</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="101" href="#101" class="ln">101</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="102" href="#102" class="ln">102</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="103" href="#103" class="ln">103</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="104" href="#104" class="ln">104</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="105" href="#105" class="ln">105</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="106" href="#106" class="ln">106</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="107" href="#107" class="ln">107</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="108" href="#108" class="ln">108</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="109" href="#109" class="ln">109</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="110" href="#110" class="ln">110</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="111" href="#111" class="ln">111</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="112" href="#112" class="ln">112</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="113" href="#113" class="ln">113</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="114" href="#114" class="ln">114</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="115" href="#115" class="ln">115</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="116" href="#116" class="ln">116</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="117" href="#117" class="ln">117</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="118" href="#118" class="ln">118</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="119" href="#119" class="ln">119</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="120" href="#120" class="ln">120</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="121" href="#121" class="ln">121</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="122" href="#122" class="ln">122</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="123" href="#123" class="ln">123</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="124" href="#124" class="ln">124</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="125" href="#125" class="ln">125</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="126" href="#126" class="ln">126</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="127" href="#127" class="ln">127</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="128" href="#128" class="ln">128</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="129" href="#129" class="ln">129</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="130" href="#130" class="ln">130</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="131" href="#131" class="ln">131</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="132" href="#132" class="ln">132</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="133" href="#133" class="ln">133</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="134" href="#134" class="ln">134</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="135" href="#135" class="ln">135</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="136" href="#136" class="ln">136</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="137" href="#137" class="ln">137</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="138" href="#138" class="ln">138</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="139" href="#139" class="ln">139</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="140" href="#140" class="ln">140</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="141" href="#141" class="ln">141</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="142" href="#142" class="ln">142</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="143" href="#143" class="ln">143</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="144" href="#144" class="ln">144</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="145" href="#145" class="ln">145</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="146" href="#146" class="ln">146</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="147" href="#147" class="ln">147</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="148" href="#148" class="ln">148</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="149" href="#149" class="ln">149</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="150" href="#150" class="ln">150</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="151" href="#151" class="ln">151</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="152" href="#152" class="ln">152</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="153" href="#153" class="ln">153</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="154" href="#154" class="ln">154</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="155" href="#155" class="ln">155</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="156" href="#156" class="ln">156</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="157" href="#157" class="ln">157</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="158" href="#158" class="ln">158</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="159" href="#159" class="ln">159</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="160" href="#160" class="ln">160</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="161" href="#161" class="ln">161</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="162" href="#162" class="ln">162</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="163" href="#163" class="ln">163</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="164" href="#164" class="ln">164</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="165" href="#165" class="ln">165</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="166" href="#166" class="ln">166</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="167" href="#167" class="ln">167</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="168" href="#168" class="ln">168</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="169" href="#169" class="ln">169</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="170" href="#170" class="ln">170</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="171" href="#171" class="ln">171</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="172" href="#172" class="ln">172</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="173" href="#173" class="ln">173</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="174" href="#174" class="ln">174</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="175" href="#175" class="ln">175</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="176" href="#176" class="ln">176</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="177" href="#177" class="ln">177</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="178" href="#178" class="ln">178</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="179" href="#179" class="ln">179</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="180" href="#180" class="ln">180</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="181" href="#181" class="ln">181</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="182" href="#182" class="ln">182</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="183" href="#183" class="ln">183</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="184" href="#184" class="ln">184</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="185" href="#185" class="ln">185</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="186" href="#186" class="ln">186</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="187" href="#187" class="ln">187</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="188" href="#188" class="ln">188</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="189" href="#189" class="ln">189</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="190" href="#190" class="ln">190</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="191" href="#191" class="ln">191</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="192" href="#192" class="ln">192</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="193" href="#193" class="ln">193</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="194" href="#194" class="ln">194</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="195" href="#195" class="ln">195</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="196" href="#196" class="ln">196</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="197" href="#197" class="ln">197</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="198" href="#198" class="ln">198</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="199" href="#199" class="ln">199</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="200" href="#200" class="ln">200</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="201" href="#201" class="ln">201</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="202" href="#202" class="ln">202</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="203" href="#203" class="ln">203</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="204" href="#204" class="ln">204</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="205" href="#205" class="ln">205</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="206" href="#206" class="ln">206</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="207" href="#207" class="ln">207</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="208" href="#208" class="ln">208</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="209" href="#209" class="ln">209</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="210" href="#210" class="ln">210</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="211" href="#211" class="ln">211</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="212" href="#212" class="ln">212</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="213" href="#213" class="ln">213</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="214" href="#214" class="ln">214</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="215" href="#215" class="ln">215</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="216" href="#216" class="ln">216</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="217" href="#217" class="ln">217</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="218" href="#218" class="ln">218</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="219" href="#219" class="ln">219</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="220" href="#220" class="ln">220</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="221" href="#221" class="ln">221</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="222" href="#222" class="ln">222</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="223" href="#223" class="ln">223</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="224" href="#224" class="ln">224</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="225" href="#225" class="ln">225</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="226" href="#226" class="ln">226</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="227" href="#227" class="ln">227</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="228" href="#228" class="ln">228</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="229" href="#229" class="ln">229</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="230" href="#230" class="ln">230</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="231" href="#231" class="ln">231</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="232" href="#232" class="ln">232</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="233" href="#233" class="ln">233</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="234" href="#234" class="ln">234</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="235" href="#235" class="ln">235</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="236" href="#236" class="ln">236</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="237" href="#237" class="ln">237</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="238" href="#238" class="ln">238</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="239" href="#239" class="ln">239</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="240" href="#240" class="ln">240</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="241" href="#241" class="ln">241</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="242" href="#242" class="ln">242</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="243" href="#243" class="ln">243</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="244" href="#244" class="ln">244</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="245" href="#245" class="ln">245</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="246" href="#246" class="ln">246</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="247" href="#247" class="ln">247</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="248" href="#248" class="ln">248</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="249" href="#249" class="ln">249</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="250" href="#250" class="ln">250</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="251" href="#251" class="ln">251</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="252" href="#252" class="ln">252</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="253" href="#253" class="ln">253</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="254" href="#254" class="ln">254</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="255" href="#255" class="ln">255</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="256" href="#256" class="ln">256</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="257" href="#257" class="ln">257</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="258" href="#258" class="ln">258</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="259" href="#259" class="ln">259</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="260" href="#260" class="ln">260</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="261" href="#261" class="ln">261</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="262" href="#262" class="ln">262</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="263" href="#263" class="ln">263</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="264" href="#264" class="ln">264</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="265" href="#265" class="ln">265</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="266" href="#266" class="ln">266</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="267" href="#267" class="ln">267</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="268" href="#268" class="ln">268</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="269" href="#269" class="ln">269</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="270" href="#270" class="ln">270</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="271" href="#271" class="ln">271</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="272" href="#272" class="ln">272</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="273" href="#273" class="ln">273</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="274" href="#274" class="ln">274</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="275" href="#275" class="ln">275</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="276" href="#276" class="ln">276</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="277" href="#277" class="ln">277</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="278" href="#278" class="ln">278</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="279" href="#279" class="ln">279</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="280" href="#280" class="ln">280</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="281" href="#281" class="ln">281</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="282" href="#282" class="ln">282</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="283" href="#283" class="ln">283</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="284" href="#284" class="ln">284</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="285" href="#285" class="ln">285</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="286" href="#286" class="ln">286</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="287" href="#287" class="ln">287</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="288" href="#288" class="ln">288</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="289" href="#289" class="ln">289</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="290" href="#290" class="ln">290</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="291" href="#291" class="ln">291</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="292" href="#292" class="ln">292</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="293" href="#293" class="ln">293</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="294" href="#294" class="ln">294</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="295" href="#295" class="ln">295</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="296" href="#296" class="ln">296</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="297" href="#297" class="ln">297</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="298" href="#298" class="ln">298</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="299" href="#299" class="ln">299</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="300" href="#300" class="ln">300</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="301" href="#301" class="ln">301</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="302" href="#302" class="ln">302</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="303" href="#303" class="ln">303</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="304" href="#304" class="ln">304</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="305" href="#305" class="ln">305</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="306" href="#306" class="ln">306</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="307" href="#307" class="ln">307</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="308" href="#308" class="ln">308</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="309" href="#309" class="ln">309</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="310" href="#310" class="ln">310</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="311" href="#311" class="ln">311</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="312" href="#312" class="ln">312</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="313" href="#313" class="ln">313</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="314" href="#314" class="ln">314</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="315" href="#315" class="ln">315</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="316" href="#316" class="ln">316</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="317" href="#317" class="ln">317</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="318" href="#318" class="ln">318</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="319" href="#319" class="ln">319</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="320" href="#320" class="ln">320</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="321" href="#321" class="ln">321</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="322" href="#322" class="ln">322</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="323" href="#323" class="ln">323</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="324" href="#324" class="ln">324</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="325" href="#325" class="ln">325</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="326" href="#326" class="ln">326</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="327" href="#327" class="ln">327</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="328" href="#328" class="ln">328</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="329" href="#329" class="ln">329</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="330" href="#330" class="ln">330</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="331" href="#331" class="ln">331</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="332" href="#332" class="ln">332</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="333" href="#333" class="ln">333</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="334" href="#334" class="ln">334</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="335" href="#335" class="ln">335</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="336" href="#336" class="ln">336</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="337" href="#337" class="ln">337</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="338" href="#338" class="ln">338</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="339" href="#339" class="ln">339</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="340" href="#340" class="ln">340</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="341" href="#341" class="ln">341</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="342" href="#342" class="ln">342</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="343" href="#343" class="ln">343</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="344" href="#344" class="ln">344</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="345" href="#345" class="ln">345</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="346" href="#346" class="ln">346</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="347" href="#347" class="ln">347</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="348" href="#348" class="ln">348</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="349" href="#349" class="ln">349</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="350" href="#350" class="ln">350</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="351" href="#351" class="ln">351</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="352" href="#352" class="ln">352</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="353" href="#353" class="ln">353</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="354" href="#354" class="ln">354</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="355" href="#355" class="ln">355</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="356" href="#356" class="ln">356</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="357" href="#357" class="ln">357</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="358" href="#358" class="ln">358</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="359" href="#359" class="ln">359</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="360" href="#360" class="ln">360</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="361" href="#361" class="ln">361</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="362" href="#362" class="ln">362</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="363" href="#363" class="ln">363</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="364" href="#364" class="ln">364</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="365" href="#365" class="ln">365</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="366" href="#366" class="ln">366</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="367" href="#367" class="ln">367</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="368" href="#368" class="ln">368</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="369" href="#369" class="ln">369</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="370" href="#370" class="ln">370</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="371" href="#371" class="ln">371</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="372" href="#372" class="ln">372</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="373" href="#373" class="ln">373</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="374" href="#374" class="ln">374</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="375" href="#375" class="ln">375</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="376" href="#376" class="ln">376</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="377" href="#377" class="ln">377</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="378" href="#378" class="ln">378</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="379" href="#379" class="ln">379</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="380" href="#380" class="ln">380</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="381" href="#381" class="ln">381</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="382" href="#382" class="ln">382</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="383" href="#383" class="ln">383</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="384" href="#384" class="ln">384</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="385" href="#385" class="ln">385</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="386" href="#386" class="ln">386</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="387" href="#387" class="ln">387</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="388" href="#388" class="ln">388</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="389" href="#389" class="ln">389</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="390" href="#390" class="ln">390</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="391" href="#391" class="ln">391</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="392" href="#392" class="ln">392</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="393" href="#393" class="ln">393</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="394" href="#394" class="ln">394</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="395" href="#395" class="ln">395</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="396" href="#396" class="ln">396</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="397" href="#397" class="ln">397</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="398" href="#398" class="ln">398</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="399" href="#399" class="ln">399</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="400" href="#400" class="ln">400</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="401" href="#401" class="ln">401</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="402" href="#402" class="ln">402</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="403" href="#403" class="ln">403</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="404" href="#404" class="ln">404</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="405" href="#405" class="ln">405</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="406" href="#406" class="ln">406</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="407" href="#407" class="ln">407</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="408" href="#408" class="ln">408</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="409" href="#409" class="ln">409</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="410" href="#410" class="ln">410</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="411" href="#411" class="ln">411</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="412" href="#412" class="ln">412</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="413" href="#413" class="ln">413</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="414" href="#414" class="ln">414</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="415" href="#415" class="ln">415</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="416" href="#416" class="ln">416</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="417" href="#417" class="ln">417</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="418" href="#418" class="ln">418</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="419" href="#419" class="ln">419</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="420" href="#420" class="ln">420</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="421" href="#421" class="ln">421</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="422" href="#422" class="ln">422</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="423" href="#423" class="ln">423</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="424" href="#424" class="ln">424</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="425" href="#425" class="ln">425</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="426" href="#426" class="ln">426</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="427" href="#427" class="ln">427</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="428" href="#428" class="ln">428</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="429" href="#429" class="ln">429</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="430" href="#430" class="ln">430</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="431" href="#431" class="ln">431</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="432" href="#432" class="ln">432</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="433" href="#433" class="ln">433</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="434" href="#434" class="ln">434</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="435" href="#435" class="ln">435</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="436" href="#436" class="ln">436</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="437" href="#437" class="ln">437</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="438" href="#438" class="ln">438</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="439" href="#439" class="ln">439</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="440" href="#440" class="ln">440</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="441" href="#441" class="ln">441</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="442" href="#442" class="ln">442</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="443" href="#443" class="ln">443</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="444" href="#444" class="ln">444</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="445" href="#445" class="ln">445</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="446" href="#446" class="ln">446</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="447" href="#447" class="ln">447</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="448" href="#448" class="ln">448</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="449" href="#449" class="ln">449</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="450" href="#450" class="ln">450</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="451" href="#451" class="ln">451</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="452" href="#452" class="ln">452</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="453" href="#453" class="ln">453</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="454" href="#454" class="ln">454</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="455" href="#455" class="ln">455</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="456" href="#456" class="ln">456</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="457" href="#457" class="ln">457</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="458" href="#458" class="ln">458</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="459" href="#459" class="ln">459</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="460" href="#460" class="ln">460</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="461" href="#461" class="ln">461</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="462" href="#462" class="ln">462</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="463" href="#463" class="ln">463</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="464" href="#464" class="ln">464</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="465" href="#465" class="ln">465</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="466" href="#466" class="ln">466</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="467" href="#467" class="ln">467</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="468" href="#468" class="ln">468</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="469" href="#469" class="ln">469</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="470" href="#470" class="ln">470</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="471" href="#471" class="ln">471</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="472" href="#472" class="ln">472</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="473" href="#473" class="ln">473</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="474" href="#474" class="ln">474</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="475" href="#475" class="ln">475</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="476" href="#476" class="ln">476</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="477" href="#477" class="ln">477</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="478" href="#478" class="ln">478</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="479" href="#479" class="ln">479</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="480" href="#480" class="ln">480</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="481" href="#481" class="ln">481</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="482" href="#482" class="ln">482</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="483" href="#483" class="ln">483</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="484" href="#484" class="ln">484</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="485" href="#485" class="ln">485</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="486" href="#486" class="ln">486</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="487" href="#487" class="ln">487</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="488" href="#488" class="ln">488</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="489" href="#489" class="ln">489</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="490" href="#490" class="ln">490</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="491" href="#491" class="ln">491</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="492" href="#492" class="ln">492</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="493" href="#493" class="ln">493</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="494" href="#494" class="ln">494</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="495" href="#495" class="ln">495</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="496" href="#496" class="ln">496</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="497" href="#497" class="ln">497</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="498" href="#498" class="ln">498</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="499" href="#499" class="ln">499</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="500" href="#500" class="ln">500</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="501" href="#501" class="ln">501</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="502" href="#502" class="ln">502</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="503" href="#503" class="ln">503</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="504" href="#504" class="ln">504</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="505" href="#505" class="ln">505</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="506" href="#506" class="ln">506</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="507" href="#507" class="ln">507</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="508" href="#508" class="ln">508</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="509" href="#509" class="ln">509</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="510" href="#510" class="ln">510</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="511" href="#511" class="ln">511</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="512" href="#512" class="ln">512</a></div><div class="ln">&nbsp;<span class="lnfile">TStructViewer.cxx:</span><a name="513" href="#513" class="ln">513</a></div></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-11-03 20:23 </em><em>&raquo; Last generated: 2011-11-03 20:23</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,935 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:20:39 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMultiLayerPerceptron</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMultiLayerPerceptron','libMLP','TMultiLayerPerceptron.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMultiLayerPerceptron.h.html">header file</a>
+<a class="descrheadentry" href="src/TMultiLayerPerceptron.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mlp/inc/TMultiLayerPerceptron.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mlp/src/TMultiLayerPerceptron.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMultiLayerPerceptron:description">class description</a> 
+<a class="descrheadentry" href="#TMultiLayerPerceptron:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMultiLayerPerceptron:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMultiLayerPerceptron:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MLP_Index.html">MLP</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMultiLayerPerceptron</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMultiLayerPerceptron:description"></a>class TMultiLayerPerceptron: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>
+
+ This class describes a neural network.
+ There are facilities to train the network and use the output.
+
+ The input layer is made of inactive neurons (returning the
+ optionaly normalized input) and output neurons are linear.
+ The type of hidden neurons is free, the default being sigmoids.
+ (One should still try to pass normalized inputs, e.g. between [0.,1])
+
+ The basic input is a <a href="./TTree.html">TTree</a> and two (training and test) TEventLists.
+ Input and output neurons are assigned a value computed for each event
+ with the same possibilities as for <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>().
+ Events may be weighted individualy or via <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:SetWeight" title="void TTree::SetWeight(Double_t w=1,Option_t* option=&quot;&quot;)">SetWeight</a>().
+ 6 learning methods are available: <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kStochastic" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kStochastic">kStochastic</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kBatch" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kBatch">kBatch</a>,
+ <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kSteepestDescent" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kSteepestDescent">kSteepestDescent</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kRibierePolak" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kRibierePolak">kRibierePolak</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kFletcherReeves" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kFletcherReeves">kFletcherReeves</a> and <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kBFGS" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kBFGS">kBFGS</a>.
+
+ This implementation, written by C. Delaere, is *inspired* from
+ the mlpfit package from J.Schwindling et al. with some extensions:
+   * the algorithms are globally the same
+   * in TMultilayerPerceptron, there is no limitation on the number of
+     layers/neurons, while MLPFIT was limited to 2 hidden layers
+   * TMultilayerPerceptron allows you to save the network in a root file, and
+     provides more export functionalities
+   * TMultilayerPerceptron gives more flexibility regarding the normalization of
+     inputs/outputs
+   * TMultilayerPerceptron provides, thanks to Andrea Bocci, the possibility to
+     use cross-entropy errors, which allows to train a network for pattern
+     classification based on Bayesian posterior probability.
+
+
+
+</pre><!-- TDocHtmlDirective start --> <!--
+/* -->
+<UL>
+        <LI><P><A NAME="intro"></A><FONT COLOR="#5c8526">
+        <FONT SIZE=4 STYLE="font-size: 15pt">Introduction</FONT></FONT></P>
+</UL>
+<P>Neural Networks are more and more used in various fields for data
+analysis and classification, both for research and commercial
+institutions. Some randomly choosen examples are:</P>
+<UL>
+        <LI><P>image analysis</P>
+        <LI><P>financial movements predictions and analysis</P>
+        <LI><P>sales forecast and product shipping optimisation</P>
+        <LI><P>in particles physics: mainly for classification tasks (signal
+        over background discrimination)</P>
+</UL>
+<P>More than 50% of neural networks are multilayer perceptrons. This
+implementation of multilayer perceptrons is inspired from the
+<A HREF="http://schwind.home.cern.ch/schwind/MLPfit.html">MLPfit
+package</A> originaly written by Jerome Schwindling. MLPfit remains
+one of the fastest tool for neural networks studies, and this ROOT
+add-on will not try to compete on that. A clear and flexible Object
+Oriented implementation has been choosen over a faster but more
+difficult to maintain code. Nevertheless, the time penalty does not
+exceed a factor 2.</P>
+<UL>
+        <LI><P><A NAME="mlp"></A><FONT COLOR="#5c8526">
+        <FONT SIZE=4 STYLE="font-size: 15pt">The
+        MLP</FONT></FONT></P>
+</UL>
+<P>The multilayer perceptron is a simple feed-forward network with
+the following structure:</P>
+<P ALIGN=CENTER><IMG SRC="gif/mlp.png" NAME="MLP"
+ALIGN=MIDDLE WIDTH=333 HEIGHT=358 BORDER=0>
+</P>
+<P>It is made of neurons characterized by a bias and weighted links
+between them (let's call those links synapses). The input neurons
+receive the inputs, normalize them and forward them to the first
+hidden layer.
+</P>
+<P>Each neuron in any subsequent layer first computes a linear
+combination of the outputs of the previous layer. The output of the
+neuron is then function of that combination with <I>f</I> being
+linear for output neurons or a sigmoid for hidden layers. This is
+useful because of two theorems:</P>
+<OL>
+        <LI><P>A linear combination of sigmoids can approximate any
+        continuous function.</P>
+        <LI><P>Trained with output = 1 for the signal and 0 for the
+        background, the approximated function of inputs X is the probability
+        of signal, knowing X.</P>
+</OL>
+<UL>
+        <LI><P><A NAME="lmet"></A><FONT COLOR="#5c8526">
+        <FONT SIZE=4 STYLE="font-size: 15pt">Learning
+        methods</FONT></FONT></P>
+</UL>
+<P>The aim of all learning methods is to minimize the total error on
+a set of weighted examples. The error is defined as the sum in
+quadrature, devided by two, of the error on each individual output
+neuron.</P>
+<P>In all methods implemented, one needs to compute
+the first derivative of that error with respect to the weights.
+Exploiting the well-known properties of the derivative, especialy the
+derivative of compound functions, one can write:</P>
+<UL>
+        <LI><P>for a neuton: product of the local derivative with the
+        weighted sum on the outputs of the derivatives.</P>
+        <LI><P>for a synapse: product of the input with the local derivative
+        of the output neuron.</P>
+</UL>
+<P>This computation is called back-propagation of the errors. A
+loop over all examples is called an epoch.</P>
+<P>Six learning methods are implemented.</P>
+<P><FONT COLOR="#006b6b"><I>Stochastic minimization</I>:</FONT> This
+is the most trivial learning method. This is the Robbins-Monro
+stochastic approximation applied to multilayer perceptrons. The
+weights are updated after each example according to the formula:</P>
+<P ALIGN=CENTER>$w_{ij}(t+1) = w_{ij}(t) + \Delta w_{ij}(t)$
+</P>
+<P ALIGN=CENTER>with
+</P>
+<P ALIGN=CENTER>$\Delta w_{ij}(t) = - \eta(\d e_p / \d w_{ij} +
+\delta) + \epsilon \Deltaw_{ij}(t-1)$</P>
+<P>The parameters for this method are Eta, EtaDecay, Delta and
+Epsilon.</P>
+<P><FONT COLOR="#006b6b"><I>Steepest descent with fixed step size
+(batch learning)</I>:</FONT> It is the same as the stochastic
+minimization, but the weights are updated after considering all the
+examples, with the total derivative dEdw. The parameters for this
+method are Eta, EtaDecay, Delta and Epsilon.</P>
+<P><FONT COLOR="#006b6b"><I>Steepest descent algorithm</I>: </FONT>Weights
+are set to the minimum along the line defined by the gradient. The
+only parameter for this method is Tau. Lower tau = higher precision =
+slower search. A value Tau = 3 seems reasonable.</P>
+<P><FONT COLOR="#006b6b"><I>Conjugate gradients with the
+Polak-Ribiere updating formula</I>: </FONT>Weights are set to the
+minimum along the line defined by the conjugate gradient. Parameters
+are Tau and Reset, which defines the epochs where the direction is
+reset to the steepes descent.</P>
+<P><FONT COLOR="#006b6b"><I>Conjugate gradients with the
+Fletcher-Reeves updating formula</I>: </FONT>Weights are set to the
+minimum along the line defined by the conjugate gradient. Parameters
+are Tau and Reset, which defines the epochs where the direction is
+reset to the steepes descent.</P>
+<P><FONT COLOR="#006b6b"><I>Broyden, Fletcher, Goldfarb, Shanno
+(BFGS) method</I>:</FONT> Implies the computation of a NxN matrix
+computation, but seems more powerful at least for less than 300
+weights. Parameters are Tau and Reset, which defines the epochs where
+the direction is reset to the steepes descent.</P>
+<UL>
+        <LI><P><A NAME="use"></A><FONT COLOR="#5c8526">
+        <FONT SIZE=4 STYLE="font-size: 15pt">How
+        to use it...</FONT></FONT></P></LI>
+</UL>
+<P><FONT SIZE=3>TMLP is build from 3 classes: TNeuron, TSynapse and
+TMultiLayerPerceptron. Only TMultiLayerPerceptron should be used
+explicitely by the user.</FONT></P>
+<P><FONT SIZE=3>TMultiLayerPerceptron will take examples from a TTree
+given in the constructor. The network is described by a simple
+string: The input/output layers are defined by giving the expression for
+each neuron, separated by comas. Hidden layers are just described
+by the number of neurons. The layers are separated by colons.
+In addition, input/output layer formulas can be preceded by '@' (e.g "@out")
+if one wants to also normalize the data from the TTree.
+Input and outputs are taken from the TTree given as second argument.
+Expressions are evaluated as for TTree::Draw(), arrays are expended in
+distinct neurons, one for each index.
+This can only be done for fixed-size arrays.
+If the formula ends with &quot;!&quot;, softmax functions are used for the output layer.
+One defines the training and test datasets by TEventLists.</FONT></P>
+<P STYLE="margin-left: 2cm"><FONT SIZE=3><SPAN STYLE="background: #e6e6e6">
+<U><FONT COLOR="#ff0000">Example</FONT></U><SPAN STYLE="text-decoration: none">:
+</SPAN>TMultiLayerPerceptron(&quot;x,y:10:5:f&quot;,inputTree);</SPAN></FONT></P>
+<P><FONT SIZE=3>Both the TTree and the TEventLists can be defined in
+the constructor, or later with the suited setter method. The lists
+used for training and test can be defined either explicitely, or via
+a string containing the formula to be used to define them, exactly as
+for a TCut.</FONT></P>
+<P><FONT SIZE=3>The learning method is defined using the
+TMultiLayerPerceptron::SetLearningMethod() . Learning methods are :</FONT></P>
+<P><FONT SIZE=3>TMultiLayerPerceptron::kStochastic, <BR>
+TMultiLayerPerceptron::kBatch,<BR>
+TMultiLayerPerceptron::kSteepestDescent,<BR>
+TMultiLayerPerceptron::kRibierePolak,<BR>
+TMultiLayerPerceptron::kFletcherReeves,<BR>
+TMultiLayerPerceptron::kBFGS<BR></FONT></P>
+<P>A weight can be assigned to events, either in the constructor, either
+with TMultiLayerPerceptron::SetEventWeight(). In addition, the TTree weight
+is taken into account.</P>
+<P><FONT SIZE=3>Finally, one starts the training with
+TMultiLayerPerceptron::Train(Int_t nepoch, Option_t* options). The
+first argument is the number of epochs while option is a string that
+can contain: &quot;text&quot; (simple text output) , &quot;graph&quot;
+(evoluting graphical training curves), &quot;update=X&quot; (step for
+the text/graph output update) or &quot;+&quot; (will skip the
+randomisation and start from the previous values). All combinations
+are available. </FONT></P>
+<P STYLE="margin-left: 2cm"><FONT SIZE=3><SPAN STYLE="background: #e6e6e6">
+<U><FONT COLOR="#ff0000">Example</FONT></U>:
+net.Train(100,&quot;text, graph, update=10&quot;).</SPAN></FONT></P>
+<P><FONT SIZE=3>When the neural net is trained, it can be used
+directly ( TMultiLayerPerceptron::Evaluate() ) or exported to a
+standalone C++ code ( TMultiLayerPerceptron::Export() ).</FONT></P>
+<P><FONT SIZE=3>Finaly, note that even if this implementation is inspired from the mlpfit code,
+the feature lists are not exactly matching:
+<UL>
+        <LI><P>mlpfit hybrid learning method is not implemented</P></LI>
+        <LI><P>output neurons can be normalized, this is not the case for mlpfit</P></LI>
+        <LI><P>the neural net is exported in C++, FORTRAN or PYTHON</P></LI>
+        <LI><P>the drawResult() method allows a fast check of the learning procedure</P></LI>
+</UL>
+In addition, the paw version of mlpfit had additional limitations on the number of neurons, hidden layers and inputs/outputs that does not apply to TMultiLayerPerceptron.
+<!-- */
+ -->
+<!-- TDocHtmlDirective end --><pre>
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMultiLayerPerceptron:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron">TMultiLayerPerceptron</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron%1">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <a href="./TTree.html">TTree</a>* data = 0, <span class="keyword">const</span> <span class="keyword">char</span>* training = <span class="string">"Entry$%2==0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* test = <span class="string">""</span>, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron%3">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <a href="./TTree.html">TTree</a>* data, <a href="./TEventList.html">TEventList</a>* training, <a href="./TEventList.html">TEventList</a>* test, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron%2">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <span class="keyword">const</span> <span class="keyword">char</span>* weight, <a href="./TTree.html">TTree</a>* data = 0, <span class="keyword">const</span> <span class="keyword">char</span>* training = <span class="string">"Entry$%2==0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* test = <span class="string">""</span>, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron%4">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <span class="keyword">const</span> <span class="keyword">char</span>* weight, <a href="./TTree.html">TTree</a>* data, <a href="./TEventList.html">TEventList</a>* training, <a href="./TEventList.html">TEventList</a>* test, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:_TMultiLayerPerceptron">~TMultiLayerPerceptron</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:ComputeDEDw">ComputeDEDw</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Draw">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:DrawResult">DrawResult</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"test"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:DumpWeights">DumpWeights</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">"-"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Evaluate">Evaluate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index, <a href="./ListOfTypes.html#Double_t">Double_t</a>* params) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Export">Export</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">"NNfunction"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* language = <span class="string">"C++"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetDelta">GetDelta</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetEpsilon">GetEpsilon</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetError">GetError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetError%1">GetError</a>(<a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>::EDataSet set) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetEta">GetEta</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetEtaDecay">GetEtaDecay</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetReset">GetReset</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetStructure">GetStructure</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetTau">GetTau</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TNeuron.html">TNeuron</a>::ENeuronType</td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetType">GetType</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:LoadWeights">LoadWeights</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Randomize">Randomize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Result">Result</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> index = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetData">SetData</a>(<a href="./TTree.html">TTree</a>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetDelta">SetDelta</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> delta)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetEpsilon">SetEpsilon</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> eps)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetEta">SetEta</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> eta)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetEtaDecay">SetEtaDecay</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ed)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetEventWeight">SetEventWeight</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetLearningMethod">SetLearningMethod</a>(<a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>::ELearningMethod method)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetReset">SetReset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> reset)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetTau">SetTau</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> tau)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetTestDataSet">SetTestDataSet</a>(<a href="./TEventList.html">TEventList</a>* test)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetTestDataSet%1">SetTestDataSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* test)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetTrainingDataSet">SetTrainingDataSet</a>(<a href="./TEventList.html">TEventList</a>* train)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetTrainingDataSet%1">SetTrainingDataSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* train)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Train">Train</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nEpoch, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"text"</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> minE = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:AttachData">AttachData</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BFGSDir">BFGSDir</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BuildNetwork">BuildNetwork</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:ConjugateGradientsDir">ConjugateGradientsDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:DerivDir">DerivDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetBFGSH">GetBFGSH</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp;, <a href="./TMatrixD.html">TMatrixD</a>&amp;, <a href="./TMatrixD.html">TMatrixD</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetCrossEntropy">GetCrossEntropy</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetCrossEntropyBinary">GetCrossEntropyBinary</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetEntry">GetEntry</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:GetSumSquareError">GetSumSquareError</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:LineSearch">LineSearch</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:MLP_Batch">MLP_Batch</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:MLP_Stochastic">MLP_Stochastic</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SetGammaDelta">SetGammaDelta</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp;, <a href="./TMatrixD.html">TMatrixD</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:SteepestDir">SteepestDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:TMultiLayerPerceptron%5">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BuildFirstLayer">BuildFirstLayer</a>(<a href="./TString.html">TString</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BuildHiddenLayers">BuildHiddenLayers</a>(<a href="./TString.html">TString</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BuildLastLayer">BuildLastLayer</a>(<a href="./TString.html">TString</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:BuildOneHiddenLayer">BuildOneHiddenLayer</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; sNumNodes, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; layer, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; prevStart, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; prevStop, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lastLayer)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:ExpandStructure">ExpandStructure</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:MLP_Line">MLP_Line</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>&amp;</td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMultiLayerPerceptron:Shuffle">Shuffle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMultiLayerPerceptron:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum ELearningMethod { </td><td class="dataname"><a name="TMultiLayerPerceptron:kStochastic"></a>kStochastic</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kBatch"></a>kBatch</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kSteepestDescent"></a>kSteepestDescent</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kRibierePolak"></a>kRibierePolak</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kFletcherReeves"></a>kFletcherReeves</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kBFGS"></a>kBFGS</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="data"><td class="datatype">enum EDataSet { </td><td class="dataname"><a name="TMultiLayerPerceptron:kTraining"></a>kTraining</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMultiLayerPerceptron:kTest"></a>kTest</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fCurrentTree"></a>fCurrentTree</td><td class="datadesc">! index of the current tree in a chain</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fCurrentTreeWeight"></a>fCurrentTreeWeight</td><td class="datadesc">! weight of the current tree in a chain</td></tr>
+<tr class="data"><td class="datatype"><a href="./TTree.html">TTree</a>*</td><td class="dataname"><a name="TMultiLayerPerceptron:fData"></a>fData</td><td class="datadesc">! pointer to the tree used as datasource</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fDelta"></a>fDelta</td><td class="datadesc">! Delta - used in stochastic minimisation - Default=0.</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fEpsilon"></a>fEpsilon</td><td class="datadesc">! Epsilon - used in stochastic minimisation - Default=0.</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fEta"></a>fEta</td><td class="datadesc">! Eta - used in stochastic minimisation - Default=0.1</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fEtaDecay"></a>fEtaDecay</td><td class="datadesc">! EtaDecay - Eta *= EtaDecay at each epoch - Default=1.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TTreeFormula.html">TTreeFormula</a>*</td><td class="dataname"><a name="TMultiLayerPerceptron:fEventWeight"></a>fEventWeight</td><td class="datadesc">! formula representing the event weight</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fFirstLayer"></a>fFirstLayer</td><td class="datadesc">Collection of the input neurons; subset of fNetwork</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fLastAlpha"></a>fLastAlpha</td><td class="datadesc">! internal parameter used in line search</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fLastLayer"></a>fLastLayer</td><td class="datadesc">Collection of the output neurons; subset of fNetwork</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>::ELearningMethod</td><td class="dataname"><a name="TMultiLayerPerceptron:fLearningMethod"></a>fLearningMethod</td><td class="datadesc">! The Learning Method</td></tr>
+<tr class="data"><td class="datatype"><a href="./TTreeFormulaManager.html">TTreeFormulaManager</a>*</td><td class="dataname"><a name="TMultiLayerPerceptron:fManager"></a>fManager</td><td class="datadesc">! TTreeFormulaManager for the weight and neurons</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fNetwork"></a>fNetwork</td><td class="datadesc">Collection of all the neurons in the network</td></tr>
+<tr class="data"><td class="datatype"><a href="./TNeuron.html">TNeuron</a>::ENeuronType</td><td class="dataname"><a name="TMultiLayerPerceptron:fOutType"></a>fOutType</td><td class="datadesc">Type of output neurons</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fReset"></a>fReset</td><td class="datadesc">! number of epochs between two resets of the search direction to the steepest descent - Default=50</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fStructure"></a>fStructure</td><td class="datadesc">String containing the network structure</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fSynapses"></a>fSynapses</td><td class="datadesc">Collection of all the synapses in the network</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fTau"></a>fTau</td><td class="datadesc">! Tau - used in line search - Default=3.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TEventList.html">TEventList</a>*</td><td class="dataname"><a name="TMultiLayerPerceptron:fTest"></a>fTest</td><td class="datadesc">! EventList defining the events in the test dataset</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fTestOwner"></a>fTestOwner</td><td class="datadesc">! internal flag whether one has to delete fTest or not</td></tr>
+<tr class="data"><td class="datatype"><a href="./TEventList.html">TEventList</a>*</td><td class="dataname"><a name="TMultiLayerPerceptron:fTraining"></a>fTraining</td><td class="datadesc">! EventList defining the events in the training dataset</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fTrainingOwner"></a>fTrainingOwner</td><td class="datadesc">! internal flag whether one has to delete fTraining or not</td></tr>
+<tr class="data"><td class="datatype"><a href="./TNeuron.html">TNeuron</a>::ENeuronType</td><td class="dataname"><a name="TMultiLayerPerceptron:fType"></a>fType</td><td class="datadesc">Type of hidden neurons</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fWeight"></a>fWeight</td><td class="datadesc">String containing the event weight</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fextD"></a>fextD</td><td class="datadesc">String containing the derivative name</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TMultiLayerPerceptron:fextF"></a>fextF</td><td class="datadesc">String containing the function name</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMultiLayerPerceptron:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMultiLayerPerceptron_Inh" id="MapTMultiLayerPerceptron_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="49,14,158,47"/>
+</map>
+<map name="MapTMultiLayerPerceptron_InhMem" id="MapTMultiLayerPerceptron_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTMultiLayerPerceptron_Lib" id="MapTMultiLayerPerceptron_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="449,315,577,363"/>
+</map>
+<div class="tabs">
+<a id="imgTMultiLayerPerceptron_Inh" class="tabsel" href="inh/TMultiLayerPerceptron_Inh.png" onclick="javascript:return SetImg('Charts','inh/TMultiLayerPerceptron_Inh.png');">Inheritance</a>
+<a id="imgTMultiLayerPerceptron_InhMem" class="tab" href="inhmem/TMultiLayerPerceptron_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMultiLayerPerceptron_InhMem.png');">Inherited Members</a>
+<a id="imgTMultiLayerPerceptron_Incl" class="tab" href="incl/TMultiLayerPerceptron_Incl.png" onclick="javascript:return SetImg('Charts','incl/TMultiLayerPerceptron_Incl.png');">Includes</a>
+<a id="imgTMultiLayerPerceptron_Lib" class="tab" href="lib/TMultiLayerPerceptron_Lib.png" onclick="javascript:return SetImg('Charts','lib/TMultiLayerPerceptron_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMultiLayerPerceptron_Inh" src="inh/TMultiLayerPerceptron_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron" href="src/TMultiLayerPerceptron.cxx.html#xN8CY">TMultiLayerPerceptron</a>()</span><br />
+<div class="funccomm"><pre> Default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron%3" href="src/TMultiLayerPerceptron.cxx.html#tVcm4E">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <a href="./TTree.html">TTree</a>* data, <a href="./TEventList.html">TEventList</a>* training, <a href="./TEventList.html">TEventList</a>* test, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> The network is described by a simple string:
+ The input/output layers are defined by giving
+ the branch names separated by comas.
+ Hidden layers are just described by the number of neurons.
+ The layers are separated by colons.
+ Ex: <span class="string">"x,y:10:5:f"</span>
+ The output can be prepended by <span class="string">'@'</span> if the variable has to be
+ normalized.
+ The output can be followed by <span class="string">'!'</span> to use Softmax neurons for the
+ output layer only.
+ Ex: <span class="string">"x,y:10:5:c1,c2,c3!"</span>
+ Input and outputs are taken from the <a href="./TTree.html">TTree</a> given as second argument.
+ training and test are the two TEventLists defining events
+ to be used during the neural net training.
+ Both the <a href="./TTree.html">TTree</a> and the TEventLists  can be defined in the constructor,
+ or later with the suited setter method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron%4" href="src/TMultiLayerPerceptron.cxx.html#uFIVjE">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <span class="keyword">const</span> <span class="keyword">char</span>* weight, <a href="./TTree.html">TTree</a>* data, <a href="./TEventList.html">TEventList</a>* training, <a href="./TEventList.html">TEventList</a>* test, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> The network is described by a simple string:
+ The input/output layers are defined by giving
+ the branch names separated by comas.
+ Hidden layers are just described by the number of neurons.
+ The layers are separated by colons.
+ Ex: <span class="string">"x,y:10:5:f"</span>
+ The output can be prepended by <span class="string">'@'</span> if the variable has to be
+ normalized.
+ The output can be followed by <span class="string">'!'</span> to use Softmax neurons for the
+ output layer only.
+ Ex: <span class="string">"x,y:10:5:c1,c2,c3!"</span>
+ Input and outputs are taken from the <a href="./TTree.html">TTree</a> given as second argument.
+ training and test are the two TEventLists defining events
+ to be used during the neural net training.
+ Both the <a href="./TTree.html">TTree</a> and the TEventLists  can be defined in the constructor,
+ or later with the suited setter method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron%1" href="src/TMultiLayerPerceptron.cxx.html#tVcm4E">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <a href="./TTree.html">TTree</a>* data = 0, <span class="keyword">const</span> <span class="keyword">char</span>* training = <span class="string">"Entry$%2==0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* test = <span class="string">""</span>, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> The network is described by a simple string:
+ The input/output layers are defined by giving
+ the branch names separated by comas.
+ Hidden layers are just described by the number of neurons.
+ The layers are separated by colons.
+ Ex: <span class="string">"x,y:10:5:f"</span>
+ The output can be prepended by <span class="string">'@'</span> if the variable has to be
+ normalized.
+ The output can be followed by <span class="string">'!'</span> to use Softmax neurons for the
+ output layer only.
+ Ex: <span class="string">"x,y:10:5:c1,c2,c3!"</span>
+ Input and outputs are taken from the <a href="./TTree.html">TTree</a> given as second argument.
+ training and test are two cuts (see <a href="./TTreeFormula.html">TTreeFormula</a>) defining events
+ to be used during the neural net training and testing.
+ Example: <span class="string">"Entry$%2"</span>, <span class="string">"(Entry$+1)%2"</span>.
+ Both the <a href="./TTree.html">TTree</a> and the cut can be defined in the constructor,
+ or later with the suited setter method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron%2" href="src/TMultiLayerPerceptron.cxx.html#uFIVjE">TMultiLayerPerceptron</a>(<span class="keyword">const</span> <span class="keyword">char</span>* layout, <span class="keyword">const</span> <span class="keyword">char</span>* weight, <a href="./TTree.html">TTree</a>* data = 0, <span class="keyword">const</span> <span class="keyword">char</span>* training = <span class="string">"Entry$%2==0"</span>, <span class="keyword">const</span> <span class="keyword">char</span>* test = <span class="string">""</span>, <a href="./TNeuron.html">TNeuron</a>::ENeuronType type = <a href="./TNeuron.html">TNeuron</a>::<a href="./TNeuron.html#TNeuron:kSigmoid" title="const TNeuron::ENeuronType TNeuron::kSigmoid">kSigmoid</a>, <span class="keyword">const</span> <span class="keyword">char</span>* extF = <span class="string">""</span>, <span class="keyword">const</span> <span class="keyword">char</span>* extD = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> The network is described by a simple string:
+ The input/output layers are defined by giving
+ the branch names separated by comas.
+ Hidden layers are just described by the number of neurons.
+ The layers are separated by colons.
+ Ex: <span class="string">"x,y:10:5:f"</span>
+ The output can be prepended by <span class="string">'@'</span> if the variable has to be
+ normalized.
+ The output can be followed by <span class="string">'!'</span> to use Softmax neurons for the
+ output layer only.
+ Ex: <span class="string">"x,y:10:5:c1,c2,c3!"</span>
+ Input and outputs are taken from the <a href="./TTree.html">TTree</a> given as second argument.
+ training and test are two cuts (see <a href="./TTreeFormula.html">TTreeFormula</a>) defining events
+ to be used during the neural net training and testing.
+ Example: <span class="string">"Entry$%2"</span>, <span class="string">"(Entry$+1)%2"</span>.
+ Both the <a href="./TTree.html">TTree</a> and the cut can be defined in the constructor,
+ or later with the suited setter method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:_TMultiLayerPerceptron" href="src/TMultiLayerPerceptron.cxx.html#iUE6vB">~TMultiLayerPerceptron</a>()</span><br />
+<div class="funccomm"><pre> Destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetData" href="src/TMultiLayerPerceptron.cxx.html#konyDC">SetData</a>(<a href="./TTree.html">TTree</a>* )</span><br />
+<div class="funccomm"><pre> Set the data source
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetEventWeight" href="src/TMultiLayerPerceptron.cxx.html#FxwcRE">SetEventWeight</a>(<span class="keyword">const</span> <span class="keyword">char</span>* )</span><br />
+<div class="funccomm"><pre> Set the event weight
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetTrainingDataSet" href="src/TMultiLayerPerceptron.cxx.html#bgOSQD">SetTrainingDataSet</a>(<a href="./TEventList.html">TEventList</a>* train)</span><br />
+<div class="funccomm"><pre> Sets the Training dataset.
+ Those events will be used for the minimization
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetTestDataSet" href="src/TMultiLayerPerceptron.cxx.html#yRGB3B">SetTestDataSet</a>(<a href="./TEventList.html">TEventList</a>* test)</span><br />
+<div class="funccomm"><pre> Sets the Test dataset.
+ Those events will not be used for the minimization but for control
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetTrainingDataSet%1" href="src/TMultiLayerPerceptron.cxx.html#G9TGQC">SetTrainingDataSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* train)</span><br />
+<div class="funccomm"><pre> Sets the Training dataset.
+ Those events will be used for the minimization.
+ Note that the tree must be already defined.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetTestDataSet%1" href="src/TMultiLayerPerceptron.cxx.html#D7sIsC">SetTestDataSet</a>(<span class="keyword">const</span> <span class="keyword">char</span>* test)</span><br />
+<div class="funccomm"><pre> Sets the Test dataset.
+ Those events will not be used for the minimization but for control.
+ Note that the tree must be already defined.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetLearningMethod" href="src/TMultiLayerPerceptron.cxx.html#WJgzMC">SetLearningMethod</a>(<a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>::ELearningMethod method)</span><br />
+<div class="funccomm"><pre> Sets the learning method.
+ Available methods are: <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kStochastic" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kStochastic">kStochastic</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kBatch" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kBatch">kBatch</a>,
+ <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kSteepestDescent" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kSteepestDescent">kSteepestDescent</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kRibierePolak" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kRibierePolak">kRibierePolak</a>, <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kFletcherReeves" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kFletcherReeves">kFletcherReeves</a> and <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:kBFGS" title="const TMultiLayerPerceptron::ELearningMethod TMultiLayerPerceptron::kBFGS">kBFGS</a>.
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetEta" href="src/TMultiLayerPerceptron.cxx.html#i2QhqE">SetEta</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> eta)</span><br />
+<div class="funccomm"><pre> Sets Eta - used in stochastic minimisation
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetEpsilon" href="src/TMultiLayerPerceptron.cxx.html#CByJ6">SetEpsilon</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> eps)</span><br />
+<div class="funccomm"><pre> Sets Epsilon - used in stochastic minimisation
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetDelta" href="src/TMultiLayerPerceptron.cxx.html#V5eztE">SetDelta</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> delta)</span><br />
+<div class="funccomm"><pre> Sets Delta - used in stochastic minimisation
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetEtaDecay" href="src/TMultiLayerPerceptron.cxx.html#wCuxkB">SetEtaDecay</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> ed)</span><br />
+<div class="funccomm"><pre> Sets EtaDecay - Eta *= EtaDecay at each epoch
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetTau" href="src/TMultiLayerPerceptron.cxx.html#DKM8xE">SetTau</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> tau)</span><br />
+<div class="funccomm"><pre> Sets Tau - used in line search
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetReset" href="src/TMultiLayerPerceptron.cxx.html#wcRUDD">SetReset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> reset)</span><br />
+<div class="funccomm"><pre> Sets number of epochs between two resets of the
+ search direction to the steepest descent.
+ (look at the constructor for the complete description
+ of learning methods and parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:GetEntry" href="src/TMultiLayerPerceptron.cxx.html#ZL5JRC">GetEntry</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ) const</span><br />
+<div class="funccomm"><pre> Load an entry into the network
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:Train" href="src/TMultiLayerPerceptron.cxx.html#L_h5W">Train</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nEpoch, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"text"</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> minE = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:Train" title="void TMultiLayerPerceptron::Train(Int_t nEpoch,Option_t* option=&quot;text&quot;,Double_t minE=0)">Train</a> the network.
+ nEpoch is the number of iterations.
+ option can contain:
+ - <span class="string">"text"</span> (simple text output)
+ - <span class="string">"graph"</span> (evoluting graphical training curves)
+ - <span class="string">"update=X"</span> (step for the text/graph output update)
+ - <span class="string">"+"</span> will skip the randomisation and start from the previous values.
+ - <span class="string">"current"</span> (draw in the current canvas)
+ - <span class="string">"minErrorTrain"</span> (stop when NN error on the training sample gets below minE
+ - <span class="string">"minErrorTest"</span> (stop when NN error on the test sample gets below minE
+ All combinations are available.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:Result" href="src/TMultiLayerPerceptron.cxx.html#OqHDwE">Result</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> index = 0) const</span><br />
+<div class="funccomm"><pre> Computes the output for a given event.
+ Look at the output neuron designed by index.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetError" href="src/TMultiLayerPerceptron.cxx.html#FbIQeC">GetError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event) const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Error" title="void TObject::Error(const char* method,const char* msgfmt)">Error</a> on the output for a given event
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetError%1" href="src/TMultiLayerPerceptron.cxx.html#FmqVaB">GetError</a>(<a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>::EDataSet set) const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Error" title="void TObject::Error(const char* method,const char* msgfmt)">Error</a> on the whole dataset
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetSumSquareError" href="src/TMultiLayerPerceptron.cxx.html#qjfwyC">GetSumSquareError</a>() const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Error" title="void TObject::Error(const char* method,const char* msgfmt)">Error</a> on the output for a given event
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetCrossEntropyBinary" href="src/TMultiLayerPerceptron.cxx.html#KFJxRC">GetCrossEntropyBinary</a>() const</span><br />
+<div class="funccomm"><pre> Cross entropy error for sigmoid output neurons, for a given event
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetCrossEntropy" href="src/TMultiLayerPerceptron.cxx.html#Y_cMG">GetCrossEntropy</a>() const</span><br />
+<div class="funccomm"><pre> Cross entropy error for a softmax output neuron, for a given event
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:ComputeDEDw" href="src/TMultiLayerPerceptron.cxx.html#FoZNgD">ComputeDEDw</a>() const</span><br />
+<div class="funccomm"><pre> Compute the DEDw = sum on all training events of dedw for each weight
+ normalized by the number of events.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:Randomize" href="src/TMultiLayerPerceptron.cxx.html#hkFKiC">Randomize</a>() const</span><br />
+<div class="funccomm"><pre> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:Randomize" title="void TMultiLayerPerceptron::Randomize()">Randomize</a> the weights
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:AttachData" href="src/TMultiLayerPerceptron.cxx.html#D.HDl">AttachData</a>()</span><br />
+<div class="funccomm"><pre> Connects the <a href="./TTree.html">TTree</a> to Neurons in input and output
+ layers. The formulas associated to each neuron are created
+ and reported to the network formula manager.
+ By default, the branch is not normalised since this would degrade
+ performance for classification jobs.
+ Normalisation can be requested by putting <span class="string">'@'</span> in front of the formula.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:ExpandStructure" href="src/TMultiLayerPerceptron.cxx.html#WBl4zB">ExpandStructure</a>()</span><br />
+<div class="funccomm"><pre> Expand the structure of the first layer
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BuildNetwork" href="src/TMultiLayerPerceptron.cxx.html#kpPrtC">BuildNetwork</a>()</span><br />
+<div class="funccomm"><pre> Instanciates the network from the description
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BuildFirstLayer" href="src/TMultiLayerPerceptron.cxx.html#grcEJB">BuildFirstLayer</a>(<a href="./TString.html">TString</a>&amp; )</span><br />
+<div class="funccomm"><pre> Instanciates the neurons in input
+ Inputs are normalised and the type is set to kOff
+ (simple forward of the formula value)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BuildHiddenLayers" href="src/TMultiLayerPerceptron.cxx.html#jwfqC">BuildHiddenLayers</a>(<a href="./TString.html">TString</a>&amp; )</span><br />
+<div class="funccomm"><pre> Builds hidden layers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BuildOneHiddenLayer" href="src/TMultiLayerPerceptron.cxx.html#SOkwxB">BuildOneHiddenLayer</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; sNumNodes, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; layer, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; prevStart, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; prevStop, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> lastLayer)</span><br />
+<div class="funccomm"><pre> Builds a hidden layer, updates the number of layers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BuildLastLayer" href="src/TMultiLayerPerceptron.cxx.html#a5WpnC">BuildLastLayer</a>(<a href="./TString.html">TString</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> Builds the output layer
+ Neurons are linear combinations of input, by defaul.
+ If the structure ends with <span class="string">"!"</span>, neurons are set up for classification,
+ ie. with a sigmoid (1 neuron) or softmax (more neurons) activation function.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:DrawResult" href="src/TMultiLayerPerceptron.cxx.html#Ep8qAD">DrawResult</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"test"</span>) const</span><br />
+<div class="funccomm"><pre> Draws the neural net output
+ It produces an histogram with the output for the two datasets.
+ Index is the number of the desired output neuron.
+ <span class="string">"option"</span> can contain:
+ - test or train to select a dataset
+ - comp to produce a X-Y comparison plot
+ - nocanv to not create a new <a href="./TCanvas.html">TCanvas</a> for the plot
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:DumpWeights" href="src/TMultiLayerPerceptron.cxx.html#ibb_bD">DumpWeights</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">"-"</span>) const</span><br />
+<div class="funccomm"><pre> Dumps the weights to a text file.
+ Set filename to <span class="string">"-"</span> (default) to dump to the standard output
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:LoadWeights" href="src/TMultiLayerPerceptron.cxx.html#QnmcuB">LoadWeights</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Loads the weights from a text file conforming to the format
+ defined by <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:DumpWeights" title="void TMultiLayerPerceptron::DumpWeights(Option_t* filename=&quot;-&quot;)">DumpWeights</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:Evaluate" href="src/TMultiLayerPerceptron.cxx.html#B5EvkB">Evaluate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> index, <a href="./ListOfTypes.html#Double_t">Double_t</a>* params) const</span><br />
+<div class="funccomm"><pre> Returns the Neural Net for a given set of input parameters
+ #parameters must equal #input neurons
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:Export" href="src/TMultiLayerPerceptron.cxx.html#P2TXsE">Export</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* filename = <span class="string">"NNfunction"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* language = <span class="string">"C++"</span>) const</span><br />
+<div class="funccomm"><pre> Exports the NN as a function for any non-<a href="./ROOT.html">ROOT</a>-dependant code
+ Supported languages are: only C++ , FORTRAN and Python (yet)
+ This feature is also usefull if you want to plot the NN as
+ a function (<a href="./TF1.html">TF1</a> or <a href="./TF2.html">TF2</a>).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:Shuffle" href="src/TMultiLayerPerceptron.cxx.html#wj7iq">Shuffle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* , <a href="./ListOfTypes.html#Int_t">Int_t</a> ) const</span><br />
+<div class="funccomm"><pre> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:Shuffle" title="void TMultiLayerPerceptron::Shuffle(Int_t* ,Int_t )">Shuffle</a> the <a href="./ListOfTypes.html#Int_t">Int_t</a> index[n] in input.
+ Input:
+   index: the array to shuffle
+   n: the size of the array
+ Output:
+   index: the shuffled indexes
+ This method is used for stochastic training
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:MLP_Stochastic" href="src/TMultiLayerPerceptron.cxx.html#L_nLqC">MLP_Stochastic</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> One step for the stochastic method
+ buffer should contain the previous dw vector and will be updated
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:MLP_Batch" href="src/TMultiLayerPerceptron.cxx.html#PxYrwE">MLP_Batch</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> One step for the batch (stochastic) method.
+ DEDw should have been updated before calling this.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:MLP_Line" href="src/TMultiLayerPerceptron.cxx.html#UW.d2D">MLP_Line</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* , <a href="./ListOfTypes.html#Double_t">Double_t</a>* , <a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+<div class="funccomm"><pre> Sets the weights to a point along a line
+ Weights are set to [origin + (dist * <a href="./TString.html">dir</a>)].
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SteepestDir" href="src/TMultiLayerPerceptron.cxx.html#isqtb">SteepestDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> Sets the search direction to steepest descent.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">bool</span> <a class="funcname" name="TMultiLayerPerceptron:LineSearch" href="src/TMultiLayerPerceptron.cxx.html#C_OVuB">LineSearch</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* , <a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> Search along the line defined by direction.
+ buffer is not used but is updated with the new dw
+ so that it can be used by a later stochastic step.
+ It returns <a href="./ListOfTypes.html#bool">true</a> if the line search fails.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:ConjugateGradientsDir" href="src/TMultiLayerPerceptron.cxx.html#Y1SLqB">ConjugateGradientsDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* , <a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+<div class="funccomm"><pre> Sets the search direction to conjugate gradient direction
+ beta should be:
+  ||g_{(t+1)}||^2 / ||g_{(t)}||^2                   (Fletcher-Reeves)
+  g_{(t+1)} (g_{(t+1)}-g_{(t)}) / ||g_{(t)}||^2     (Ribiere-Polak)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">bool</span> <a class="funcname" name="TMultiLayerPerceptron:GetBFGSH" href="src/TMultiLayerPerceptron.cxx.html#lk_zaB">GetBFGSH</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; , <a href="./TMatrixD.html">TMatrixD</a>&amp; , <a href="./TMatrixD.html">TMatrixD</a>&amp; )</span><br />
+<div class="funccomm"><pre> Computes the hessian matrix using the BFGS update algorithm.
+ from gamma (g_{(t+1)}-g_{(t)}) and delta (w_{(t+1)}-w_{(t)}).
+ It returns <a href="./ListOfTypes.html#bool">true</a> if such a direction could not be found
+ (if gamma and delta are orthogonal).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:SetGammaDelta" href="src/TMultiLayerPerceptron.cxx.html#bMHL7B">SetGammaDelta</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; , <a href="./TMatrixD.html">TMatrixD</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> Sets the gamma (g_{(t+1)}-g_{(t)}) and delta (w_{(t+1)}-w_{(t)}) vectors
+ Gamma is computed here, so <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:ComputeDEDw" title="void TMultiLayerPerceptron::ComputeDEDw()">ComputeDEDw</a> cannot have been called before,
+ and delta is a direct translation of buffer into a <a href="./TMatrixD.html">TMatrixD</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:DerivDir" href="src/TMultiLayerPerceptron.cxx.html#CGAH5C">DerivDir</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> scalar product between gradient and direction
+ = derivative along direction
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:BFGSDir" href="src/TMultiLayerPerceptron.cxx.html#Xs3MdE">BFGSDir</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>* )</span><br />
+<div class="funccomm"><pre> Computes the direction for the BFGS algorithm as the product
+ between the Hessian estimate (bfgsh) and the <a href="./TString.html">dir</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMultiLayerPerceptron:Draw" href="src/TMultiLayerPerceptron.cxx.html#xv256">Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Draws the network structure.
+ Neurons are depicted by a blue disk, and synapses by
+ lines connecting neurons.
+ The line width is proportionnal to the weight.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TMultiLayerPerceptron:TMultiLayerPerceptron" href="src/TMultiLayerPerceptron.h.html#dWlSpB">TMultiLayerPerceptron</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetEta" href="src/TMultiLayerPerceptron.h.html#XSzZU">GetEta</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fEta" title="Double_t TMultiLayerPerceptron::fEta">fEta</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetEpsilon" href="src/TMultiLayerPerceptron.h.html#LO9d6">GetEpsilon</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fEpsilon" title="Double_t TMultiLayerPerceptron::fEpsilon">fEpsilon</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetDelta" href="src/TMultiLayerPerceptron.h.html#bwedgC">GetDelta</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fDelta" title="Double_t TMultiLayerPerceptron::fDelta">fDelta</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetEtaDecay" href="src/TMultiLayerPerceptron.h.html#vgcWjC">GetEtaDecay</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fEtaDecay" title="Double_t TMultiLayerPerceptron::fEtaDecay">fEtaDecay</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetTau" href="src/TMultiLayerPerceptron.h.html#wYJ8bD">GetTau</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fTau" title="Double_t TMultiLayerPerceptron::fTau">fTau</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMultiLayerPerceptron:GetReset" href="src/TMultiLayerPerceptron.h.html#yXHojC">GetReset</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fReset" title="Int_t TMultiLayerPerceptron::fReset">fReset</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TMultiLayerPerceptron:GetStructure" href="src/TMultiLayerPerceptron.h.html#sIRGPD">GetStructure</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fStructure" title="TString TMultiLayerPerceptron::fStructure">fStructure</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TNeuron.html">TNeuron</a>::ENeuronType <a class="funcname" name="TMultiLayerPerceptron:GetType" href="src/TMultiLayerPerceptron.h.html#oey_4C">GetType</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMultiLayerPerceptron.html#TMultiLayerPerceptron:fType" title="TNeuron::ENeuronType TMultiLayerPerceptron::fType">fType</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>&amp; <a class="funcname" name="TMultiLayerPerceptron:operator_" href="src/TMultiLayerPerceptron.h.html#xH4CNB">operator=</a>(<span class="keyword">const</span> <a href="./TMultiLayerPerceptron.html">TMultiLayerPerceptron</a>&amp; )</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Christophe.Delaere@cern.ch"> Christophe.Delaere@cern.ch   20/07/03</a> </em><em>&raquo; Copyright   (C) 1995-2003, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/mlp:$Id: TMultiLayerPerceptron.h 36832 2010-11-22 08:53:49Z brun $ </em><em>&raquo; Last generated: 2011-11-03 20:20</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:35 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TPacketizerAdaptive</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TPacketizerAdaptive','libProofPlayer','TPacketizerAdaptive.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TPacketizerAdaptive.h.html">header file</a>
+<a class="descrheadentry" href="src/TPacketizerAdaptive.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/proof/proofplayer/inc/TPacketizerAdaptive.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/proof/proofplayer/src/TPacketizerAdaptive.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TPacketizerAdaptive:description">class description</a> 
+<a class="descrheadentry" href="#TPacketizerAdaptive:Function_Members">function members</a>
+<a class="descrheadentry" href="#TPacketizerAdaptive:Data_Members">data members</a>
+<a class="descrheadentry" href="#TPacketizerAdaptive:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./PROOF_Index.html">PROOF</a>
+ &#187; <a class="locationlevel" href="./PROOF_PROOFPLAYER_Index.html">PROOFPLAYER</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TPacketizerAdaptive</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TPacketizerAdaptive:description"></a>class TPacketizerAdaptive: public <a href="./TVirtualPacketizer.html">TVirtualPacketizer</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>
+
+This packetizer is based on <a href="./TPacketizer.html">TPacketizer</a> but uses different
+load-balancing algorithms and data structures.
+Two main improvements in the load-balancing strategy:
+- First one was to change the order in which the files are assigned
+to the computing nodes in such a way that network transfers are
+evenly distributed in the query time. Transfer of the remote files
+was often becoming a bottleneck at the end of a query.
+- The other improvement is the use of time-based packet size. We
+measure the processing rate of all the nodes and calculate the
+packet size, so that it takes certain amount of time. In this way
+packetizer prevents the situation where the query can't finish
+because of one slow node.
+
+The data structures: TFileStat, TFileNode and TSlaveStat are
+enriched + changed and TFileNode::<a href="./TObject.html#TObject:Compare" title="Int_t TObject::Compare(const TObject* obj)">Compare</a> method is changed.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TPacketizerAdaptive:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:TPacketizerAdaptive%2">TPacketizerAdaptive</a>(<a href="./TDSet.html">TDSet</a>* dset, <a href="./TList.html">TList</a>* slaves, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> first, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> num, <a href="./TList.html">TList</a>* input, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* st)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:_TPacketizerAdaptive">~TPacketizerAdaptive</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:AddProcessed">AddProcessed</a>(<a href="./TSlave.html">TSlave</a>* sl, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* st, <a href="./ListOfTypes.html#Double_t">Double_t</a> latency, <a href="./TList.html">TList</a>** listOfMissingFiles = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:CalculatePacketSize">CalculatePacketSize</a>(<a href="./TObject.html">TObject</a>* slstat, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> cachesz, <a href="./ListOfTypes.html#Int_t">Int_t</a> learnent)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetActiveWorkers">GetActiveWorkers</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetBytesRead"><span class="baseclass">TVirtualPacketizer::</span>GetBytesRead</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetConfigParams"><span class="baseclass">TVirtualPacketizer::</span>GetConfigParams</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> steal = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetCumProcTime"><span class="baseclass">TVirtualPacketizer::</span>GetCumProcTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetCurrentRate">GetCurrentRate</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; all)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetEntriesProcessed"><span class="baseclass">TVirtualPacketizer::</span>GetEntriesProcessed</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetEstEntriesProcessed">GetEstEntriesProcessed</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; ent, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; bytes, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; calls)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetFailedPackets"><span class="baseclass">TVirtualPacketizer::</span>GetFailedPackets</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetInitTime"><span class="baseclass">TVirtualPacketizer::</span>GetInitTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TDSetElement.html">TDSetElement</a>*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetNextPacket">GetNextPacket</a>(<a href="./TSlave.html">TSlave</a>* sl, <a href="./TMessage.html">TMessage</a>* r)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetProcTime"><span class="baseclass">TVirtualPacketizer::</span>GetProcTime</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TNtuple.html">TNtuple</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetProgressPerf"><span class="baseclass">TVirtualPacketizer::</span>GetProgressPerf</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> steal = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetReadCalls"><span class="baseclass">TVirtualPacketizer::</span>GetReadCalls</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TMap.html">TMap</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetSlaveStats"><span class="baseclass">TVirtualPacketizer::</span>GetSlaveStats</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TProofProgressStatus.html">TProofProgressStatus</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetStatus"><span class="baseclass">TVirtualPacketizer::</span>GetStatus</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetTotalEntries"><span class="baseclass">TVirtualPacketizer::</span>GetTotalEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:IsValid"><span class="baseclass">TVirtualPacketizer::</span>IsValid</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:MarkBad">MarkBad</a>(<a href="./TSlave.html">TSlave</a>* s, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* status, <a href="./TList.html">TList</a>** missingFiles)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:SetFailedPackets"><span class="baseclass">TVirtualPacketizer::</span>SetFailedPackets</a>(<a href="./TList.html">TList</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:SetInitTime"><span class="baseclass">TVirtualPacketizer::</span>SetInitTime</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:SetProgressStatus"><span class="baseclass">TVirtualPacketizer::</span>SetProgressStatus</a>(<a href="./TProofProgressStatus.html">TProofProgressStatus</a>* st)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:SetTotalEntries"><span class="baseclass">TVirtualPacketizer::</span>SetTotalEntries</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> ent)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:StopProcess"><span class="baseclass">TVirtualPacketizer::</span>StopProcess</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> abort, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> stoptimer = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret"><a href="./TDSetElement.html">TDSetElement</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:CreateNewPacket"><span class="baseclass">TVirtualPacketizer::</span>CreateNewPacket</a>(<a href="./TDSetElement.html">TDSetElement</a>* base, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> first, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> num)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:GetEntries"><span class="baseclass">TVirtualPacketizer::</span>GetEntries</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> tree, <a href="./TDSetElement.html">TDSetElement</a>* e)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualPacketizer.html#TVirtualPacketizer:HandleTimer"><span class="baseclass">TVirtualPacketizer::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:TPacketizerAdaptive">TPacketizerAdaptive</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:TPacketizerAdaptive%1">TPacketizerAdaptive</a>(<span class="keyword">const</span> <a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileStat*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetNextActive">GetNextActive</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileStat*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:GetNextUnAlloc">GetNextUnAlloc</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode* node = 0, <span class="keyword">const</span> <span class="keyword">char</span>* nodeHostName = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:InitStats">InitStats</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:NextActiveNode">NextActiveNode</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode*</td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:NextNode">NextNode</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:ReassignPacket">ReassignPacket</a>(<a href="./TDSetElement.html">TDSetElement</a>* e, <a href="./TList.html">TList</a>** listOfMissingFiles)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:RemoveActive">RemoveActive</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileStat* file)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:RemoveActiveNode">RemoveActiveNode</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:RemoveUnAllocNode">RemoveUnAllocNode</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode*)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:Reset">Reset</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:SplitPerHost">SplitPerHost</a>(<a href="./TList.html">TList</a>* elements, <a href="./TList.html">TList</a>** listOfMissingFiles)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPacketizerAdaptive:ValidateFiles">ValidateFiles</a>(<a href="./TDSet.html">TDSet</a>* dset, <a href="./TList.html">TList</a>* slaves, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> maxent = -1, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> byfile = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TPacketizerAdaptive:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TVirtualPacketizer::</span>EUseEstOpt { </td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kEstOff">kEstOff</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kEstCurrent">kEstCurrent</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kEstAverage">kEstAverage</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TVirtualPacketizer::</span>EStatusBits { </td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kIsInitializing">kIsInitializing</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kIsDone">kIsDone</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:kIsTree">kIsTree</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fAWLastFill"><span class="baseclass">TVirtualPacketizer::</span>fAWLastFill</a></td><td class="datadesc">Whether to fill the last measurement</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fActWrksLast"><span class="baseclass">TVirtualPacketizer::</span>fActWrksLast</a></td><td class="datadesc">Active workers at fProcTimeLast</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fCircN"><span class="baseclass">TVirtualPacketizer::</span>fCircN</a></td><td class="datadesc">Circularity</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TNtupleD.html">TNtupleD</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fCircProg"><span class="baseclass">TVirtualPacketizer::</span>fCircProg</a></td><td class="datadesc">Keeps circular info for "instantenous"</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fConfigParams"><span class="baseclass">TVirtualPacketizer::</span>fConfigParams</a></td><td class="datadesc">List of configuration parameters</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fDataSet"><span class="baseclass">TVirtualPacketizer::</span>fDataSet</a></td><td class="datadesc">Name of the dataset being processed (for dataset-driven runs)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fEffSessLast"><span class="baseclass">TVirtualPacketizer::</span>fEffSessLast</a></td><td class="datadesc">Number of effective sessions at fProcTimeLast</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fEvtRateLast"><span class="baseclass">TVirtualPacketizer::</span>fEvtRateLast</a></td><td class="datadesc">Evt rate at fProcTimeLast</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fFailedPackets"><span class="baseclass">TVirtualPacketizer::</span>fFailedPackets</a></td><td class="datadesc">a list of packets that failed while processing</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fInitTime"><span class="baseclass">TVirtualPacketizer::</span>fInitTime</a></td><td class="datadesc">time before processing</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fMBsReadLast"><span class="baseclass">TVirtualPacketizer::</span>fMBsReadLast</a></td><td class="datadesc">MBs read at fProcTimeLast</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fMaxPacketTime"><span class="baseclass">TVirtualPacketizer::</span>fMaxPacketTime</a></td><td class="datadesc">maximum packet time</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fMinPacketTime"><span class="baseclass">TVirtualPacketizer::</span>fMinPacketTime</a></td><td class="datadesc">minimum packet time</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fProcTime"><span class="baseclass">TVirtualPacketizer::</span>fProcTime</a></td><td class="datadesc">time since start of processing</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fProcTimeLast"><span class="baseclass">TVirtualPacketizer::</span>fProcTimeLast</a></td><td class="datadesc">Time of the last measurement</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TTimer.html">TTimer</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fProgress"><span class="baseclass">TVirtualPacketizer::</span>fProgress</a></td><td class="datadesc">progress updates timer</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TNtuple.html">TNtuple</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fProgressPerf"><span class="baseclass">TVirtualPacketizer::</span>fProgressPerf</a></td><td class="datadesc">{Active workers, evt rate, MBs read} as a function of processing time</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TProofProgressStatus.html">TProofProgressStatus</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fProgressStatus"><span class="baseclass">TVirtualPacketizer::</span>fProgressStatus</a></td><td class="datadesc">pointer to status in the player.</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fReportPeriod"><span class="baseclass">TVirtualPacketizer::</span>fReportPeriod</a></td><td class="datadesc">Time between reports if nothing changes (estimated proc time / 100)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TMap.html">TMap</a>*</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fSlaveStats"><span class="baseclass">TVirtualPacketizer::</span>fSlaveStats</a></td><td class="datadesc">slave status, keyed by correspondig TSlave</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TTime.html">TTime</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fStartTime"><span class="baseclass">TVirtualPacketizer::</span>fStartTime</a></td><td class="datadesc">time offset</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fStop"><span class="baseclass">TVirtualPacketizer::</span>fStop</a></td><td class="datadesc">Termination of Process() requested?</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fTimeUpdt"><span class="baseclass">TVirtualPacketizer::</span>fTimeUpdt</a></td><td class="datadesc">time between updates</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fTotalEntries"><span class="baseclass">TVirtualPacketizer::</span>fTotalEntries</a></td><td class="datadesc">total number of entries to be distributed;</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TVirtualPacketizer.html">TVirtualPacketizer</a>::EUseEstOpt</td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fUseEstOpt"><span class="baseclass">TVirtualPacketizer::</span>fUseEstOpt</a></td><td class="datadesc">Control usage of estimated values for the progress info</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TVirtualPacketizer.html#TVirtualPacketizer:fValid"><span class="baseclass">TVirtualPacketizer::</span>fValid</a></td><td class="datadesc">Constructed properly?</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TPacketizerAdaptive:fActive"></a>fActive</td><td class="datadesc">nodes with unfinished files</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fBaseLocalPreference"></a>fBaseLocalPreference</td><td class="datadesc">indicates how much more likely the nodes will be</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fCachePacketSync"></a>fCachePacketSync</td><td class="datadesc">control synchronization of cache and packet sizes</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TPacketizerAdaptive:fFileNodes"></a>fFileNodes</td><td class="datadesc">nodes with files</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSortedList.html">TSortedList</a>*</td><td class="dataname"><a name="TPacketizerAdaptive:fFilesToProcess"></a>fFilesToProcess</td><td class="datadesc">Global list of files (TFileStat) to be processed</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fForceLocal"></a>fForceLocal</td><td class="datadesc">if 1 - eliminate the remote processing</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fFractionOfRemoteFiles"></a>fFractionOfRemoteFiles</td><td class="datadesc">fraction of TDSetElements that are on non-workers</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fMaxEntriesRatio"></a>fMaxEntriesRatio</td><td class="datadesc">max file entries to avg allowed ratio for cache-to-packet sync</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fMaxPerfIdx"></a>fMaxPerfIdx</td><td class="datadesc">maximum of our slaves' performance index</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fMaxSlaveCnt"></a>fMaxSlaveCnt</td><td class="datadesc">maximum number of workers per filenode (Long_t to avoid</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fNEventsOnRemLoc"></a>fNEventsOnRemLoc</td><td class="datadesc">number of events in currently</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fPacketAsAFraction"></a>fPacketAsAFraction</td><td class="datadesc">used to calculate the packet size</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TPacketizerAdaptive:fPartitions"></a>fPartitions</td><td class="datadesc">list of partitions on nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fStrategy"></a>fStrategy</td><td class="datadesc">0 means the classic and 1 (default) - the adaptive strategy</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TPacketizerAdaptive:fTryReassign"></a>fTryReassign</td><td class="datadesc">Controls attempts to reassign packets (0 == no reassignment)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TPacketizerAdaptive:fUnAllocated"></a>fUnAllocated</td><td class="datadesc">nodes with unallocated files</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TPacketizerAdaptive:Class_Charts"></a>Class Charts</h2>
+<map name="MapTPacketizerAdaptive_Inh" id="MapTPacketizerAdaptive_Inh">
+<area shape="rect" href="./TVirtualPacketizer.html" title="TVirtualPacketizer" alt="" coords="220,10,397,33"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="35,10,111,33"/>
+</map>
+<map name="MapTPacketizerAdaptive_InhMem" id="MapTPacketizerAdaptive_InhMem">
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="541,60,629,256"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="443,60,531,256"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="344,60,432,256"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="573,267,597,301"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="541,312,629,548"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="443,312,531,548"/>
+<area shape="rect" href="./TVirtualPacketizer.html" alt="" coords="344,312,432,548"/>
+<area shape="rect" href="./TVirtualPacketizer.html" title="TVirtualPacketizer" alt="" coords="333,16,640,559"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTPacketizerAdaptive_Lib" id="MapTPacketizerAdaptive_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="529,315,657,363"/>
+</map>
+<div class="tabs">
+<a id="imgTPacketizerAdaptive_Inh" class="tabsel" href="inh/TPacketizerAdaptive_Inh.png" onclick="javascript:return SetImg('Charts','inh/TPacketizerAdaptive_Inh.png');">Inheritance</a>
+<a id="imgTPacketizerAdaptive_InhMem" class="tab" href="inhmem/TPacketizerAdaptive_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TPacketizerAdaptive_InhMem.png');">Inherited Members</a>
+<a id="imgTPacketizerAdaptive_Incl" class="tab" href="incl/TPacketizerAdaptive_Incl.png" onclick="javascript:return SetImg('Charts','incl/TPacketizerAdaptive_Incl.png');">Includes</a>
+<a id="imgTPacketizerAdaptive_Lib" class="tab" href="lib/TPacketizerAdaptive_Lib.png" onclick="javascript:return SetImg('Charts','lib/TPacketizerAdaptive_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTPacketizerAdaptive_Inh" src="inh/TPacketizerAdaptive_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPacketizerAdaptive:TPacketizerAdaptive%2" href="src/TPacketizerAdaptive.cxx.html#IKxPHD">TPacketizerAdaptive</a>(<a href="./TDSet.html">TDSet</a>* dset, <a href="./TList.html">TList</a>* slaves, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> first, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> num, <a href="./TList.html">TList</a>* input, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* st)</span><br />
+<div class="funccomm"><pre> Constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPacketizerAdaptive:_TPacketizerAdaptive" href="src/TPacketizerAdaptive.cxx.html#Ws_dGC">~TPacketizerAdaptive</a>()</span><br />
+<div class="funccomm"><pre> Destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:InitStats" href="src/TPacketizerAdaptive.cxx.html#aoClaB">InitStats</a>()</span><br />
+<div class="funccomm"><pre> (re)initialise the statistics
+ called at the begining or after a worker dies.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:RemoveUnAllocNode" href="src/TPacketizerAdaptive.cxx.html#Fb38oD">RemoveUnAllocNode</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode* )</span><br />
+<div class="funccomm"><pre> Remove unallocated node.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:RemoveActive" href="src/TPacketizerAdaptive.cxx.html#YZUvwE">RemoveActive</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileStat* file)</span><br />
+<div class="funccomm"><pre> Remove file from the list of actives.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:RemoveActiveNode" href="src/TPacketizerAdaptive.cxx.html#Uug6qB">RemoveActiveNode</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode* )</span><br />
+<div class="funccomm"><pre> Remove node from the list of actives.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:Reset" href="src/TPacketizerAdaptive.cxx.html#vUQ1vB">Reset</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TPacketizerAdaptive.html#TPacketizerAdaptive:Reset" title="void TPacketizerAdaptive::Reset()">Reset</a> the internal data structure for packet distribution.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:ValidateFiles" href="src/TPacketizerAdaptive.cxx.html#vU.rY">ValidateFiles</a>(<a href="./TDSet.html">TDSet</a>* dset, <a href="./TList.html">TList</a>* slaves, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> maxent = -1, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> byfile = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Check existence of file/<a href="./TString.html">dir</a>/tree an get number of entries.
+ Assumes the files have been setup.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPacketizerAdaptive:CalculatePacketSize" href="src/TPacketizerAdaptive.cxx.html#HL2cG">CalculatePacketSize</a>(<a href="./TObject.html">TObject</a>* slstat, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> cachesz, <a href="./ListOfTypes.html#Int_t">Int_t</a> learnent)</span><br />
+<div class="funccomm"><pre> The result depends on the <a href="./TPacketizerAdaptive.html#TPacketizerAdaptive:fStrategy" title="Int_t TPacketizerAdaptive::fStrategy">fStrategy</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPacketizerAdaptive:AddProcessed" href="src/TPacketizerAdaptive.cxx.html#v7rCCE">AddProcessed</a>(<a href="./TSlave.html">TSlave</a>* sl, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* st, <a href="./ListOfTypes.html#Double_t">Double_t</a> latency, <a href="./TList.html">TList</a>** listOfMissingFiles = 0)</span><br />
+<div class="funccomm"><pre> To be used by <a href="./TPacketizerAdaptive.html#TPacketizerAdaptive:GetNextPacket" title="TDSetElement* TPacketizerAdaptive::GetNextPacket(TSlave* sl,TMessage* r)">GetNextPacket</a> but also in reaction to kPROOF_STOPPROCESS
+ message (when the worker was asked to stop processing during a packet).
+ returns the #entries intended in the last packet - #processed entries
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDSetElement.html">TDSetElement</a> * <a class="funcname" name="TPacketizerAdaptive:GetNextPacket" href="src/TPacketizerAdaptive.cxx.html#rw8N2B">GetNextPacket</a>(<a href="./TSlave.html">TSlave</a>* sl, <a href="./TMessage.html">TMessage</a>* r)</span><br />
+<div class="funccomm"><pre> Get next packet;
+ A meaningfull difference to <a href="./TPacketizer.html">TPacketizer</a> is the fact that this
+ packetizer, for each worker, tries to predict whether the worker
+ will finish processing it's local files before the end of the query.
+ If yes, it allocates, to those workers, files from non-slave filenodes
+ or from slaves that are overloaded. The check is done every time a new
+ file needs to be assigned.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPacketizerAdaptive:GetActiveWorkers" href="src/TPacketizerAdaptive.cxx.html#X182M">GetActiveWorkers</a>()</span><br />
+<div class="funccomm"><pre> Return the number of workers still processing
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Float_t">Float_t</a> <a class="funcname" name="TPacketizerAdaptive:GetCurrentRate" href="src/TPacketizerAdaptive.cxx.html#tacC2D">GetCurrentRate</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a>&amp; all)</span><br />
+<div class="funccomm"><pre> Get Estimation of the current rate; just summing the current rates of
+ the active workers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPacketizerAdaptive:GetEstEntriesProcessed" href="src/TPacketizerAdaptive.cxx.html#vNjrs">GetEstEntriesProcessed</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> , <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; ent, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; bytes, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>&amp; calls)</span><br />
+<div class="funccomm"><pre> Get estimation for the number of processed entries and bytes read at time t,
+ based on the numbers already processed and the latests worker measured speeds.
+ If t &lt;= 0 the current time is used.
+ Only the estimation for the entries is currently implemented.
+ This is needed to smooth the instantaneous rate plot.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:MarkBad" href="src/TPacketizerAdaptive.cxx.html#FHjzFC">MarkBad</a>(<a href="./TSlave.html">TSlave</a>* s, <a href="./TProofProgressStatus.html">TProofProgressStatus</a>* status, <a href="./TList.html">TList</a>** missingFiles)</span><br />
+<div class="funccomm"><pre> This method can be called at any time during processing
+ as an effect of handling kPROOF_STOPPROCESS
+ If the output list from this worker is going to be sent back to the master,
+ the 'status' includes the number of entries processed by the slave.
+ From this we calculate the remaining part of the packet.
+ 0 indicates that the results from that worker were lost completely.
+ Assume that the filenodes for which we have a TFileNode object
+ are still up and running.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TPacketizerAdaptive:ReassignPacket" href="src/TPacketizerAdaptive.cxx.html#gY4VpC">ReassignPacket</a>(<a href="./TDSetElement.html">TDSetElement</a>* e, <a href="./TList.html">TList</a>** listOfMissingFiles)</span><br />
+<div class="funccomm"><pre> The file in the listOfMissingFiles can appear several times;
+ in order to fix that, a <a href="./TDSetElement.html">TDSetElement</a>::Merge method is needed.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:SplitPerHost" href="src/TPacketizerAdaptive.cxx.html#FwFPJB">SplitPerHost</a>(<a href="./TList.html">TList</a>* elements, <a href="./TList.html">TList</a>** listOfMissingFiles)</span><br />
+<div class="funccomm"><pre> Split into per host entries
+ The files in the listOfMissingFiles can appear several times;
+ in order to fix that, a <a href="./TDSetElement.html">TDSetElement</a>::Merge method is needed.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPacketizerAdaptive:TPacketizerAdaptive" href="src/TPacketizerAdaptive.h.html#tCA4fC">TPacketizerAdaptive</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TPacketizerAdaptive:TPacketizerAdaptive%1" href="src/TPacketizerAdaptive.h.html#JMUnKD">TPacketizerAdaptive</a>(<span class="keyword">const</span> <a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPacketizerAdaptive:operator_" href="src/TPacketizerAdaptive.h.html#ZSkWJE">operator=</a>(<span class="keyword">const</span> <a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TFileNode     * <a class="funcname" name="TPacketizerAdaptive:NextNode" href="src/TPacketizerAdaptive.h.html#t7LEh">NextNode</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TFileNode     * <a class="funcname" name="TPacketizerAdaptive:NextActiveNode" href="src/TPacketizerAdaptive.h.html#mf0QQE">NextActiveNode</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TFileStat     * <a class="funcname" name="TPacketizerAdaptive:GetNextUnAlloc" href="src/TPacketizerAdaptive.h.html#l_Ztv">GetNextUnAlloc</a>(<a href="./TPacketizerAdaptive.html">TPacketizerAdaptive</a>::TFileNode* node = 0, <span class="keyword">const</span> <span class="keyword">char</span>* nodeHostName = 0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TFileStat     * <a class="funcname" name="TPacketizerAdaptive:GetNextActive" href="src/TPacketizerAdaptive.h.html#J7fLPB">GetNextActive</a>()</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Jan+Iwaszkiewicz"> Jan Iwaszkiewicz   11/12/06</a> </em><em>&raquo; Copyright   (C) 1995-2006, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/proofplayer:$Id: TPacketizerAdaptive.h 38810 2011-04-12 16:22:59Z ganis $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

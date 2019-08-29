@@ -1,0 +1,1026 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:27:53 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TGraphPainter</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TGraphPainter','libHistPainter','TGraphPainter.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TGraphPainter.h.html">header file</a>
+<a class="descrheadentry" href="src/TGraphPainter.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/histpainter/inc/TGraphPainter.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/histpainter/src/TGraphPainter.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TGraphPainter:description">class description</a> 
+<a class="descrheadentry" href="#TGraphPainter:Function_Members">function members</a>
+<a class="descrheadentry" href="#TGraphPainter:Data_Members">data members</a>
+<a class="descrheadentry" href="#TGraphPainter:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HISTPAINTER_Index.html">HISTPAINTER</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TGraphPainter</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TGraphPainter:description"></a>class TGraphPainter: public <a href="./TVirtualGraphPainter.html">TVirtualGraphPainter</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>The graph painter class</h2></center>
+<ul>
+<li><a href="#GP00">Introduction</li></a>
+<li><a href="#GP01">Graphs' plotting options</li></a>
+<li><a href="#GP02">Exclusion graphs</li></a>
+<li><a href="#GP03">Graphs with error bars</li></a>
+<ul>
+<li><a href="#GP03a">TGraphErrors</li></a>
+<li><a href="#GP03b">TGraphAsymmErrors</li></a>
+<li><a href="#GP03c">TGraphBentErrors</li></a>
+</ul>
+<li><a href="#GP04">TGraphPolar options</li></a>
+</ul>
+<a name="GP00"></a><h3>Introduction</h3>
+Graphs are drawn via the painter <tt>TGraphPainter</tt> class. This class
+implements techniques needed to display the various kind of
+graphs i.e.: <tt>TGraph</tt>, <tt>TGraphErrors</tt>,
+<tt>TGraphBentErrors</tt> and <tt>TGraphAsymmErrors</tt>.
+<p>
+To draw a graph "<tt>graph</tt>" it's enough to do:
+<pre>
+   graph->Draw("AL");
+</pre>
+<p>The option <tt>"AL"</tt> in the <tt>Draw()</tt> method means:
+<ol>
+<li>The axis should be drawn (option <tt>"A"</tt>),</li>
+<li>The graph should be drawn as a simple line (option <tt>"L"</tt>).</li>
+</ol>
+By default a graph is drawn in the current pad in the current coordinate system.
+To define a suitable coordinate system and draw the axis the option
+<tt>"A"</tt> must be specified.
+<p>
+<tt>TGraphPainter</tt> offers many options to paint the various kind of graphs.
+<p>
+It is separated from the graph classes so that one can have graphs without the
+graphics overhead, for example in a batch program.
+<p>
+When a displayed graph is modified, there is no need to call
+<tt>Draw()</tt> again; the image will be refreshed the next time the
+pad will be updated.
+<p>A pad is updated after one of these three actions:
+<ol>
+<li>  a carriage return on the ROOT command line,
+<li>  a click inside the pad,
+<li>  a call to <tt>TPad::Update</tt>.
+</ol>
+<a name="GP01"></a><h3>Graphs' plotting options</h3>
+Graphs can be drawn with the following options:
+<p>
+<table border=0>
+<tr><th valign=top>"A"</th><td>
+Axis are drawn around the graph
+</td></tr>
+<tr><th valign=top>"L"</th><td>
+A simple polyline is drawn
+</td></tr>
+<tr><th valign=top>"F"</th><td>
+A fill area is drawn ('CF' draw a smoothed fill area)
+</td></tr>
+<tr><th valign=top>"C"</th><td>
+A smooth Curve is drawn
+</td></tr>
+<tr><th valign=top>"*"</th><td>
+A Star is plotted at each point
+</td></tr>
+<tr><th valign=top>"P"</th><td>
+The current marker is plotted at each point
+</td></tr>
+<tr><th valign=top>"B"</th><td>
+A Bar chart is drawn
+</td></tr>
+<tr><th valign=top>"1"</th><td>
+When a graph is drawn as a bar chart, this option makes the bars start from
+the bottom of the pad. By default they start at 0.
+</td></tr>
+<tr><th valign=top>"X+"</th><td>
+The X-axis is drawn on the top side of the plot.
+</td></tr>
+<tr><th valign=top>"Y+"</th><td>
+The Y-axis is drawn on the right side of the plot.
+</td></tr>
+</table>
+<p>
+Drawing options can be combined. In the following example the graph
+is drawn as a smooth curve (option "C") with markers (option "P") and
+with axes (option "A").
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_1_c1_A0" class="tabsel" href="MACRO_TGraphPainter_1_c1.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_1_c1',0);">Picture</a>
+<a id="MACRO_TGraphPainter_1_c1_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_1_c1',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_1_c1_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_1_c1" title="MACRO" src="MACRO_TGraphPainter_1_c1.gif" /></span></div>
+<div id="MACRO_TGraphPainter_1_c1_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"c1"</span>,200,10,600,400);
+
+   c1-&gt;SetFillColor(42);
+   c1-&gt;SetGrid();
+
+   <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> n = 20;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x[n], y[n];
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0;i&lt;n;i++) {
+      x[i] = i*0.1;
+      y[i] = 10*sin(x[i]+0.2);
+   }
+   gr = <span class="keyword">new</span> <a href="./TGraph.html">TGraph</a>(n,x,y);
+   gr-&gt;SetLineColor(2);
+   gr-&gt;SetLineWidth(4);
+   gr-&gt;SetMarkerColor(4);
+   gr-&gt;SetMarkerSize(1.5);
+   gr-&gt;SetMarkerStyle(21);
+   gr-&gt;SetTitle(<span class="string">"Option ACP example"</span>);
+   gr-&gt;GetXaxis()-&gt;SetTitle(<span class="string">"X title"</span>);
+   gr-&gt;GetYaxis()-&gt;SetTitle(<span class="string">"Y title"</span>);
+   gr-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"ACP"</span>);
+
+   <span class="comment">// <a href="./TCanvas.html">TCanvas</a>::<a href="./TCanvas.html#TCanvas:Update" title="void TCanvas::Update()">Update</a>() draws the frame, after which one can change it</span>
+   c1-&gt;Update();
+   c1-&gt;GetFrame()-&gt;SetFillColor(21);
+   c1-&gt;GetFrame()-&gt;SetBorderSize(12);
+   c1-&gt;Modified();
+   <span class="keyword">return</span> c1;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><p>The following macro shows the option "B" usage. It can be combined with the
+option "1".
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_3_c47_A0" class="tabsel" href="MACRO_TGraphPainter_3_c47.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_3_c47',0);">Picture</a>
+<a id="MACRO_TGraphPainter_3_c47_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_3_c47',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_3_c47_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_3_c47" title="MACRO" src="MACRO_TGraphPainter_3_c47.gif" /></span></div>
+<div id="MACRO_TGraphPainter_3_c47_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c47 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c47"</span>,<span class="string">"c47"</span>,200,10,600,400);
+   c47-&gt;Divide(1,2);
+   <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> n = 20;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x[n], y[n];
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0;i&lt;n;i++) {
+      x[i] = i*0.1;
+      y[i] = 10*sin(x[i]+0.2)-6;
+   }
+   gr = <span class="keyword">new</span> <a href="./TGraph.html">TGraph</a>(n,x,y);
+   gr-&gt;SetFillColor(38);
+   c47-&gt;cd(1); gr-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"AB"</span>);
+   c47-&gt;cd(2); gr-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"AB1"</span>);
+ <span class="keyword">return</span> c47;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><a name="GP02"></a><h3>Exclusion graphs</h3>
+When a graph is painted with the option <tt>"C"</tt> or <tt>"L"</tt> it is
+possible to draw a filled area on one side of the line. This is useful to show
+exclusion zones.
+<p>This drawing mode is activated when the absolute value of the graph line
+width (set by <tt>SetLineWidth()</tt>) is greater than 99. In that
+case the line width number is interpreted as:
+<pre>
+      100*ff+ll = ffll
+</pre>
+<ul>
+<li> The two digits number <tt>"ll"</tt> represent the normal line width
+<li> The two digits number  <tt>"ff"</tt> represent the filled area width.
+<li> The sign of "ffll" allows to flip the filled area from one side of the line
+     to the other.
+</ul>
+The current fill area attributes are used to draw the hatched zone.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_5_c1_A0" class="tabsel" href="MACRO_TGraphPainter_5_c1.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_5_c1',0);">Picture</a>
+<a id="MACRO_TGraphPainter_5_c1_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_5_c1',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_5_c1_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_5_c1" title="MACRO" src="MACRO_TGraphPainter_5_c1.gif" /></span></div>
+<div id="MACRO_TGraphPainter_5_c1_1" class="tabhidden"><div class="listing"><pre class="code"><a href="./TCanvas.html">TCanvas</a> *exclusiongraph() {
+   <span class="comment">// <a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a> three graphs with an exclusion zone.</span>
+   <span class="comment">//Author: Olivier Couet</span>
+   
+   <a href="./TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"Exclusion graphs examples"</span>,200,10,600,400);
+   c1-&gt;SetGrid();
+
+   <a href="./TMultiGraph.html">TMultiGraph</a> *mg = <span class="keyword">new</span> <a href="./TMultiGraph.html">TMultiGraph</a>();
+   mg-&gt;SetTitle(<span class="string">"Exclusion graphs"</span>);
+
+   <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> n = 35;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x1[n], x2[n], x3[n], y1[n], y2[n], y3[n];
+   <span class="keyword">for</span> (<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0;i&lt;n;i++) {
+     x1[i]  = i*0.1;
+     x2[i]  = x1[i];
+     x3[i]  = x1[i]+.5;
+     y1[i] = 10*sin(x1[i]);
+     y2[i] = 10*cos(x1[i]);
+     y3[i] = 10*sin(x1[i])-2;
+   }
+
+   <a href="./TGraph.html">TGraph</a> *gr1 = <span class="keyword">new</span> <a href="./TGraph.html">TGraph</a>(n,x1,y1);
+   gr1-&gt;SetLineColor(2);
+   gr1-&gt;SetLineWidth(1504);
+   gr1-&gt;SetFillStyle(3005);
+
+   <a href="./TGraph.html">TGraph</a> *gr2 = <span class="keyword">new</span> <a href="./TGraph.html">TGraph</a>(n,x2,y2);
+   gr2-&gt;SetLineColor(4);
+   gr2-&gt;SetLineWidth(-2002);
+   gr2-&gt;SetFillStyle(3004);
+   gr2-&gt;SetFillColor(9);
+
+   <a href="./TGraph.html">TGraph</a> *gr3 = <span class="keyword">new</span> <a href="./TGraph.html">TGraph</a>(n,x3,y3);
+   gr3-&gt;SetLineColor(5);
+   gr3-&gt;SetLineWidth(-802);
+   gr3-&gt;SetFillStyle(3002);
+   gr3-&gt;SetFillColor(2);
+
+   mg-&gt;Add(gr1);
+   mg-&gt;Add(gr2);
+   mg-&gt;Add(gr3);
+   mg-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"AC"</span>);
+
+   <span class="keyword">return</span> c1;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><a name="GP03"></a><h3>Graphs with error bars</h3>
+Three classes are available to handle graphs with error bars:
+<tt>TGraphErrors</tt>, <tt>TGraphAsymmErrors</tt> and <tt>TGraphBentErrors</tt>.
+The following drawing options are specific to graphs with error bars:
+<p>
+<table border=0>
+<tr><th valign=top>"Z"</th><td>
+Do not draw small horizontal and vertical lines the end of the error bars.
+Without "Z", the default is to draw these.
+</td></tr>
+<tr><th valign=top>">"</th><td>
+An arrow is drawn at the end of the error bars.
+The size of the arrow is set to 2/3 of the marker size.
+</td></tr>
+<tr><th valign=top>"|>"</th><td>
+A filled arrow is drawn at the end of the error bars.
+The size of the arrow is set to 2/3 of the marker size.
+</td></tr>
+<tr><th valign=top>"X"</th><td>
+Do not draw error bars.  By default, graph classes that have errors
+are drawn with the errors (TGraph itself has no errors, and so this option
+has no effect.)
+</td></tr>
+<tr><th valign=top>"||"</th><td>
+Draw only the small vertical/horizontal lines at the ends of the
+error bars, without drawing the bars themselves. This option is
+interesting to superimpose statistical-only errors on top of a graph
+with statistical+systematic errors.
+</td></tr>
+<tr><th valign=top>"[]"</th><td>
+Does the same as option "||" except that it draws additional marks at the
+ends of the small vertical/horizontal lines. It makes plots less ambiguous
+in case several graphs are drawn on the same picture.
+</td></tr>
+<tr><th valign=top>"0"</th><td>
+By default, when a data point is outside the visible range along the Y
+axis, the error bars are not drawn. This option forces error bars' drawing for
+the data points outside the visible range along the Y axis (see example below).
+</td></tr>
+<tr><th valign=top>"2"</th><td>
+Error rectangles are drawn.
+</td></tr>
+<tr><th valign=top>"3"</th><td>
+A filled area is drawn through the end points of the vertical error bars.
+</td></tr>
+<tr><th valign=top>"4"</th><td>
+A smoothed filled area is drawn through the end points of the vertical error
+bars.
+</td></tr>
+<tr><th valign=top>"5"</th><td>
+Error rectangles are drawn like option "2". In addition the contour line
+around the boxes is drawn. This can be useful when boxes' fill colors are very
+light or in gray scale mode.
+</td></tr>
+</table>
+<p>
+<tt>gStyle->SetErrorX(dx)</tt> controls the size of the error along x.
+<tt>dx = 0</tt> removes the error along x.
+<p>
+<tt>gStyle->SetEndErrorSize(np)</tt> controls the size of the lines
+at the end of the error bars (when option 1 is used).
+By default <tt>np=1</tt>. (np represents the number of pixels).
+<a name="GP03a"></a><h4><u>TGraphErrors</u></h4>
+A <tt>TGraphErrors</tt> is a <tt>TGraph</tt> with error bars. The errors are
+defined along X and Y and are symmetric: The left and right errors are the same
+along X and the bottom and up errors are the same along Y.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_7_c4_A0" class="tabsel" href="MACRO_TGraphPainter_7_c4.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_7_c4',0);">Picture</a>
+<a id="MACRO_TGraphPainter_7_c4_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_7_c4',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_7_c4_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_7_c4" title="MACRO" src="MACRO_TGraphPainter_7_c4.gif" /></span></div>
+<div id="MACRO_TGraphPainter_7_c4_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c4 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c4"</span>,<span class="string">"c4"</span>,200,10,600,400);
+   <span class="keyword">double</span> x[] = {0, 1, 2, 3, 4};
+   <span class="keyword">double</span> y[] = {0, 2, 4, 1, 3};
+   <span class="keyword">double</span> ex[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+   <span class="keyword">double</span> ey[] = {1, 0.5, 1, 0.5, 1};
+   <a href="./TGraphErrors.html">TGraphErrors</a>* ge = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y, ex, ey);
+   ge-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"ap"</span>);
+   <span class="keyword">return</span> c4;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><p>The option "0" shows the error bars for data points outside range.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_9_c48_A0" class="tabsel" href="MACRO_TGraphPainter_9_c48.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_9_c48',0);">Picture</a>
+<a id="MACRO_TGraphPainter_9_c48_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_9_c48',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_9_c48_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_9_c48" title="MACRO" src="MACRO_TGraphPainter_9_c48.gif" /></span></div>
+<div id="MACRO_TGraphPainter_9_c48_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c48 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c48"</span>,<span class="string">"c48"</span>,200,10,600,400);
+   <span class="keyword">float</span> x[]     = {1,2,3};
+   <span class="keyword">float</span> err_x[] = {0,0,0};
+   <span class="keyword">float</span> err_y[] = {5,5,5};
+   <span class="keyword">float</span> y[]     = {1,4,9};
+   <a href="./TGraphErrors.html">TGraphErrors</a> tg(3,x,y,err_x,err_y);
+   c48-&gt;Divide(2,1);
+   c48-&gt;cd(1); gPad-&gt;DrawFrame(0,0,4,8); tg.<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"PC"</span>);
+   c48-&gt;cd(2); gPad-&gt;DrawFrame(0,0,4,8); tg.<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"0PC"</span>);
+   <span class="keyword">return</span> c48;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><p>The option "3" shows the errors as a band.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_11_c41_A0" class="tabsel" href="MACRO_TGraphPainter_11_c41.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_11_c41',0);">Picture</a>
+<a id="MACRO_TGraphPainter_11_c41_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_11_c41',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_11_c41_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_11_c41" title="MACRO" src="MACRO_TGraphPainter_11_c41.gif" /></span></div>
+<div id="MACRO_TGraphPainter_11_c41_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c41 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c41"</span>,<span class="string">"c41"</span>,200,10,600,400);
+   <span class="keyword">double</span> x[] = {0, 1, 2, 3, 4};
+   <span class="keyword">double</span> y[] = {0, 2, 4, 1, 3};
+   <span class="keyword">double</span> ex[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+   <span class="keyword">double</span> ey[] = {1, 0.5, 1, 0.5, 1};
+   <a href="./TGraphErrors.html">TGraphErrors</a>* ge = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y, ex, ey);
+   ge-&gt;SetFillColor(4);
+   ge-&gt;SetFillStyle(3010);
+   ge-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"a3"</span>);
+   <span class="keyword">return</span> c41;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><p>The option "4" is similar to the option "3" except that the band
+is smoothed. As the following picture shows, this option should be
+used carefully because the smoothing algorithm may show some (huge)
+"bouncing" effects. In some cases it looks nicer than option "3"
+(because it is smooth) but it can be misleading.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_13_c42_A0" class="tabsel" href="MACRO_TGraphPainter_13_c42.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_13_c42',0);">Picture</a>
+<a id="MACRO_TGraphPainter_13_c42_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_13_c42',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_13_c42_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_13_c42" title="MACRO" src="MACRO_TGraphPainter_13_c42.gif" /></span></div>
+<div id="MACRO_TGraphPainter_13_c42_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c42 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c42"</span>,<span class="string">"c42"</span>,200,10,600,400);
+   <span class="keyword">double</span> x[] = {0, 1, 2, 3, 4};
+   <span class="keyword">double</span> y[] = {0, 2, 4, 1, 3};
+   <span class="keyword">double</span> ex[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+   <span class="keyword">double</span> ey[] = {1, 0.5, 1, 0.5, 1};
+   <a href="./TGraphErrors.html">TGraphErrors</a>* ge = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y, ex, ey);
+   ge-&gt;SetFillColor(6);
+   ge-&gt;SetFillStyle(3005);
+   ge-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"a4"</span>);
+   <span class="keyword">return</span> c42;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><p>The following example shows how the option "[]" can be used to superimpose
+systematic errors on top of a graph with statistical errors.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_15_c43_A0" class="tabsel" href="MACRO_TGraphPainter_15_c43.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_15_c43',0);">Picture</a>
+<a id="MACRO_TGraphPainter_15_c43_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_15_c43',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_15_c43_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_15_c43" title="MACRO" src="MACRO_TGraphPainter_15_c43.gif" /></span></div>
+<div id="MACRO_TGraphPainter_15_c43_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c43 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c43"</span>,<span class="string">"c43"</span>,200,10,600,400);
+   c43-&gt;DrawFrame(0., -0.5, 6., 2);
+
+   <span class="keyword">double</span> x[5]    = {1, 2, 3, 4, 5};
+   <span class="keyword">double</span> zero[5] = {0, 0, 0, 0, 0};
+
+   <span class="comment">// data set (1) with stat and sys errors</span>
+   <span class="keyword">double</span> y1[5]       = {1.2, 1.15, 1.19, 0.9, 1.4};
+   <span class="keyword">double</span> ey_stat1[5] = {0.2, 0.18, 0.17, 0.2, 0.4};
+   <span class="keyword">double</span> ey_sys1[5]  = {0.5, 0.71, 0.76, 0.5, 0.45};
+
+   <span class="comment">// data set (2) with stat and sys errors</span>
+   <span class="keyword">double</span> y2[5]       = {0.25, 0.18, 0.29, 0.2, 0.21};
+   <span class="keyword">double</span> ey_stat2[5] = {0.2, 0.18, 0.17, 0.2, 0.4};
+   <span class="keyword">double</span> ey_sys2[5]  = {0.63, 0.19, 0.7, 0.2, 0.7};
+
+   <span class="comment">// Now draw data set (1)</span>
+
+   <span class="comment">// We first have to draw it only with the stat errors</span>
+   <a href="./TGraphErrors.html">TGraphErrors</a> *graph1 = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y1, zero, ey_stat1);
+   graph1-&gt;SetMarkerStyle(20);
+   graph1-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"P"</span>);
+
+   <span class="comment">// Now we have to somehow depict the sys errors</span>
+
+   <a href="./TGraphErrors.html">TGraphErrors</a> *graph1_sys = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y1, zero, ey_sys1);
+   graph1_sys-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"[]"</span>);
+
+   <span class="comment">// Now draw data set (2)</span>
+
+   <span class="comment">// We first have to draw it only with the stat errors</span>
+   <a href="./TGraphErrors.html">TGraphErrors</a> *graph2 = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y2, zero, ey_stat2);
+   graph2-&gt;SetMarkerStyle(24);
+   graph2-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"P"</span>);
+
+   <span class="comment">// Now we have to somehow depict the sys errors</span>
+
+   <a href="./TGraphErrors.html">TGraphErrors</a> *graph2_sys = <span class="keyword">new</span> <a href="./TGraphErrors.html">TGraphErrors</a>(5, x, y2, zero, ey_sys2);
+   graph2_sys-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"[]"</span>);
+   <span class="keyword">return</span> c43;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><a name="GP03b"></a><h4><u>TGraphAsymmErrors</u></h4>
+A <tt>TGraphAsymmErrors</tt> is like a <tt>TGraphErrors</tt> but the errors
+defined along X and Y are not symmetric: The left and right errors are
+different along X and the bottom and up errors are different along Y.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_17_c44_A0" class="tabsel" href="MACRO_TGraphPainter_17_c44.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_17_c44',0);">Picture</a>
+<a id="MACRO_TGraphPainter_17_c44_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_17_c44',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_17_c44_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_17_c44" title="MACRO" src="MACRO_TGraphPainter_17_c44.gif" /></span></div>
+<div id="MACRO_TGraphPainter_17_c44_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c44 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c44"</span>,<span class="string">"c44"</span>,200,10,600,400);
+   <span class="keyword">double</span> ax[] = {0, 1, 2, 3, 4};
+   <span class="keyword">double</span> ay[] = {0, 2, 4, 1, 3};
+   <span class="keyword">double</span> aexl[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+   <span class="keyword">double</span> aexh[] = {0.5, 0.4, 0.3, 0.2, 0.1};
+   <span class="keyword">double</span> aeyl[] = {1, 0.5, 1, 0.5, 1};
+   <span class="keyword">double</span> aeyh[] = {0.5, 1, 0.5, 1, 0.5};
+   <a href="./TGraphAsymmErrors.html">TGraphAsymmErrors</a>* gae = <span class="keyword">new</span> <a href="./TGraphAsymmErrors.html">TGraphAsymmErrors</a>(5, ax, ay, aexl, aexh, aeyl, aeyh);
+   gae-&gt;SetFillColor(2);
+   gae-&gt;SetFillStyle(3001);
+   gae-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"a2"</span>);
+   gae-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"p"</span>);
+   <span class="keyword">return</span> c44;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><a name="GP03c"></a><h4><u>TGraphBentErrors</u></h4>
+A <tt>TGraphBentErrors</tt> is like a <tt>TGraphAsymmErrors</tt>.
+An extra parameter allows to bent the error bars to better see them
+when several graphs are drawn on the same plot.
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_19_c45_A0" class="tabsel" href="MACRO_TGraphPainter_19_c45.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_19_c45',0);">Picture</a>
+<a id="MACRO_TGraphPainter_19_c45_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_19_c45',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_19_c45_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_19_c45" title="MACRO" src="MACRO_TGraphPainter_19_c45.gif" /></span></div>
+<div id="MACRO_TGraphPainter_19_c45_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c45 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c45"</span>,<span class="string">"c45"</span>,200,10,600,400);
+   <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> n = 10;
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> x[n]  = {-0.22, 0.05, 0.25, 0.35, 0.5, 0.61,0.7,0.85,0.89,0.95};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> y[n]  = {1,2.9,5.6,7.4,9,9.6,8.7,6.3,4.5,1};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> exl[n] = {.05,.1,.07,.07,.04,.05,.06,.07,.08,.05};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> eyl[n] = {.8,.7,.6,.5,.4,.4,.5,.6,.7,.8};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> exh[n] = {.02,.08,.05,.05,.03,.03,.04,.05,.06,.03};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> eyh[n] = {.6,.5,.4,.3,.2,.2,.3,.4,.5,.6};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> exld[n] = {.0,.0,.0,.0,.0,.0,.0,.0,.0,.0};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> eyld[n] = {.0,.0,.05,.0,.0,.0,.0,.0,.0,.0};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> exhd[n] = {.0,.0,.0,.0,.0,.0,.0,.0,.0,.0};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> eyhd[n] = {.0,.0,.0,.0,.0,.0,.0,.0,.05,.0};
+   <a href="./TGraphBentErrors.html">TGraphBentErrors</a> *gr = <span class="keyword">new</span> <a href="./TGraphBentErrors.html">TGraphBentErrors</a>(n,x,y,exl,exh,eyl,eyh,exld,exhd,eyld,eyhd);
+   gr-&gt;SetTitle(<span class="string">"TGraphBentErrors Example"</span>);
+   gr-&gt;SetMarkerColor(4);
+   gr-&gt;SetMarkerStyle(21);
+   gr-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"ALP"</span>);
+   <span class="keyword">return</span> c45;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><a name="GP04"></a><h3>TGraphPolar options</h3>
+The drawing options for the polar graphs are the following:
+<table border=0>
+<tr><th valign=top>"O"</th><td>
+Polar labels are drawn orthogonally to the polargram radius.
+</td></tr>
+<tr><th valign=top>"P"</th><td>
+Polymarker are drawn at each point position.
+</td></tr>
+<tr><th valign=top>"E"</th><td>
+Draw error bars.
+</td></tr>
+<tr><th valign=top>"F"</th><td>
+Draw fill area (closed polygon).
+</td></tr>
+<tr><th valign=top>"A"</th><td>
+Force axis redrawing even if a polargram already exists.
+</td></tr>
+<tr><th valign=top>"N"</th><td>
+Disable the display of the polar labels.
+</td></tr>
+</table>
+<!-- TDocHtmlDirective end --><pre>
+</pre><div class="tabs">
+<a id="MACRO_TGraphPainter_21_c46_A0" class="tabsel" href="MACRO_TGraphPainter_21_c46.gif" onclick="javascript:return SetDiv('MACRO_TGraphPainter_21_c46',0);">Picture</a>
+<a id="MACRO_TGraphPainter_21_c46_A1" class="tab" href="#" onclick="javascript:return SetDiv('MACRO_TGraphPainter_21_c46',1);">Source</a>
+<br /></div><div class="tabcontent">
+<div id="MACRO_TGraphPainter_21_c46_0" class="tabvisible"><span class="macro"><img class="macro" alt="output of MACRO_TGraphPainter_21_c46" title="MACRO" src="MACRO_TGraphPainter_21_c46.gif" /></span></div>
+<div id="MACRO_TGraphPainter_21_c46_1" class="tabhidden"><div class="listing"><pre class="code">{
+   <a href="./TCanvas.html">TCanvas</a> *c46 = <span class="keyword">new</span> <a href="./TCanvas.html">TCanvas</a>(<span class="string">"c46"</span>,<span class="string">"c46"</span>,500,500);
+   <a href="./TGraphPolar.html">TGraphPolar</a> * grP1 = <span class="keyword">new</span> <a href="./TGraphPolar.html">TGraphPolar</a>();
+   grP1-&gt;SetTitle(<span class="string">"TGraphPolar example"</span>);
+
+   grP1-&gt;SetPoint(0, (1*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.05);
+   grP1-&gt;SetPoint(1, (2*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.10);
+   grP1-&gt;SetPoint(2, (3*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.15);
+   grP1-&gt;SetPoint(3, (4*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.20);
+   grP1-&gt;SetPoint(4, (5*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.25);
+   grP1-&gt;SetPoint(5, (6*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.30);
+   grP1-&gt;SetPoint(6, (7*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.35);
+   grP1-&gt;SetPoint(7, (8*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Pi" title="Double_t TMath::Pi()">Pi</a>())/4., 0.40);
+
+   grP1-&gt;SetMarkerStyle(20);
+   grP1-&gt;SetMarkerSize(1.);
+   grP1-&gt;SetMarkerColor(4);
+   grP1-&gt;SetLineColor(4);
+   grP1-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"ALP"</span>);
+
+   <span class="comment">// Update, otherwise GetPolargram returns 0</span>
+   c46-&gt;Update();
+   grP1-&gt;GetPolargram()-&gt;SetToRadian();
+
+   <span class="keyword">return</span> c46;
+}</pre></div></div><div class="clear"></div></div><pre>
+</pre><!-- TDocHtmlDirective start --><!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TGraphPainter:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraphPainter:TGraphPainter">TGraphPainter</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TGraphPainter:TGraphPainter%1">TGraphPainter</a>(<span class="keyword">const</span> <a href="./TGraphPainter.html">TGraphPainter</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TGraphPainter:_TGraphPainter">~TGraphPainter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGraphPainter:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:ComputeLogs">ComputeLogs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> opt)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TGraphPainter:DistancetoPrimitiveHelper">DistancetoPrimitiveHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:DrawPanelHelper">DrawPanelHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:ExecuteEventHelper">ExecuteEventHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TGraphPainter:GetObjectInfoHelper">GetObjectInfoHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TVirtualGraphPainter.html">TVirtualGraphPainter</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualGraphPainter.html#TVirtualGraphPainter:GetPainter"><span class="baseclass">TVirtualGraphPainter::</span>GetPainter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TGraphPainter:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TGraphPainter.html">TGraphPainter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TGraphPainter:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TGraphPainter.html">TGraphPainter</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraph">PaintGraph</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphAsymmErrors">PaintGraphAsymmErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphBentErrors">PaintGraphBentErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphErrors">PaintGraphErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGrapHist">PaintGrapHist</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphPolar">PaintGraphPolar</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphQQ">PaintGraphQQ</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintGraphSimple">PaintGraphSimple</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintHelper">PaintHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintPolyLineHatches">PaintPolyLineHatches</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:PaintStats">PaintStats</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./TF1.html">TF1</a>* fit)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualGraphPainter.html#TVirtualGraphPainter:SetPainter"><span class="baseclass">TVirtualGraphPainter::</span>SetPainter</a>(<a href="./TVirtualGraphPainter.html">TVirtualGraphPainter</a>* painter)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:Smooth">Smooth</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a> drawtype)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TGraphPainter:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TGraphPainter:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="TGraphPainter:Class_Charts"></a>Class Charts</h2>
+<map name="MapTGraphPainter_Inh" id="MapTGraphPainter_Inh">
+<area shape="rect" href="./TVirtualGraphPainter.html" title="TVirtualGraphPainter" alt="" coords="236,10,457,35"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="37,10,120,35"/>
+</map>
+<map name="MapTGraphPainter_InhMem" id="MapTGraphPainter_InhMem">
+<area shape="rect" href="./TVirtualGraphPainter.html" alt="" coords="376,60,629,109"/>
+<area shape="rect" href="./TVirtualGraphPainter.html" alt="" coords="541,120,629,268"/>
+<area shape="rect" href="./TVirtualGraphPainter.html" alt="" coords="443,120,531,268"/>
+<area shape="rect" href="./TVirtualGraphPainter.html" alt="" coords="344,120,432,268"/>
+<area shape="rect" href="./TVirtualGraphPainter.html" title="TVirtualGraphPainter" alt="" coords="333,16,640,279"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTGraphPainter_Lib" id="MapTGraphPainter_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="524,237,652,285"/>
+</map>
+<div class="tabs">
+<a id="imgTGraphPainter_Inh" class="tabsel" href="inh/TGraphPainter_Inh.png" onclick="javascript:return SetImg('Charts','inh/TGraphPainter_Inh.png');">Inheritance</a>
+<a id="imgTGraphPainter_InhMem" class="tab" href="inhmem/TGraphPainter_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TGraphPainter_InhMem.png');">Inherited Members</a>
+<a id="imgTGraphPainter_Incl" class="tab" href="incl/TGraphPainter_Incl.png" onclick="javascript:return SetImg('Charts','incl/TGraphPainter_Incl.png');">Includes</a>
+<a id="imgTGraphPainter_Lib" class="tab" href="lib/TGraphPainter_Lib.png" onclick="javascript:return SetImg('Charts','lib/TGraphPainter_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTGraphPainter_Inh" src="inh/TGraphPainter_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraphPainter:TGraphPainter" href="src/TGraphPainter.cxx.html#i0bLc">TGraphPainter</a>()</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Default constructor
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraphPainter:_TGraphPainter" href="src/TGraphPainter.cxx.html#lJbTSD">~TGraphPainter</a>()</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Destructor.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:ComputeLogs" href="src/TGraphPainter.cxx.html#cfTLHE">ComputeLogs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> opt)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Compute the lorarithm of global variables <tt>gxwork</tt> and <tt>gywork</tt>
+   according to the value of Options and put the results in the global
+   variables <tt>gxworkl</tt> and <tt>gyworkl</tt>.
+   <p>
+   npoints : Number of points in gxwork and in gywork.
+   <ul>
+   <li> opt = 1 ComputeLogs is called from PaintGrapHist
+   <li> opt = 0 ComputeLogs is called from PaintGraph
+   </ul>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TGraphPainter:DistancetoPrimitiveHelper" href="src/TGraphPainter.cxx.html#NUl.nE">DistancetoPrimitiveHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Compute distance from point px,py to a graph.
+   <p>
+   Compute the closest distance of approach from point px,py to this line.
+   The distance is computed in pixels units.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:DrawPanelHelper" href="src/TGraphPainter.cxx.html#Q8pXcC">DrawPanelHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Display a panel with all histogram drawing options.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:ExecuteEventHelper" href="src/TGraphPainter.cxx.html#TgrB4">ExecuteEventHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Execute action corresponding to one event.
+   <p>
+   This member function is called when a graph is clicked with the locator.
+   <p>
+   If the left mouse button is clicked on one of the line end points, this point
+   follows the cursor until button is released.
+   <p>
+   If the middle mouse button clicked, the line is moved parallel to itself
+   until the button is released.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">char</span> * <a class="funcname" name="TGraphPainter:GetObjectInfoHelper" href="src/TGraphPainter.cxx.html#SrxWKD">GetObjectInfoHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintHelper" href="src/TGraphPainter.cxx.html#GsPhvE">PaintHelper</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Paint a any kind of TGraph
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraph" href="src/TGraphPainter.cxx.html#mOnXYC">PaintGraph</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   <a href="#GP01">Control function to draw a graph.</a>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGrapHist" href="src/TGraphPainter.cxx.html#wrOfvC">PaintGrapHist</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Option_t">Option_t</a>* chopt)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->    This is a service method used by
+    <a href="http://root.cern.ch/root/html/THistPainter.html"><tt>THistPainter</tt></a>
+    to paint 1D histograms. <b>It is not used to paint TGraph</b>.
+    <p>
+    Input parameters:
+    <ul>
+    <li> npoints : Number of points in X or in Y.
+    <li> x[npoints] or x[0] : x coordinates or (xmin,xmax).
+    <li> y[npoints] or y[0] : y coordinates or (ymin,ymax).
+    <li> chopt : Option.
+    </ul>
+    <p>
+    The aspect of the histogram is done according to the value of the chopt.
+    <p>
+    <table border=0>
+    <tr><th valign=top>"R"</th><td>
+    Graph is drawn horizontaly, parallel to X axis. (default is vertically,
+    parallel to Y axis)
+    <br>
+    If option R is selected the user must give:
+    <ul>
+    <li> 2 values for Y (y[0]=YMIN and y[1]=YMAX)
+    <li> N values for X, one for each channel.
+    </ul>
+    Otherwise the user must give:
+    <ul>
+    <li> N values for Y, one for each channel.
+    <li> 2 values for X (x[0]=XMIN and x[1]=XMAX)
+    </ul>
+    </td></tr>
+    <tr><th valign=top>"L"</th><td>
+    A simple polyline beetwen every points is drawn.
+    </td></tr>
+    <tr><th valign=top>"H"</th><td>
+    An Histogram with equidistant bins is drawn as a polyline.
+    </td></tr>
+    <tr><th valign=top>"F"</th><td>
+    An histogram with equidistant bins is drawn as a fill area. Contour is not
+    drawn unless chopt='H' is also selected..
+    </td></tr>
+    <tr><th valign=top>"N"</th><td>
+    Non equidistant bins (default is equidistant). If N is the number of channels
+    array X and Y must be dimensionned as follow:
+    <ul>
+    <li>>If option R is not selected (default) then the user must give:</li>
+      <ul>
+      <li>(N+1) values for X (limits of channels).</li>
+      <li>N values for Y, one for each channel.</li>
+      <ul>
+    <li>Otherwise the user must give:</li>
+      <ul>
+      <li>(N+1) values for Y (limits of channels).</li>
+      <li>N values for X, one for each channel.</li>
+      </ul>
+    </ul>
+    </td></tr>
+    <tr><th valign=top>"F1"</th><td>
+    Idem as 'F' except that fill area base line is the minimum of the pad instead
+    of Y=0.
+    </td></tr>
+    <tr><th valign=top>"F2"</th><td>
+    Draw a Fill area polyline connecting the center of bins
+    </td></tr>
+    <tr><th valign=top>"C"</th><td>
+    A smooth Curve is drawn.
+    </td></tr>
+    <tr><th valign=top>"*"</th><td>
+    A Star is plotted at the center of each bin.
+    </td></tr>
+    <tr><th valign=top>"P"</th><td>
+    Idem with the current marker.
+    </td></tr>
+    <tr><th valign=top>"P0"</th><td>
+    Idem with the current marker. Empty bins also drawn.
+    </td></tr>
+    <tr><th valign=top>"B"</th><td>
+    A Bar chart with equidistant bins is drawn as fill areas (Contours are drawn).
+    </td></tr>
+    <tr><th valign=top>"9"</th><td>
+    Force graph to be drawn in high resolution mode. By default, the graph is
+    drawn in low resolution in case the number of points is greater than the
+    number of pixels in the current pad.
+    </td></tr>
+    <tr><th valign=top>"]["</th><td>
+    "Cutoff" style. When this option is selected together with H option, the
+    first and last vertical lines of the histogram are not drawn.
+    </td></tr>
+    </table>
+    
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphAsymmErrors" href="src/TGraphPainter.cxx.html#ICBFYE">PaintGraphAsymmErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   <a href="#GP03">Paint this TGraphAsymmErrors with its current attributes.</a>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphBentErrors" href="src/TGraphPainter.cxx.html#JYI4hD">PaintGraphBentErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   <a href="#GP03">Paint this TGraphBentErrors with its current attributes.</a>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphErrors" href="src/TGraphPainter.cxx.html#bDqprD">PaintGraphErrors</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   <a href="#GP03">Paint this TGraphErrors with its current attributes.</a>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphPolar" href="src/TGraphPainter.cxx.html#iTMRz">PaintGraphPolar</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   <a href="#GP04">Paint this TGraphPolar with its current attributes.</a>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphQQ" href="src/TGraphPainter.cxx.html#BD6FMB">PaintGraphQQ</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Paint this graphQQ. No options for the time being.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintGraphSimple" href="src/TGraphPainter.cxx.html#gPNVZC">PaintGraphSimple</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Paint a simple graph, without errors bars.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintPolyLineHatches" href="src/TGraphPainter.cxx.html#UVkXLE">PaintPolyLineHatches</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Paint a polyline with hatches on one side showing an exclusion zone. x and y
+   are the the vectors holding the polyline and n the number of points in the
+   polyline and <tt>w</tt> the width of the hatches. <tt>w</tt> can be negative.
+   This method is not meant to be used directly. It is called automatically
+   according to the line style convention.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:PaintStats" href="src/TGraphPainter.cxx.html#GWV8JB">PaintStats</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./TF1.html">TF1</a>* fit)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Paint the statistics box with the fit info.
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TGraphPainter:Smooth" href="src/TGraphPainter.cxx.html#LyxQiE">Smooth</a>(<a href="./TGraph.html">TGraph</a>* theGraph, <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Int_t">Int_t</a> drawtype)</span><br />
+<div class="funccomm"><pre>
+</pre><!-- TDocHtmlDirective start -->   Smooth a curve given by N points.
+   <p>
+   The original code is from an underlaying routine for Draw based on the
+   CERN GD3 routine TVIPTE:
+   <pre>
+        Author - Marlow etc.   Modified by - P. Ward     Date -  3.10.1973
+   </pre>
+   This method draws a smooth tangentially continuous curve through
+   the sequence of data points P(I) I=1,N where P(I)=(X(I),Y(I)).
+   The curve is approximated by a polygonal arc of short vectors.
+   The data points can represent open curves, P(1) != P(N) or closed
+   curves P(2) == P(N). If a tangential discontinuity at P(I) is
+   required, then set P(I)=P(I+1). Loops are also allowed.
+   <p>
+   Reference Marlow and Powell, Harwell report No.R.7092.1972
+   MCCONALOGUE, Computer Journal VOL.13, NO4, NOV1970P p392 6
+   <p>
+   <ul>
+   <li>  npoints   : Number of data points.
+   <li>  x         : Abscissa
+   <li>  y         : Ordinate
+   </ul>
+   
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TGraphPainter:TGraphPainter" href="src/TGraphPainter.h.html#WfGnvE">TGraphPainter</a>()</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Olivier+Couet"> Olivier Couet</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/histpainter:$Id: TGraphPainter.h,v 1.00 </em><em>&raquo; Last generated: 2011-12-02 14:27</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

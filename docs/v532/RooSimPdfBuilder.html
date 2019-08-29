@@ -1,0 +1,642 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:15 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooSimPdfBuilder</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooSimPdfBuilder','libRooFitCore','RooSimPdfBuilder.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooSimPdfBuilder.h.html">header file</a>
+<a class="descrheadentry" href="src/RooSimPdfBuilder.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/inc/RooSimPdfBuilder.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roofitcore/src/RooSimPdfBuilder.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooSimPdfBuilder:description">class description</a> 
+<a class="descrheadentry" href="#RooSimPdfBuilder:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooSimPdfBuilder:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooSimPdfBuilder:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOFITCORE_Index.html">ROOFITCORE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooSimPdfBuilder</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooSimPdfBuilder:description"></a>class RooSimPdfBuilder: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+
+</pre><!-- TDocHtmlDirective start --> <b>This tool has now been superceded by RooSimWSTool</b>
+ 
+  <p>
+    <tt>RooSimPdfBuilder</tt> is a powerful tool to build <tt>RooSimultaneous</tt>
+    PDFs that are defined in terms component PDFs that are identical in
+    structure, but have different parameters. 
+  </p>
+  <h2>Example</h2>
+  <p>
+    The following example demonstrates the essence of <tt>RooSimPdfBuilder</tt>:
+    Given a dataset D with a <tt>RooRealVar X</tt> and a <tt>RooCategory C</tt> that has
+    state C1 and C2. 
+    <ul>
+    <li> We want to fit the distribution of <tt>X</tt> with a Gaussian+ArgusBG PDF, 
+    <li> We want to fit the data subsets <tt>D(C==C1)</tt> and <tt>D(C==C2)</tt> separately and simultaneously. 
+    <li> The PDFs to fit data subsets D_C1 and D_C2 are identical except for 
+         <ul>
+         <li> the kappa parameter of the ArgusBG PDF and 
+         <li> the sigma parameter of the gaussian PDF
+         </ul>
+         where each PDF will have its own copy of the parameter
+    </ul>
+  </p>
+  <p>
+    Coding this example directly with RooFit classes gives
+    (we assume dataset D and variables C and X have been declared previously)
+  </p>
+  <pre>
+ RooRealVar m("m","mean of gaussian",-10,10) ;
+ RooRealVar s_C1("s_C1","sigma of gaussian C1",0,20) ;
+ RooRealVar s_C2("s_C2","sigma of gaussian C2",0,20) ;
+ RooGaussian gauss_C1("gauss_C1","gaussian C1",X,m,s_C1) ;
+ RooGaussian gauss_C2("gauss_C2","gaussian C2",X,m,s_C2) ;
+ RooRealVar k_C1("k_C1","ArgusBG kappa parameter C1",-50,0) ;
+ RooRealVar k_C2("k_C2","ArgusBG kappa parameter C2",-50,0) ;
+ RooRealVar xm("xm","ArgusBG cutoff point",5.29) ;
+ RooArgusBG argus_C1("argus_C1","argus background C1",X,k_C1,xm) ;
+ RooArgusBG argus_C2("argus_C2","argus background C2",X,k_C2,xm) ;
+ RooRealVar gfrac("gfrac","fraction of gaussian",0.,1.) ;
+ RooAddPdf pdf_C1("pdf_C1","gauss+argus_C1",RooArgList(gauss_C1,argus_C1),gfrac) ;
+ RooAddPdf pdf_C2("pdf_C2","gauss+argus_C2",RooArgList(gauss_C2,argus_C2),gfrac) ;
+ RooSimultaneous simPdf("simPdf","simPdf",C) ;   
+ simPdf.addPdf(pdf_C1,"C1") ;
+ simPdf.addPdf(pdf_C2,"C2") ;
+  </pre>
+  <p>
+    Coding this example with RooSimPdfBuilder gives
+  </p>
+  <pre>
+ RooRealVar m("m","mean of gaussian",-10,10) ;
+ RooRealVar s("s","sigma of gaussian",0,20) ;
+ RooGaussian gauss("gauss","gaussian",X,m,s) ;
+ RooRealVar k("k","ArgusBG kappa parameter",-50,0) ;
+ RooRealVar xm("xm","ArgusBG cutoff point",5.29) ;
+ RooArgusBG argus("argus","argus background",X,k,xm) ;
+ RooRealVar gfrac("gfrac","fraction of gaussian",0.,1.) ;
+ RooAddPdf pdf("pdf","gauss+argus",RooArgList(gauss,argus),gfrac) ;
+ RooSimPdfBuilder builder(pdf) ;
+ RooArgSet* config = builder.createProtoBuildConfig() ;
+ (*config)["physModels"] = "pdf" ;      // Name of the PDF we are going to work with
+ (*config)["splitCats"]  = "C" ;        // Category used to differentiate sub-datasets
+ (*config)["pdf"]        = "C : k,s" ;  // Prescription to taylor PDF parameters k and s 
+                                        // for each data subset designated by C states
+ RooSimultaneous* simPdf = builder.buildPdf(*config,&D) ;
+  </pre>
+  <p>
+    The above snippet of code demonstrates the concept of <tt>RooSimPdfBuilder</tt>:
+    the user defines a single <i>'prototype' PDF</i> that defines the structure of all
+    PDF components of the <tt>RooSimultaneous</tt> PDF to be built. <tt>RooSimPdfBuilder</tt> 
+    then takes this prototype and replicates it as a component 
+    PDF for each state of the C index category.
+  </p>
+  <p>
+    In the above example </tt>RooSimPdfBuilder</tt>
+    will first replicate <tt>k</tt> and <tt>s</tt> into 
+    <tt>k_C1,k_C2</tt> and <tt>s_C1,s_C2</tt>, as prescribed in the
+    configuration. Then it will recursively replicate all PDF nodes that depend on
+    the 'split' parameter nodes: <tt>gauss</tt> into <tt>gauss_C1,C2</tt>, <tt>argus</tt> 
+    into <tt>argus_C1,C2</tt> and finally <tt>pdf</tt> into <tt>pdf_C1,pdf_C2</tt>. 
+     When PDFs for all states of C have been replicated
+    they are assembled into a <tt>RooSimultaneous</tt> PDF, which is returned by the <tt>buildPdf()</tt>
+    method.
+  </p>
+  <p>
+    Although in this very simple example the use of <tt>RooSimPdfBuilder</tt> doesn't
+    reduce the amount of code much, it is already easier to read and maintain
+    because there is no duplicate code. As the complexity of the <tt>RooSimultaneous</tt>
+    to be built increases, the advantages of <tt>RooSimPdfBuilder</tt> will become more and
+    more apparent.
+  </p>
+  <h2>Builder configuration rules for a single prototype PDF</h2>
+  <p>
+    Each builder configuration needs at minumum two lines, <tt>physModels</tt> and <tt>splitCats</tt>, which identify
+    the ingredients of the build. In this section we only explain the building rules for
+    builds from a single prototype PDF. In that case the <tt>physModels</tt> line always reads
+  </p>
+  <pre>
+  physModels = {pdfName}
+  </pre>
+  <p>
+    The second line, <tt>splitCats</tt>, indicates which categories are going to be used to 
+    differentiate the various subsets of the 'master' input data set. You can enter
+    a single category here, or multiple if necessary:
+  </p>
+  <pre>
+ splitCats = {catName} [{catName} ...]
+  </pre>
+  <p>
+    All listed splitcats must be <tt>RooCategories</tt> that appear in the dataset provided to
+    <tt>RooSimPdfBuilder::buildPdf()</tt>
+  </p>
+  <p>
+    The parameter splitting prescriptions, the essence of each build configuration
+    can be supplied in a third line carrying the name of the pdf listed in <tt>physModels</tt>
+  </p>
+  <pre>
+ pdfName = {splitCat} : {parameter} [,{parameter},....]
+  </pre>
+  <p>     
+    Each pdf can have only one line with splitting rules, but multiple rules can be
+    supplied in each line, e.g.
+  </p>
+  <pre>
+ pdfName = {splitCat} : {parameter} [,{parameter},....] 
+           {splitCat} : {parameter} [,{parameter},....]
+  </pre>
+  <p>
+    Conversely, each parameter can only have one splitting prescription, but it may be split
+    by multiple categories, e.g.
+  </p>
+  <pre>
+ pdfName = {splitCat1},{splitCat2} : {parameter}
+  </pre>
+  <p>
+    instructs <tt>RooSimPdfBuilder</tt> to build a <tt>RooSuperCategory</tt> 
+    of <tt>{splitCat1}</tt> and <tt>{splitCat2}</tt>
+    and split <tt>{parameter}</tt> with that <tt>RooSuperCategory</tt>
+  </p>
+  <p>
+    Here is an example of a builder configuration that uses several of the options discussed
+    above:
+  </p>
+  <pre>
+   physModels = pdf
+   splitCats  = tagCat runBlock
+   pdf        = tagCat          : signalRes,bkgRes 
+                runBlock        : fudgeFactor      
+                tagCat,runBlock : kludgeParam
+  </pre>
+  <h2>How to enter configuration data</h2>
+  <p>
+    The prototype builder configuration returned by 
+    <tt>RooSimPdfBuilder::createProtoBuildConfig()</tt> is a pointer to a <tt>RooArgSet</tt> filled with
+    initially blank <tt>RooStringVars</tt> named <tt>physModels,splitCats</tt> and one additional for each
+    PDF supplied to the <tt>RooSimPdfBuilders</tt> constructor (with the same name)
+  </p>
+  <p>
+    In macro code, the easiest way to assign new values to these <tt>RooStringVars</tt>
+    is to use <tt>RooArgSet</tt>s array operator and the <tt>RooStringVar</tt>s assignment operator, e.g.
+  </p>
+  <pre>
+ (*config)["physModels"] = "Blah" ;
+  </pre>
+  <p>
+    To enter multiple splitting rules simply separate consecutive rules by whitespace
+    (not newlines), e.g.           
+  </p>
+  <pre>
+ (*config)["physModels"] = "Blah " // << note trailing space here
+                          "Blah 2" ;
+  </pre>
+  <p>
+    In this example, the C++ compiler will concatenate the two string literals (without inserting
+    any whitespace), so the extra space after 'Blah' is important here.
+  </p>
+  <p>      
+    Alternatively, you can read the configuration from an ASCII file, as you can
+    for any <tt>RooArgSet</tt> using <tt>RooArgSet::readFromFile()</tt>. In that case the ASCII file
+    can follow the syntax of the examples above and the '<tt>\\</tt>' line continuation 
+    sequence can be used to fold a long splitting rule over multiple lines.
+  </p>
+  <pre>
+ RooArgSet* config = builder.createProtoBuildConfig() ;
+ config->readFromFile("config.txt") ;
+ --- config.txt ----------------    
+ physModels = pdf
+ splitCats  = tagCat
+ pdf        = tagCat : bogusPar
+ -------------------------------
+  </pre>
+  <h2>Working with multiple prototype PDFs</h2>
+  <p>
+    It is also possible to build a <tt>RooSimultaneous</tt> PDF from multiple PDF prototypes.
+    This is appropriate for cases where the input prototype PDF would otherwise be 
+    a <tt>RooSimultaneous</tt> PDF by itself. In such cases we don't feed a single
+    <tt>RooSimultaneous</tt> PDF into <tt>RooSimPdfBuilder</tt>, instead we feed it its ingredients and
+    add a prescription to the builder configuration that corresponds to the 
+    PDF-category state mapping of the prototype <tt>RooSimultaneous</tt>.
+  </p>
+  <p>
+    The constructor of the <tt>RooSimPdfBuilder</tt> will look as follows:
+  </p>
+  <pre>
+  RooSimPdfBuilder builder(RooArgSet(pdfA,pdfB,...)) ;
+  </pre>
+  <p>
+    The <tt>physModels</tt> line is now expanded to carry the pdf->state mapping information
+    that the prototype <tt>RooSimultaneous</tt> would have. I.e.
+  </p>
+  <pre>
+ physModels = mode : pdfA=modeA  pdfB=modeB
+  </pre>
+  <p>
+    is equivalent to a prototype <tt>RooSimultaneous</tt> constructed as
+  </p>
+  <pre>
+ RooSimultanous simPdf("simPdf","simPdf",mode);
+ simPdf.addPdf(pdfA,"modeA") ;
+ simPdf.addPdf(pdfB,"modeB") ;
+  </pre>
+  <p>
+    The rest of the builder configuration works the same, except that
+    each prototype PDF now has its own set of splitting rules, e.g.
+  </p>
+  <pre>
+ physModels = mode : pdfA=modeA  pdfB=modeB
+ splitCats  = tagCat
+ pdfA       = tagCat : bogusPar
+ pdfB       = tagCat : fudgeFactor   
+  </pre>
+  <p>
+    Please note that 
+    <ul>
+    <li> The master index category ('mode' above) doesn't have to be listed in 
+         <tt>splitCats</tt>, this is implicit.
+    <li> The number of splitting prescriptions goes by the
+          number of prototype PDFs and not by the number of states of the
+          master index category (mode in the above and below example). 
+  </ul>
+  In the following case:
+</p>
+  <pre>
+    physModels = mode : pdfA=modeA  pdfB=modeB  pdfA=modeC  pdfB=modeD
+  </pre>
+  <p>
+    there are still only 2 sets of splitting rules: one for <tt>pdfA</tt> and one
+    for <tt>pdfB</tt>. However, you <i>can</i> differentiate between <tt>modeA</tt> and <tt>modeC</tt> in 
+    the above example. The technique is to use <tt>mode</tt> as splitting category, e.g.
+  </p>
+  <pre>
+    physModels = mode : pdfA=modeA  pdfB=modeB  pdfA=modeC  pdfB=modeD
+    splitCats = tagCat
+    pdfA      = tagCat : bogusPar 
+                mode   : funnyPar
+    pdfB      = mode   : kludgeFactor
+  </pre>
+  <p>
+    will result in an individual set of <tt>funnyPar</tt> parameters for <tt>modeA</tt> and <tt>modeC</tt>
+    labeled <tt>funnyPar_modeA</tt> and <tt>funnyPar_modeB</tt> and an individual set of
+    kludgeFactor parameters for <tt>pdfB</tt>, <tt>kludgeFactor_modeB</tt> and <tt>kludgeFactor_modeD</tt>. 
+    Please note that for splits in the master index category (mode) only the 
+    applicable states are built (A,C for <tt>pdfA</tt>, B,D for <tt>pdfB</tt>)
+  </p>
+  <h2>Advanced options</h2>
+  <h4>Partial splits</h4>
+  <p>
+    You can request to limit the list of states of each splitCat that
+    will be considered in the build. This limitation is requested in the 
+    each build as follows:
+  </p>
+  <pre>
+ splitCats = tagCat(Lep,Kao) RunBlock(Run1)
+  </pre>
+  <p>
+    In this example the splitting of <tt>tagCat</tt> is limited to states <tt>Lep,Kao</tt>
+    and the splitting of <tt>runBlock</tt> is limited to <tt>Run1</tt>. The splits apply
+    globally to each build, i.e. every parameter split requested in this
+    build will be limited according to these specifications. 
+  </p>
+  <p>      
+    NB: Partial builds have no pdf associated with the unbuilt states of the 
+    limited splits. Running such a pdf on a dataset that contains data with 
+    unbuilt states will result in this data being ignored completely.
+  </p>
+  <h4>Non-trivial splits</h4>
+  <p>
+    It is possible to make non-trivial parameter splits with <tt>RooSimPdfBuilder</tt>.
+    Trivial splits are considered simple splits in one (fundamental) category
+    in the dataset or a split in a <tt>RooSuperCategory</tt> 'product' of multiple
+    fundamental categories in the dataset. Non-trivial splits can be performed
+    using an intermediate 'category function' (<tt>RooMappedCategory,
+    RooGenericCategory,RooThresholdCategory</tt> etc), i.e. any <tt>RooAbsCategory</tt>
+    derived objects that calculates its output as function of one or more
+    input <tt>RooRealVars</tt> and/or <tt>RooCategories</tt>.
+  </p>
+  <p>
+    Such 'function categories' objects must be constructed by the user prior
+    to building the PDF. In the <tt>RooSimPdfBuilder::buildPdf()</tt> function these
+    objects can be passed in an optional <tt>RooArgSet</tt> called 'auxiliary categories':
+  </p>
+  <pre>
+   const <tt>RooSimultaneous</tt>* buildPdf(const RooArgSet& buildConfig, const RooAbsData* dataSet, 
+                                   const RooArgSet& auxSplitCats, Bool_t verbose=kFALSE) {
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  </pre>
+  <p>
+    Objects passed in this argset can subsequently be used in the build configuration, e.g.
+  </p>
+  <pre>
+ RooMappedCategory tagMap("tagMap","Mapped tagging category",tagCat,"CutBased") ;
+ tagMap.map("Lep","CutBased") ;
+ tagMap.map("Kao","CutBased") ;
+ tagMap.map("NT*","NeuralNet") ;                                                                                          
+ ...
+ builder.buildPdf(config,D,tagMap) ;
+                          ^^^^^^
+<Contents of config>
+   physModels = pdf
+   splitCats  = tagCat runBlock
+   pdf        = tagCat          : signalRes 
+                tagMap          : fudgeFactor      
+                ^^^^^^
+  </pre>
+  <p>
+    In the above example <tt>signalRes</tt> will be split in <tt>signalRes_Kao,signalRes_Lep,
+    signalRes_NT1,signalRes_NT2</tt>, while <tt>fudgeFactor</tt> will be split in <tt>fudgeFactor_CutBased</tt>
+    and <tt>fudgeFactor_NeuralNet</tt>.
+  </p>
+  <p>
+    Category functions passed in the auxSplitCats <tt>RooArgSet</tt> can be used regularly
+    in the splitting configuration. They should not be listed in <tt>splitCats</tt>,
+    but must be able to be expressed <i>completely</i> in terms of the <tt>splitCats</tt> that 
+    are listed.
+  </p>
+  
+  <h4>Multiple connected builds</h4>
+  <p>
+    Sometimes you want to build multiple PDFs for independent consecutive fits 
+    that share some of their parameters. For example, we have two prototype PDFs 
+    <tt>pdfA(x;p,q)</tt> and <tt>pdfB(x;p,r)</tt> that have a common parameter <tt>p</tt>. 
+    We want to build a <tt>RooSimultaneous</tt> for both <tt>pdfA</tt> and <tt>B</tt>, 
+    which involves a split of parameter <tt>p</tt> and we would like to build the
+    simultaneous pdfs </tt>simA</tt> and <tt>simB</tt> such that still share their (now split) parameters
+    <tt>p_XXX</tt>. This is accomplished by letting a single instance of <tt>RooSimPdfBuilder</tt> handle
+    the builds of both <tt>pdfA</tt> and <tt>pdfB</tt>, as illustrated in this example:
+  </p>
+  <pre>
+ RooSimPdfBuilder builder(RooArgSet(pdfA,pdfB)) ;
+ RooArgSet* configA = builder.createProtoBuildConfig() ;
+ (*configA)["physModels"] = "pdfA" ;     
+ (*configA)["splitCats"]  = "C" ;        
+ (*configA)["pdf"]        = "C : p" ;  
+ RooSimultaneous* simA = builder.buildPdf(*configA,&D) ;
+ RooArgSet* configB = builder.createProtoBuildConfig() ;
+ (*configA)["physModels"] = "pdfB" ;     
+ (*configA)["splitCats"]  = "C" ;        
+ (*configA)["pdf"]        = "C : p" ;  
+ RooSimultaneous* simB = builder.buildPdf(*configB,&D) ;
+  </pre>
+  <h2>Ownership of constructed PDFs</h2>
+  <p>
+    The <tt>RooSimPdfBuilder</tt> instance owns all the objects it creates, including the top-level
+    <tt>RooSimultaneous</tt> returned by <tt>buildPdf()</tt>. Therefore the builder instance should 
+    exist as long as the constructed PDFs needs to exist.
+  </p>
+ 
+<!-- TDocHtmlDirective end --><pre>
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooSimPdfBuilder:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:RooSimPdfBuilder">RooSimPdfBuilder</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; pdfProtoList)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:_RooSimPdfBuilder">~RooSimPdfBuilder</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:addSpecializations">addSpecializations</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; specSet)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooSimultaneous.html">RooSimultaneous</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:buildPdf">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; dependents, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* auxSplitCats = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooSimultaneous.html">RooSimultaneous</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:buildPdf%1">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooAbsData.html">RooAbsData</a>* dataSet, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; auxSplitCats, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooSimultaneous.html">RooSimultaneous</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:buildPdf%2">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; dependents, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; auxSplitCats, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooSimultaneous.html">RooSimultaneous</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:buildPdf%3">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooAbsData.html">RooAbsData</a>* dataSet, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* auxSplitCats = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooArgSet.html">RooArgSet</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:createProtoBuildConfig">createProtoBuildConfig</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>&amp;</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_"><span class="baseclass">TObject::</span>operator=</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:splitLeafList">splitLeafList</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#RooSimPdfBuilder:RooSimPdfBuilder%1">RooSimPdfBuilder</a>(<span class="keyword">const</span> <a href="./RooSimPdfBuilder.html">RooSimPdfBuilder</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooSimPdfBuilder:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooSimPdfBuilder:_compSplitCatSet"></a>_compSplitCatSet</td><td class="datadesc">List of owned composite splitting categories</td></tr>
+<tr class="data"><td class="datatype">list&lt;<a href="./RooSuperCategory.html">RooSuperCategory</a>*&gt;</td><td class="dataname"><a name="RooSimPdfBuilder:_fitCatList"></a>_fitCatList</td><td class="datadesc">The supercategories that we built</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooSimPdfBuilder:_protoPdfSet"></a>_protoPdfSet</td><td class="datadesc">Set of prototype PDFS</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a></td><td class="dataname"><a name="RooSimPdfBuilder:_retiredCustomizerList"></a>_retiredCustomizerList</td><td class="datadesc">Retired customizer from previous builds (own their PDF branch nodes)</td></tr>
+<tr class="data"><td class="datatype">list&lt;<a href="./RooSimultaneous.html">RooSimultaneous</a>*&gt;</td><td class="dataname"><a name="RooSimPdfBuilder:_simPdfList"></a>_simPdfList</td><td class="datadesc">The simpdfs that we built</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooSimPdfBuilder:_splitNodeList"></a>_splitNodeList</td><td class="datadesc">List of owned split nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a name="RooSimPdfBuilder:_splitNodeListOwned"></a>_splitNodeListOwned</td><td class="datadesc">List of all split nodes</td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooSimPdfBuilder:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooSimPdfBuilder_Inh" id="MapRooSimPdfBuilder_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="56,16,179,53"/>
+</map>
+<map name="MapRooSimPdfBuilder_InhMem" id="MapRooSimPdfBuilder_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapRooSimPdfBuilder_Lib" id="MapRooSimPdfBuilder_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="524,353,652,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooSimPdfBuilder_Inh" class="tabsel" href="inh/RooSimPdfBuilder_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooSimPdfBuilder_Inh.png');">Inheritance</a>
+<a id="imgRooSimPdfBuilder_InhMem" class="tab" href="inhmem/RooSimPdfBuilder_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooSimPdfBuilder_InhMem.png');">Inherited Members</a>
+<a id="imgRooSimPdfBuilder_Incl" class="tab" href="incl/RooSimPdfBuilder_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooSimPdfBuilder_Incl.png');">Includes</a>
+<a id="imgRooSimPdfBuilder_Lib" class="tab" href="lib/RooSimPdfBuilder_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooSimPdfBuilder_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooSimPdfBuilder_Inh" src="inh/RooSimPdfBuilder_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooSimPdfBuilder:RooSimPdfBuilder" href="src/RooSimPdfBuilder.cxx.html#bOOrD">RooSimPdfBuilder</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; pdfProtoList)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooArgSet.html">RooArgSet</a>* <a class="funcname" name="RooSimPdfBuilder:createProtoBuildConfig" href="src/RooSimPdfBuilder.cxx.html#jy1EeD">createProtoBuildConfig</a>()</span><br />
+<div class="funccomm"><pre> Make <a href="./RooArgSet.html">RooArgSet</a> of configuration objects
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooSimPdfBuilder:addSpecializations" href="src/RooSimPdfBuilder.cxx.html#BLlGvB">addSpecializations</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; specSet)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooSimultaneous.html">RooSimultaneous</a>* <a class="funcname" name="RooSimPdfBuilder:buildPdf" href="src/RooSimPdfBuilder.cxx.html#Z6YZvB">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; dependents, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* auxSplitCats = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Initialize needed components
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooSimPdfBuilder:_RooSimPdfBuilder" href="src/RooSimPdfBuilder.cxx.html#c8ySiE">~RooSimPdfBuilder</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooSimPdfBuilder:RooSimPdfBuilder" href="src/RooSimPdfBuilder.h.html#IiiE0D">RooSimPdfBuilder</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; pdfProtoList)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooSimultaneous.html">RooSimultaneous</a>* <a class="funcname" name="RooSimPdfBuilder:buildPdf" href="src/RooSimPdfBuilder.h.html#PbPJ_B">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; dependents, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* auxSplitCats = 0, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">return</span> <a class="funcname" name="RooSimPdfBuilder:buildPdf" href="src/RooSimPdfBuilder.h.html#bO4Ri">buildPdf</a>(buildConfig,*dataSet-&gt;get(),&amp;auxSplitCats,verbose)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./RooSimultaneous.html">RooSimultaneous</a>* <a class="funcname" name="RooSimPdfBuilder:buildPdf%2" href="src/RooSimPdfBuilder.h.html#PbPJ_B">buildPdf</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; buildConfig, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; dependents, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; auxSplitCats, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> verbose = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; <a class="funcname" name="RooSimPdfBuilder:splitLeafList" href="src/RooSimPdfBuilder.h.html#IAy57B">splitLeafList</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./RooSimPdfBuilder.html#RooSimPdfBuilder:_splitNodeList" title="RooArgSet RooSimPdfBuilder::_splitNodeList">_splitNodeList</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: Thu Nov  3 20:09:15 2011 </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,917 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:25 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TLinearFitter</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TLinearFitter','libMinuit','TLinearFitter.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TLinearFitter.h.html">header file</a>
+<a class="descrheadentry" href="src/TLinearFitter.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/minuit/inc/TLinearFitter.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/minuit/src/TLinearFitter.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TLinearFitter:description">class description</a> 
+<a class="descrheadentry" href="#TLinearFitter:Function_Members">function members</a>
+<a class="descrheadentry" href="#TLinearFitter:Data_Members">data members</a>
+<a class="descrheadentry" href="#TLinearFitter:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MINUIT_Index.html">MINUIT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TLinearFitter</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TLinearFitter:description"></a>class TLinearFitter: public <a href="./TVirtualFitter.html">TVirtualFitter</a></h1>
+<div class="classdescr">
+<pre>
+
+ The Linear <a href="./TVirtualFitter.html#TVirtualFitter:Fitter" title="TVirtualFitter* TVirtualFitter::Fitter(TObject* obj,Int_t maxpar=25)">Fitter</a> - fitting functions that are LINEAR IN PARAMETERS
+
+ Linear fitter is used to fit a set of data points with a linear
+ combination of specified functions. Note, that <span class="string">"linear"</span> in the name
+ stands only for the model dependency on parameters, the specified
+ functions can be nonlinear.
+ The general form of this kind of model is
+
+          y(x) = a[0] + a[1]*f[1](x)+...a[n]*f[n](x)
+
+ Functions f are fixed functions of x. For example, fitting with a
+ polynomial is linear fitting in this sense.
+
+                         The fitting method
+
+ The fit is performed using the Normal Equations method with Cholesky
+ decomposition.
+
+                         Why should it be used?
+
+ The linear fitter is considerably faster than general non-linear
+ fitters and doesn't require to set the initial values of parameters.
+
+                          Using the fitter:
+
+ 1.Adding the data points:
+  1.1 To store or not to store the input data?
+      - There are 2 options in the constructor - to store or not
+        store the input data. The advantages of storing the data
+        are that you'll be able to reset the fitting model without
+        adding all the points again, and that for very large sets
+        of points the chisquare is calculated more precisely.
+        The obvious disadvantage is the amount of memory used to
+        keep all the points.
+      - Before you start adding the points, you can change the
+        store/not store option by <a href="./TLinearFitter.html#TLinearFitter:StoreData" title="void TLinearFitter::StoreData(Bool_t store)">StoreData</a>() method.
+  1.2 The data can be added:
+      - simply point by point - <a href="./TLinearFitter.html#TLinearFitter:AddPoint" title="void TLinearFitter::AddPoint(Double_t* x,Double_t y,Double_t e=1)">AddPoint</a>() method
+      - an array of points at once:
+        If the data is already stored in some arrays, this data
+        can be assigned to the linear fitter without physically
+        coping bytes, thanks to the Use() method of
+        <a href="./TVector.html">TVector</a> and <a href="./TMatrix.html">TMatrix</a> classes - <a href="./TLinearFitter.html#TLinearFitter:AssignData" title="void TLinearFitter::AssignData(Int_t npoints,Int_t xncols,Double_t* x,Double_t* y,Double_t* e=0)">AssignData</a>() method
+
+ 2.Setting the formula
+  2.1 The linear formula syntax:
+      -Additive parts are separated by 2 plus signes <span class="string">"++"</span>
+       --for example <span class="string">"1 ++ x"</span> - for fitting a straight line
+      -All standard functions, undrestood by <a href="./TFormula.html">TFormula</a>, can be used
+       as additive parts
+       --<a href="./TMath.html">TMath</a> functions can be used too
+      -Functions, used as additive parts, shouldn't have any parameters,
+       even if those parameters are set.
+       --for example, if normalizing a sum of a gaus(0, 1) and a
+         gaus(0, 2), don't use the built-in <span class="string">"gaus"</span> of <a href="./TFormula.html">TFormula</a>,
+         because it has parameters, take <a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Gaus" title="Double_t TMath::Gaus(Double_t x,Double_t mean=0,Double_t sigma=1,Bool_t norm=kFALSE)">Gaus</a>(x, 0, 1) instead.
+      -Polynomials can be used like <span class="string">"pol3"</span>, ..<span class="string">"polN"</span>
+      -If fitting a more than 3-dimensional formula, variables should
+       be numbered as follows:
+       -- x[0], x[1], x[2]... For example, to fit  <span class="string">"1 ++ x[0] ++ x[1] ++ x[2] ++ x[3]*x[3]"</span>
+  2.2 Setting the formula:
+    2.2.1 If fitting a 1-2-3-dimensional formula, one can create a
+          TF123 based on a linear expression and pass this function
+          to the fitter:
+          --Example:
+            <a href="./TLinearFitter.html">TLinearFitter</a> *lf = new <a href="./TLinearFitter.html">TLinearFitter</a>();
+            <a href="./TF2.html">TF2</a> *f2 = new <a href="./TF2.html">TF2</a>(<span class="string">"f2"</span>, <span class="string">"x ++ y ++ x*x*y*y"</span>, -2, 2, -2, 2);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:SetFormula" title="void TLinearFitter::SetFormula(const char* formula) or overloads">SetFormula</a>(f2);
+          --The results of the fit are then stored in the function,
+            just like when the <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:Fit" title="TFitResultPtr TH1::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Double_t xmin=0,Double_t xmax=0) or overloads">Fit</a> or <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a> is used
+          --A linear function of this kind is by no means different
+            from any other function, it can be drawn, evaluated, etc.
+
+          --For multidimensional fitting, TFormulas of the form:
+            x[0]++...++x[n] can be used
+    2.2.2 There is no need to create the function if you don't want to,
+          the formula can be set by expression:
+          --Example:
+            // 2 is the number of dimensions
+            <a href="./TLinearFitter.html">TLinearFitter</a> *lf = new <a href="./TLinearFitter.html">TLinearFitter</a>(2);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:SetFormula" title="void TLinearFitter::SetFormula(const char* formula) or overloads">SetFormula</a>(<span class="string">"x ++ y ++ x*x*y*y"</span>);
+
+    2.2.3 The fastest functions to compute are polynomials and hyperplanes.
+          --Polynomials are set the usual way: <span class="string">"pol1"</span>, <span class="string">"pol2"</span>,...
+          --Hyperplanes are set by expression <span class="string">"hyp3"</span>, <span class="string">"hyp4"</span>, ...
+          ---The <span class="string">"hypN"</span> expressions only work when the linear fitter
+             is used directly, not through <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:Fit" title="TFitResultPtr TH1::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Double_t xmin=0,Double_t xmax=0) or overloads">Fit</a> or <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a>.
+             To fit a graph or a histogram with a hyperplane, define
+             the function as <span class="string">"1++x++y"</span>.
+          ---A constant term is assumed for a hyperplane, when using
+             the <span class="string">"hypN"</span> expression, so <span class="string">"hyp3"</span> is in fact fitting with
+             <span class="string">"1++x++y++z"</span> function.
+          --Fitting hyperplanes is much faster than fitting other
+            expressions so if performance is vital, calculate the
+            function values beforehand and give them to the fitter
+            as variables
+          --Example:
+            You want to fit <span class="string">"sin(x)|cos(2*x)"</span> very fast. Calculate
+            sin(x) and cos(2*x) beforehand and store them in array *data.
+            Then:
+            <a href="./TLinearFitter.html">TLinearFitter</a> *lf=new <a href="./TLinearFitter.html">TLinearFitter</a>(2, <span class="string">"hyp2"</span>);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:AssignData" title="void TLinearFitter::AssignData(Int_t npoints,Int_t xncols,Double_t* x,Double_t* y,Double_t* e=0)">AssignData</a>(npoint, 2, data, y);
+
+  2.3 Resetting the formula
+    2.3.1 If the input data is stored (or added via <a href="./TLinearFitter.html#TLinearFitter:AssignData" title="void TLinearFitter::AssignData(Int_t npoints,Int_t xncols,Double_t* x,Double_t* y,Double_t* e=0)">AssignData</a>() function),
+          the fitting formula can be reset without re-adding all the points.
+          --Example:
+            <a href="./TLinearFitter.html">TLinearFitter</a> *lf=new <a href="./TLinearFitter.html">TLinearFitter</a>(<span class="string">"1++x++x*x"</span>);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:AssignData" title="void TLinearFitter::AssignData(Int_t npoints,Int_t xncols,Double_t* x,Double_t* y,Double_t* e=0)">AssignData</a>(n, 1, x, y, e);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:Eval" title="Int_t TLinearFitter::Eval()">Eval</a>()
+            //looking at the parameter significance, you see,
+            // that maybe the fit will improve, if you take out
+            // the constant term
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:SetFormula" title="void TLinearFitter::SetFormula(const char* formula) or overloads">SetFormula</a>(<span class="string">"x++x*x"</span>);
+            lf-&gt;<a href="./TLinearFitter.html#TLinearFitter:Eval" title="Int_t TLinearFitter::Eval()">Eval</a>();
+
+    2.3.2 If the input data is not stored, the fitter will have to be
+          cleared and the data will have to be added again to try a
+          different formula.
+
+ 3.Accessing the fit results
+  3.1 There are methods in the fitter to access all relevant information:
+      --<a href="./TLinearFitter.html#TLinearFitter:GetParameters" title="void TLinearFitter::GetParameters(TVectorD&amp; vpar)">GetParameters</a>, <a href="./TLinearFitter.html#TLinearFitter:GetCovarianceMatrix" title="Double_t* TLinearFitter::GetCovarianceMatrix() or overloads">GetCovarianceMatrix</a>, etc
+      --the t-values of parameters and their significance can be reached by
+        <a href="./TLinearFitter.html#TLinearFitter:GetParTValue" title="Double_t TLinearFitter::GetParTValue(Int_t ipar)">GetParTValue</a>() and <a href="./TLinearFitter.html#TLinearFitter:GetParSignificance" title="Double_t TLinearFitter::GetParSignificance(Int_t ipar)">GetParSignificance</a>() methods
+  3.2 If fitting with a pre-defined TF123, the fit results are also
+      written into this function.
+
+
+ 4.Robust fitting - Least Trimmed Squares regression (LTS)
+   Outliers are atypical(by definition), infrequant observations; data points
+   which do not appear to follow the characteristic distribution of the rest
+   of the data. These may reflect genuine properties of the underlying
+   phenomenon(variable), or be due to measurement errors or anomalies which
+   shouldn't be modelled. (StatSoft electronic textbook)
+
+   Even a single gross outlier can greatly influence the results of least-
+   squares fitting procedure, and in this case use of robust(resistant) methods
+   is recommended.
+
+   The method implemented here is based on the article and algorithm:
+   <span class="string">"Computing LTS Regression for Large Data Sets"</span> by
+   P.J.Rousseeuw and Katrien Van Driessen
+   The idea of the method is to find the fitting coefficients for a subset
+   of h observations (out of n) with the smallest sum of squared residuals.
+   The size of the subset h should lie between (npoints + nparameters +1)/2
+   and n, and represents the minimal number of good points in the dataset.
+   The default value is set to (npoints + nparameters +1)/2, but of course
+   if you are sure that the data contains less outliers it's better to change
+   h according to your data.
+
+   To perform a robust fit, call <a href="./TLinearFitter.html#TLinearFitter:EvalRobust" title="Int_t TLinearFitter::EvalRobust(Double_t h=-1)">EvalRobust</a>() function instead of <a href="./TLinearFitter.html#TLinearFitter:Eval" title="Int_t TLinearFitter::Eval()">Eval</a>() after
+   adding the points and setting the fitting function.
+   Note, that standard errors on parameters are not computed!
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TLinearFitter:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TLinearFitter:TLinearFitter">TLinearFitter</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TLinearFitter:TLinearFitter%2">TLinearFitter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TLinearFitter:TLinearFitter%4">TLinearFitter</a>(<span class="keyword">const</span> <a href="./TLinearFitter.html">TLinearFitter</a>&amp; tlf)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TLinearFitter:TLinearFitter%3">TLinearFitter</a>(<a href="./TFormula.html">TFormula</a>* function, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">"D"</span>)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TLinearFitter:TLinearFitter%1">TLinearFitter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">"D"</span>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TLinearFitter:_TLinearFitter">~TLinearFitter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Add">Add</a>(<a href="./TLinearFitter.html">TLinearFitter</a>* tlf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:AddPoint">AddPoint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> e = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:AddTempMatrices">AddTempMatrices</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:AssignData">AssignData</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> xncols, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* e = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Chisquare">Chisquare</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Chisquare%1">Chisquare</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TLinearFitter:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:ClearPoints">ClearPoints</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Eval">Eval</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:EvalRobust">EvalRobust</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h = -1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:ExecuteCommand">ExecuteCommand</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command, <a href="./ListOfTypes.html#Double_t">Double_t</a>* args, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TVirtualFitter.html">TVirtualFitter</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:Fitter"><span class="baseclass">TVirtualFitter::</span>Fitter</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 25)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:FixParameter">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:FixParameter%1">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetAtbVector">GetAtbVector</a>(<a href="./TVectorD.html">TVectorD</a>&amp; v)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetChisquare">GetChisquare</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetConfidenceIntervals%1">GetConfidenceIntervals</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Double_t">Double_t</a> cl = 0.95)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetConfidenceIntervals">GetConfidenceIntervals</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ci, <a href="./ListOfTypes.html#Double_t">Double_t</a> cl = 0.95)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetCovarianceMatrix">GetCovarianceMatrix</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetCovarianceMatrix%1">GetCovarianceMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; matr)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetCovarianceMatrixElement">GetCovarianceMatrixElement</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetDefaultFitter"><span class="baseclass">TVirtualFitter::</span>GetDefaultFitter</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetDesignMatrix">GetDesignMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; matr)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetErrorDef"><span class="baseclass">TVirtualFitter::</span>GetErrorDef</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetErrors">GetErrors</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vpar)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetErrors%1">GetErrors</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TVirtualFitter.html">TVirtualFitter</a>::<a href="./ListOfTypes.html#TVirtualFitter__FCNFunc_t">FCNFunc_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetFCN"><span class="baseclass">TVirtualFitter::</span>GetFCN</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./Foption_t.html">Foption_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetFitOption"><span class="baseclass">TVirtualFitter::</span>GetFitOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetFitSample">GetFitSample</a>(<a href="./TBits.html">TBits</a>&amp; bits)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TVirtualFitter.html">TVirtualFitter</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetFitter"><span class="baseclass">TVirtualFitter::</span>GetFitter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetMaxIterations"><span class="baseclass">TVirtualFitter::</span>GetMaxIterations</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetMethodCall"><span class="baseclass">TVirtualFitter::</span>GetMethodCall</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetNpoints">GetNpoints</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetNumberFreeParameters">GetNumberFreeParameters</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetNumberTotalParameters">GetNumberTotalParameters</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetObjectFit"><span class="baseclass">TVirtualFitter::</span>GetObjectFit</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParameter">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParameter%1">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; value, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParameters">GetParameters</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vpar)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParError">GetParError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParName">GetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParSignificance">GetParSignificance</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetParTValue">GetParTValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetPrecision"><span class="baseclass">TVirtualFitter::</span>GetPrecision</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetStats">GetStats</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetSumLog">GetSumLog</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetUserFunc"><span class="baseclass">TVirtualFitter::</span>GetUserFunc</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetXfirst"><span class="baseclass">TVirtualFitter::</span>GetXfirst</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetXlast"><span class="baseclass">TVirtualFitter::</span>GetXlast</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GetY2">GetY2</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetYfirst"><span class="baseclass">TVirtualFitter::</span>GetYfirst</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetYlast"><span class="baseclass">TVirtualFitter::</span>GetYlast</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetZfirst"><span class="baseclass">TVirtualFitter::</span>GetZfirst</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:GetZlast"><span class="baseclass">TVirtualFitter::</span>GetZlast</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TLinearFitter:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:IsFixed">IsFixed</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Merge">Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TLinearFitter.html">TLinearFitter</a>&amp;</td><td class="funcname"><a class="funcname" href="#TLinearFitter:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TLinearFitter.html">TLinearFitter</a>&amp; tlf)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:PrintResults">PrintResults</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level, <a href="./ListOfTypes.html#Double_t">Double_t</a> amin = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:ReleaseParameter">ReleaseParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetBasisFunctions">SetBasisFunctions</a>(<a href="./TObjArray.html">TObjArray</a>* functions)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetCache"><span class="baseclass">TVirtualFitter::</span>SetCache</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> psize)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetDefaultFitter"><span class="baseclass">TVirtualFitter::</span>SetDefaultFitter</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetDim">SetDim</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetErrorDef"><span class="baseclass">TVirtualFitter::</span>SetErrorDef</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> errdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetFCN"><span class="baseclass">TVirtualFitter::</span>SetFCN</a>(<span class="keyword">void</span>* fcn)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetFCN%1"><span class="baseclass">TVirtualFitter::</span>SetFCN</a>(<span class="keyword">void</span> (*)(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;f, <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>) fcn)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetFitMethod">SetFitMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetFitOption"><span class="baseclass">TVirtualFitter::</span>SetFitOption</a>(<a href="./Foption_t.html">Foption_t</a> option)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetFitter"><span class="baseclass">TVirtualFitter::</span>SetFitter</a>(<a href="./TVirtualFitter.html">TVirtualFitter</a>* fitter, <a href="./ListOfTypes.html#Int_t">Int_t</a> maxpar = 25)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetFormula">SetFormula</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetFormula%1">SetFormula</a>(<a href="./TFormula.html">TFormula</a>* function)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetMaxIterations"><span class="baseclass">TVirtualFitter::</span>SetMaxIterations</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> niter = 5000)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetObjectFit"><span class="baseclass">TVirtualFitter::</span>SetObjectFit</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:SetParameter">SetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <span class="keyword">char</span>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetPrecision"><span class="baseclass">TVirtualFitter::</span>SetPrecision</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> prec = 1e-6)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetUserFunc"><span class="baseclass">TVirtualFitter::</span>SetUserFunc</a>(<a href="./TObject.html">TObject</a>* userfunc)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetXfirst"><span class="baseclass">TVirtualFitter::</span>SetXfirst</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> first)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetXlast"><span class="baseclass">TVirtualFitter::</span>SetXlast</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetYfirst"><span class="baseclass">TVirtualFitter::</span>SetYfirst</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> first)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetYlast"><span class="baseclass">TVirtualFitter::</span>SetYlast</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetZfirst"><span class="baseclass">TVirtualFitter::</span>SetZfirst</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> first)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TVirtualFitter.html#TVirtualFitter:SetZlast"><span class="baseclass">TVirtualFitter::</span>SetZlast</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:StoreData">StoreData</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> store)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:UpdateMatrix">UpdateMatrix</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:AddToDesign">AddToDesign</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:ComputeTValues">ComputeTValues</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:CreateSubset">CreateSubset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> h, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:CStep">CStep</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> step, <a href="./ListOfTypes.html#Int_t">Int_t</a> h, <a href="./ListOfTypes.html#Double_t">Double_t</a>* residuals, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a> start, <a href="./ListOfTypes.html#Int_t">Int_t</a> end)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Graph2DLinearFitter">Graph2DLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:GraphLinearFitter">GraphLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:HistLinearFitter">HistLinearFitter</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Linf">Linf</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:MultiGraphLinearFitter">MultiGraphLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TLinearFitter:Partition">Partition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nmini, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TLinearFitter:RDraw">RDraw</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TLinearFitter:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fCache"><span class="baseclass">TVirtualFitter::</span>fCache</a></td><td class="datadesc">[fCacheSize] array of points data (fNpoints*fPointSize &lt; fCacheSize words)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fCacheSize"><span class="baseclass">TVirtualFitter::</span>fCacheSize</a></td><td class="datadesc">Size of the fCache array</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">void</span></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fFCN"><span class="baseclass">TVirtualFitter::</span>fFCN</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TMethodCall.html">TMethodCall</a>*</td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fMethodCall"><span class="baseclass">TVirtualFitter::</span>fMethodCall</a></td><td class="datadesc">Pointer to MethodCall in case of interpreted function</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fNpoints"><span class="baseclass">TVirtualFitter::</span>fNpoints</a></td><td class="datadesc">Number of points to fit</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fObjectFit"><span class="baseclass">TVirtualFitter::</span>fObjectFit</a></td><td class="datadesc">pointer to object being fitted</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./Foption_t.html">Foption_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fOption"><span class="baseclass">TVirtualFitter::</span>fOption</a></td><td class="datadesc">struct with the fit options</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fPointSize"><span class="baseclass">TVirtualFitter::</span>fPointSize</a></td><td class="datadesc">Number of words per point in the cache</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fUserFunc"><span class="baseclass">TVirtualFitter::</span>fUserFunc</a></td><td class="datadesc">pointer to user theoretical function (a TF1*)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fXfirst"><span class="baseclass">TVirtualFitter::</span>fXfirst</a></td><td class="datadesc">first bin on X axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fXlast"><span class="baseclass">TVirtualFitter::</span>fXlast</a></td><td class="datadesc">last  bin on X axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fYfirst"><span class="baseclass">TVirtualFitter::</span>fYfirst</a></td><td class="datadesc">first bin on Y axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fYlast"><span class="baseclass">TVirtualFitter::</span>fYlast</a></td><td class="datadesc">last  bin on Y axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fZfirst"><span class="baseclass">TVirtualFitter::</span>fZfirst</a></td><td class="datadesc">first bin on Z axis</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fZlast"><span class="baseclass">TVirtualFitter::</span>fZlast</a></td><td class="datadesc">last  bin on Z axis</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./TString.html">TString</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgDefault"><span class="baseclass">TVirtualFitter::</span>fgDefault</a></td><td class="datadesc">name of the default fitter ("Minuit","Fumili",etc)</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgErrorDef"><span class="baseclass">TVirtualFitter::</span>fgErrorDef</a></td><td class="datadesc">Error definition (default=1)</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./TVirtualFitter.html">TVirtualFitter</a>*</td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgFitter"><span class="baseclass">TVirtualFitter::</span>fgFitter</a></td><td class="datadesc">Current fitter (default TFitter)</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgMaxiter"><span class="baseclass">TVirtualFitter::</span>fgMaxiter</a></td><td class="datadesc">Maximum number of iterations</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgMaxpar"><span class="baseclass">TVirtualFitter::</span>fgMaxpar</a></td><td class="datadesc">Maximum number of fit parameters for current fitter</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TVirtualFitter.html#TVirtualFitter:fgPrecision"><span class="baseclass">TVirtualFitter::</span>fgPrecision</a></td><td class="datadesc">maximum precision</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fAtb"></a>fAtb</td><td class="datadesc">vector Atb</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fAtbTemp"></a>fAtbTemp</td><td class="datadesc">! temporary vector, used for num.stability</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fAtbTemp2"></a>fAtbTemp2</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fAtbTemp3"></a>fAtbTemp3</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TLinearFitter:fChisquare"></a>fChisquare</td><td class="datadesc">Chisquare of the fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TLinearFitter:fDesign"></a>fDesign</td><td class="datadesc">matrix AtA</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TLinearFitter:fDesignTemp"></a>fDesignTemp</td><td class="datadesc">! temporary matrix, used for num.stability</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TLinearFitter:fDesignTemp2"></a>fDesignTemp2</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TLinearFitter:fDesignTemp3"></a>fDesignTemp3</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fE"></a>fE</td><td class="datadesc">the errors if they are known</td></tr>
+<tr class="data"><td class="datatype"><a href="./TBits.html">TBits</a></td><td class="dataname"><a name="TLinearFitter:fFitsample"></a>fFitsample</td><td class="datadesc">indices of points, used in the robust fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a>*</td><td class="dataname"><a name="TLinearFitter:fFixedParams"></a>fFixedParams</td><td class="datadesc">[fNfixed] array of fixed/released params</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TLinearFitter:fFormula"></a>fFormula</td><td class="datadesc">the formula</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fFormulaSize"></a>fFormulaSize</td><td class="datadesc">length of the formula</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TLinearFitter:fFunctions"></a>fFunctions</td><td class="datadesc">array of basis functions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fH"></a>fH</td><td class="datadesc">number of good points in robust fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./TFormula.html">TFormula</a>*</td><td class="dataname"><a name="TLinearFitter:fInputFunction"></a>fInputFunction</td><td class="datadesc">the function being fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TLinearFitter:fIsSet"></a>fIsSet</td><td class="datadesc">Has the formula been set?</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fNdim"></a>fNdim</td><td class="datadesc">number of dimensions in the formula</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fNfixed"></a>fNfixed</td><td class="datadesc">number of fixed parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fNfunctions"></a>fNfunctions</td><td class="datadesc">number of basis functions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fNpoints"></a>fNpoints</td><td class="datadesc">number of points</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixDSym.html">TMatrixDSym</a></td><td class="dataname"><a name="TLinearFitter:fParCovar"></a>fParCovar</td><td class="datadesc">matrix of parameters' covariances</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fParSign"></a>fParSign</td><td class="datadesc">significance levels of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fParams"></a>fParams</td><td class="datadesc">vector of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TLinearFitter:fRobust"></a>fRobust</td><td class="datadesc">true when performing a robust fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TLinearFitter:fSpecial"></a>fSpecial</td><td class="datadesc">=100+n if fitting a polynomial of deg.n</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TLinearFitter:fStoreData"></a>fStoreData</td><td class="datadesc">Is the data stored?</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fTValues"></a>fTValues</td><td class="datadesc">T-Values of parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TLinearFitter:fVal"></a>fVal[1000]</td><td class="datadesc">! temporary</td></tr>
+<tr class="data"><td class="datatype"><a href="./TMatrixD.html">TMatrixD</a></td><td class="dataname"><a name="TLinearFitter:fX"></a>fX</td><td class="datadesc">values of x</td></tr>
+<tr class="data"><td class="datatype"><a href="./TVectorD.html">TVectorD</a></td><td class="dataname"><a name="TLinearFitter:fY"></a>fY</td><td class="datadesc">the values being fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TLinearFitter:fY2"></a>fY2</td><td class="datadesc">sum of square of y, used for chisquare</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TLinearFitter:fY2Temp"></a>fY2Temp</td><td class="datadesc">! temporary variable used for num.stability</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TLinearFitter:Class_Charts"></a>Class Charts</h2>
+<map name="MapTLinearFitter_Inh" id="MapTLinearFitter_Inh">
+<area shape="rect" href="./TVirtualFitter.html" title="TVirtualFitter" alt="" coords="403,9,520,30"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="226,9,303,30"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="32,9,103,30"/>
+</map>
+<map name="MapTLinearFitter_InhMem" id="MapTLinearFitter_InhMem">
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="859,60,947,183"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="760,60,848,212"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="661,60,749,212"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="891,193,915,228"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="859,239,947,577"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="760,223,848,591"/>
+<area shape="rect" href="./TVirtualFitter.html" alt="" coords="661,223,749,591"/>
+<area shape="rect" href="./TVirtualFitter.html" title="TVirtualFitter" alt="" coords="651,16,957,601"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTLinearFitter_Lib" id="MapTLinearFitter_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="463,199,591,247"/>
+</map>
+<div class="tabs">
+<a id="imgTLinearFitter_Inh" class="tabsel" href="inh/TLinearFitter_Inh.png" onclick="javascript:return SetImg('Charts','inh/TLinearFitter_Inh.png');">Inheritance</a>
+<a id="imgTLinearFitter_InhMem" class="tab" href="inhmem/TLinearFitter_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TLinearFitter_InhMem.png');">Inherited Members</a>
+<a id="imgTLinearFitter_Incl" class="tab" href="incl/TLinearFitter_Incl.png" onclick="javascript:return SetImg('Charts','incl/TLinearFitter_Incl.png');">Includes</a>
+<a id="imgTLinearFitter_Lib" class="tab" href="lib/TLinearFitter_Lib.png" onclick="javascript:return SetImg('Charts','lib/TLinearFitter_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTLinearFitter_Inh" src="inh/TLinearFitter_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:TLinearFitter" href="src/TLinearFitter.cxx.html#RxzzP">TLinearFitter</a>()</span><br />
+<div class="funccomm"><pre>default c-tor, input data is stored
+If you don't want to store the input data,
+run the function <a href="./TLinearFitter.html#TLinearFitter:StoreData" title="void TLinearFitter::StoreData(Bool_t store)">StoreData</a>(<a href="./ListOfTypes.html#Bool_t">kFALSE</a>) after constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:TLinearFitter%2" href="src/TLinearFitter.cxx.html#g3ZORD">TLinearFitter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim)</span><br />
+<div class="funccomm"><pre>The parameter stands for number of dimensions in the fitting formula
+The input data is stored. If you don't want to store the input data,
+run the function <a href="./TLinearFitter.html#TLinearFitter:StoreData" title="void TLinearFitter::StoreData(Bool_t store)">StoreData</a>(<a href="./ListOfTypes.html#Bool_t">kFALSE</a>) after constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:TLinearFitter%1" href="src/TLinearFitter.cxx.html#WREWvD">TLinearFitter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">"D"</span>)</span><br />
+<div class="funccomm"><pre>First parameter stands for number of dimensions in the fitting formula
+Second parameter is the fitting formula: see class description for formula syntax
+Options:
+The option is to store or not to store the data
+If you don't want to store the data, choose <span class="string">""</span> for the option, or run
+<a href="./TLinearFitter.html#TLinearFitter:StoreData" title="void TLinearFitter::StoreData(Bool_t store)">StoreData</a>(kFalse) member function after the constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:TLinearFitter%3" href="src/TLinearFitter.cxx.html#dnnsXE">TLinearFitter</a>(<a href="./TFormula.html">TFormula</a>* function, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt = <span class="string">"D"</span>)</span><br />
+<div class="funccomm"><pre>This constructor uses a linear function. How to create it?
+<a href="./TFormula.html">TFormula</a> now accepts formulas of the following kind:
+<a href="./TFormula.html">TFormula</a>(<span class="string">"f"</span>, <span class="string">"x++y++z++x*x"</span>) or
+<a href="./TFormula.html">TFormula</a>(<span class="string">"f"</span>, <span class="string">"x[0]++x[1]++x[2]*x[2]"</span>);
+Other than the look, it's in no
+way different from the regular formula, it can be evaluated,
+drawn, etc.
+The option is to store or not to store the data
+If you don't want to store the data, choose <span class="string">""</span> for the option, or run
+<a href="./TLinearFitter.html#TLinearFitter:StoreData" title="void TLinearFitter::StoreData(Bool_t store)">StoreData</a>(kFalse) member function after the constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:TLinearFitter%4" href="src/TLinearFitter.cxx.html#axo6JB">TLinearFitter</a>(<span class="keyword">const</span> <a href="./TLinearFitter.html">TLinearFitter</a>&amp; tlf)</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Copy" title="void TNamed::Copy(TObject&amp; named)">Copy</a> ctor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TLinearFitter:_TLinearFitter" href="src/TLinearFitter.cxx.html#VlqH5C">~TLinearFitter</a>()</span><br />
+<div class="funccomm"><pre> Linear fitter cleanup.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TLinearFitter.html">TLinearFitter</a>&amp; <a class="funcname" name="TLinearFitter:operator_" href="src/TLinearFitter.cxx.html#dbIghD">operator=</a>(<span class="keyword">const</span> <a href="./TLinearFitter.html">TLinearFitter</a>&amp; tlf)</span><br />
+<div class="funccomm"><pre> Assignment operator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:Add" href="src/TLinearFitter.cxx.html#DwHguC">Add</a>(<a href="./TLinearFitter.html">TLinearFitter</a>* tlf)</span><br />
+<div class="funccomm"><pre><a href="./TLinearFitter.html#TLinearFitter:Add" title="void TLinearFitter::Add(TLinearFitter* tlf)">Add</a> another linear fitter to this linear fitter. Points and Design matrices
+are added, but the previos fitting results (if any) are deleted.
+Fitters must have same formulas (this is not checked). Fixed parameters are not changed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:AddPoint" href="src/TLinearFitter.cxx.html#Bx58zB">AddPoint</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> e = 1)</span><br />
+<div class="funccomm"><pre>Adds 1 point to the fitter.
+First parameter stands for the coordinates of the point, where the function is measured
+Second parameter - the value being fitted
+Third parameter - weight(measurement error) of this point (=1 by default)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:AssignData" href="src/TLinearFitter.cxx.html#QV13GC">AssignData</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> npoints, <a href="./ListOfTypes.html#Int_t">Int_t</a> xncols, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a>* e = 0)</span><br />
+<div class="funccomm"><pre>This function is to use when you already have all the data in arrays
+and don't want to copy them into the fitter. In this function, the Use() method
+of <a href="./TVectorD.html">TVectorD</a> and <a href="./TMatrixD.html">TMatrixD</a> is used, so no bytes are physically moved around.
+First parameter - number of points to fit
+Second parameter - number of variables in the model
+Third parameter - the variables of the model, stored in the following way:
+(x0(0), x1(0), x2(0), x3(0), x0(1), x1(1), x2(1), x3(1),...
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:AddToDesign" href="src/TLinearFitter.cxx.html#mebWBC">AddToDesign</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</span><br />
+<div class="funccomm"><pre><a href="./TLinearFitter.html#TLinearFitter:Add" title="void TLinearFitter::Add(TLinearFitter* tlf)">Add</a> a point to the AtA matrix and to the Atb vector.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:AddTempMatrices" href="src/TLinearFitter.cxx.html#Vo4GU">AddTempMatrices</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:Clear" href="src/TLinearFitter.cxx.html#p1LqED">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>Clears everything. Used in <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:Fit" title="TFitResultPtr TH1::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Double_t xmin=0,Double_t xmax=0) or overloads">Fit</a> and <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:ClearPoints" href="src/TLinearFitter.cxx.html#a_Z3T">ClearPoints</a>()</span><br />
+<div class="funccomm"><pre>To be used when different sets of points are fitted with the same formula.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:Chisquare" href="src/TLinearFitter.cxx.html#U.ueGD">Chisquare</a>()</span><br />
+<div class="funccomm"><pre>Calculates the chisquare.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:ComputeTValues" href="src/TLinearFitter.cxx.html#l4_hdD">ComputeTValues</a>()</span><br />
+<div class="funccomm"><pre> Computes parameters' t-values and significance
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:Eval" href="src/TLinearFitter.cxx.html#QJ7vk">Eval</a>()</span><br />
+<div class="funccomm"><pre> Perform the fit and evaluate the parameters
+ Returns 0 if the fit is ok, 1 if there are errors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:FixParameter" href="src/TLinearFitter.cxx.html#vwDDM">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</span><br />
+<div class="funccomm"><pre>Fixes paramter #ipar at its current value.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:FixParameter%1" href="src/TLinearFitter.cxx.html#a3Zp_B">FixParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <a href="./ListOfTypes.html#Double_t">Double_t</a> parvalue)</span><br />
+<div class="funccomm"><pre>Fixes parameter #ipar at value parvalue.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:ReleaseParameter" href="src/TLinearFitter.cxx.html#ny.FV">ReleaseParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</span><br />
+<div class="funccomm"><pre>Releases parameter #ipar.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetAtbVector" href="src/TLinearFitter.cxx.html#WjDuDD">GetAtbVector</a>(<a href="./TVectorD.html">TVectorD</a>&amp; v)</span><br />
+<div class="funccomm"><pre>Get the Atb vector - a vector, used for internal computations
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetChisquare" href="src/TLinearFitter.cxx.html#p13mSE">GetChisquare</a>()</span><br />
+<div class="funccomm"><pre> Get the <a href="./TLinearFitter.html#TLinearFitter:Chisquare" title="void TLinearFitter::Chisquare() or overloads">Chisquare</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetConfidenceIntervals" href="src/TLinearFitter.cxx.html#sNZCDD">GetConfidenceIntervals</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* ci, <a href="./ListOfTypes.html#Double_t">Double_t</a> cl = 0.95)</span><br />
+<div class="funccomm"><pre>Computes point-by-point confidence intervals for the fitted function
+Parameters:
+n - number of points
+ndim - dimensions of points
+x - points, at which to compute the intervals, for ndim &gt; 1
+    should be in order: (x0,y0, x1, y1, ... xn, yn)
+ci - computed intervals are returned in this array
+cl - confidence level, default=0.95
+
+NOTE, that this method can only be used when the fitting function inherits from a <a href="./TF1.html">TF1</a>,
+so it's not possible when the fitting function was set as a string or as a pure <a href="./TFormula.html">TFormula</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetConfidenceIntervals%1" href="src/TLinearFitter.cxx.html#PBNslC">GetConfidenceIntervals</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Double_t">Double_t</a> cl = 0.95)</span><br />
+<div class="funccomm"><pre>Computes confidence intervals at level cl. Default is 0.95
+The <a href="./TObject.html">TObject</a> parameter can be a <a href="./TGraphErrors.html">TGraphErrors</a>, a <a href="./TGraph2DErrors.html">TGraph2DErrors</a> or a TH123.
+For Graphs, confidence intervals are computed for each point,
+the value of the graph at that point is set to the function value at that
+point, and the graph y-errors (or z-errors) are set to the value of
+the confidence interval at that point
+For Histograms, confidence intervals are computed for each bin center
+The bin content of this bin is then set to the function value at the bin
+center, and the bin error is set to the confidence interval value.
+Allowed combinations:
+Fitted object               Passed object
+<a href="./TGraph.html">TGraph</a>                      <a href="./TGraphErrors.html">TGraphErrors</a>, <a href="./TH1.html">TH1</a>
+<a href="./TGraphErrors.html">TGraphErrors</a>, AsymmErrors   <a href="./TGraphErrors.html">TGraphErrors</a>, <a href="./TH1.html">TH1</a>
+<a href="./TH1.html">TH1</a>                         <a href="./TGraphErrors.html">TGraphErrors</a>, <a href="./TH1.html">TH1</a>
+<a href="./TGraph2D.html">TGraph2D</a>                    <a href="./TGraph2DErrors.html">TGraph2DErrors</a>, <a href="./TH2.html">TH2</a>
+<a href="./TGraph2DErrors.html">TGraph2DErrors</a>              <a href="./TGraph2DErrors.html">TGraph2DErrors</a>, <a href="./TH2.html">TH2</a>
+<a href="./TH2.html">TH2</a>                         <a href="./TGraph2DErrors.html">TGraph2DErrors</a>, <a href="./TH2.html">TH2</a>
+<a href="./TH3.html">TH3</a>                         <a href="./TH3.html">TH3</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TLinearFitter:GetCovarianceMatrix" href="src/TLinearFitter.cxx.html#FI36iE">GetCovarianceMatrix</a>() const</span><br />
+<div class="funccomm"><pre>Returns covariance matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetCovarianceMatrix%1" href="src/TLinearFitter.cxx.html#oKiqg">GetCovarianceMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; matr)</span><br />
+<div class="funccomm"><pre>Returns covariance matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetDesignMatrix" href="src/TLinearFitter.cxx.html#pabrT">GetDesignMatrix</a>(<a href="./TMatrixD.html">TMatrixD</a>&amp; matr)</span><br />
+<div class="funccomm"><pre>Returns the internal design matrix
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetErrors" href="src/TLinearFitter.cxx.html#zRu82E">GetErrors</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vpar)</span><br />
+<div class="funccomm"><pre>Returns parameter errors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetParameters" href="src/TLinearFitter.cxx.html#ft1VLB">GetParameters</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vpar)</span><br />
+<div class="funccomm"><pre>Returns parameter values
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GetParameter%1" href="src/TLinearFitter.cxx.html#B0K0vB">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar, <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; value, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; ) const</span><br />
+<div class="funccomm"><pre>Returns the value and the name of the parameter #ipar
+NB: In the calling function he argument name must be set large enough
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetParError" href="src/TLinearFitter.cxx.html#Z2t2gD">GetParError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+<div class="funccomm"><pre>Returns the error of parameter #ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TLinearFitter:GetParName" href="src/TLinearFitter.cxx.html#lx4rPE">GetParName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+<div class="funccomm"><pre>Returns name of parameter #ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetParTValue" href="src/TLinearFitter.cxx.html#vZ5d.C">GetParTValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</span><br />
+<div class="funccomm"><pre>Returns the t-value for parameter #ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetParSignificance" href="src/TLinearFitter.cxx.html#Bfq9LC">GetParSignificance</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar)</span><br />
+<div class="funccomm"><pre>Returns the significance of parameter #ipar
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetFitSample" href="src/TLinearFitter.cxx.html#NSI5MC">GetFitSample</a>(<a href="./TBits.html">TBits</a>&amp; bits)</span><br />
+<div class="funccomm"><pre>For robust lts fitting, returns the sample, on which the best fit was based
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:Merge" href="src/TLinearFitter.cxx.html#L4fuzE">Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</span><br />
+<div class="funccomm"><pre><a href="./TLinearFitter.html#TLinearFitter:Merge" title="Int_t TLinearFitter::Merge(TCollection* list)">Merge</a> objects in list
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:SetBasisFunctions" href="src/TLinearFitter.cxx.html#U2fy_D">SetBasisFunctions</a>(<a href="./TObjArray.html">TObjArray</a>* functions)</span><br />
+<div class="funccomm"><pre>set the basis functions in case the fitting function is not
+ set directly
+ The <a href="./TLinearFitter.html">TLinearFitter</a> will manage and delete the functions contained in the list
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:SetDim" href="src/TLinearFitter.cxx.html#RxQm6C">SetDim</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre>set the number of dimensions
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:SetFormula" href="src/TLinearFitter.cxx.html#QlbSZD">SetFormula</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula)</span><br />
+<div class="funccomm"><pre>Additive parts should be separated by <span class="string">"++"</span>.
+Examples (ai are parameters to fit):
+1.fitting function: a0*x0 + a1*x1 + a2*x2
+  input formula <span class="string">"x[0]++x[1]++x[2]"</span>
+2.<a href="./TMath.html">TMath</a> functions can be used:
+  fitting function: a0*<a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:Gaus" title="Double_t TMath::Gaus(Double_t x,Double_t mean=0,Double_t sigma=1,Bool_t norm=kFALSE)">Gaus</a>(x, 0, 1) + a1*y
+  input formula:    <span class="string">"TMath::Gaus(x, 0, 1)++y"</span>
+fills the array of functions
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:SetFormula%1" href="src/TLinearFitter.cxx.html#cl1vd">SetFormula</a>(<a href="./TFormula.html">TFormula</a>* function)</span><br />
+<div class="funccomm"><pre>Set the fitting function.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TLinearFitter:UpdateMatrix" href="src/TLinearFitter.cxx.html#qdqqVC">UpdateMatrix</a>()</span><br />
+<div class="funccomm"><pre>Update the design matrix after the formula has been changed.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:ExecuteCommand" href="src/TLinearFitter.cxx.html#u202kE">ExecuteCommand</a>(<span class="keyword">const</span> <span class="keyword">char</span>* command, <a href="./ListOfTypes.html#Double_t">Double_t</a>* args, <a href="./ListOfTypes.html#Int_t">Int_t</a> nargs)</span><br />
+<div class="funccomm"><pre>To use in <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a> and <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:Fit" title="TFitResultPtr TH1::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Double_t xmin=0,Double_t xmax=0) or overloads">Fit</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:PrintResults" href="src/TLinearFitter.cxx.html#YWBKcD">PrintResults</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level, <a href="./ListOfTypes.html#Double_t">Double_t</a> amin = 0) const</span><br />
+<div class="funccomm"><pre> Level = 3 (to be consistent with minuit)  prints parameters and parameter
+ errors.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GraphLinearFitter" href="src/TLinearFitter.cxx.html#dr_nTD">GraphLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</span><br />
+<div class="funccomm"><pre>Used in <a href="./TGraph.html">TGraph</a>::<a href="./TGraph.html#TGraph:Fit" title="TFitResultPtr TGraph::Fit(const char* formula,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;,Axis_t xmin=0,Axis_t xmax=0) or overloads">Fit</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:Graph2DLinearFitter" href="src/TLinearFitter.cxx.html#AjZP0">Graph2DLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</span><br />
+<div class="funccomm"><pre>Minimisation function for a <a href="./TGraph2D.html">TGraph2D</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:MultiGraphLinearFitter" href="src/TLinearFitter.cxx.html#lz8pvE">MultiGraphLinearFitter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h)</span><br />
+<div class="funccomm"><pre>Minimisation function for a <a href="./TMultiGraph.html">TMultiGraph</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:HistLinearFitter" href="src/TLinearFitter.cxx.html#bil3aE">HistLinearFitter</a>()</span><br />
+<div class="funccomm"><pre> Minimization function for H1s using a <a href="./TLinearFitter.html#TLinearFitter:Chisquare" title="void TLinearFitter::Chisquare() or overloads">Chisquare</a> method.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:Streamer" href="src/TLinearFitter.cxx.html#sRgJsC">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:EvalRobust" href="src/TLinearFitter.cxx.html#DDxNHE">EvalRobust</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> h = -1)</span><br />
+<div class="funccomm"><pre>Finds the parameters of the fitted function in case data contains
+outliers.
+Parameter h stands for the minimal fraction of good points in the
+dataset (h &lt; 1, i.e. for 70% of good points take h=0.7).
+The default value of h*Npoints is  (Npoints + Nparameters+1)/2
+If the user provides a value of h smaller than above, default is taken
+See class description for the algorithm details
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:CreateSubset" href="src/TLinearFitter.cxx.html#mFqBZD">CreateSubset</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntotal, <a href="./ListOfTypes.html#Int_t">Int_t</a> h, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index)</span><br />
+<div class="funccomm"><pre>Creates a p-subset to start
+ntotal - total number of points from which the subset is chosen
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:CStep" href="src/TLinearFitter.cxx.html#D4nbPC">CStep</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> step, <a href="./ListOfTypes.html#Int_t">Int_t</a> h, <a href="./ListOfTypes.html#Double_t">Double_t</a>* residuals, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index, <a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a> start, <a href="./ListOfTypes.html#Int_t">Int_t</a> end)</span><br />
+<div class="funccomm"><pre>The <a href="./TLinearFitter.html#TLinearFitter:CStep" title="Double_t TLinearFitter::CStep(Int_t step,Int_t h,Double_t* residuals,Int_t* index,Int_t* subdat,Int_t start,Int_t end)">CStep</a> procedure, as described in the article
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TLinearFitter:Linf" href="src/TLinearFitter.cxx.html#LHo_j">Linf</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:Partition" href="src/TLinearFitter.cxx.html#JrfrQE">Partition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nmini, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</span><br />
+<div class="funccomm"><pre>divides the elements into approximately equal subgroups
+number of elements in each subgroup is stored in indsubdat
+number of subgroups is returned
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:RDraw" href="src/TLinearFitter.cxx.html#nYkKD">RDraw</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* subdat, <a href="./ListOfTypes.html#Int_t">Int_t</a>* indsubdat)</span><br />
+<div class="funccomm"><pre>Draws ngroup nonoverlapping subdatasets out of a dataset of size n
+such that the selected case numbers are uniformly distributed from 1 to n
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:Chisquare" href="src/TLinearFitter.h.html#cJC8RC">Chisquare</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetCovarianceMatrixElement" href="src/TLinearFitter.h.html#I8gq9D">GetCovarianceMatrixElement</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fParCovar" title="TMatrixDSym TLinearFitter::fParCovar">fParCovar</a>(i, j);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:GetErrors" href="src/TLinearFitter.h.html#PfdX2">GetErrors</a>(<a href="./TVectorD.html">TVectorD</a>&amp; vpar)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GetNumberTotalParameters" href="src/TLinearFitter.h.html#cMNi5B">GetNumberTotalParameters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fNfunctions" title="Int_t TLinearFitter::fNfunctions">fNfunctions</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GetNumberFreeParameters" href="src/TLinearFitter.h.html#AC1O8">GetNumberFreeParameters</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fNfunctions" title="Int_t TLinearFitter::fNfunctions">fNfunctions</a>-<a href="./TLinearFitter.html#TLinearFitter:fNfixed" title="Int_t TLinearFitter::fNfixed">fNfixed</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GetNpoints" href="src/TLinearFitter.h.html#yKfrQ">GetNpoints</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fNpoints" title="Int_t TLinearFitter::fNpoints">fNpoints</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetParameter" href="src/TLinearFitter.h.html#rpIDrE">GetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fParams" title="TVectorD TLinearFitter::fParams">fParams</a>(ipar);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetY2" href="src/TLinearFitter.h.html#h_fSjB">GetY2</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fY2" title="Double_t TLinearFitter::fY2">fY2</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TLinearFitter:IsFixed" href="src/TLinearFitter.h.html#pjM6RB">IsFixed</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ipar) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TLinearFitter.html#TLinearFitter:fFixedParams" title="Bool_t* TLinearFitter::fFixedParams">fFixedParams</a>[ipar];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:StoreData" href="src/TLinearFitter.h.html#kV6VXB">StoreData</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> store)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TLinearFitter.html#TLinearFitter:fStoreData" title="Bool_t TLinearFitter::fStoreData">fStoreData</a>=store;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:GetStats" href="src/TLinearFitter.h.html#P12GxC">GetStats</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TLinearFitter:GetSumLog" href="src/TLinearFitter.h.html#FAO0AE">GetSumLog</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TLinearFitter:SetFitMethod" href="src/TLinearFitter.h.html#UOSzMD">SetFitMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* )</span><br />
+
+<div class="code"><code class="inlinecode">{;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TLinearFitter:SetParameter" href="src/TLinearFitter.h.html#GD7PAD">SetParameter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <span class="keyword">char</span>* , <a href="./ListOfTypes.html#Double_t">Double_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Anna+Kreshuk"> Anna Kreshuk 04/03/2005</a> </em><em>&raquo; Copyright   (C) 1995-2005, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/minuit:$Id: TLinearFitter.h 27022 2008-12-19 10:34:54Z pcanal $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

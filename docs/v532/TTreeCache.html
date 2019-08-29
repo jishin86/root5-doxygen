@@ -1,0 +1,711 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:23:50 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TTreeCache</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TTreeCache','libTree','TTreeCache.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TTreeCache.h.html">header file</a>
+<a class="descrheadentry" href="src/TTreeCache.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tree/tree/inc/TTreeCache.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/tree/tree/src/TTreeCache.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TTreeCache:description">class description</a> 
+<a class="descrheadentry" href="#TTreeCache:Function_Members">function members</a>
+<a class="descrheadentry" href="#TTreeCache:Data_Members">data members</a>
+<a class="descrheadentry" href="#TTreeCache:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./TREE_Index.html">TREE</a>
+ &#187; <a class="locationlevel" href="./TREE_TREE_Index.html">TREE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TTreeCache</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TTreeCache:description"></a>class TTreeCache: public <a href="./TFileCacheRead.html">TFileCacheRead</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TTreeCache.html">TTreeCache</a>
+
+A specialized <a href="./TFileCacheRead.html">TFileCacheRead</a> object for a <a href="./TTree.html">TTree</a>
+This class acts as a file cache, registering automatically the
+baskets from the branches being processed (<a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a> or
+<a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Process" title="Long64_t TTree::Process(const char* filename,Option_t* option=&quot;&quot;,Long64_t nentries=1000000000,Long64_t firstentry=0) or overloads">Process</a> and TSelectors) when in the learning phase.
+The learning phase is by default 100 entries.
+It can be changed via <a href="./TTreeCache.html">TTreeCache</a>::<a href="./TTreeCache.html#TTreeCache:SetLearnEntries" title="void TTreeCache::SetLearnEntries(Int_t n=10)">SetLearnEntries</a>.
+
+This cache speeds-up considerably the performance, in particular
+when the Tree is accessed remotely via a high latency network.
+
+The default cache size (10 Mbytes) may be changed via the function
+<a href="./TTreeCache.html">TTreeCache</a>::SetCacheSize
+
+Only the baskets for the requested entry range are put in the cache
+
+For each Tree being processed a <a href="./TTreeCache.html">TTreeCache</a> object is created.
+This object is automatically deleted when the Tree is deleted or
+when the file is deleted.
+
+-Special case of a <a href="./TChain.html">TChain</a>
+Once the training is done on the first Tree, the list of branches
+in the cache is kept for the following files.
+
+-Special case of a TEventlist
+if the Tree or <a href="./TChain.html">TChain</a> has a TEventlist, only the buffers
+referenced by the list are put in the cache.
+
+  The learning period is started or restarted when:
+     - <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:SetCacheSize" title="void TTree::SetCacheSize(Long64_t cachesize=-1)">SetCacheSize</a> is called for the first time.
+     - <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:SetCacheSize" title="void TTree::SetCacheSize(Long64_t cachesize=-1)">SetCacheSize</a> is called a second time with a different size.
+     - <a href="./TTreeCache.html">TTreeCache</a>::<a href="./TTreeCache.html#TTreeCache:StartLearningPhase" title="void TTreeCache::StartLearningPhase()">StartLearningPhase</a> is called.
+     - <a href="./TTree.html">TTree</a>[Cache]::<a href="./TTreeCache.html#TTreeCache:SetEntryRange" title="void TTreeCache::SetEntryRange(Long64_t emin,Long64_t emax)">SetEntryRange</a> is called
+          * and the learning is not yet finished
+          * and has not been set to manual
+          * and the new minimun entry is different.
+
+  The learning period is stopped (and prefetching is actually started) when:
+     - <a href="./TTree.html">TTree</a>[Cache]::<a href="./TTreeCache.html#TTreeCache:StopLearningPhase" title="void TTreeCache::StopLearningPhase()">StopLearningPhase</a> is called.
+     - An entry outside the 'learning' range is requested
+       The 'learning range is from <a href="./TTreeCache.html#TTreeCache:fEntryMin" title="Long64_t TTreeCache::fEntryMin">fEntryMin</a> (default to 0) to
+       <a href="./TTreeCache.html#TTreeCache:fEntryMin" title="Long64_t TTreeCache::fEntryMin">fEntryMin</a> + <a href="./TTreeCache.html#TTreeCache:fgLearnEntries" title="Int_t TTreeCache::fgLearnEntries">fgLearnEntries</a> (default to 100).
+     - A 'cached' <a href="./TChain.html">TChain</a> switches over to a new file.
+
+     WHY DO WE NEED the TreeCache when doing data analysis?
+
+
+  When writing a <a href="./TTree.html">TTree</a>, the branch buffers are kept in memory.
+  A typical branch buffersize (before compression) is typically 32 KBytes.
+  After compression, the zipped buffer may be just a few Kbytes.
+  The branch buffers cannot be much larger in case of Trees with several
+  hundred or thousand branches.
+  When writing, this does not generate a performance problem because branch
+  buffers are always written sequentially and the OS is in general clever enough
+  to flush the data to the output file when a few MBytes of data have to be written.
+  When reading at the contrary, one may hit a performance problem when reading
+  across a network (LAN or WAN) and the network latency is high.
+  For example in a WAN with 10ms latency, reading 1000 buffers of 10 KBytes each
+  with no cache will imply 10s penalty where a local read of the 10 MBytes would
+  take about 1 second.
+  The TreeCache will try to prefetch all the buffers for the selected branches
+  such that instead of transfering 1000 buffers of 10 Kbytes, it will be able
+  to transfer one single large buffer of 10 Mbytes in one single transaction.
+  Not only the TreeCache minimizes the number of transfers, but in addition
+  it can sort the blocks to be read in increasing order such that the file
+  is read sequentially.
+  Systems like xrootd, dCache or httpd take advantage of the TreeCache in
+  reading ahead as much data as they can and return to the application
+  the maximum data specified in the cache and have the next chunk of data ready
+  when the next request comes.
+
+
+     HOW TO USE the TreeCache
+
+
+  A few use cases are discussed below. It is not simple to activate the cache
+  by default (except case1 below) because there are many possible configurations.
+  In some applications you know a priori the list of branches to read.
+  In other applications the analysis loop calls several layers of user functions
+  where it is impossible to predict a priori which branches will be used. This
+  is probably the most frequent case. In this case <a href="./ROOT.html">ROOT</a> I/O will flag used
+  branches automatically when a branch buffer is read during the learning phase.
+  The TreeCache interface provides functions to instruct the cache about the used
+  branches if they are known a priori. In the examples below, portions of analysis
+  code are shown. The few statements involving the TreeCache are marked with //&lt;&lt;&lt;
+
+
+  1- with <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>
+
+  the TreeCache is automatically used by <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>. The function knows
+  which branches are used in the query and it puts automatically these branches
+  in the cache. The entry range is also known automatically.
+
+
+  2- with <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Process" title="Long64_t TTree::Process(const char* filename,Option_t* option=&quot;&quot;,Long64_t nentries=1000000000,Long64_t firstentry=0) or overloads">Process</a> and TSelectors
+
+  You must enable the cache and tell the system which branches to cache
+  and also specify the entry range. It is important to specify the entry range
+  in case you process only a subset of the events, otherwise you run the risk
+  to store in the cache entries that you do not need.
+
+      --example 2a
+--
+   <a href="./TTree.html">TTree</a> *T = (<a href="./TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"mytree"</span>);
+   <a href="./ListOfTypes.html#Long64_t">Long64_t</a> nentries = T-&gt;GetEntries();
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> cachesize = 10000000; //10 MBytes
+   T-&gt;SetCacheSize(cachesize); //&lt;&lt;&lt;
+   T-&gt;AddBranchToCache(<span class="string">"*"</span>,<a href="./ListOfTypes.html#Bool_t">kTRUE</a>);    //&lt;&lt;&lt; add all branches to the cache
+   T-&gt;Process('myselector.C+<span class="string">");</span>
+   //in the <a href="./TSelector.html">TSelector</a>::<a href="./TSelector.html#TSelector:Process" title="Bool_t TSelector::Process(Long64_t )">Process</a> function we read all branches
+   T-&gt;GetEntry(i);
+--      ... here you process your entry
+
+
+      --example 2b
+  in the Process function we read a subset of the branches.
+  Only the branches used in the first entry will be put in the cache
+--
+   <a href="./TTree.html">TTree</a> *T = (<a href="./TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"mytree"</span>);
+   //we want to process only the 200 first entries
+   <a href="./ListOfTypes.html#Long64_t">Long64_t</a> nentries=200;
+   <a href="./ListOfTypes.html#int">int</a> efirst= 0;
+   <a href="./ListOfTypes.html#int">int</a> elast = efirst+nentries;
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> cachesize = 10000000; //10 MBytes
+   <a href="./TTreeCache.html">TTreeCache</a>::<a href="./TTreeCache.html#TTreeCache:SetLearnEntries" title="void TTreeCache::SetLearnEntries(Int_t n=10)">SetLearnEntries</a>(1);  //&lt;&lt;&lt; we can take the decision after 1 entry
+   T-&gt;SetCacheSize(cachesize);      //&lt;&lt;&lt;
+   T-&gt;SetCacheEntryRange(efirst,elast); //&lt;&lt;&lt;
+   T-&gt;Process('myselector.C+<span class="string">","</span><span class="string">",nentries,efirst);</span>
+   // in the <a href="./TSelector.html">TSelector</a>::<a href="./TSelector.html#TSelector:Process" title="Bool_t TSelector::Process(Long64_t )">Process</a> we read only 2 branches
+   <a href="./TBranch.html">TBranch</a> *b1 = T-&gt;GetBranch(<span class="string">"branch1"</span>);
+   b1-&gt;GetEntry(i);
+   if (somecondition) return;
+   <a href="./TBranch.html">TBranch</a> *b2 = T-&gt;GetBranch(<span class="string">"branch2"</span>);
+   b2-&gt;GetEntry(i);
+      ... here you process your entry
+--
+
+  3- with your own event loop
+
+    --example 3a
+      in your analysis loop, you always use 2 branches. You want to prefetch
+      the branch buffers for these 2 branches only.
+--
+   <a href="./TTree.html">TTree</a> *T = (<a href="./TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"mytree"</span>);
+   <a href="./TBranch.html">TBranch</a> *b1 = T-&gt;GetBranch(<span class="string">"branch1"</span>);
+   <a href="./TBranch.html">TBranch</a> *b2 = T-&gt;GetBranch(<span class="string">"branch2"</span>);
+   <a href="./ListOfTypes.html#Long64_t">Long64_t</a> nentries = T-&gt;GetEntries();
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> cachesize = 10000000; //10 MBytes
+   T-&gt;SetCacheSize(cachesize);     //&lt;&lt;&lt;
+   T-&gt;AddBranchToCache(b1,<a href="./ListOfTypes.html#Bool_t">kTRUE</a>);  //&lt;&lt;&lt;add branch1 and branch2 to the cache
+   T-&gt;AddBranchToCache(b2,<a href="./ListOfTypes.html#Bool_t">kTRUE</a>);  //&lt;&lt;&lt;
+   T-&gt;StopCacheLearningPhase();    //&lt;&lt;&lt;
+   for (<a href="./ListOfTypes.html#Long64_t">Long64_t</a> i=0;i&lt;nentries;i++) {
+      T-&gt;LoadTree(i); //&lt;&lt;&lt; important call when calling <a href="./TBranch.html">TBranch</a>::<a href="./TBranch.html#TBranch:GetEntry" title="Int_t TBranch::GetEntry(Long64_t entry=0,Int_t getall=0)">GetEntry</a> after
+      b1-&gt;GetEntry(i);
+      if (some condition not met) continue;
+      b2-&gt;GetEntry(i);
+      if (some condition not met) continue;
+      //here we read the full event only in some rare cases.
+      //there is no point in caching the other branches as it might be
+      //more economical to read only the branch buffers really used.
+      T-&gt;GetEntry(i);
+      .. process the rare but interesting cases.
+      ... here you process your entry
+   }
+--
+   --example 3b
+      in your analysis loop, you always use 2 branches in the main loop.
+      you also call some analysis functions where a few more branches will be read.
+      but you do not know a priori which ones. There is no point in prefetching
+      branches that will be used very rarely.
+--
+   <a href="./TTree.html">TTree</a> *T = (<a href="./TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"mytree"</span>);
+   <a href="./ListOfTypes.html#Long64_t">Long64_t</a> nentries = T-&gt;GetEntries();
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> cachesize = 10000000;   //10 MBytes
+   T-&gt;SetCacheSize(cachesize);   //&lt;&lt;&lt;
+   T-&gt;SetCacheLearnEntries(5);   //&lt;&lt;&lt; we can take the decision after 5 entries
+   <a href="./TBranch.html">TBranch</a> *b1 = T-&gt;GetBranch(<span class="string">"branch1"</span>);
+   <a href="./TBranch.html">TBranch</a> *b2 = T-&gt;GetBranch(<span class="string">"branch2"</span>);
+   for (<a href="./ListOfTypes.html#Long64_t">Long64_t</a> i=0;i&lt;nentries;i++) {
+      T-&gt;LoadTree(i);
+      b1-&gt;GetEntry(i);
+      if (some condition not met) continue;
+      b2-&gt;GetEntry(i);
+      //at this point we may call a user function where a few more branches
+      //will be read conditionally. These branches will be put in the cache
+      //if they have been used in the first 10 entries
+      if (some condition not met) continue;
+      //here we read the full event only in some rare cases.
+      //there is no point in caching the other branches as it might be
+      //more economical to read only the branch buffers really used.
+      T-&gt;GetEntry(i);
+      .. process the rare but interesting cases.
+      ... here you process your entry
+   }
+--
+
+
+     SPECIAL CASES WHERE TreeCache should not be activated
+
+
+   When reading only a small fraction of all entries such that not all branch
+   buffers are read, it might be faster to run without a cache.
+
+
+   HOW TO VERIFY That the TreeCache has been used and check its performance
+
+
+  Once your analysis loop has terminated, you can access/print the number
+  of effective system reads for a given file with a code like
+  (where <a href="./TFile.html">TFile</a>* f is a pointer to your file)
+
+   printf(<span class="string">"Reading %lld bytes in %d transactions\n"</span>,f-&gt;GetBytesRead(),  f-&gt;GetReadCalls());
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TTreeCache:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTreeCache:TTreeCache%1">TTreeCache</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTreeCache:TTreeCache%2">TTreeCache</a>(<a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Int_t">Int_t</a> buffersize = 0)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TTreeCache:_TTreeCache">~TTreeCache</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:AddBranch">AddBranch</a>(<a href="./TBranch.html">TBranch</a>* b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:AddBranch%1">AddBranch</a>(<span class="keyword">const</span> <span class="keyword">char</span>* branch, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTreeCache:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:DropBranch">DropBranch</a>(<a href="./TBranch.html">TBranch</a>* b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:DropBranch%1">DropBranch</a>(<span class="keyword">const</span> <span class="keyword">char</span>* branch, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:FillBuffer">FillBuffer</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:GetBufferSize"><span class="baseclass">TFileCacheRead::</span>GetBufferSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="#TTreeCache:GetCachedBranches">GetCachedBranches</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:GetEfficiency">GetEfficiency</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:GetEfficiencyRel">GetEfficiencyRel</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:GetLearnEntries">GetLearnEntries</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TTree.html">TTree</a>*</td><td class="funcname"><a class="funcname" href="#TTreeCache:GetOwner">GetOwner</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:GetPrefetchedBlocks"><span class="baseclass">TFileCacheRead::</span>GetPrefetchedBlocks</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TFilePrefetch.html">TFilePrefetch</a>*</td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:GetPrefetchObj"><span class="baseclass">TFileCacheRead::</span>GetPrefetchObj</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TTree.html">TTree</a>*</td><td class="funcname"><a class="funcname" href="#TTreeCache:GetTree">GetTree</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:GetUnzipBuffer"><span class="baseclass">TFileCacheRead::</span>GetUnzipBuffer</a>(<span class="keyword">char</span>**, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Bool_t">Bool_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTreeCache:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:IsAsyncReading"><span class="baseclass">TFileCacheRead::</span>IsAsyncReading</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:IsEnablePrefetching"><span class="baseclass">TFileCacheRead::</span>IsEnablePrefetching</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:IsLearning">IsLearning</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:Prefetch"><span class="baseclass">TFileCacheRead::</span>Prefetch</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:ReadBuffer">ReadBuffer</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:ReadBufferExt"><span class="baseclass">TFileCacheRead::</span>ReadBufferExt</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; loc)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:ReadBufferExtNormal"><span class="baseclass">TFileCacheRead::</span>ReadBufferExtNormal</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; loc)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:ReadBufferExtPrefetch"><span class="baseclass">TFileCacheRead::</span>ReadBufferExtPrefetch</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; loc)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:ReadBufferNormal">ReadBufferNormal</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTreeCache:ReadBufferPrefetch">ReadBufferPrefetch</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:ResetCache">ResetCache</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:SecondPrefetch"><span class="baseclass">TFileCacheRead::</span>SecondPrefetch</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:SecondSort"><span class="baseclass">TFileCacheRead::</span>SecondSort</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:SetEnablePrefetching"><span class="baseclass">TFileCacheRead::</span>SetEnablePrefetching</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> setPrefetching = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:SetEntryRange">SetEntryRange</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> emin, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> emax)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:SetFile"><span class="baseclass">TFileCacheRead::</span>SetFile</a>(<a href="./TFile.html">TFile</a>* file)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:SetLearnEntries">SetLearnEntries</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n = 10)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:SetSkipZip"><span class="baseclass">TFileCacheRead::</span>SetSkipZip</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TFileCacheRead.html#TFileCacheRead:Sort"><span class="baseclass">TFileCacheRead::</span>Sort</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:StartLearningPhase">StartLearningPhase</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:StopLearningPhase">StopLearningPhase</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTreeCache:UpdateBranches">UpdateBranches</a>(<a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> owner = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTreeCache:TTreeCache">TTreeCache</a>(<span class="keyword">const</span> <a href="./TTreeCache.html">TTreeCache</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TTreeCache.html">TTreeCache</a>&amp;</td><td class="funcname"><a class="funcname" href="#TTreeCache:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TTreeCache.html">TTreeCache</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TTreeCache:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fAsyncReading"><span class="baseclass">TFileCacheRead::</span>fAsyncReading</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBIsSorted"><span class="baseclass">TFileCacheRead::</span>fBIsSorted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBIsTransferred"><span class="baseclass">TFileCacheRead::</span>fBIsTransferred</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBLen"><span class="baseclass">TFileCacheRead::</span>fBLen</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBNb"><span class="baseclass">TFileCacheRead::</span>fBNb</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBNseek"><span class="baseclass">TFileCacheRead::</span>fBNseek</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBNtot"><span class="baseclass">TFileCacheRead::</span>fBNtot</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBPos"><span class="baseclass">TFileCacheRead::</span>fBPos</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeek"><span class="baseclass">TFileCacheRead::</span>fBSeek</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekIndex"><span class="baseclass">TFileCacheRead::</span>fBSeekIndex</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekLen"><span class="baseclass">TFileCacheRead::</span>fBSeekLen</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekPos"><span class="baseclass">TFileCacheRead::</span>fBSeekPos</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekSize"><span class="baseclass">TFileCacheRead::</span>fBSeekSize</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekSort"><span class="baseclass">TFileCacheRead::</span>fBSeekSort</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBSeekSortLen"><span class="baseclass">TFileCacheRead::</span>fBSeekSortLen</a></td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TTreeCache:fBrNames"></a>fBrNames</td><td class="datadesc">! list of branch names in the cache</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a>*</td><td class="dataname"><a name="TTreeCache:fBranches"></a>fBranches</td><td class="datadesc">! List of branches to be stored in the cache</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBuffer"><span class="baseclass">TFileCacheRead::</span>fBuffer</a></td><td class="datadesc">[fBufferSize] buffer of contiguous prefetched blocks</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBufferLen"><span class="baseclass">TFileCacheRead::</span>fBufferLen</a></td><td class="datadesc">Current buffer length (&lt;= fBufferSize)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBufferSize"><span class="baseclass">TFileCacheRead::</span>fBufferSize</a></td><td class="datadesc">Allocated size of fBuffer (at a given time)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fBufferSizeMin"><span class="baseclass">TFileCacheRead::</span>fBufferSizeMin</a></td><td class="datadesc">Original size of fBuffer</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fEnablePrefetching"><span class="baseclass">TFileCacheRead::</span>fEnablePrefetching</a></td><td class="datadesc">reading by prefetching asynchronously </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TTreeCache:fEntryCurrent"></a>fEntryCurrent</td><td class="datadesc">! current lowest entry number in the cache</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TTreeCache:fEntryMax"></a>fEntryMax</td><td class="datadesc">! last entry in the cache</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TTreeCache:fEntryMin"></a>fEntryMin</td><td class="datadesc">! first entry in the cache</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TTreeCache:fEntryNext"></a>fEntryNext</td><td class="datadesc">! next entry number where cache must be filled</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TFile.html">TFile</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fFile"><span class="baseclass">TFileCacheRead::</span>fFile</a></td><td class="datadesc">Pointer to file</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fFillTimes"></a>fFillTimes</td><td class="datadesc">!  how many times we can fill the current buffer</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fFirstBuffer"></a>fFirstBuffer</td><td class="datadesc">! true if first buffer is used for prefetching</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="TTreeCache:fFirstEntry"></a>fFirstEntry</td><td class="datadesc">! save the value of the first entry</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fFirstTime"></a>fFirstTime</td><td class="datadesc">! save the fact that we processes the first entry</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fIsLearning"></a>fIsLearning</td><td class="datadesc">! true if cache is in learning mode</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fIsManual"></a>fIsManual</td><td class="datadesc">! true if cache is StopLearningPhase was used</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fIsSorted"><span class="baseclass">TFileCacheRead::</span>fIsSorted</a></td><td class="datadesc">True if fSeek array is sorted</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fIsTransferred"><span class="baseclass">TFileCacheRead::</span>fIsTransferred</a></td><td class="datadesc">True when fBuffer contains something valid</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fLen"><span class="baseclass">TFileCacheRead::</span>fLen</a></td><td class="datadesc">[fNb] Length of long buffers</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fNReadMiss"></a>fNReadMiss</td><td class="datadesc">Number of blocks read and not found in the chache</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fNReadOk"></a>fNReadOk</td><td class="datadesc">Number of blocks read and found in the cache</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fNReadPref"></a>fNReadPref</td><td class="datadesc">Number of blocks that were prefetched</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fNb"><span class="baseclass">TFileCacheRead::</span>fNb</a></td><td class="datadesc">Number of long buffers</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fNbranches"></a>fNbranches</td><td class="datadesc">! Number of branches in the cache</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fNseek"><span class="baseclass">TFileCacheRead::</span>fNseek</a></td><td class="datadesc">Number of blocks to be prefetched</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fNtot"><span class="baseclass">TFileCacheRead::</span>fNtot</a></td><td class="datadesc">Total size of prefetched blocks</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fOneTime"></a>fOneTime</td><td class="datadesc">! used in the learning phase </td></tr>
+<tr class="data"><td class="datatype"><a href="./TTree.html">TTree</a>*</td><td class="dataname"><a name="TTreeCache:fOwner"></a>fOwner</td><td class="datadesc">! pointer to the owner Tree/chain</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fPos"><span class="baseclass">TFileCacheRead::</span>fPos</a></td><td class="datadesc">[fNb] start of long buffers</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TFilePrefetch.html">TFilePrefetch</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fPrefetch"><span class="baseclass">TFileCacheRead::</span>fPrefetch</a></td><td class="datadesc">!Object that does the asynchronous reading in another thread</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fPrefetchedBlocks"><span class="baseclass">TFileCacheRead::</span>fPrefetchedBlocks</a></td><td class="datadesc">Number of blocks prefetched.</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fReadDirectionSet"></a>fReadDirectionSet</td><td class="datadesc">! read direction established</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTreeCache:fReverseRead"></a>fReverseRead</td><td class="datadesc">!  reading in reverse mode </td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeek"><span class="baseclass">TFileCacheRead::</span>fSeek</a></td><td class="datadesc">[fNseek] Position on file of buffers to be prefetched</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekIndex"><span class="baseclass">TFileCacheRead::</span>fSeekIndex</a></td><td class="datadesc">[fNseek] sorted index table of fSeek</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekLen"><span class="baseclass">TFileCacheRead::</span>fSeekLen</a></td><td class="datadesc">[fNseek] Length of buffers to be prefetched</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekPos"><span class="baseclass">TFileCacheRead::</span>fSeekPos</a></td><td class="datadesc">[fNseek] Position of sorted blocks in fBuffer</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekSize"><span class="baseclass">TFileCacheRead::</span>fSeekSize</a></td><td class="datadesc">Allocated size of fSeek</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekSort"><span class="baseclass">TFileCacheRead::</span>fSeekSort</a></td><td class="datadesc">[fNseek] Position on file of buffers to be prefetched (sorted)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a href="./TFileCacheRead.html#TFileCacheRead:fSeekSortLen"><span class="baseclass">TFileCacheRead::</span>fSeekSortLen</a></td><td class="datadesc">[fNseek] Length of buffers to be prefetched (sorted)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TTree.html">TTree</a>*</td><td class="dataname"><a name="TTreeCache:fTree"></a>fTree</td><td class="datadesc">! pointer to the current Tree</td></tr>
+<tr class="data"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTreeCache:fgLearnEntries"></a>fgLearnEntries</td><td class="datadesc">number of entries used for learning mode</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TTreeCache:Class_Charts"></a>Class Charts</h2>
+<map name="MapTTreeCache_Inh" id="MapTTreeCache_Inh">
+<area shape="rect" href="./TFileCacheRead.html" title="TFileCacheRead" alt="" coords="193,8,330,29"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="31,8,98,29"/>
+<area shape="rect" href="./TTreeCacheUnzip.html" title="TTreeCacheUnzip" alt="" coords="614,8,763,29"/>
+</map>
+<map name="MapTTreeCache_InhMem" id="MapTTreeCache_InhMem">
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="541,60,629,271"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="443,60,531,285"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="344,60,432,285"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="573,281,597,316"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="541,327,629,519"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="443,312,531,519"/>
+<area shape="rect" href="./TFileCacheRead.html" alt="" coords="344,312,432,519"/>
+<area shape="rect" href="./TFileCacheRead.html" title="TFileCacheRead" alt="" coords="333,16,640,529"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTTreeCache_Lib" id="MapTTreeCache_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="407,160,535,208"/>
+</map>
+<div class="tabs">
+<a id="imgTTreeCache_Inh" class="tabsel" href="inh/TTreeCache_Inh.png" onclick="javascript:return SetImg('Charts','inh/TTreeCache_Inh.png');">Inheritance</a>
+<a id="imgTTreeCache_InhMem" class="tab" href="inhmem/TTreeCache_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TTreeCache_InhMem.png');">Inherited Members</a>
+<a id="imgTTreeCache_Incl" class="tab" href="incl/TTreeCache_Incl.png" onclick="javascript:return SetImg('Charts','incl/TTreeCache_Incl.png');">Includes</a>
+<a id="imgTTreeCache_Lib" class="tab" href="lib/TTreeCache_Lib.png" onclick="javascript:return SetImg('Charts','lib/TTreeCache_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTTreeCache_Inh" src="inh/TTreeCache_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTreeCache:TTreeCache%1" href="src/TTreeCache.cxx.html#v1gxkE">TTreeCache</a>()</span><br />
+<div class="funccomm"><pre> Default Constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTreeCache:TTreeCache%2" href="src/TTreeCache.cxx.html#yqHWhC">TTreeCache</a>(<a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Int_t">Int_t</a> buffersize = 0)</span><br />
+<div class="funccomm"><pre> Constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTreeCache:_TTreeCache" href="src/TTreeCache.cxx.html#KZLTWD">~TTreeCache</a>()</span><br />
+<div class="funccomm"><pre> destructor. (in general called by the <a href="./TFile.html">TFile</a> destructor)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:AddBranch" href="src/TTreeCache.cxx.html#JCJPCD">AddBranch</a>(<a href="./TBranch.html">TBranch</a>* b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre>add a branch to the list of branches to be stored in the cache
+this function is called by <a href="./TBranch.html">TBranch</a>::<a href="./TBranch.html#TBranch:GetBasket" title="TBasket* TBranch::GetBasket(Int_t basket)">GetBasket</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:AddBranch%1" href="src/TTreeCache.cxx.html#MsfYpD">AddBranch</a>(<span class="keyword">const</span> <span class="keyword">char</span>* branch, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Add a branch to the list of branches to be stored in the cache
+ this is to be used by user (thats why we pass the name of the branch).
+ It works in exactly the same way as <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:SetBranchStatus" title="void TTree::SetBranchStatus(const char* bname,Bool_t status=1,UInt_t* found=0)">SetBranchStatus</a> so you
+ probably want to look over ther for details about the use of bname
+ with regular expresions.
+ The branches are taken with respect to the Owner of this <a href="./TTreeCache.html">TTreeCache</a>
+ (i.e. the original Tree)
+ NB: if bname=<span class="string">"*"</span> all branches are put in the cache and the learning phase stopped
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:DropBranch" href="src/TTreeCache.cxx.html#b9CQZ">DropBranch</a>(<a href="./TBranch.html">TBranch</a>* b, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre>Remove a branch to the list of branches to be stored in the cache
+this function is called by <a href="./TBranch.html">TBranch</a>::<a href="./TBranch.html#TBranch:GetBasket" title="TBasket* TBranch::GetBasket(Int_t basket)">GetBasket</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:DropBranch%1" href="src/TTreeCache.cxx.html#mCIaID">DropBranch</a>(<span class="keyword">const</span> <span class="keyword">char</span>* branch, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subbranches = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Remove a branch to the list of branches to be stored in the cache
+ this is to be used by user (thats why we pass the name of the branch).
+ It works in exactly the same way as <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:SetBranchStatus" title="void TTree::SetBranchStatus(const char* bname,Bool_t status=1,UInt_t* found=0)">SetBranchStatus</a> so you
+ probably want to look over ther for details about the use of bname
+ with regular expresions.
+ The branches are taken with respect to the Owner of this <a href="./TTreeCache.html">TTreeCache</a>
+ (i.e. the original Tree)
+ NB: if bname=<span class="string">"*"</span> all branches are put in the cache and the learning phase stopped
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTreeCache:FillBuffer" href="src/TTreeCache.cxx.html#b3tKN">FillBuffer</a>()</span><br />
+<div class="funccomm"><pre> Fill the cache buffer with the branches in the cache.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TTreeCache:GetEfficiency" href="src/TTreeCache.cxx.html#QK0_i">GetEfficiency</a>() const</span><br />
+<div class="funccomm"><pre> Give the total efficiency of the cache... defined as the ratio
+ of blocks found in the cache vs. the number of blocks prefetched
+ ( it could be more than 1 if we read the same block from the cache more
+   than once )
+ Note: This should eb used at the end of the processing or we will
+       get uncomplete stats
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TTreeCache:GetEfficiencyRel" href="src/TTreeCache.cxx.html#VqGIpC">GetEfficiencyRel</a>() const</span><br />
+<div class="funccomm"><pre> This will indicate a sort of relative efficiency... a ratio of the
+ reads found in the cache to the number of reads so far
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTreeCache:GetLearnEntries" href="src/TTreeCache.cxx.html#i_M7GB">GetLearnEntries</a>()</span><br />
+<div class="funccomm"><pre>static function returning the number of entries used to train the cache
+see <a href="./TTreeCache.html#TTreeCache:SetLearnEntries" title="void TTreeCache::SetLearnEntries(Int_t n=10)">SetLearnEntries</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTree.html">TTree</a> * <a class="funcname" name="TTreeCache:GetOwner" href="src/TTreeCache.cxx.html#Ad_iQC">GetOwner</a>() const</span><br />
+<div class="funccomm"><pre>return the owner of this cache.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTree.html">TTree</a> * <a class="funcname" name="TTreeCache:GetTree" href="src/TTreeCache.cxx.html#YBUHoD">GetTree</a>() const</span><br />
+<div class="funccomm"><pre>return Tree in the cache
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:Print" href="src/TTreeCache.cxx.html#rfcCxC">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TTreeCache.html#TTreeCache:Print" title="void TTreeCache::Print(Option_t* option=&quot;&quot;)">Print</a> cache statistics, like
+   ******TreeCache statistics for file: cms2.root ******
+   Number of branches in the cache ...: 1093
+   Cache Efficiency ..................: 0.997372
+   Cache Efficiency Rel...............: 1.000000
+   Learn entries......................: 100
+   Reading............................: 72761843 bytes in 7 transactions
+   Readahead..........................: 256000 bytes with overhead = 0 bytes
+   Average transaction................: 10394.549000 Kbytes
+   Number of blocks in current cache..: 210, total size: 6280352
+
+ if option = <span class="string">"a"</span> the list of blocks in the cache is printed
+ see also class <a href="./TTreePerfStats.html">TTreePerfStats</a>.
+ if option contains 'cachedbranches', the list of branches being
+ cached is printed.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTreeCache:ReadBufferNormal" href="src/TTreeCache.cxx.html#iWAyxB">ReadBufferNormal</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTreeCache:ReadBufferPrefetch" href="src/TTreeCache.cxx.html#PIPPzC">ReadBufferPrefetch</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTreeCache:ReadBuffer" href="src/TTreeCache.cxx.html#o_JWrB">ReadBuffer</a>(<span class="keyword">char</span>* buf, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> pos, <a href="./ListOfTypes.html#Int_t">Int_t</a> len)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a> buffer at position pos.
+ If pos is in the list of prefetched blocks read from fBuffer.
+ Otherwise try to fill the cache from the list of selected branches,
+ and recheck if pos is now in the list.
+ Returns
+    -1 in case of read failure,
+     0 in case not in cache,
+     1 in case read from cache.
+ This function overloads <a href="./TFileCacheRead.html">TFileCacheRead</a>::<a href="./TFileCacheRead.html#TFileCacheRead:ReadBuffer" title="Int_t TFileCacheRead::ReadBuffer(char* buf,Long64_t pos,Int_t len)">ReadBuffer</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:ResetCache" href="src/TTreeCache.cxx.html#cQw6NE">ResetCache</a>()</span><br />
+<div class="funccomm"><pre> This will simply clear the cache
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:SetEntryRange" href="src/TTreeCache.cxx.html#gE84IC">SetEntryRange</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> emin, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> emax)</span><br />
+<div class="funccomm"><pre> Set the minimum and maximum entry number to be processed
+ this information helps to optimize the number of baskets to read
+ when prefetching the branch buffers.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:SetLearnEntries" href="src/TTreeCache.cxx.html#I6rly">SetLearnEntries</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n = 10)</span><br />
+<div class="funccomm"><pre> Static function to set the number of entries to be used in learning mode
+ The default value for n is 10. n must be &gt;= 1
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:StartLearningPhase" href="src/TTreeCache.cxx.html#zldD0E">StartLearningPhase</a>()</span><br />
+<div class="funccomm"><pre> The name should be enough to explain the method.
+ The only additional comments is that the cache is cleaned before
+ the new learning phase.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:StopLearningPhase" href="src/TTreeCache.cxx.html#LBvzkB">StopLearningPhase</a>()</span><br />
+<div class="funccomm"><pre> This is the counterpart of <a href="./TTreeCache.html#TTreeCache:StartLearningPhase" title="void TTreeCache::StartLearningPhase()">StartLearningPhase</a>() and can be used to stop
+ the learning phase. It's useful when the user knows exactly what branches
+ he is going to use.
+ For the moment it's just a call to <a href="./TTreeCache.html#TTreeCache:FillBuffer" title="Bool_t TTreeCache::FillBuffer()">FillBuffer</a>() since that method
+ will create the buffer lists from the specified branches.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTreeCache:UpdateBranches" href="src/TTreeCache.cxx.html#kQHUd">UpdateBranches</a>(<a href="./TTree.html">TTree</a>* tree, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> owner = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)</span><br />
+<div class="funccomm"><pre> Update pointer to current Tree and recompute pointers to the branches in the cache.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTreeCache:TTreeCache" href="src/TTreeCache.h.html#vHmb6E">TTreeCache</a>(<span class="keyword">const</span> <a href="./TTreeCache.html">TTreeCache</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTreeCache.html">TTreeCache</a>&amp; <a class="funcname" name="TTreeCache:operator_" href="src/TTreeCache.h.html#iOXnID">operator=</a>(<span class="keyword">const</span> <a href="./TTreeCache.html">TTreeCache</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>    * <a class="funcname" name="TTreeCache:GetCachedBranches" href="src/TTreeCache.h.html#ntqAND">GetCachedBranches</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TTreeCache.html#TTreeCache:fBranches" title="TObjArray* TTreeCache::fBranches">fBranches</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTreeCache:IsLearning" href="src/TTreeCache.h.html#UZ4LeC">IsLearning</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TTreeCache.html#TTreeCache:fIsLearning" title="Bool_t TTreeCache::fIsLearning">fIsLearning</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun   04/06/2006</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/tree:$Id: TTreeCache.h 41101 2011-10-03 16:23:48Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:23</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

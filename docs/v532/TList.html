@@ -1,0 +1,614 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:19:19 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TList</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TList','libCore','TList.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TList.h.html">header file</a>
+<a class="descrheadentry" href="src/TList.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/cont/inc/TList.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/cont/src/TList.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TList:description">class description</a> 
+<a class="descrheadentry" href="#TList:Function_Members">function members</a>
+<a class="descrheadentry" href="#TList:Data_Members">data members</a>
+<a class="descrheadentry" href="#TList:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_CONT_Index.html">CONT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TList</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TList:description"></a>class TList: public <a href="./TSeqCollection.html">TSeqCollection</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TList.html">TList</a>
+
+A doubly linked list. All classes inheriting from <a href="./TObject.html">TObject</a> can be
+inserted in a <a href="./TList.html">TList</a>. <a href="./TList.html#TList:Before" title="TObject* TList::Before(const TObject* obj)">Before</a> being inserted into the list the object
+pointer is wrapped in a TObjLink object which contains, besides
+the object pointer also a previous and next pointer.
+
+There are basically four ways to iterate over a <a href="./TList.html">TList</a> (in order
+of preference, if not forced by other constraints):
+1) Using the R__FOR_EACH macro:
+GetListOfPrimitives()-&gt;R__FOR_EACH(<a href="./TObject.html">TObject</a>,<a href="./TCollection.html#TCollection:Paint" title="void TCollection::Paint(Option_t* option=&quot;&quot;)">Paint</a>)(option);
+
+2) Using the <a href="./TList.html">TList</a> iterator <a href="./TListIter.html">TListIter</a> (via the wrapper class
+<a href="./TIter.html">TIter</a>):
+<a href="./TIter.html">TIter</a> next(GetListOfPrimitives());
+while ((<a href="./TObject.html">TObject</a> *obj = next()))
+obj-&gt;<a href="./TCollection.html#TCollection:Draw" title="void TCollection::Draw(Option_t* option=&quot;&quot;)">Draw</a>(next.<a href="./TObject.html#TObject:GetOption" title="Option_t* TObject::GetOption()">GetOption</a>());
+
+3) Using the <a href="./TList.html">TList</a> iterator <a href="./TListIter.html">TListIter</a> and std::for_each
+algorithm:
+ A function object, which will be applied to each element
+ of the given range.
+struct STestFunctor {
+<a href="./ListOfTypes.html#bool">bool</a> operator()(<a href="./TObject.html">TObject</a> *aObj) {
+
+return <a href="./ListOfTypes.html#bool">true</a>;
+}
+}
+
+
+<a href="./TIter.html">TIter</a> iter(mylist);
+for_each( iter.Begin(), <a href="./TIter.html">TIter</a>::<a href="./TIter.html#TIter:End" title="TIter TIter::End()">End</a>(), STestFunctor() );
+
+4) Using the TObjLink list entries (that wrap the <a href="./TObject.html">TObject</a>*):
+TObjLink *lnk = GetListOfPrimitives()-&gt;<a href="./TList.html#TList:FirstLink" title="TObjLink* TList::FirstLink()">FirstLink</a>();
+while (lnk) {
+lnk-&gt;GetObject()-&gt;<a href="./TCollection.html#TCollection:Draw" title="void TCollection::Draw(Option_t* option=&quot;&quot;)">Draw</a>(lnk-&gt;<a href="./TObject.html#TObject:GetOption" title="Option_t* TObject::GetOption()">GetOption</a>());
+lnk = lnk-&gt;Next();
+}
+
+5) Using the <a href="./TList.html">TList</a>'s <a href="./TList.html#TList:After" title="TObject* TList::After(const TObject* obj)">After</a>() and <a href="./TList.html#TList:Before" title="TObject* TList::Before(const TObject* obj)">Before</a>() member functions:
+<a href="./TFree.html">TFree</a> *idcur = this;
+while (idcur) {
+
+
+idcur = (<a href="./TFree.html">TFree</a>*)GetListOfFree()-&gt;<a href="./TList.html#TList:After" title="TObject* TList::After(const TObject* obj)">After</a>(idcur);
+}
+
+Methods 2, 3 and 4 can also easily iterate backwards using either
+a backward <a href="./TIter.html">TIter</a> (using argument <a href="./ListOfTypes.html#Bool_t">kIterBackward</a>) or by using
+<a href="./TList.html#TList:LastLink" title="TObjLink* TList::LastLink()">LastLink</a>() and lnk-&gt;Prev() or by using the <a href="./TList.html#TList:Before" title="TObject* TList::Before(const TObject* obj)">Before</a>() member.
+</pre><!-- TDocHtmlDirective start --> <img src=gif/tlist.gif> 
+<!-- TDocHtmlDirective end --><pre>                           
+
+
+</pre><h4>This class is also known as (typedefs to this class)</h4><a href="./TTabCom.html">TTabCom</a>::<a href="./TTabCom__TContainer.html">TContainer</a></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TList:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TList:TList%1">TList</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TList:TList%2">TList</a>(<a href="./TObject.html">TObject</a>*)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TList:_TList">~TList</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Add">Add</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Add%1">Add</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddAfter">AddAfter</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* after, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddAfter%1">AddAfter</a>(TObjLink* after, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AddAll"><span class="baseclass">TCollection::</span>AddAll</a>(<span class="keyword">const</span> <a href="./TCollection.html">TCollection</a>* col)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddAt">AddAt</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddBefore">AddBefore</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* before, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddBefore%1">AddBefore</a>(TObjLink* before, <a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddFirst">AddFirst</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddFirst%1">AddFirst</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddLast">AddLast</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:AddLast%1">AddLast</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AddVector"><span class="baseclass">TCollection::</span>AddVector</a>(<a href="./TObject.html">TObject</a>* obj1)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:After">After</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:AssertClass"><span class="baseclass">TCollection::</span>AssertClass</a>(<a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:At">At</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:Before">Before</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Browse"><span class="baseclass">TCollection::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Capacity"><span class="baseclass">TCollection::</span>Capacity</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TList:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Clone"><span class="baseclass">TCollection::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Compare"><span class="baseclass">TCollection::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Contains"><span class="baseclass">TCollection::</span>Contains</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Contains%1"><span class="baseclass">TCollection::</span>Contains</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Delete">Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Draw"><span class="baseclass">TCollection::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Dump"><span class="baseclass">TCollection::</span>Dump</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:EmptyGarbageCollection"><span class="baseclass">TCollection::</span>EmptyGarbageCollection</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:FindObject">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:FindObject%1">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:First">First</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:FirstLink">FirstLink</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GarbageCollect"><span class="baseclass">TCollection::</span>GarbageCollect</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TCollection.html">TCollection</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetCurrentCollection"><span class="baseclass">TCollection::</span>GetCurrentCollection</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetEntries"><span class="baseclass">TCollection::</span>GetEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:GetLast"><span class="baseclass">TSeqCollection::</span>GetLast</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetName"><span class="baseclass">TCollection::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>**</td><td class="funcname"><a class="funcname" href="#TList:GetObjectRef">GetObjectRef</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetSize"><span class="baseclass">TCollection::</span>GetSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GrowBy"><span class="baseclass">TCollection::</span>GrowBy</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> delta) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Hash"><span class="baseclass">TCollection::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:IndexOf"><span class="baseclass">TSeqCollection::</span>IndexOf</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TList:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsArgNull"><span class="baseclass">TCollection::</span>IsArgNull</a>(<span class="keyword">const</span> <span class="keyword">char</span>* where, <span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TList:IsAscending">IsAscending</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsEmpty"><span class="baseclass">TCollection::</span>IsEmpty</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsFolder"><span class="baseclass">TCollection::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsOwner"><span class="baseclass">TCollection::</span>IsOwner</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:IsSortable"><span class="baseclass">TCollection::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:IsSorted"><span class="baseclass">TSeqCollection::</span>IsSorted</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:Last">Last</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:LastIndex"><span class="baseclass">TSeqCollection::</span>LastIndex</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:LastLink">LastLink</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:ls"><span class="baseclass">TCollection::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TIterator.html">TIterator</a>*</td><td class="funcname"><a class="funcname" href="#TList:MakeIterator">MakeIterator</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a href="./TString.html">dir</a> = <a href="./ListOfTypes.html#Bool_t">kIterForward</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TIterator.html">TIterator</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:MakeReverseIterator"><span class="baseclass">TCollection::</span>MakeReverseIterator</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:Merge"><span class="baseclass">TSeqCollection::</span>Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:ObjCompare"><span class="baseclass">TSeqCollection::</span>ObjCompare</a>(<a href="./TObject.html">TObject</a>* a, <a href="./TObject.html">TObject</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:operator()"><span class="baseclass">TCollection::</span>operator()</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Paint"><span class="baseclass">TCollection::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%1"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%2"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <span class="keyword">const</span> <span class="keyword">char</span>* wildcard, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Print%3"><span class="baseclass">TCollection::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./TPRegexp.html">TPRegexp</a>&amp; regexp, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort%1"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./TObject.html">TObject</a>** b, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:QSort%2"><span class="baseclass">TSeqCollection::</span>QSort</a>(<a href="./TObject.html">TObject</a>** a, <a href="./ListOfTypes.html#Int_t">Int_t</a> nBs, <a href="./TObject.html">TObject</a>*** b, <a href="./ListOfTypes.html#Int_t">Int_t</a> first, <a href="./ListOfTypes.html#Int_t">Int_t</a> last)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:RecursiveRemove">RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:Remove">Remove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TList:Remove%1">Remove</a>(TObjLink* lnk)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveAfter"><span class="baseclass">TSeqCollection::</span>RemoveAfter</a>(<a href="./TObject.html">TObject</a>* after)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:RemoveAll%1"><span class="baseclass">TCollection::</span>RemoveAll</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:RemoveAll"><span class="baseclass">TCollection::</span>RemoveAll</a>(<a href="./TCollection.html">TCollection</a>* col)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveAt"><span class="baseclass">TSeqCollection::</span>RemoveAt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveBefore"><span class="baseclass">TSeqCollection::</span>RemoveBefore</a>(<a href="./TObject.html">TObject</a>* before)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:RemoveFirst"><span class="baseclass">TSeqCollection::</span>RemoveFirst</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:RemoveLast">RemoveLast</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:SetCurrentCollection"><span class="baseclass">TCollection::</span>SetCurrentCollection</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:SetName"><span class="baseclass">TCollection::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:SetOwner"><span class="baseclass">TCollection::</span>SetOwner</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> enable = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Sort">Sort</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> order = kSortAscending)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:StartGarbageCollection"><span class="baseclass">TCollection::</span>StartGarbageCollection</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:UnSort"><span class="baseclass">TSeqCollection::</span>UnSort</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Write"><span class="baseclass">TCollection::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:Write%1"><span class="baseclass">TCollection::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TSeqCollection.html#TSeqCollection:Changed"><span class="baseclass">TSeqCollection::</span>Changed</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TList:DeleteLink">DeleteLink</a>(TObjLink* lnk)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TObjLink**</td><td class="funcname"><a class="funcname" href="#TList:DoSort">DoSort</a>(TObjLink** head, <a href="./ListOfTypes.html#Int_t">Int_t</a> n)</td></tr>
+<tr class="func"><td class="funcret">TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:FindLink">FindLink</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; idx) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:GetCollectionEntryName"><span class="baseclass">TCollection::</span>GetCollectionEntryName</a>(<a href="./TObject.html">TObject</a>* entry) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:LinkAt">LinkAt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TList:LnkCompare">LnkCompare</a>(TObjLink* l1, TObjLink* l2)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:NewLink">NewLink</a>(<a href="./TObject.html">TObject</a>* obj, TObjLink* prev = NULL)</td></tr>
+<tr class="func"><td class="funcret">virtual TObjLink*</td><td class="funcname"><a class="funcname" href="#TList:NewOptLink">NewOptLink</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt, TObjLink* prev = NULL)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:PrintCollectionEntry"><span class="baseclass">TCollection::</span>PrintCollectionEntry</a>(<a href="./TObject.html">TObject</a>* entry, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./ListOfTypes.html#Int_t">Int_t</a> recurse) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TCollection.html#TCollection:PrintCollectionHeader"><span class="baseclass">TCollection::</span>PrintCollectionHeader</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TList:TList">TList</a>(<span class="keyword">const</span> <a href="./TList.html">TList</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>&amp;</td><td class="funcname"><a class="funcname" href="#TList:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TList.html">TList</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TList:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TCollection::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TCollection.html#TCollection:kIsOwner">kIsOwner</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TCollection.html#TCollection:kInitCapacity">kInitCapacity</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TCollection.html#TCollection:kInitHashTableCapacity">kInitHashTableCapacity</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TList:fAscending"></a>fAscending</td><td class="datadesc">! sorting order (when calling Sort() or for TSortedList)</td></tr>
+<tr class="data"><td class="datatype">TObjLink*</td><td class="dataname"><a name="TList:fCache"></a>fCache</td><td class="datadesc">! cache to speedup sequential calling of Before() and After() functions</td></tr>
+<tr class="data"><td class="datatype">TObjLink*</td><td class="dataname"><a name="TList:fFirst"></a>fFirst</td><td class="datadesc">! pointer to first entry in linked list</td></tr>
+<tr class="data"><td class="datatype">TObjLink*</td><td class="dataname"><a name="TList:fLast"></a>fLast</td><td class="datadesc">! pointer to last entry in linked list</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TCollection.html#TCollection:fName"><span class="baseclass">TCollection::</span>fName</a></td><td class="datadesc">name of the collection</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TCollection.html#TCollection:fSize"><span class="baseclass">TCollection::</span>fSize</a></td><td class="datadesc">number of elements in collection</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TSeqCollection.html#TSeqCollection:fSorted"><span class="baseclass">TSeqCollection::</span>fSorted</a></td><td class="datadesc">true if collection has been sorted</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TList:Class_Charts"></a>Class Charts</h2>
+<map name="MapTList_Inh" id="MapTList_Inh">
+<area shape="rect" href="./TSeqCollection.html" title="TSeqCollection" alt="" coords="251,73,336,87"/>
+<area shape="rect" href="./TCollection.html" title="TCollection" alt="" coords="135,73,197,87"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="20,73,65,87"/>
+<area shape="rect" href="./RooList.html" title="RooList" alt="" coords="543,2,585,16"/>
+<area shape="rect" href="./TGridJobStatusList.html" title="TGridJobStatusList" alt="" coords="511,18,617,31"/>
+<area shape="rect" href="./TGridResult.html" title="TGridResult" alt="" coords="531,34,597,47"/>
+<area shape="rect" href="./THashList.html" title="THashList" alt="" coords="536,49,592,63"/>
+<area shape="rect" href="./TParallelCoordSelect.html" title="TParallelCoordSelect" alt="" coords="505,65,623,79"/>
+<area shape="rect" href="./TProofOutputList.html" title="TProofOutputList" alt="" coords="516,81,612,94"/>
+<area shape="rect" href="./TQCommand.html" title="TQCommand" alt="" coords="527,97,601,110"/>
+<area shape="rect" href="./TQConnection.html" title="TQConnection" alt="" coords="524,112,604,126"/>
+<area shape="rect" href="./TSelectorList.html" title="TSelectorList" alt="" coords="527,128,601,141"/>
+<area shape="rect" href="./TSortedList.html" title="TSortedList" alt="" coords="532,144,596,157"/>
+<area shape="rect" href="./TQUndoManager.html" title="TQUndoManager" alt="" coords="669,97,764,110"/>
+</map>
+<map name="MapTList_InhMem" id="MapTList_InhMem">
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="693,60,947,109"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="859,120,947,327"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="760,120,848,341"/>
+<area shape="rect" href="./TSeqCollection.html" alt="" coords="661,120,749,341"/>
+<area shape="rect" href="./TSeqCollection.html" title="TSeqCollection" alt="" coords="651,16,957,352"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="541,60,629,124"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="443,60,531,153"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="344,60,432,153"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="573,135,597,169"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="541,180,629,489"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="443,165,531,489"/>
+<area shape="rect" href="./TCollection.html" alt="" coords="344,165,432,489"/>
+<area shape="rect" href="./TCollection.html" title="TCollection" alt="" coords="333,16,640,500"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTList_Lib" id="MapTList_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTList_Inh" class="tabsel" href="inh/TList_Inh.png" onclick="javascript:return SetImg('Charts','inh/TList_Inh.png');">Inheritance</a>
+<a id="imgTList_InhMem" class="tab" href="inhmem/TList_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TList_InhMem.png');">Inherited Members</a>
+<a id="imgTList_Incl" class="tab" href="incl/TList_Incl.png" onclick="javascript:return SetImg('Charts','incl/TList_Incl.png');">Includes</a>
+<a id="imgTList_Lib" class="tab" href="lib/TList_Lib.png" onclick="javascript:return SetImg('Charts','lib/TList_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTList_Inh" src="inh/TList_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TList:_TList" href="src/TList.cxx.html#f.2mr">~TList</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Delete" title="void TList::Delete(Option_t* option=&quot;&quot;)">Delete</a> the list. Objects are not deleted unless the <a href="./TList.html">TList</a> is the
+ owner (set via <a href="./TCollection.html#TCollection:SetOwner" title="void TCollection::SetOwner(Bool_t enable=kTRUE)">SetOwner</a>()).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddFirst" href="src/TList.cxx.html#ztSRs">AddFirst</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a> object at the beginning of the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddFirst%1" href="src/TList.cxx.html#fJ_mdD">AddFirst</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a> object at the beginning of the list and also store option.
+ Storing an option is useful when one wants to change the behaviour
+ of an object a little without having to create a complete new
+ copy of the object. This feature is used, for example, by the <a href="./TCollection.html#TCollection:Draw" title="void TCollection::Draw(Option_t* option=&quot;&quot;)">Draw</a>()
+ method. It allows the same object to be drawn in different ways.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddLast" href="src/TList.cxx.html#YKb4XE">AddLast</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a> object at the end of the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddLast%1" href="src/TList.cxx.html#mgREUE">AddLast</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Add" title="void TList::Add(TObject* obj) or overloads">Add</a> object at the end of the list and also store option.
+ Storing an option is useful when one wants to change the behaviour
+ of an object a little without having to create a complete new
+ copy of the object. This feature is used, for example, by the <a href="./TCollection.html#TCollection:Draw" title="void TCollection::Draw(Option_t* option=&quot;&quot;)">Draw</a>()
+ method. It allows the same object to be drawn in different ways.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddBefore" href="src/TList.cxx.html#XEqDjB">AddBefore</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* before, <a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> Insert object before object before in the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddBefore%1" href="src/TList.cxx.html#DpKCEB">AddBefore</a>(TObjLink* before, <a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> Insert object before the specified ObjLink object. If before = 0 then add
+ to the head of the list. An ObjLink can be obtained by looping over a list
+ using the above describe iterator method 3.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddAfter" href="src/TList.cxx.html#niTJWD">AddAfter</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* after, <a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> Insert object after object after in the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddAfter%1" href="src/TList.cxx.html#lDMdEB">AddAfter</a>(TObjLink* after, <a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> Insert object after the specified ObjLink object. If after = 0 then add
+ to the tail of the list. An ObjLink can be obtained by looping over a list
+ using the above describe iterator method 3.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:AddAt" href="src/TList.cxx.html#d7wZSD">AddAt</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a> idx)</span><br />
+<div class="funccomm"><pre> Insert object at position idx in the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:After" href="src/TList.cxx.html#A2hbRD">After</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> Returns the object after object obj. Obj is found using the
+ object's <a href="./TObject.html#TObject:IsEqual" title="Bool_t TObject::IsEqual(const TObject* obj)">IsEqual</a>() method.  Returns 0 if obj is last in list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:At" href="src/TList.cxx.html#xg3xCD">At</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) const</span><br />
+<div class="funccomm"><pre> Returns the object at position idx. Returns 0 if idx is out of range.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:Before" href="src/TList.cxx.html#vn7_uE">Before</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> Returns the object before object obj. Obj is found using the
+ object's <a href="./TObject.html#TObject:IsEqual" title="Bool_t TObject::IsEqual(const TObject* obj)">IsEqual</a>() method.  Returns 0 if obj is first in list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Clear" href="src/TList.cxx.html#uToHxE">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> all objects from the list. Does not delete the objects
+ unless the <a href="./TList.html">TList</a> is the owner (set via <a href="./TCollection.html#TCollection:SetOwner" title="void TCollection::SetOwner(Bool_t enable=kTRUE)">SetOwner</a>()) and option
+ <span class="string">"nodelete"</span> is not set.
+ If option=<span class="string">"nodelete"</span> then don't delete any heap objects that were
+ marked with the kCanDelete bit, otherwise these objects will be
+ deleted (this option is used by <a href="./THashTable.html">THashTable</a>::<a href="./THashTable.html#THashTable:Clear" title="void THashTable::Clear(Option_t* option=&quot;&quot;)">Clear</a>()).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Delete" href="src/TList.cxx.html#xxH24E">Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> all objects from the list AND delete all heap based objects.
+ If option=<span class="string">"slow"</span> then keep list consistent during delete. This allows
+ recursive list operations during the delete (e.g. during the dtor
+ of an object in this list one can still access the list to search for
+ other not yet deleted objects).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:DeleteLink" href="src/TList.cxx.html#slUUI">DeleteLink</a>(TObjLink* lnk)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Delete" title="void TList::Delete(Option_t* option=&quot;&quot;)">Delete</a> a TObjLink object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:FindObject" href="src/TList.cxx.html#uZsOEE">FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) const</span><br />
+<div class="funccomm"><pre> Find an object in this list using its name. Requires a sequential
+ scan till the object has been found. Returns 0 if object with specified
+ name is not found. This method overrides the generic <a href="./TList.html#TList:FindObject" title="TObject* TList::FindObject(const char* name) or overloads">FindObject</a>()
+ of <a href="./TCollection.html">TCollection</a> for efficiency reasons.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:FindObject%1" href="src/TList.cxx.html#vQcBuE">FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> Find an object in this list using the object's <a href="./TObject.html#TObject:IsEqual" title="Bool_t TObject::IsEqual(const TObject* obj)">IsEqual</a>()
+ member function. Requires a sequential scan till the object has
+ been found. Returns 0 if object is not found.
+ This method overrides the generic <a href="./TList.html#TList:FindObject" title="TObject* TList::FindObject(const char* name) or overloads">FindObject</a>() of <a href="./TCollection.html">TCollection</a> for
+ efficiency reasons.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:FindLink" href="src/TList.cxx.html#tZ3sTE">FindLink</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; idx) const</span><br />
+<div class="funccomm"><pre> Returns the TObjLink object that contains object obj. In idx it returns
+ the position of the object in the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:First" href="src/TList.cxx.html#OasstE">First</a>() const</span><br />
+<div class="funccomm"><pre> Return the first object in the list. Returns 0 when list is empty.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> ** <a class="funcname" name="TList:GetObjectRef" href="src/TList.cxx.html#Z4EJjB">GetObjectRef</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) const</span><br />
+<div class="funccomm"><pre> Return address of pointer to obj
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:Last" href="src/TList.cxx.html#lRZ3QC">Last</a>() const</span><br />
+<div class="funccomm"><pre> Return the last object in the list. Returns 0 when list is empty.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:LinkAt" href="src/TList.cxx.html#L4HygE">LinkAt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) const</span><br />
+<div class="funccomm"><pre> Return the TObjLink object at index idx.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TIterator.html">TIterator</a> * <a class="funcname" name="TList:MakeIterator" href="src/TList.cxx.html#xXfD3C">MakeIterator</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a href="./TString.html">dir</a> = <a href="./ListOfTypes.html#Bool_t">kIterForward</a>) const</span><br />
+<div class="funccomm"><pre> Return a list iterator.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:NewLink" href="src/TList.cxx.html#x8pc.">NewLink</a>(<a href="./TObject.html">TObject</a>* obj, TObjLink* prev = NULL)</span><br />
+<div class="funccomm"><pre> Return a new TObjLink.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:NewOptLink" href="src/TList.cxx.html#vF9O2B">NewOptLink</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt, TObjLink* prev = NULL)</span><br />
+<div class="funccomm"><pre> Return a new TObjOptLink (a TObjLink that also stores the option).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:RecursiveRemove" href="src/TList.cxx.html#ewoqGB">RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> object from this collection and recursively remove the object
+ from all other objects (and collections).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:Remove" href="src/TList.cxx.html#UiHxqD">Remove</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> object from the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TList:Remove%1" href="src/TList.cxx.html#fIyRmD">Remove</a>(TObjLink* lnk)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> object link (and therefore the object it contains)
+ from the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:RemoveLast" href="src/TList.cxx.html#qOZkp">RemoveLast</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Remove" title="TObject* TList::Remove(TObject* obj) or overloads">Remove</a> the last object of the list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Sort" href="src/TList.cxx.html#SRYrvE">Sort</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> order = kSortAscending)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Sort" title="void TList::Sort(Bool_t order=kSortAscending)">Sort</a> linked list. Real sorting is done in private function <a href="./TList.html#TList:DoSort" title="TObjLink** TList::DoSort(TObjLink** head,Int_t n)">DoSort</a>().
+ The list can only be sorted when is contains objects of a sortable
+ class.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TList:LnkCompare" href="src/TList.cxx.html#La0hNB">LnkCompare</a>(TObjLink* l1, TObjLink* l2)</span><br />
+<div class="funccomm"><pre> Compares the objects stored in the TObjLink objects.
+ Depending on the flag <a href="./TList.html#TList:IsAscending" title="Bool_t TList::IsAscending()">IsAscending</a>() the function returns
+ <a href="./ListOfTypes.html#bool">true</a> if the object in l1 &lt;= l2 (ascending) or l2 &lt;= l1 (descending).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink ** <a class="funcname" name="TList:DoSort" href="src/TList.cxx.html#ba_OyC">DoSort</a>(TObjLink** head, <a href="./ListOfTypes.html#Int_t">Int_t</a> n)</span><br />
+<div class="funccomm"><pre> <a href="./TList.html#TList:Sort" title="void TList::Sort(Bool_t order=kSortAscending)">Sort</a> linked list.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Streamer" href="src/TList.cxx.html#FWHVPB">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream all objects in the collection to or from the I/O buffer.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TList:TList" href="src/TList.h.html#xev88">TList</a>(<span class="keyword">const</span> <a href="./TList.html">TList</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>&amp; <a class="funcname" name="TList:operator_" href="src/TList.h.html#Gvu0qE">operator=</a>(<span class="keyword">const</span> <a href="./TList.html">TList</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TList:TList%1" href="src/TList.h.html#cjW45E">TList</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TList:TList%2" href="src/TList.h.html#kRiGkD">TList</a>(<a href="./TObject.html">TObject</a>* )</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Add" href="src/TList.h.html#LWtm6">Add</a>(<a href="./TObject.html">TObject</a>* obj)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TList.html#TList:AddLast" title="void TList::AddLast(TObject* obj) or overloads">AddLast</a>(obj); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TList:Add%1" href="src/TList.h.html#qYF8gD">Add</a>(<a href="./TObject.html">TObject</a>* obj, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TList.html#TList:AddLast" title="void TList::AddLast(TObject* obj) or overloads">AddLast</a>(obj, opt); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:FirstLink" href="src/TList.h.html#M5n4pC">FirstLink</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TList.html#TList:fFirst" title="TObjLink* TList::fFirst">fFirst</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TObjLink * <a class="funcname" name="TList:LastLink" href="src/TList.h.html#Oha9hD">LastLink</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TList.html#TList:fLast" title="TObjLink* TList::fLast">fLast</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TList:IsAscending" href="src/TList.h.html#Hh6hfC">IsAscending</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TList.html#TList:fAscending" title="Bool_t TList::fAscending">fAscending</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Fons+Rademakers"> Fons Rademakers   10/08/95</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/cont:$Id: TList.h 34744 2010-08-07 06:16:36Z brun $ </em><em>&raquo; Last generated: 2011-11-03 20:19</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

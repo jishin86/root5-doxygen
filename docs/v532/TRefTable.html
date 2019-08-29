@@ -1,0 +1,434 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:28 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TRefTable</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TRefTable','libCore','TRefTable.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TRefTable.h.html">header file</a>
+<a class="descrheadentry" href="src/TRefTable.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/cont/inc/TRefTable.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/cont/src/TRefTable.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TRefTable:description">class description</a> 
+<a class="descrheadentry" href="#TRefTable:Function_Members">function members</a>
+<a class="descrheadentry" href="#TRefTable:Data_Members">data members</a>
+<a class="descrheadentry" href="#TRefTable:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_CONT_Index.html">CONT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TRefTable</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TRefTable:description"></a>class TRefTable: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+A <a href="./TRefTable.html">TRefTable</a> maintains the association between a referenced object
+and the parent object supporting this referenced object.
+
+The parent object is typically a branch of a <a href="./TTree.html">TTree</a>. For each object
+referenced in a <a href="./TTree.html">TTree</a> entry, the corresponding entry in the <a href="./TTree.html">TTree</a>'s
+<a href="./TBranchRef.html">TBranchRef</a>::<a href="./TBranchRef.html#TBranchRef:fRefTable" title="TRefTable* TBranchRef::fRefTable">fRefTable</a> contains the index of the branch that
+needs to be loaded to bring the object into memory.
+
+Persistency of a <a href="./TRefTable.html">TRefTable</a> is split into two parts:
+* entry specific information is stored (read) by <a href="./TRefTable.html#TRefTable:FillBuffer" title="void TRefTable::FillBuffer(TBuffer&amp; b)">FillBuffer</a>
+(<a href="./TRefTable.html#TRefTable:ReadBuffer" title="void TRefTable::ReadBuffer(TBuffer&amp; b)">ReadBuffer</a>). For each referenced object the object's fUniqueID
+and the referencing <a href="./TRef.html">TRef</a>::<a href="./TRef.html#TRef:fPID" title="TProcessID* TRef::fPID">fPID</a> is stored (to allow the <a href="./TRefTable.html">TRefTable</a>
+to autoload references created by different processes).
+* non-entry specific, i.e. global information is stored (read) by
+the <a href="./TRefTable.html#TRefTable:Streamer" title="void TRefTable::Streamer(TBuffer&amp; b)">Streamer</a> function. This comprises all members marked as
+persistent.
+
+As <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:fUniqueID" title="UInt_t TObject::fUniqueID">fUniqueID</a> is only unique for a given <a href="./TProcessID.html">TProcessID</a>, a table
+of unique IDs is kept for each used <a href="./TProcessID.html">TProcessID</a>. There is no natural
+order of TProcessIDs, so <a href="./TRefTable.html">TRefTable</a> stores a vector of the TGUID of
+all known TProcessIDs in <a href="./TRefTable.html#TRefTable:fProcessGUIDs" title="vector&lt;std::string&gt; TRefTable::fProcessGUIDs">fProcessGUIDs</a>; the index of a <a href="./TProcessID.html">TProcessID</a> in
+this vector defines the index of the auto-loading info in <a href="./TRefTable.html#TRefTable:fParentIDs" title="Int_t** TRefTable::fParentIDs">fParentIDs</a>
+for that <a href="./TProcessID.html">TProcessID</a>. The mapping of <a href="./TProcessID.html">TProcessID</a>* to index is cached
+for quick non-persistent lookup.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TRefTable:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRefTable:TRefTable">TRefTable</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRefTable:TRefTable%2">TRefTable</a>(<span class="keyword">const</span> <a href="./TRefTable.html">TRefTable</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TRefTable:TRefTable%1">TRefTable</a>(<a href="./TObject.html">TObject</a>* owner, <a href="./ListOfTypes.html#Int_t">Int_t</a> size)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TRefTable:_TRefTable">~TRefTable</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:Add">Add</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:Expand">Expand</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid, <a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:FillBuffer">FillBuffer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetN">GetN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetNumPIDs">GetNumPIDs</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:GetOwner">GetOwner</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:GetParent">GetParent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:GetParents">GetParents</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TRefTable.html">TRefTable</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:GetRefTable">GetRefTable</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetSize">GetSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetUID">GetUID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TProcessID.html">TProcessID</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:GetUIDContext">GetUIDContext</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TRefTable:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:Notify">Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TRefTable.html">TRefTable</a>&amp;</td><td class="funcname"><a class="funcname" href="#TRefTable:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TRefTable.html">TRefTable</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:ReadBuffer">ReadBuffer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:Reset">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:SetParent">SetParent</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* parent, <a href="./ListOfTypes.html#Int_t">Int_t</a> branchID)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:SetRefTable">SetRefTable</a>(<a href="./TRefTable.html">TRefTable</a>* table)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:SetUID">SetUID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:AddInternalIdxForPID">AddInternalIdxForPID</a>(<a href="./TProcessID.html">TProcessID</a>* procid)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:ExpandForIID">ExpandForIID</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iid, <a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TRefTable:ExpandPIDs">ExpandPIDs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numpids)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:FindPIDGUID">FindPIDGUID</a>(<span class="keyword">const</span> <span class="keyword">char</span>* guid) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetInternalIdxForPID">GetInternalIdxForPID</a>(<a href="./TProcessID.html">TProcessID</a>* procid) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TRefTable:GetInternalIdxForPID%1">GetInternalIdxForPID</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TRefTable:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TRefTable:kHaveWarnedReadingOld"></a>kHaveWarnedReadingOld</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TRefTable:fAllocSize"></a>fAllocSize</td><td class="datadesc">![fNumPIDs] allocated size of array fParentIDs for each ProcessID</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRefTable:fDefaultSize"></a>fDefaultSize</td><td class="datadesc">!default size for a new PID array</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<a href="./ListOfTypes.html#Int_t">Int_t</a>&gt;</td><td class="dataname"><a name="TRefTable:fMapPIDtoInternal"></a>fMapPIDtoInternal</td><td class="datadesc">! cache of pid to index in fProcessGUIDs</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TRefTable:fN"></a>fN</td><td class="datadesc">![fNumPIDs] current maximum number of IDs in array fParentIDs for each ProcessID</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRefTable:fNumPIDs"></a>fNumPIDs</td><td class="datadesc">!number of known ProcessIDs</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObject.html">TObject</a>*</td><td class="dataname"><a name="TRefTable:fOwner"></a>fOwner</td><td class="datadesc">Object owning this TRefTable</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRefTable:fParentID"></a>fParentID</td><td class="datadesc">!current parent ID in fParents (latest call to SetParent)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>**</td><td class="dataname"><a name="TRefTable:fParentIDs"></a>fParentIDs</td><td class="datadesc">![fNumPIDs][fAllocSize] array of Parent IDs</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a>*</td><td class="dataname"><a name="TRefTable:fParents"></a>fParents</td><td class="datadesc">array of Parent objects  (eg TTree branch) holding the referenced objects</td></tr>
+<tr class="data"><td class="datatype">vector&lt;std::string&gt;</td><td class="dataname"><a name="TRefTable:fProcessGUIDs"></a>fProcessGUIDs</td><td class="datadesc">UUIDs of TProcessIDs used in fParentIDs</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TRefTable:fSize"></a>fSize</td><td class="datadesc">dummy for backward compatibility</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="dataname"><a name="TRefTable:fUID"></a>fUID</td><td class="datadesc">!Current uid (set by TRef::GetObject)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TProcessID.html">TProcessID</a>*</td><td class="dataname"><a name="TRefTable:fUIDContext"></a>fUIDContext</td><td class="datadesc">!TProcessID the current uid is referring to</td></tr>
+<tr class="data"><td class="datatype">static <a href="./TRefTable.html">TRefTable</a>*</td><td class="dataname"><a name="TRefTable:fgRefTable"></a>fgRefTable</td><td class="datadesc">Pointer to current TRefTable</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TRefTable:Class_Charts"></a>Class Charts</h2>
+<map name="MapTRefTable_Inh" id="MapTRefTable_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="74,20,236,70"/>
+</map>
+<map name="MapTRefTable_InhMem" id="MapTRefTable_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTRefTable_Lib" id="MapTRefTable_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,5,500,53"/>
+</map>
+<div class="tabs">
+<a id="imgTRefTable_Inh" class="tabsel" href="inh/TRefTable_Inh.png" onclick="javascript:return SetImg('Charts','inh/TRefTable_Inh.png');">Inheritance</a>
+<a id="imgTRefTable_InhMem" class="tab" href="inhmem/TRefTable_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TRefTable_InhMem.png');">Inherited Members</a>
+<a id="imgTRefTable_Incl" class="tab" href="incl/TRefTable_Incl.png" onclick="javascript:return SetImg('Charts','incl/TRefTable_Incl.png');">Includes</a>
+<a id="imgTRefTable_Lib" class="tab" href="lib/TRefTable_Lib.png" onclick="javascript:return SetImg('Charts','lib/TRefTable_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTRefTable_Inh" src="inh/TRefTable_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRefTable:TRefTable" href="src/TRefTable.cxx.html#b9B.gB">TRefTable</a>()</span><br />
+<div class="funccomm"><pre> Default constructor for I/O.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRefTable:TRefTable%1" href="src/TRefTable.cxx.html#D7tcfD">TRefTable</a>(<a href="./TObject.html">TObject</a>* owner, <a href="./ListOfTypes.html#Int_t">Int_t</a> size)</span><br />
+<div class="funccomm"><pre> Create a <a href="./TRefTable.html">TRefTable</a> with initial size.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRefTable:_TRefTable" href="src/TRefTable.cxx.html#bvz9VC">~TRefTable</a>()</span><br />
+<div class="funccomm"><pre> Destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:Add" href="src/TRefTable.cxx.html#GQvUuD">Add</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Add" title="Int_t TRefTable::Add(Int_t uid,TProcessID* context=0)">Add</a> a new uid to the table.
+ we add a new pair (uid,fparent) to the map
+ This function is called by <a href="./TObject.html">TObject</a>::<a href="./TObject.html#TObject:Streamer" title="void TObject::Streamer(TBuffer&amp; b)">Streamer</a> or <a href="./TStreamerInfo.html">TStreamerInfo</a>::<a href="./TStreamerInfo.html#TStreamerInfo:WriteBuffer" title="Int_t TStreamerInfo::WriteBuffer(TBuffer&amp; b,char* pointer,Int_t first)">WriteBuffer</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:AddInternalIdxForPID" href="src/TRefTable.cxx.html#zMhCBD">AddInternalIdxForPID</a>(<a href="./TProcessID.html">TProcessID</a>* procid)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Add" title="Int_t TRefTable::Add(Int_t uid,TProcessID* context=0)">Add</a> the internal index for fProcessIDs, <a href="./TRefTable.html#TRefTable:fAllocSize" title="Int_t* TRefTable::fAllocSize">fAllocSize</a>, etc given a PID.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:Clear" href="src/TRefTable.cxx.html#hbNbND">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Clear" title="void TRefTable::Clear(Option_t* =&quot;&quot;)">Clear</a> all entries in the table.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:Expand" href="src/TRefTable.cxx.html#dWzutB">Expand</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid, <a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Expand" title="Int_t TRefTable::Expand(Int_t pid,Int_t newsize)">Expand</a> <a href="./TRefTable.html#TRefTable:fParentIDs" title="Int_t** TRefTable::fParentIDs">fParentIDs</a> to newsize for ProcessID pid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:ExpandForIID" href="src/TRefTable.cxx.html#ysxFZD">ExpandForIID</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> iid, <a href="./ListOfTypes.html#Int_t">Int_t</a> newsize)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Expand" title="Int_t TRefTable::Expand(Int_t pid,Int_t newsize)">Expand</a> <a href="./TRefTable.html#TRefTable:fParentIDs" title="Int_t** TRefTable::fParentIDs">fParentIDs</a> to newsize for internel ProcessID index iid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:ExpandPIDs" href="src/TRefTable.cxx.html#XODtUE">ExpandPIDs</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> numpids)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Expand" title="Int_t TRefTable::Expand(Int_t pid,Int_t newsize)">Expand</a> the arrays of managed PIDs
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:FillBuffer" href="src/TRefTable.cxx.html#BB58RE">FillBuffer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Fill buffer b with the <a href="./TRefTable.html#TRefTable:fN" title="Int_t* TRefTable::fN">fN</a> elements in fParentdIDs.
+ This function is called by <a href="./TBranchRef.html">TBranchRef</a>::FillLeaves.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:FindPIDGUID" href="src/TRefTable.cxx.html#OZQ6XE">FindPIDGUID</a>(<span class="keyword">const</span> <span class="keyword">char</span>* guid) const</span><br />
+<div class="funccomm"><pre> Get <a href="./TRefTable.html#TRefTable:fProcessGUIDs" title="vector&lt;std::string&gt; TRefTable::fProcessGUIDs">fProcessGUIDs</a>' index of the <a href="./TProcessID.html">TProcessID</a> with GUID guid
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a> * <a class="funcname" name="TRefTable:GetParent" href="src/TRefTable.cxx.html#qgcLI">GetParent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0) const</span><br />
+<div class="funccomm"><pre> Return object corresponding to uid.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:GetInternalIdxForPID" href="src/TRefTable.cxx.html#FlAeSC">GetInternalIdxForPID</a>(<a href="./TProcessID.html">TProcessID</a>* procid) const</span><br />
+<div class="funccomm"><pre> Get the index for fProcessIDs, <a href="./TRefTable.html#TRefTable:fAllocSize" title="Int_t* TRefTable::fAllocSize">fAllocSize</a>, etc given a PID.
+ Uses <a href="./TRefTable.html#TRefTable:fMapPIDtoInternal" title="vector&lt;Int_t&gt; TRefTable::fMapPIDtoInternal">fMapPIDtoInternal</a> and the pid's GUID / fProcessGUID
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:GetInternalIdxForPID%1" href="src/TRefTable.cxx.html#zeYEsD">GetInternalIdxForPID</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) const</span><br />
+<div class="funccomm"><pre> Get the index for fProcessIDs, <a href="./TRefTable.html#TRefTable:fAllocSize" title="Int_t* TRefTable::fAllocSize">fAllocSize</a>, etc given a PID.
+ Uses <a href="./TRefTable.html#TRefTable:fMapPIDtoInternal" title="vector&lt;Int_t&gt; TRefTable::fMapPIDtoInternal">fMapPIDtoInternal</a> and the pid's GUID / fProcessGUID
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TRefTable.html">TRefTable</a> * <a class="funcname" name="TRefTable:GetRefTable" href="src/TRefTable.cxx.html#KVtSpB">GetRefTable</a>()</span><br />
+<div class="funccomm"><pre> Static function returning the current <a href="./TRefTable.html">TRefTable</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TRefTable:Notify" href="src/TRefTable.cxx.html#bK2PpB">Notify</a>()</span><br />
+<div class="funccomm"><pre> This function is called by <a href="./TRef.html">TRef</a>::<a href="./TRef.html#TRef:Streamer" title="void TRef::Streamer(TBuffer&amp; b)">Streamer</a> or <a href="./TStreamerInfo.html">TStreamerInfo</a>::ReadBuffer
+ when reading a reference.
+ This function, in turns, notifies the <a href="./TRefTable.html">TRefTable</a> owner for action.
+ eg, when the owner is a <a href="./TBranchRef.html">TBranchRef</a>, <a href="./TBranchRef.html">TBranchRef</a>::<a href="./TBranchRef.html#TBranchRef:Notify" title="Bool_t TBranchRef::Notify()">Notify</a> is called
+ to read the branch containing the referenced object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:ReadBuffer" href="src/TRefTable.cxx.html#B3EjvE">ReadBuffer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Fill buffer b with the <a href="./TRefTable.html#TRefTable:fN" title="Int_t* TRefTable::fN">fN</a> elements in fParentdIDs.
+ This function is called by <a href="./TBranchRef.html">TBranchRef</a>::ReadLeaves
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:Reset" href="src/TRefTable.cxx.html#IPvzH">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TRefTable.html#TRefTable:Clear" title="void TRefTable::Clear(Option_t* =&quot;&quot;)">Clear</a> all entries in the table.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:SetParent" href="src/TRefTable.cxx.html#LnpqZE">SetParent</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* parent, <a href="./ListOfTypes.html#Int_t">Int_t</a> branchID)</span><br />
+<div class="funccomm"><pre> -- Set current parent object, typically a branch of a tree.
+
+ This function is called by <a href="./TBranchElement.html">TBranchElement</a>::<a href="./TBranchElement.html#TBranchElement:Fill" title="Int_t TBranchElement::Fill()">Fill</a>() and by
+ <a href="./TBranchElement.html">TBranchElement</a>::<a href="./TBranchElement.html#TBranchElement:GetEntry" title="Int_t TBranchElement::GetEntry(Long64_t entry=0,Int_t getall=0)">GetEntry</a>().
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:SetRefTable" href="src/TRefTable.cxx.html#c1DJAB">SetRefTable</a>(<a href="./TRefTable.html">TRefTable</a>* table)</span><br />
+<div class="funccomm"><pre> Static function setting the current <a href="./TRefTable.html">TRefTable</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:Streamer" href="src/TRefTable.cxx.html#MCVgYB">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream an object of class <a href="./TRefTable.html">TRefTable</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TRefTable:TRefTable" href="src/TRefTable.h.html#tVLDq">TRefTable</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:GetNumPIDs" href="src/TRefTable.h.html#EzYOUC">GetNumPIDs</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fNumPIDs" title="Int_t TRefTable::fNumPIDs">fNumPIDs</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:GetSize" href="src/TRefTable.h.html#jiap">GetSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fAllocSize" title="Int_t* TRefTable::fAllocSize">fAllocSize</a>[<a href="./TRefTable.html#TRefTable:GetInternalIdxForPID" title="Int_t TRefTable::GetInternalIdxForPID(TProcessID* procid) or overloads">GetInternalIdxForPID</a>(pid)];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TRefTable:GetN" href="src/TRefTable.h.html#Ql14TD">GetN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> pid) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fN" title="Int_t* TRefTable::fN">fN</a>[<a href="./TRefTable.html#TRefTable:GetInternalIdxForPID" title="Int_t TRefTable::GetInternalIdxForPID(TProcessID* procid) or overloads">GetInternalIdxForPID</a>(pid)];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>           * <a class="funcname" name="TRefTable:GetOwner" href="src/TRefTable.h.html#TsIxpD">GetOwner</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fOwner" title="TObject* TRefTable::fOwner">fOwner</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObjArray.html">TObjArray</a>         * <a class="funcname" name="TRefTable:GetParents" href="src/TRefTable.h.html#t30hmB">GetParents</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fParents" title="TObjArray* TRefTable::fParents">fParents</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TRefTable:GetUID" href="src/TRefTable.h.html#AuZQSE">GetUID</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fUID" title="UInt_t TRefTable::fUID">fUID</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TProcessID.html">TProcessID</a>        * <a class="funcname" name="TRefTable:GetUIDContext" href="src/TRefTable.h.html#GjKmS">GetUIDContext</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TRefTable.html#TRefTable:fUIDContext" title="TProcessID* TRefTable::fUIDContext">fUIDContext</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TRefTable:SetUID" href="src/TRefTable.h.html#jESPLC">SetUID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid, <a href="./TProcessID.html">TProcessID</a>* context = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TRefTable.html#TRefTable:fUID" title="UInt_t TRefTable::fUID">fUID</a>=uid; <a href="./TRefTable.html#TRefTable:fUIDContext" title="TProcessID* TRefTable::fUIDContext">fUIDContext</a> = context;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Rene+Brun"> Rene Brun   17/08/2004</a> </em><em>&raquo; Copyright   (C) 1995-2004, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/cont:$Id: TRefTable.h 37274 2010-12-04 21:31:29Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

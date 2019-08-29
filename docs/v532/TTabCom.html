@@ -1,0 +1,619 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:53 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TTabCom</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TTabCom','libRint','TTabCom.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TTabCom.h.html">header file</a>
+<a class="descrheadentry" href="src/TTabCom.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/rint/inc/TTabCom.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/core/rint/src/TTabCom.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TTabCom:description">class description</a> 
+<a class="descrheadentry" href="#TTabCom:Function_Members">function members</a>
+<a class="descrheadentry" href="#TTabCom:Data_Members">data members</a>
+<a class="descrheadentry" href="#TTabCom:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./CORE_Index.html">CORE</a>
+ &#187; <a class="locationlevel" href="./CORE_RINT_Index.html">RINT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TTabCom</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TTabCom:description"></a>class TTabCom</h1>
+<div class="classdescr">
+<pre>
+
+<a href="./TTabCom.html">TTabCom</a>
+
+This class performs basic tab completion.
+You should be able to hit [TAB] to complete a partially typed:
+
+username
+environment variable
+preprocessor directive
+pragma
+filename (with a context-sensitive path)
+public member function or data member (including base classes)
+global variable, function, or class name
+
+Also, something like
+
+someObject-&gt;Func([TAB]
+someObject.Func([TAB]
+someClass::Func([TAB]
+someClass var([TAB]
+new someClass([TAB]
+
+will print a list of prototypes for the indicated
+method or constructor.
+
+Current limitations and bugs:
+
+1. you can only use one member access operator at a time.
+eg, this will work: <a href="./TROOT.html">gROOT</a>->GetListOfG[TAB]
+but this will not:  <a href="./TROOT.html">gROOT</a>-><a href="./TROOT.html#TROOT:GetListOfGlobals" title="TCollection* TROOT::GetListOfGlobals(Bool_t load=kFALSE)">GetListOfGlobals</a>()->Conta[TAB]
+
+2. nothing is guaranteed to work on windows or VMS
+(for one thing, /bin/env and /etc/passwd are hardcoded)
+
+3. CINT shortcut #2 is deliberately not supported.
+(using <span class="string">"operator.()"</span> instead of <span class="string">"operator-&gt;()"</span>)
+
+4. most identifiers (including C++ identifiers, usernames,
+environment variables, etc)
+are restriceted to this character set: [_a-zA-Z0-9]
+therefore, you won't be able to complete things like
+
+operator new
+operator+
+etc
+
+5. ~whatever[TAB] always tries to complete a username.
+use whitespace (~ whatever[TAB]) if you want to complete a global
+identifier.
+
+6. CINT shortcut #3 is not supported when trying to complete
+the name of a global object.  (it is supported when trying to
+complete a member of a global object)
+
+7. the list of #pragma's is hardcoded
+(ie not obtained from the interpreter at runtime)
+==&gt; user-defined #pragma's will not be recognized
+
+8. the system include directories are also hardcoded
+because i don't know how to get them from the interpreter.
+fons, maybe they should be #ifdef'd for the different sytems?
+
+9. the TabCom.FileIgnore resource is always applied, even if you
+are not trying to complete a filename.
+
+10. anything in quotes is assumed to be a filename
+so (among other things) you can't complete a quoted class name:
+     eg, <a href="./TClass.html">TClass</a> class1( <span class="string">"TDict[TAB]                                     //</span>
+this won't work... looks for a file in pwd starting with TDict
+
+11. the prototypes tend to omit the word <span class="string">"const"</span> a lot.
+this is a problem with <a href="./ROOT.html">ROOT</a> or CINT.
+
+12. when listing ambiguous matches, only one column is used,
+even if there are many completions.
+
+13. anonymous objects are not currently identified
+so, for example,
+
+root&gt; printf( <a href="./TString.html">TString</a>([TAB
+
+gives an error message instead of listing <a href="./TString.html">TString</a>'s constructors.
+(this could be fixed)
+
+14. the routine that adds the <span class="string">"appendage"</span> isn't smart enough to know
+if it's already there:
+
+root&gt; <a href="./TCanvas.html">TCanvas</a>::<a href="./TCanvas.html#TCanvas:Update" title="void TCanvas::Update()">Update</a>()
+press [TAB] here ^
+root&gt; <a href="./TCanvas.html">TCanvas</a>::<a href="./TCanvas.html#TCanvas:Update" title="void TCanvas::Update()">Update</a>()()
+(this could be fixed)
+
+15. the appendage is only applied if there is exactly 1 match.
+eg, this
+
+root&gt; G__at[TAB]
+root&gt; G__ateval
+
+happens instead of this
+
+root&gt; G__at[TAB]
+root&gt; G__ateval(
+
+because there are several overloaded versions of G__ateval().
+(this could be fixed)
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TTabCom:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTabCom:TTabCom">TTabCom</a>()</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TTabCom:_TTabCom">~TTabCom</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Char_t">Char_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:AllAgreeOnChar">AllAgreeOnChar</a>(<span class="keyword">int</span> i, <span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>* pList, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nGoodStrings)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:AppendListOfFilesInDirectory">AppendListOfFilesInDirectory</a>(<span class="keyword">const</span> <span class="keyword">char</span>* dirName, <a href="./TSeqCollection.html">TSeqCollection</a>* pList)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearAll">ClearAll</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearClasses">ClearClasses</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearCppDirectives">ClearCppDirectives</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearEnvVars">ClearEnvVars</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearFiles">ClearFiles</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearGlobalFunctions">ClearGlobalFunctions</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearGlobals">ClearGlobals</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearPragmas">ClearPragmas</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearSysIncFiles">ClearSysIncFiles</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ClearUsers">ClearUsers</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TTabCom:DetermineClass">DetermineClass</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varName)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:ExcludedByFignore">ExcludedByFignore</a>(<a href="./TString.html">TString</a> s)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfClasses">GetListOfClasses</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfCppDirectives">GetListOfCppDirectives</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfEnvVars">GetListOfEnvVars</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfFilesInPath">GetListOfFilesInPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfGlobalFunctions">GetListOfGlobalFunctions</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfGlobals">GetListOfGlobals</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfPragmas">GetListOfPragmas</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfSysIncFiles">GetListOfSysIncFiles</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:GetListOfUsers">GetListOfUsers</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TTabCom:GetSysIncludePath">GetSysIncludePath</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:Hook">Hook</a>(<span class="keyword">char</span>* buf, <span class="keyword">int</span>* pLoc, <a href="./ListOfTypes.html#ostream">ostream</a>&amp; out)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:IsDirectory">IsDirectory</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:NewListOfFilesInPath">NewListOfFilesInPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:NoMsg">NoMsg</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> errorLevel)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:PathIsSpecifiedInFileName">PathIsSpecifiedInFileName</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; fileName)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashAll">RehashAll</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashClasses">RehashClasses</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashCppDirectives">RehashCppDirectives</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashEnvVars">RehashEnvVars</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashFiles">RehashFiles</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashGlobalFunctions">RehashGlobalFunctions</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashGlobals">RehashGlobals</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashPragmas">RehashPragmas</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashSysIncFiles">RehashSysIncFiles</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:RehashUsers">RehashUsers</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TTabCom:TTabCom%1">TTabCom</a>(<span class="keyword">const</span> <a href="./TTabCom.html">TTabCom</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TTabCom:Complete">Complete</a>(<span class="keyword">const</span> <a href="./TRegexp.html">TRegexp</a>&amp; re, <span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>* pListOfCandidates, <span class="keyword">const</span> <span class="keyword">char</span>* appendage, <a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./TString.html">TString</a>::ECaseCompare cmp = <a href="./TString.html">TString</a>::<a href="./TString.html#TString:kExact" title="const TString::ECaseCompare TString::kExact">kExact</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:CopyMatch">CopyMatch</a>(<span class="keyword">char</span>* dest, <span class="keyword">const</span> <span class="keyword">char</span>* localName, <span class="keyword">const</span> <span class="keyword">char</span>* appendage = 0, <span class="keyword">const</span> <span class="keyword">char</span>* fullName = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TTabCom.html">TTabCom</a>::EContext_t</td><td class="funcname"><a class="funcname" href="#TTabCom:DetermineContext">DetermineContext</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TTabCom:DeterminePath">DeterminePath</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; fileName, <span class="keyword">const</span> <span class="keyword">char</span>* defaultPath) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TString.html">TString</a></td><td class="funcname"><a class="funcname" href="#TTabCom:ExtendPath">ExtendPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* originalPath, <a href="./TString.html">TString</a> newBase) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:InitPatterns">InitPatterns</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:MakeClassFromClassName">MakeClassFromClassName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* className) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:MakeClassFromVarName">MakeClassFromVarName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varName, <a href="./TTabCom.html">TTabCom</a>::EContext_t&amp; context, <span class="keyword">int</span> iter = 0)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TTabCom.html">TTabCom</a>&amp;</td><td class="funcname"><a class="funcname" href="#TTabCom:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TTabCom.html">TTabCom</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TTabCom:ParseReverse">ParseReverse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* var_str, <span class="keyword">int</span> start)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TTabCom:SetPattern">SetPattern</a>(<a href="./TTabCom.html">TTabCom</a>::EContext_t handle, <span class="keyword">const</span> <span class="keyword">char</span>* regexp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TTabCom:TryMakeClassFromClassName">TryMakeClassFromClassName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* className) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TTabCom:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="TTabCom:kDebug"></a>kDebug</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="data"><td class="datatype">enum EContext_t { </td><td class="dataname"><a name="TTabCom:kUNKNOWN_CONTEXT"></a>kUNKNOWN_CONTEXT</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kSYS_UserName"></a>kSYS_UserName</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kSYS_EnvVar"></a>kSYS_EnvVar</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_stdout"></a>kCINT_stdout</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_stderr"></a>kCINT_stderr</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_stdin"></a>kCINT_stdin</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_Edit"></a>kCINT_Edit</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_Load"></a>kCINT_Load</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_Exec"></a>kCINT_Exec</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_EXec"></a>kCINT_EXec</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_pragma"></a>kCINT_pragma</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_includeSYS"></a>kCINT_includeSYS</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_includePWD"></a>kCINT_includePWD</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCINT_cpp"></a>kCINT_cpp</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kROOT_Load"></a>kROOT_Load</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kSYS_FileName"></a>kSYS_FileName</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_NewProto"></a>kCXX_NewProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_ConstructorProto"></a>kCXX_ConstructorProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_ScopeProto"></a>kCXX_ScopeProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_DirectProto"></a>kCXX_DirectProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_IndirectProto"></a>kCXX_IndirectProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_ScopeMember"></a>kCXX_ScopeMember</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_DirectMember"></a>kCXX_DirectMember</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_IndirectMember"></a>kCXX_IndirectMember</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_Global"></a>kCXX_Global</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kCXX_GlobalProto"></a>kCXX_GlobalProto</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TTabCom:kNUM_PAT"></a>kNUM_PAT</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><span class="keyword">char</span>*</td><td class="dataname"><a name="TTabCom:fBuf"></a>fBuf</td><td class="datadesc">initialized by Hook()</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TTabCom:fLastIter"></a>fLastIter</td><td class="datadesc">frodo: iteration counter for recursive MakeClassFromVarName</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">unsigned</span> <span class="keyword">short</span></td><td class="dataname"><a name="TTabCom:fPat"></a>fPat[25][1024]</td><td class="datadesc">array of patterns</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="dataname"><a name="TTabCom:fRegExp"></a>fRegExp[25]</td><td class="datadesc">corresponding regular expression plain text</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TTabCom:fVarIsPointer"></a>fVarIsPointer</td><td class="datadesc">frodo: pointer or not flag</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpClasses"></a>fpClasses</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpDirectives"></a>fpDirectives</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpEnvVars"></a>fpEnvVars</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpFiles"></a>fpFiles</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpGlobalFuncs"></a>fpGlobalFuncs</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpGlobals"></a>fpGlobals</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span>*</td><td class="dataname"><a name="TTabCom:fpLoc"></a>fpLoc</td><td class="datadesc">initialized by Hook()</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpNamespaces"></a>fpNamespaces</td><td class="datadesc">Contains the names of namespaces registered in CINT.</td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpPragmas"></a>fpPragmas</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpSysIncFiles"></a>fpSysIncFiles</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./TSeqCollection.html">TSeqCollection</a>*</td><td class="dataname"><a name="TTabCom:fpUsers"></a>fpUsers</td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="TTabCom:Class_Charts"></a>Class Charts</h2>
+<map name="MapTTabCom_Lib" id="MapTTabCom_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="372,44,500,92"/>
+</map>
+<div class="tabs">
+<a id="imgTTabCom_Inh" class="tabsel" href="inh/TTabCom_Inh.png" onclick="javascript:return SetImg('Charts','inh/TTabCom_Inh.png');">Inheritance</a>
+<a id="imgTTabCom_InhMem" class="tab" href="inhmem/TTabCom_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TTabCom_InhMem.png');">Inherited Members</a>
+<a id="imgTTabCom_Incl" class="tab" href="incl/TTabCom_Incl.png" onclick="javascript:return SetImg('Charts','incl/TTabCom_Incl.png');">Includes</a>
+<a id="imgTTabCom_Lib" class="tab" href="lib/TTabCom_Lib.png" onclick="javascript:return SetImg('Charts','lib/TTabCom_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTTabCom_Inh" src="inh/TTabCom_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTabCom:TTabCom" href="src/TTabCom.cxx.html#eNkJ0">TTabCom</a>()</span><br />
+<div class="funccomm"><pre> Default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTabCom:_TTabCom" href="src/TTabCom.cxx.html#KHJTGC">~TTabCom</a>()</span><br />
+<div class="funccomm"><pre> Destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearClasses" href="src/TTabCom.cxx.html#uWkU2E">ClearClasses</a>()</span><br />
+<div class="funccomm"><pre> Clear classes and namespace collections.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearCppDirectives" href="src/TTabCom.cxx.html#F5vmSB">ClearCppDirectives</a>()</span><br />
+<div class="funccomm"><pre> Forget all Cpp directives seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearEnvVars" href="src/TTabCom.cxx.html#Hd.EjD">ClearEnvVars</a>()</span><br />
+<div class="funccomm"><pre> Forget all environment variables seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearFiles" href="src/TTabCom.cxx.html#O44lJE">ClearFiles</a>()</span><br />
+<div class="funccomm"><pre> Close all files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearGlobalFunctions" href="src/TTabCom.cxx.html#mw7QoD">ClearGlobalFunctions</a>()</span><br />
+<div class="funccomm"><pre> Forget all global functions seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearGlobals" href="src/TTabCom.cxx.html#t0G3pD">ClearGlobals</a>()</span><br />
+<div class="funccomm"><pre> Forget all global variables seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearPragmas" href="src/TTabCom.cxx.html#dUzFNB">ClearPragmas</a>()</span><br />
+<div class="funccomm"><pre> Forget all pragmas seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearSysIncFiles" href="src/TTabCom.cxx.html#anb1jE">ClearSysIncFiles</a>()</span><br />
+<div class="funccomm"><pre> Close system files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearUsers" href="src/TTabCom.cxx.html#iQxWGE">ClearUsers</a>()</span><br />
+<div class="funccomm"><pre> Forget all user seen so far.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:ClearAll" href="src/TTabCom.cxx.html#v88FG">ClearAll</a>()</span><br />
+<div class="funccomm"><pre> clears all lists
+ except for user names and system include files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashClasses" href="src/TTabCom.cxx.html#O_v0_B">RehashClasses</a>()</span><br />
+<div class="funccomm"><pre> Do the class rehash.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashCppDirectives" href="src/TTabCom.cxx.html#p1n98C">RehashCppDirectives</a>()</span><br />
+<div class="funccomm"><pre> Cpp rehashing.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashEnvVars" href="src/TTabCom.cxx.html#Wz3nIB">RehashEnvVars</a>()</span><br />
+<div class="funccomm"><pre> Environemnt variables rehashing.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashFiles" href="src/TTabCom.cxx.html#c_Sb0C">RehashFiles</a>()</span><br />
+<div class="funccomm"><pre> Close files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashGlobalFunctions" href="src/TTabCom.cxx.html#jHOzRC">RehashGlobalFunctions</a>()</span><br />
+<div class="funccomm"><pre> Reload global functions.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashGlobals" href="src/TTabCom.cxx.html#GDR_0B">RehashGlobals</a>()</span><br />
+<div class="funccomm"><pre> Reload globals.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashPragmas" href="src/TTabCom.cxx.html#StzU.B">RehashPragmas</a>()</span><br />
+<div class="funccomm"><pre> Reload pragmas.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashSysIncFiles" href="src/TTabCom.cxx.html#ZBEC9">RehashSysIncFiles</a>()</span><br />
+<div class="funccomm"><pre> Reload system include files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashUsers" href="src/TTabCom.cxx.html#S1ScOC">RehashUsers</a>()</span><br />
+<div class="funccomm"><pre> Reload users.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:RehashAll" href="src/TTabCom.cxx.html#ZB2q_">RehashAll</a>()</span><br />
+<div class="funccomm"><pre> clears and then rebuilds all lists
+ except for user names and system include files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfClasses" href="src/TTabCom.cxx.html#ciN3zB">GetListOfClasses</a>()</span><br />
+<div class="funccomm"><pre> Return the list of classes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfCppDirectives" href="src/TTabCom.cxx.html#u70DoD">GetListOfCppDirectives</a>()</span><br />
+<div class="funccomm"><pre> Return the list of CPP directives.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfFilesInPath" href="src/TTabCom.cxx.html#oPgg2B">GetListOfFilesInPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path)</span><br />
+<div class="funccomm"><pre> <span class="string">"path"</span> should be initialized with a colon separated list of
+ system directories
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfEnvVars" href="src/TTabCom.cxx.html#chUqC">GetListOfEnvVars</a>()</span><br />
+<div class="funccomm"><pre> Uses <span class="string">"env"</span> (Unix) or <span class="string">"set"</span> (Windows) to get list of environment variables.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfGlobals" href="src/TTabCom.cxx.html#sJAt9B">GetListOfGlobals</a>()</span><br />
+<div class="funccomm"><pre> Return the list of globals.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfGlobalFunctions" href="src/TTabCom.cxx.html#TuOgIE">GetListOfGlobalFunctions</a>()</span><br />
+<div class="funccomm"><pre> Return the list of global functions.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfPragmas" href="src/TTabCom.cxx.html#YbiI0B">GetListOfPragmas</a>()</span><br />
+<div class="funccomm"><pre> Return the list of pragmas
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfSysIncFiles" href="src/TTabCom.cxx.html#iiiUZ">GetListOfSysIncFiles</a>()</span><br />
+<div class="funccomm"><pre> Return the list of system include files.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:GetListOfUsers" href="src/TTabCom.cxx.html#mxSjgC">GetListOfUsers</a>()</span><br />
+<div class="funccomm"><pre> reads from <span class="string">"/etc/passwd"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Char_t">Char_t</a> <a class="funcname" name="TTabCom:AllAgreeOnChar" href="src/TTabCom.cxx.html#N.c_aB">AllAgreeOnChar</a>(<span class="keyword">int</span> i, <span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>* pList, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; nGoodStrings)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  if all the strings in <span class="string">"*pList"</span> have the same ith character,
+  that character is returned.
+  otherwise 0 is returned.
+
+  any string <span class="string">"s"</span> for which <span class="string">"ExcludedByFignore(s)"</span> is <a href="./ListOfTypes.html#bool">true</a>
+  will be ignored unless All the strings in <span class="string">"*pList"</span>
+  are <span class="string">"ExcludedByFignore()"</span>
+
+  in addition, the number of strings which were not
+  <span class="string">"ExcludedByFignore()"</span> is returned in <span class="string">"nGoodStrings"</span>.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:AppendListOfFilesInDirectory" href="src/TTabCom.cxx.html#NqFb0">AppendListOfFilesInDirectory</a>(<span class="keyword">const</span> <span class="keyword">char</span>* dirName, <a href="./TSeqCollection.html">TSeqCollection</a>* pList)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  adds a <a href="./TObjString.html">TObjString</a> to <span class="string">"*pList"</span>
+  for each entry found in the system directory <span class="string">"dirName"</span>
+
+  directories that do not exist are silently ignored.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TTabCom:DetermineClass" href="src/TTabCom.cxx.html#Yvoo9B">DetermineClass</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varName)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  returns empty string on failure.
+  otherwise returns something like this: <span class="string">"TROOT*"</span>.
+  fails for non-class types (ie, <a href="./ListOfTypes.html#int">int</a>, <a href="./ListOfTypes.html#char">char</a>, etc).
+  fails for pointers to functions.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTabCom:ExcludedByFignore" href="src/TTabCom.cxx.html#pF5H7">ExcludedByFignore</a>(<a href="./TString.html">TString</a> s)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  returns <a href="./ListOfTypes.html#bool">true</a> iff <span class="string">"s"</span> ends with one of
+  the strings listed in the <span class="string">"TabCom.FileIgnore"</span> resource.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TTabCom:GetSysIncludePath" href="src/TTabCom.cxx.html#kPEW2C">GetSysIncludePath</a>()</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  returns a colon-separated string of directories
+  that CINT will search when you call #include&lt;...&gt;
+
+  returns empty string on failure.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTabCom:IsDirectory" href="src/TTabCom.cxx.html#iIGNkE">IsDirectory</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fileName)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  calls <a href="./TSystem.html">TSystem</a>::<a href="./TSystem.html#TSystem:GetPathInfo" title="int TSystem::GetPathInfo(const char* path,Long_t* id,Long_t* size,Long_t* flags,Long_t* modtime) or overloads">GetPathInfo</a>() to see if <span class="string">"fileName"</span>
+  is a system directory.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TSeqCollection.html">TSeqCollection</a> * <a class="funcname" name="TTabCom:NewListOfFilesInPath" href="src/TTabCom.cxx.html#vgJGJC">NewListOfFilesInPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* path)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  creates a list containing the full path name for each file
+  in the (colon separated) string <span class="string">"path1"</span>
+
+  memory is allocated with <span class="string">"new"</span>, so
+  whoever calls this function takes responsibility for deleting it.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TTabCom:PathIsSpecifiedInFileName" href="src/TTabCom.cxx.html#Di9IRE">PathIsSpecifiedInFileName</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; fileName)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  <a href="./ListOfTypes.html#bool">true</a> if <span class="string">"fileName"</span>
+  1. is an absolute path (<span class="string">"/tmp/a"</span>)
+  2. is a relative path  (<span class="string">"../whatever"</span>, <span class="string">"./test"</span>)
+  3. starts with user name (<span class="string">"~/mail"</span>)
+  4. starts with an environment variable (<span class="string">"$ROOTSYS/bin"</span>)
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:NoMsg" href="src/TTabCom.cxx.html#KfOXq">NoMsg</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> errorLevel)</span><br />
+<div class="funccomm"><pre>[static utility function]
+
+  calling <span class="string">"NoMsg( errorLevel )"</span>,
+  sets <span class="string">"gErrorIgnoreLevel"</span> to <span class="string">"errorLevel+1"</span> so that
+  all errors with <span class="string">"level &lt; errorLevel"</span> will be ignored.
+
+  calling the function with a negative argument
+  (e.g., <span class="string">"NoMsg( -1 )"</span>)
+  resets <a href="./ListOfTypes.html#Int_t">gErrorIgnoreLevel</a> to its previous value.
+
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTabCom:Complete" href="src/TTabCom.cxx.html#wmmKZ">Complete</a>(<span class="keyword">const</span> <a href="./TRegexp.html">TRegexp</a>&amp; re, <span class="keyword">const</span> <a href="./TSeqCollection.html">TSeqCollection</a>* pListOfCandidates, <span class="keyword">const</span> <span class="keyword">char</span>* appendage, <a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./TString.html">TString</a>::ECaseCompare cmp = <a href="./TString.html">TString</a>::<a href="./TString.html#TString:kExact" title="const TString::ECaseCompare TString::kExact">kExact</a>)</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:CopyMatch" href="src/TTabCom.cxx.html#fpjJuD">CopyMatch</a>(<span class="keyword">char</span>* dest, <span class="keyword">const</span> <span class="keyword">char</span>* localName, <span class="keyword">const</span> <span class="keyword">char</span>* appendage = 0, <span class="keyword">const</span> <span class="keyword">char</span>* fullName = 0) const</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TTabCom:DeterminePath" href="src/TTabCom.cxx.html#If_H5E">DeterminePath</a>(<span class="keyword">const</span> <a href="./TString.html">TString</a>&amp; fileName, <span class="keyword">const</span> <span class="keyword">char</span>* defaultPath) const</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TString.html">TString</a> <a class="funcname" name="TTabCom:ExtendPath" href="src/TTabCom.cxx.html#KOQNi">ExtendPath</a>(<span class="keyword">const</span> <span class="keyword">char</span>* originalPath, <a href="./TString.html">TString</a> newBase) const</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TTabCom:Hook" href="src/TTabCom.cxx.html#z0biaE">Hook</a>(<span class="keyword">char</span>* buf, <span class="keyword">int</span>* pLoc, <a href="./ListOfTypes.html#ostream">ostream</a>&amp; out)</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:InitPatterns" href="src/TTabCom.cxx.html#YKotqB">InitPatterns</a>()</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TClass.html">TClass</a> * <a class="funcname" name="TTabCom:MakeClassFromClassName" href="src/TTabCom.cxx.html#g7iPDB">MakeClassFromClassName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* className) const</span><br />
+<div class="funccomm"><pre> [private]
+   (does some specific error handling that makes the function unsuitable for general use.)
+   returns a new'd <a href="./TClass.html">TClass</a> given the name of a class.
+   user must delete.
+   returns 0 in case of error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TClass.html">TClass</a> * <a class="funcname" name="TTabCom:TryMakeClassFromClassName" href="src/TTabCom.cxx.html#c_ha8D">TryMakeClassFromClassName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* className) const</span><br />
+<div class="funccomm"><pre> Same as above but does not print the error message.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TClass.html">TClass</a> * <a class="funcname" name="TTabCom:MakeClassFromVarName" href="src/TTabCom.cxx.html#LBLaYE">MakeClassFromVarName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* varName, <a href="./TTabCom.html">TTabCom</a>::EContext_t&amp; context, <span class="keyword">int</span> iter = 0)</span><br />
+<div class="funccomm"><pre> [private]
+   (does some specific error handling that makes the function unsuitable for general use.)
+   returns a new'd <a href="./TClass.html">TClass</a> given the name of a variable.
+   user must delete.
+   returns 0 in case of error.
+   if user has operator.() or operator-&gt;() backwards, will modify: context, *<a href="./TTabCom.html#TTabCom:fpLoc" title="int* TTabCom::fpLoc">fpLoc</a> and <a href="./TTabCom.html#TTabCom:fBuf" title="char* TTabCom::fBuf">fBuf</a>.
+   context sensitive behavior.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TTabCom:SetPattern" href="src/TTabCom.cxx.html#gLhtsD">SetPattern</a>(<a href="./TTabCom.html">TTabCom</a>::EContext_t handle, <span class="keyword">const</span> <span class="keyword">char</span>* regexp)</span><br />
+<div class="funccomm"><pre> [private]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">int</span> <a class="funcname" name="TTabCom:ParseReverse" href="src/TTabCom.cxx.html#bnvaKB">ParseReverse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* var_str, <span class="keyword">int</span> start)</span><br />
+<div class="funccomm"><pre>
+ Returns the place in the string where to put the \0, starting the search
+ from <span class="string">"start"</span>
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TTabCom:TTabCom" href="src/TTabCom.h.html#P6ZloC">TTabCom</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TTabCom.html">TTabCom</a>&amp; <a class="funcname" name="TTabCom:operator_" href="src/TTabCom.h.html#ZgoovC">operator=</a>(<span class="keyword">const</span> <a href="./TTabCom.html">TTabCom</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">EContext_t <a class="funcname" name="TTabCom:DetermineContext" href="src/TTabCom.h.html#J2c.KC">DetermineContext</a>() const</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="lacunza@cdfsg6.lbl.gov"> Christian Lacunza </a>   27/04/99 </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/rint:$Id: TTabCom.h 39402 2011-05-26 12:56:31Z axel $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

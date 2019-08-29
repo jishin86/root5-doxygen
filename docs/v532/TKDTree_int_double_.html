@@ -1,0 +1,758 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:19:05 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TKDTree&lt;int,double&gt;</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TKDTree&lt;int,double&gt;','','TKDTree.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TKDTree_int_double_.h.html">header file</a>
+<a class="descrheadentry" href="src/TKDTree_int_double_.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mathcore/inc/TKDTree.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/mathcore/src/TKDTree.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TKDTree_int_double_:description">class description</a> 
+<a class="descrheadentry" href="#TKDTree_int_double_:Function_Members">function members</a>
+<a class="descrheadentry" href="#TKDTree_int_double_:Data_Members">data members</a>
+<a class="descrheadentry" href="#TKDTree_int_double_:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MATHCORE_Index.html">MATHCORE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TKDTree&lt;int,double&gt;</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TKDTree_int_double_:description"></a>class TKDTree&lt;int,double&gt;: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+                      kd-tree and its implementation in TKDTree
+
+ Contents:
+ 1. What is kd-tree
+ 2. How to cosntruct kdtree - Pseudo code
+ 3. Using TKDTree
+    a. Creating the kd-tree and setting the data
+    b. Navigating the kd-tree
+ 4. TKDTree implementation - technical details
+    a. The order of nodes in internal arrays
+    b. Division algorithm
+    c. The order of nodes in boundary related arrays
+
+
+
+ 1. What is kdtree ? ( http://en.wikipedia.org/wiki/Kd-tree )
+
+ In computer science, a kd-tree (<a href="./ListOfTypes.html#short">short</a> for k-dimensional tree) is a space-partitioning data structure
+ for organizing points in a k-dimensional space. kd-trees are a useful data structure for several
+ applications, such as searches involving a multidimensional search key (e.g. range searches and
+ nearest neighbour searches). kd-trees are a special case of BSP trees.
+
+ A kd-tree uses only splitting planes that are perpendicular to one of the coordinate system axes.
+ This differs from BSP trees, in which arbitrary splitting planes can be used.
+ In addition, in the typical definition every node of a kd-tree, from the root to the leaves, stores a point.
+ This differs from BSP trees, in which leaves are typically the only nodes that contain points
+ (or other geometric primitives). As a consequence, each splitting plane must go through one of
+ the points in the kd-tree. kd-trees are a variant that store data only in leaf nodes.
+
+ 2. Constructing a classical kd-tree ( Pseudo code)
+
+ Since there are many possible ways to choose axis-aligned splitting planes, there are many different ways
+ to construct kd-trees. The canonical method of kd-tree construction has the following constraints:
+
+     * As one moves down the tree, one cycles through the axes used to select the splitting planes.
+      (For example, the root would have an x-aligned plane, the root's children would both have y-aligned
+       planes, the root's grandchildren would all have z-aligned planes, and so on.)
+     * At each step, the point selected to create the splitting plane is the median of the points being
+       put into the kd-tree, with respect to their coordinates in the axis being used. (Note the assumption
+       that we feed the entire set of points into the algorithm up-front.)
+
+ This method leads to a balanced kd-tree, in which each leaf node is about the same distance from the root.
+ However, balanced trees are not necessarily optimal for all applications.
+ The following pseudo-code illustrates this canonical construction procedure (NOTE, that the procedure used
+ by the TKDTree class is a bit different, the following pseudo-code is given as a simple illustration of the
+ concept):
+
+ function kdtree (list of points pointList, <a href="./ListOfTypes.html#int">int</a> depth)
+ {
+     if pointList is empty
+         return nil;
+     else
+     {
+         // Select axis based on depth so that axis cycles through all valid values
+         var <a href="./ListOfTypes.html#int">int</a> axis := depth mod k;
+
+         // Sort point list and choose median as pivot element
+         select median from pointList;
+
+         // Create node and construct subtrees
+         var tree_node node;
+         node.location := median;
+         node.leftChild := kdtree(points in pointList before median, depth+1);
+         node.rightChild := kdtree(points in pointList after median, depth+1);
+         return node;
+     }
+ }
+
+ Our construction method is optimized to save memory, and differs a bit from the constraints above.
+ In particular, the division axis is chosen as the one with the biggest spread, and the point to create the
+ splitting plane is chosen so, that one of the two subtrees contains exactly 2^k terminal nodes and is a
+ perfectly balanced binary tree, and, while at the same time, trying to keep the number of terminal nodes
+ in the 2 subtrees as close as possible. The following section gives more details about our implementation.
+
+ 3. Using TKDTree
+
+ 3a. Creating the tree and setting the data
+     The interface of the TKDTree, that allows to set input data, has been developped to simplify using it
+     together with <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>() functions. That's why the data has to be provided column-wise. For example:
+     {
+     <a href="./TTree.html">TTree</a> *datatree = ...
+
+     datatree-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"x:y:z"</span>, <span class="string">"selection"</span>, <span class="string">"goff"</span>);
+     //now make a kd-tree on the drawn variables
+     <a href="./TKDTreeID.html">TKDTreeID</a> *kdtree = new <a href="./TKDTreeID.html">TKDTreeID</a>(npoints, 3, 1);
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(0, datatree-&gt;GetV1());
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(1, datatree-&gt;GetV2());
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(2, datatree-&gt;GetV3());
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a>();
+     }
+     NOTE, that this implementation of kd-tree doesn't support adding new points after the tree has been built
+     Of course, it's not necessary to use <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>(). What is important, is to have data columnwise.
+     An example with regular arrays:
+     {
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> npoints = 100000;
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> ndim = 3;
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> bsize = 1;
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = -0.5;
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0.5;
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> *data0 = new <a href="./ListOfTypes.html#Double_t">Double_t</a>[npoints];
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> *data1 = new <a href="./ListOfTypes.html#Double_t">Double_t</a>[npoints];
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> *data2 = new <a href="./ListOfTypes.html#Double_t">Double_t</a>[npoints];
+     <a href="./ListOfTypes.html#Double_t">Double_t</a> *y     = new <a href="./ListOfTypes.html#Double_t">Double_t</a>[npoints];
+     for (<a href="./ListOfTypes.html#Int_t">Int_t</a> i=0; i&lt;npoints; i++){
+        data0[i]=<a href="./TRandom.html">gRandom</a>-><a href="./TRandom.html#TRandom:Uniform" title="Double_t TRandom::Uniform(Double_t x1=1) or overloads">Uniform</a>(xmin, xmax);
+        data1[i]=<a href="./TRandom.html">gRandom</a>-><a href="./TRandom.html#TRandom:Uniform" title="Double_t TRandom::Uniform(Double_t x1=1) or overloads">Uniform</a>(xmin, xmax);
+        data2[i]=<a href="./TRandom.html">gRandom</a>-><a href="./TRandom.html#TRandom:Uniform" title="Double_t TRandom::Uniform(Double_t x1=1) or overloads">Uniform</a>(xmin, xmax);
+     }
+     <a href="./TKDTreeID.html">TKDTreeID</a> *kdtree = new <a href="./TKDTreeID.html">TKDTreeID</a>(npoints, ndim, bsize);
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(0, data0);
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(1, data1);
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetData" title="void TKDTree&lt;int,double&gt;::SetData(int npoints,int ndim,UInt_t bsize,double** data) or overloads">SetData</a>(2, data2);
+     kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a>();
+     }
+
+     By default, the kd-tree doesn't own the data and doesn't delete it with itself. If you want the
+     data to be deleted together with the kd-tree, call TKDTree::<a href="./TKDTree_int_double_.html#TKDTree_int_double_:SetOwner" title="void TKDTree&lt;int,double&gt;::SetOwner(Int_t owner)">SetOwner</a>(<a href="./ListOfTypes.html#Bool_t">kTRUE</a>).
+
+     Most functions of the kd-tree don't require the original data to be present after the tree
+     has been built. Check the functions documentation for more details.
+
+ 3b. Navigating the kd-tree
+
+     Nodes of the tree are indexed top to bottom, left to right. The root node has index 0. Functions
+     TKDTree::<a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetLeft" title="Int_t TKDTree&lt;int,double&gt;::GetLeft(Int_t inode)">GetLeft</a>(Index inode), TKDTree::<a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetRight" title="Int_t TKDTree&lt;int,double&gt;::GetRight(Int_t inode)">GetRight</a>(Index inode) and TKDTree::<a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetParent" title="Int_t TKDTree&lt;int,double&gt;::GetParent(Int_t inode)">GetParent</a>(Index inode)
+     allow to find the children and the parent of a given node.
+
+     For a given node, one can find the indexes of the original points, contained in this node,
+     by calling the <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetNodePointsIndexes" title="void TKDTree&lt;int,double&gt;::GetNodePointsIndexes(Int_t node,Int_t&amp; first1,Int_t&amp; last1,Int_t&amp; first2,Int_t&amp; last2)">GetNodePointsIndexes</a>(Index inode) function. Additionally, for terminal nodes,
+     there is a function <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetPointsIndexes" title="int* TKDTree&lt;int,double&gt;::GetPointsIndexes(Int_t node)">GetPointsIndexes</a>(Index inode) that returns a pointer to the relevant
+     part of the index array. To find the number of point in the node
+     (not only terminal), call TKDTree::GetNpointsNode(Index inode).
+
+ 4.  TKDtree implementation details - internal information, not needed to use the kd-tree.
+     4a. Order of nodes in the node information arrays:
+
+ TKDtree is optimized to minimize memory consumption.
+ Nodes of the TKDTree do not store pointers to the left and right children or to the parent node,
+ but instead there are several 1-d arrays of size <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a> with information about the nodes.
+ The order of the nodes information in the arrays is described below. It's important to understand
+ it, if one's class needs to store some kind of additional information on the per node basis, for
+ example, the fit function parameters.
+
+ Drawback:   Insertion to the TKDtree is not supported.
+ Advantage:  Random access is supported
+
+ As noted above, the construction of the kd-tree involves choosing the axis and the point on
+ that axis to divide the remaining points approximately in half. The exact algorithm for choosing
+ the division point is described in the next section. The sequence of divisions is
+ recorded in the following arrays:
+ fAxix[<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>]  - Division axis (0,1,2,3 ...)
+ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fValue" title="double* TKDTree&lt;int,double&gt;::fValue">fValue</a>[<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>] - Division value
+
+ Given the index of a node in those arrays, it's easy to find the indices, corresponding to
+ children nodes or the parent node:
+ Suppose, the parent node is stored under the index inode. Then:
+ Left child index  = inode*2+1
+ Right child index =  (inode+1)*2
+ Suppose, that the child node is stored under the index inode. Then:
+ Parent index = inode/2
+
+ Number of division nodes and number of terminals :
+ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a> = (<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNPoints" title="int TKDTree&lt;int,double&gt;::fNPoints">fNPoints</a>/<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>)
+
+ The nodes are filled always from left side to the right side:
+ Let inode be the index of a node, and irow - the index of a row
+ The TKDTree looks the following way:
+ Ideal case:
+ Number of _terminal_ nodes = 2^N,  N=3
+
+            INode
+ irow 0     0                                                                   -  1 inode
+ irow 1     1                              2                                    -  2 inodes
+ irow 2     3              4               5               6                    -  4 inodes
+ irow 3     7       8      9      10       11     12       13      14           -  8 inodes
+
+
+ Non ideal case:
+ Number of _terminal_ nodes = 2^N+k,  N=3  k=1
+
+           INode
+ irow 0     0                                                                   - 1 inode
+ irow 1     1                              2                                    - 2 inodes
+ irow 2     3              4               5               6                    - 3 inodes
+ irow 3     7       8      9      10       11     12       13      14           - 8 inodes
+ irow 4     15  16                                                              - 2 inodes
+
+
+ 3b. The division algorithm:
+
+ As described above, the kd-tree is built by repeatingly dividing the given set of points into
+ 2 smaller sets. The cut is made on the axis with the biggest spread, and the value on the axis,
+ on which the cut is performed, is chosen based on the following formula:
+ Suppose, we want to divide n nodes into 2 groups, left and right. Then the left and right
+ will have the following number of nodes:
+
+ n=2^k+rest
+
+ Left  = 2^k-1 +  ((rest&gt;2^k-2) ?  2^k-2      : rest)
+ Right = 2^k-1 +  ((rest&gt;2^k-2) ?  rest-2^k-2 : 0)
+
+ For example, let n_nodes=67. Then, the closest 2^k=64, 2^k-1=32, 2^k-2=16.
+ Left node gets 32+3=35 sub-nodes, and the right node gets 32 sub-nodes
+
+ The division process continues until all the nodes contain not more than a predefined number
+ of points.
+
+ 3c. The order of nodes in boundary-related arrays
+
+ Some kd-tree based algorithms need to know the boundaries of each node. This information can
+ be computed by calling the TKDTree::<a href="./TKDTree_int_double_.html#TKDTree_int_double_:MakeBoundaries" title="void TKDTree&lt;int,double&gt;::MakeBoundaries(double* range=0x0)">MakeBoundaries</a>() function. It fills the following arrays:
+
+ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fRange" title="double* TKDTree&lt;int,double&gt;::fRange">fRange</a> : array containing the boundaries of the domain:
+ | 1st dimension (min + max) | 2nd dimension (min + max) | ...
+ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBoundaries" title="double* TKDTree&lt;int,double&gt;::fBoundaries">fBoundaries</a> : nodes boundaries
+ | 1st node {1st dim * 2 elements | 2nd dim * 2 elements | ...} | 2nd node {...} | ...
+ The nodes are arranged in the order described in section 3a.
+
+</pre><h4>This class is also known as (typedefs to this class)</h4><a href="./TKDTreeID.html">TKDTreeID</a>, TKDTree&lt;<a href="./ListOfTypes.html#Int_t">Int_t</a>,<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt;</div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TKDTree_int_double_:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:TKDTree_int_double_">TKDTree&lt;int,double&gt;</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:TKDTree_int_double_%1">TKDTree&lt;int,double&gt;</a>(<span class="keyword">int</span> npoints, <span class="keyword">int</span> ndim, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> bsize)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:TKDTree_int_double_%2">TKDTree&lt;int,double&gt;</a>(<span class="keyword">int</span> npoints, <span class="keyword">int</span> ndim, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> bsize, <span class="keyword">double</span>** data)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:">~TKDTree&lt;int,double&gt;</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:Build">Build</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:Distance">Distance</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <span class="keyword">int</span> ind, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = 2) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:DistanceToNode">DistanceToNode</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <span class="keyword">int</span> inode, <span class="keyword">double</span>&amp; min, <span class="keyword">double</span>&amp; max, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = 2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:FindBNodeA">FindBNodeA</a>(<span class="keyword">double</span>* point, <span class="keyword">double</span>* delta, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; inode)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:FindInRange">FindInRange</a>(<span class="keyword">double</span>* point, <span class="keyword">double</span> range, vector&lt;<span class="keyword">int</span>&gt;&amp; res)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:FindNearestNeighbors">FindNearestNeighbors</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <span class="keyword">int</span>* ind, <span class="keyword">double</span>* dist)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:FindNode">FindNode</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:FindPoint">FindPoint</a>(<span class="keyword">double</span>* point, <span class="keyword">int</span>&amp; index, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iter)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetBoundaries">GetBoundaries</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetBoundariesExact">GetBoundariesExact</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetBoundary">GetBoundary</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetBoundaryExact">GetBoundaryExact</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetBucketSize">GetBucketSize</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetCrossNode">GetCrossNode</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetIndPoints">GetIndPoints</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetLeft">GetLeft</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNDim">GetNDim</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNNodes">GetNNodes</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#UChar_t">UChar_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNodeAxis">GetNodeAxis</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNodePointsIndexes">GetNodePointsIndexes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; first1, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; last1, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; first2, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; last2) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNodeValue">GetNodeValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNPoints">GetNPoints</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetNPointsNode">GetNPointsNode</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetOffset">GetOffset</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetParent">GetParent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">int</span>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetPointsIndexes">GetPointsIndexes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetRight">GetRight</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetRowT0">GetRowT0</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:GetTotalNodes">GetTotalNodes</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:IsOwner">IsOwner</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:IsTerminal">IsTerminal</a>(<span class="keyword">int</span> inode) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:KOrdStat">KOrdStat</a>(<span class="keyword">int</span> ntotal, <span class="keyword">double</span>* a, <span class="keyword">int</span> k, <span class="keyword">int</span>* index) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:MakeBoundaries">MakeBoundaries</a>(<span class="keyword">double</span>* range = 0x0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:MakeBoundariesExact">MakeBoundariesExact</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:SetData%1">SetData</a>(<span class="keyword">int</span> idim, <span class="keyword">double</span>* data)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:SetData">SetData</a>(<span class="keyword">int</span> npoints, <span class="keyword">int</span> ndim, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> bsize, <span class="keyword">double</span>** data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:SetOwner">SetOwner</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> owner)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:Spread">Spread</a>(<span class="keyword">int</span> ntotal, <span class="keyword">double</span>* a, <span class="keyword">int</span>* index, <span class="keyword">double</span>&amp; min, <span class="keyword">double</span>&amp; max) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:TKDTree_int_double_%3">TKDTree&lt;int,double&gt;</a>(<span class="keyword">const</span> TKDTree&lt;<span class="keyword">int</span>,<span class="keyword">double</span>&gt;&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:CookBoundaries">CookBoundaries</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> left)</td></tr>
+<tr class="func"><td class="funcret">TKDTree&lt;<span class="keyword">int</span>,<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:operator_">operator=</a>(<span class="keyword">const</span> TKDTree&lt;<span class="keyword">int</span>,<span class="keyword">double</span>&gt;&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:UpdateNearestNeighbors">UpdateNearestNeighbors</a>(<span class="keyword">int</span> inode, <span class="keyword">const</span> <span class="keyword">double</span>* point, <a href="./ListOfTypes.html#Int_t">Int_t</a> kNN, <span class="keyword">int</span>* ind, <span class="keyword">double</span>* dist)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TKDTree_int_double_:UpdateRange">UpdateRange</a>(<span class="keyword">int</span> inode, <span class="keyword">double</span>* point, <span class="keyword">double</span> range, vector&lt;<span class="keyword">int</span>&gt;&amp; res)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TKDTree_int_double_:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#UChar_t">UChar_t</a>*</td><td class="dataname"><a name="TKDTree_int_double_:fAxis"></a>fAxis</td><td class="datadesc">[fNNodes] nodes cutting axis</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span>*</td><td class="dataname"><a name="TKDTree_int_double_:fBoundaries"></a>fBoundaries</td><td class="datadesc">! nodes boundaries</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="TKDTree_int_double_:fBucketSize"></a>fBucketSize</td><td class="datadesc">size of the terminal nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fCrossNode"></a>fCrossNode</td><td class="datadesc">! cross node - node that begins the last row (with terminal nodes only)</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span>**</td><td class="dataname"><a name="TKDTree_int_double_:fData"></a>fData</td><td class="datadesc">! data points</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fDataOwner"></a>fDataOwner</td><td class="datadesc">! 0 - not owner, 2 - owner of the pointer array, 1 - owner of the whole 2-d array</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span>*</td><td class="dataname"><a name="TKDTree_int_double_:fIndPoints"></a>fIndPoints</td><td class="datadesc">! array of points indexes</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="TKDTree_int_double_:fNDim"></a>fNDim</td><td class="datadesc">number of dimensions</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="TKDTree_int_double_:fNDimm"></a>fNDimm</td><td class="datadesc">dummy 2*fNDim</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fNNodes"></a>fNNodes</td><td class="datadesc">size of node array</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">int</span></td><td class="dataname"><a name="TKDTree_int_double_:fNPoints"></a>fNPoints</td><td class="datadesc">number of multidimensional points</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fOffset"></a>fOffset</td><td class="datadesc">! offset in fIndPoints - if there are 2 rows, that contain terminal nodes</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span>*</td><td class="dataname"><a name="TKDTree_int_double_:fRange"></a>fRange</td><td class="datadesc">[fNDimm] range of data for each dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fRowT0"></a>fRowT0</td><td class="datadesc">! smallest terminal row - first row that contains terminal nodes</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TKDTree_int_double_:fTotalNodes"></a>fTotalNodes</td><td class="datadesc">total number of nodes (fNNodes + terminal nodes)</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span>*</td><td class="dataname"><a name="TKDTree_int_double_:fValue"></a>fValue</td><td class="datadesc">[fNNodes] nodes cutting value</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TKDTree_int_double_:Class_Charts"></a>Class Charts</h2>
+<map name="MapTKDTree_int_double__Inh" id="MapTKDTree_int_double__Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="50,14,161,48"/>
+</map>
+<map name="MapTKDTree_int_double__InhMem" id="MapTKDTree_int_double__InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTKDTree_int_double__Lib" id="MapTKDTree_int_double__Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="168,237,296,285"/>
+</map>
+<div class="tabs">
+<a id="imgTKDTree_int_double__Inh" class="tabsel" href="inh/TKDTree_int_double__Inh.png" onclick="javascript:return SetImg('Charts','inh/TKDTree_int_double__Inh.png');">Inheritance</a>
+<a id="imgTKDTree_int_double__InhMem" class="tab" href="inhmem/TKDTree_int_double__InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TKDTree_int_double__InhMem.png');">Inherited Members</a>
+<a id="imgTKDTree_int_double__Incl" class="tab" href="incl/TKDTree_int_double__Incl.png" onclick="javascript:return SetImg('Charts','incl/TKDTree_int_double__Incl.png');">Includes</a>
+<a id="imgTKDTree_int_double__Lib" class="tab" href="lib/TKDTree_int_double__Lib.png" onclick="javascript:return SetImg('Charts','lib/TKDTree_int_double__Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTKDTree_int_double__Inh" src="inh/TKDTree_int_double__Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:Build" href="src/TKDTree_int_double_.cxx.html#YlklzE">Build</a>()</span><br />
+<div class="funccomm"><pre>
+ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a> the kd-tree
+
+ 1. calculate number of nodes
+ 2. calculate first terminal row
+ 3. initialize index array
+ 4. non recursive building of the binary tree
+
+
+ The tree is divided recursively. See class description, section 4b for the details
+ of the division alogrithm
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:FindNearestNeighbors" href="src/TKDTree_int_double_.cxx.html#HZx9CD">FindNearestNeighbors</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <span class="keyword">int</span>* ind, <span class="keyword">double</span>* dist)</span><br />
+<div class="funccomm"><pre>Find kNN nearest neighbors to the point in the first argument
+Returns 1 on success, 0 on failure
+Arrays ind and dist are provided by the user and are assumed to be at least kNN elements <a href="./ListOfTypes.html#long">long</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:UpdateNearestNeighbors" href="src/TKDTree_int_double_.cxx.html#QytQ9B">UpdateNearestNeighbors</a>(<span class="keyword">int</span> inode, <span class="keyword">const</span> <span class="keyword">double</span>* point, <a href="./ListOfTypes.html#Int_t">Int_t</a> kNN, <span class="keyword">int</span>* ind, <span class="keyword">double</span>* dist)</span><br />
+<div class="funccomm"><pre>Update the nearest neighbors values by examining the node inode
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:Distance" href="src/TKDTree_int_double_.cxx.html#djquiE">Distance</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <span class="keyword">int</span> ind, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = 2) const</span><br />
+<div class="funccomm"><pre>Find the distance between point of the first argument and the point at index value ind
+Type argument specifies the metric: type=2 - L2 metric, type=1 - L1 metric
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:DistanceToNode" href="src/TKDTree_int_double_.cxx.html#MJk.aC">DistanceToNode</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point, <span class="keyword">int</span> inode, <span class="keyword">double</span>&amp; min, <span class="keyword">double</span>&amp; max, <a href="./ListOfTypes.html#Int_t">Int_t</a> type = 2)</span><br />
+<div class="funccomm"><pre>Find the minimal and maximal distance from a given point to a given node.
+Type argument specifies the metric: type=2 - L2 metric, type=1 - L1 metric
+If the point is inside the node, both min and max are set to 0.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:FindNode" href="src/TKDTree_int_double_.cxx.html#s0Wl8">FindNode</a>(<span class="keyword">const</span> <span class="keyword">double</span>* point) const</span><br />
+<div class="funccomm"><pre> returns the index of the terminal node to which point belongs
+ (index in the <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fAxis" title="UChar_t* TKDTree&lt;int,double&gt;::fAxis">fAxis</a>, <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fValue" title="double* TKDTree&lt;int,double&gt;::fValue">fValue</a>, etc arrays)
+ returns -1 in case of failure
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:FindPoint" href="src/TKDTree_int_double_.cxx.html#w6DplC">FindPoint</a>(<span class="keyword">double</span>* point, <span class="keyword">int</span>&amp; index, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; iter)</span><br />
+<div class="funccomm"><pre>
+ find the index of point
+ works only if we keep <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fData" title="double** TKDTree&lt;int,double&gt;::fData">fData</a> pointers
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:FindInRange" href="src/TKDTree_int_double_.cxx.html#g9XfaD">FindInRange</a>(<span class="keyword">double</span>* point, <span class="keyword">double</span> range, vector&lt;<span class="keyword">int</span>&gt;&amp; res)</span><br />
+<div class="funccomm"><pre>Find all points in the sphere of a given radius <span class="string">"range"</span> around the given point
+1st argument - the point
+2nd argument - radius of the shere
+3rd argument - a vector, in which the results will be returned
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:UpdateRange" href="src/TKDTree_int_double_.cxx.html#GfIvH">UpdateRange</a>(<span class="keyword">int</span> inode, <span class="keyword">double</span>* point, <span class="keyword">double</span> range, vector&lt;<span class="keyword">int</span>&gt;&amp; res)</span><br />
+<div class="funccomm"><pre>Internal recursive function with the implementation of range searches
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index*  TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetPointsIndexes" href="src/TKDTree_int_double_.cxx.html#X3MVP">GetPointsIndexes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node) const</span><br />
+<div class="funccomm"><pre>return the indices of the points in that terminal node
+for all the nodes except last, the size is <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>
+for the last node it's <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fOffset" title="Int_t TKDTree&lt;int,double&gt;::fOffset">fOffset</a>%<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>  TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetNodePointsIndexes" href="src/TKDTree_int_double_.cxx.html#rVfvzB">GetNodePointsIndexes</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; first1, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; last1, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; first2, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; last2) const</span><br />
+<div class="funccomm"><pre>Return the indices of points in that node
+Indices are returned as the first and last value of the part of indices array, that belong to this node
+Sometimes points are in 2 intervals, then the first and last value for the second one are returned in
+third and fourth parameter, otherwise first2 is set to 0 and last2 is set to -1
+To iterate over all the points of the node #inode, one can do, for example:
+Index *indices = kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetPointsIndexes" title="int* TKDTree&lt;int,double&gt;::GetPointsIndexes(Int_t node)">GetPointsIndexes</a>();
+<a href="./ListOfTypes.html#Int_t">Int_t</a> first1, last1, first2, last2;
+kdtree-&gt;<a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetPointsIndexes" title="int* TKDTree&lt;int,double&gt;::GetPointsIndexes(Int_t node)">GetPointsIndexes</a>(inode, first1, last1, first2, last2);
+for (<a href="./ListOfTypes.html#Int_t">Int_t</a> ipoint=first1; ipoint&lt;=last1; ipoint++){
+   point = indices[ipoint];
+   //do something with point;
+}
+for (<a href="./ListOfTypes.html#Int_t">Int_t</a> ipoint=first2; ipoint&lt;=last2; ipoint++){
+   point = indices[ipoint];
+   //do something with point;
+}
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetNPointsNode" href="src/TKDTree_int_double_.cxx.html#NsYJE">GetNPointsNode</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> node) const</span><br />
+<div class="funccomm"><pre>Get number of points in this node
+for all the terminal nodes except last, the size is <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>
+for the last node it's <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fOffset" title="Int_t TKDTree&lt;int,double&gt;::fOffset">fOffset</a>%<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>, or if <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fOffset" title="Int_t TKDTree&lt;int,double&gt;::fOffset">fOffset</a>%<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>==0, it's also <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:SetData" href="src/TKDTree_int_double_.cxx.html#MZxFH">SetData</a>(<span class="keyword">int</span> npoints, <span class="keyword">int</span> ndim, <a href="./ListOfTypes.html#UInt_t">UInt_t</a> bsize, <span class="keyword">double</span>** data)</span><br />
+<div class="funccomm"><pre> Set the data array. See the constructor function comments for details
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:SetData%1" href="src/TKDTree_int_double_.cxx.html#h8gcXE">SetData</a>(<span class="keyword">int</span> idim, <span class="keyword">double</span>* data)</span><br />
+<div class="funccomm"><pre>Set the coordinate #ndim of all points (the column #ndim of the data matrix)
+After setting all the data columns, proceed by calling <a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a>() function
+Note, that calling this function after <a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a>() is not possible
+Note also, that no checks on the array sizes is performed anywhere
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:Spread" href="src/TKDTree_int_double_.cxx.html#D70L8C">Spread</a>(<span class="keyword">int</span> ntotal, <span class="keyword">double</span>* a, <span class="keyword">int</span>* index, <span class="keyword">double</span>&amp; min, <span class="keyword">double</span>&amp; max) const</span><br />
+<div class="funccomm"><pre>Calculate spread of the array a
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:KOrdStat" href="src/TKDTree_int_double_.cxx.html#XAENQD">KOrdStat</a>(<span class="keyword">int</span> ntotal, <span class="keyword">double</span>* a, <span class="keyword">int</span> k, <span class="keyword">int</span>* index) const</span><br />
+<div class="funccomm"><pre>
+copy of the <a href="./TMath.html">TMath</a>::<a href="./TMath.html#TMath:KOrdStat" title="short TMath::KOrdStat(long long n,const short* a,long long k,long long* work=0) or overloads">KOrdStat</a> because I need an Index work array
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:MakeBoundaries" href="src/TKDTree_int_double_.cxx.html#TXXDAE">MakeBoundaries</a>(<span class="keyword">double</span>* range = 0x0)</span><br />
+<div class="funccomm"><pre> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a> boundaries for each node. Note, that the boundaries here are built
+ based on the splitting planes of the kd-tree, and don't necessarily pass
+ through the points of the original dataset. For the latter functionality
+ see function <a href="./TKDTree_int_double_.html#TKDTree_int_double_:MakeBoundariesExact" title="void TKDTree&lt;int,double&gt;::MakeBoundariesExact()">MakeBoundariesExact</a>()
+ Boundaries can be retrieved by calling <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetBoundary" title="double* TKDTree&lt;int,double&gt;::GetBoundary(const Int_t node)">GetBoundary</a>(inode) function that would
+ return an array of boundaries for the specified node, or <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetBoundaries" title="double* TKDTree&lt;int,double&gt;::GetBoundaries()">GetBoundaries</a>() function
+ that would return the complete array.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:CookBoundaries" href="src/TKDTree_int_double_.cxx.html#g46CQD">CookBoundaries</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> left)</span><br />
+<div class="funccomm"><pre> define index of this terminal node
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:MakeBoundariesExact" href="src/TKDTree_int_double_.cxx.html#h.Sb0E">MakeBoundariesExact</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:Build" title="void TKDTree&lt;int,double&gt;::Build()">Build</a> boundaries for each node. Unlike <a href="./TKDTree_int_double_.html#TKDTree_int_double_:MakeBoundaries" title="void TKDTree&lt;int,double&gt;::MakeBoundaries(double* range=0x0)">MakeBoundaries</a>() function
+ the boundaries built here always pass through a point of the original dataset
+ So, for example, for a terminal node with just one point minimum and maximum for each
+ dimension are the same.
+ Boundaries can be retrieved by calling <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetBoundaryExact" title="double* TKDTree&lt;int,double&gt;::GetBoundaryExact(const Int_t node)">GetBoundaryExact</a>(inode) function that would
+ return an array of boundaries for the specified node, or <a href="./TKDTree_int_double_.html#TKDTree_int_double_:GetBoundaries" title="double* TKDTree&lt;int,double&gt;::GetBoundaries()">GetBoundaries</a>() function
+ that would return the complete array.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:FindBNodeA" href="src/TKDTree_int_double_.cxx.html#yfEDS">FindBNodeA</a>(<span class="keyword">double</span>* point, <span class="keyword">double</span>* delta, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; inode)</span><br />
+<div class="funccomm"><pre>
+ find the smallest node covering the full range - start
+
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value* TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetBoundaries" href="src/TKDTree_int_double_.cxx.html#GjrniE">GetBoundaries</a>()</span><br />
+<div class="funccomm"><pre> Get the boundaries
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value* TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetBoundariesExact" href="src/TKDTree_int_double_.cxx.html#wIeZK">GetBoundariesExact</a>()</span><br />
+<div class="funccomm"><pre> Get the boundaries
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value* TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetBoundary" href="src/TKDTree_int_double_.cxx.html#HslOYD">GetBoundary</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node)</span><br />
+<div class="funccomm"><pre> Get a boundary
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value* TKDTree&lt;Index, Value&gt; <a class="funcname" name="TKDTree_int_double_:GetBoundaryExact" href="src/TKDTree_int_double_.cxx.html#CI16ZE">GetBoundaryExact</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a> node)</span><br />
+<div class="funccomm"><pre> Get a boundary
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetLeft" href="src/TKDTree_int_double_.h.html#ZxGPUB">GetLeft</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) const</span><br />
+<div class="funccomm"><pre> Get indexes of left and right daughter nodes
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> inode*2+1;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetRight" href="src/TKDTree_int_double_.h.html#UNJ_w">GetRight</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (inode+1)*2;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetParent" href="src/TKDTree_int_double_.h.html#y8cSJB">GetParent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> inode) const</span><br />
+<div class="funccomm"><pre>
+ Other getters
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (inode-1)/2;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UChar_t">UChar_t</a> <a class="funcname" name="TKDTree_int_double_:GetNodeAxis" href="src/TKDTree_int_double_.h.html#JXmfN">GetNodeAxis</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (id &lt; 0 || id &gt;= <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>) ? 0 : <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fAxis" title="UChar_t* TKDTree&lt;int,double&gt;::fAxis">fAxis</a>[id];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Value <a class="funcname" name="TKDTree_int_double_:GetNodeValue" href="src/TKDTree_int_double_.h.html#WnsdTE">GetNodeValue</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> id) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (id &lt; 0 || id &gt;= <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>) ? 0 : <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fValue" title="double* TKDTree&lt;int,double&gt;::fValue">fValue</a>[id];}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetNNodes" href="src/TKDTree_int_double_.h.html#aUv5JC">GetNNodes</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetTotalNodes" href="src/TKDTree_int_double_.h.html#vIDjHB">GetTotalNodes</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fTotalNodes" title="Int_t TKDTree&lt;int,double&gt;::fTotalNodes">fTotalNodes</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index <a class="funcname" name="TKDTree_int_double_:GetNPoints" href="src/TKDTree_int_double_.h.html#vypbU">GetNPoints</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNPoints" title="int TKDTree&lt;int,double&gt;::fNPoints">fNPoints</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index <a class="funcname" name="TKDTree_int_double_:GetNDim" href="src/TKDTree_int_double_.h.html#hGBFYC">GetNDim</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNDim" title="int TKDTree&lt;int,double&gt;::fNDim">fNDim</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetRowT0" href="src/TKDTree_int_double_.h.html#vNvLsE">GetRowT0</a>()</span><br />
+<div class="funccomm"><pre>Getters for internal variables.
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fRowT0" title="Int_t TKDTree&lt;int,double&gt;::fRowT0">fRowT0</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetCrossNode" href="src/TKDTree_int_double_.h.html#SIrPmD">GetCrossNode</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fCrossNode" title="Int_t TKDTree&lt;int,double&gt;::fCrossNode">fCrossNode</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:GetOffset" href="src/TKDTree_int_double_.h.html#ce.CWB">GetOffset</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fOffset" title="Int_t TKDTree&lt;int,double&gt;::fOffset">fOffset</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index* <a class="funcname" name="TKDTree_int_double_:GetIndPoints" href="src/TKDTree_int_double_.h.html#jww6IE">GetIndPoints</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fIndPoints" title="int* TKDTree&lt;int,double&gt;::fIndPoints">fIndPoints</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">Index <a class="funcname" name="TKDTree_int_double_:GetBucketSize" href="src/TKDTree_int_double_.h.html#WRgvxD">GetBucketSize</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fBucketSize" title="int TKDTree&lt;int,double&gt;::fBucketSize">fBucketSize</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TKDTree_int_double_:IsTerminal" href="src/TKDTree_int_double_.h.html#crgYmE">IsTerminal</a>(<span class="keyword">int</span> inode) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> (inode&gt;=<a href="./TKDTree_int_double_.html#TKDTree_int_double_:fNNodes" title="Int_t TKDTree&lt;int,double&gt;::fNNodes">fNNodes</a>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TKDTree_int_double_:IsOwner" href="src/TKDTree_int_double_.h.html#L6KSWD">IsOwner</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fDataOwner" title="Int_t TKDTree&lt;int,double&gt;::fDataOwner">fDataOwner</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TKDTree_int_double_:SetOwner" href="src/TKDTree_int_double_.h.html#eGxT9">SetOwner</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> owner)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TKDTree_int_double_.html#TKDTree_int_double_:fDataOwner" title="Int_t TKDTree&lt;int,double&gt;::fDataOwner">fDataOwner</a> = owner; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TKDTree&lt;Index, Value&gt;&amp; <a class="funcname" name="TKDTree_int_double_:operator_" href="src/TKDTree_int_double_.h.html#dA39QB">operator=</a>(<span class="keyword">const</span> TKDTree&lt;<span class="keyword">int</span>,<span class="keyword">double</span>&gt;&amp; )</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: Thu Nov  3 20:19:06 2011 </em><em>&raquo; Last generated: 2011-11-03 20:19</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

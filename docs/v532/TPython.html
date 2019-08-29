@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:02 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TPython</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TPython','libPyROOT','TPython.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TPython.h.html">header file</a>
+<a class="descrheadentry" href="src/TPython.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/bindings/pyroot/inc/TPython.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/bindings/pyroot/src/TPython.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TPython:description">class description</a> 
+<a class="descrheadentry" href="#TPython:Function_Members">function members</a>
+<a class="descrheadentry" href="#TPython:Data_Members">data members</a>
+<a class="descrheadentry" href="#TPython:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./BINDINGS_Index.html">BINDINGS</a>
+ &#187; <a class="locationlevel" href="./BINDINGS_PYROOT_Index.html">PYROOT</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TPython</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TPython:description"></a>class TPython</h1>
+<div class="classdescr">
+<pre>
+                          Python interpreter access
+
+
+ The <a href="./TPython.html">TPython</a> class allows for access to python objects from CINT. The current
+ functionality is only basic: <a href="./ROOT.html">ROOT</a> objects and builtin types can freely cross
+ the boundary between the two interpreters, python objects can be instantiated
+ and their methods can be called. All other cross-coding is based on strings
+ that are run on the python interpreter.
+
+ Examples:
+
+  $ cat MyPyClass.py
+  print 'creating class MyPyClass ... '
+
+  class MyPyClass:
+     def __init__( self ):
+        print 'in MyPyClass.__init__'
+
+     def gime( self, what ):
+        return what
+
+  $ root -l
+  // Execute a string of python code.
+  root [0] <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:Exec" title="Bool_t TPython::Exec(const char* cmd)">Exec</a>( <span class="string">"print \'Hello World!\'"</span> );
+  Hello World!
+
+  // Create a <a href="./TBrowser.html">TBrowser</a> on the python side, and transfer it back and forth.
+  // Note the required explicit (<a href="./ListOfTypes.html#void">void</a>*) cast!
+  root [1] <a href="./TBrowser.html">TBrowser</a>* b = (<a href="./ListOfTypes.html#void">void</a>*)<a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:Eval" title="const TPyReturn TPython::Eval(const char* expr)">Eval</a>( <span class="string">"ROOT.TBrowser()"</span> );
+  root [2] <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:Bind" title="Bool_t TPython::Bind(TObject* object,const char* label)">Bind</a>( b, <span class="string">"b"</span> );
+  root [3] b == (<a href="./ListOfTypes.html#void">void</a>*) <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:Eval" title="const TPyReturn TPython::Eval(const char* expr)">Eval</a>( <span class="string">"b"</span> )
+  (<a href="./ListOfTypes.html#int">int</a>)1
+
+  // Builtin variables can cross-over by using implicit casts.
+  root [4] <a href="./ListOfTypes.html#int">int</a> i = <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:Eval" title="const TPyReturn TPython::Eval(const char* expr)">Eval</a>( <span class="string">"1 + 1"</span> );
+  root [5] i
+  (<a href="./ListOfTypes.html#int">int</a>)2
+
+  // Load a python module with a class definition, and use it. Casts are
+  // necessary as the type information can not be otherwise derived.
+  root [6] <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:LoadMacro" title="void TPython::LoadMacro(const char* name)">LoadMacro</a>( <span class="string">"MyPyClass.py"</span> );
+  creating class MyPyClass ...
+  root [7] MyPyClass m;
+  in MyPyClass.__init__
+  root [8] std::string s = (<a href="./ListOfTypes.html#char">char</a>*)m.gime( <span class="string">"aap"</span> );
+  root [9] s
+  (class <a href="./TString.html">TString</a>)<span class="string">"aap"</span>
+
+ It is possible to switch between interpreters by calling <span class="string">"TPython::Prompt()"</span>
+ on the CINT side, while returning with ^D (EOF). State is preserved between
+ successive switches.
+
+ The API part provides (direct) C++ access to the bindings functionality of
+ <a href="./PyROOT.html">PyROOT</a>. It allows verifying that you deal with a <a href="./PyROOT.html">PyROOT</a> python object in the
+ first place (<a href="./TPython.html#TPython:ObjectProxy_Check" title="Bool_t TPython::ObjectProxy_Check(PyObject* pyobject)">ObjectProxy_Check</a> for ObjectProxy and any derived types, as well
+ as <a href="./TPython.html#TPython:ObjectProxy_CheckExact" title="Bool_t TPython::ObjectProxy_CheckExact(PyObject* pyobject)">ObjectProxy_CheckExact</a> for ObjectProxy's only); and it allows conversions
+ of <a href="./ListOfTypes.html#void">void</a>* to an ObjectProxy and vice versa.
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TPython:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPython:TPython">TPython</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TPython:TPython%1">TPython</a>(<span class="keyword">const</span> <a href="./TPython.html">TPython</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TPython:_TPython">~TPython</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TPython:Bind">Bind</a>(<a href="./TObject.html">TObject</a>* object, <span class="keyword">const</span> <span class="keyword">char</span>* label)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPython:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">const</span> <a href="./TPyReturn.html">TPyReturn</a></td><td class="funcname"><a class="funcname" href="#TPython:Eval">Eval</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expr)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TPython:Exec">Exec</a>(<span class="keyword">const</span> <span class="keyword">char</span>* cmd)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:ExecScript">ExecScript</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">int</span> argc = 0, <span class="keyword">const</span> <span class="keyword">char</span>** argv = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TPython:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:LoadMacro">LoadMacro</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="#TPython:ObjectProxy_AsVoidPtr">ObjectProxy_AsVoidPtr</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TPython:ObjectProxy_Check">ObjectProxy_Check</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TPython:ObjectProxy_CheckExact">ObjectProxy_CheckExact</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#PyObject">PyObject</a>*</td><td class="funcname"><a class="funcname" href="#TPython:ObjectProxy_FromVoidPtr">ObjectProxy_FromVoidPtr</a>(<span class="keyword">void</span>* addr, <span class="keyword">const</span> <span class="keyword">char</span>* classname)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TPython.html">TPython</a>&amp;</td><td class="funcname"><a class="funcname" href="#TPython:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TPython.html">TPython</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:Prompt">Prompt</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TPython:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TPython:Initialize">Initialize</a>()</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TPython:Class_Charts"></a>Class Charts</h2>
+<map name="MapTPython_Lib" id="MapTPython_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="428,44,556,92"/>
+</map>
+<div class="tabs">
+<a id="imgTPython_Inh" class="tabsel" href="inh/TPython_Inh.png" onclick="javascript:return SetImg('Charts','inh/TPython_Inh.png');">Inheritance</a>
+<a id="imgTPython_InhMem" class="tab" href="inhmem/TPython_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TPython_InhMem.png');">Inherited Members</a>
+<a id="imgTPython_Incl" class="tab" href="incl/TPython_Incl.png" onclick="javascript:return SetImg('Charts','incl/TPython_Incl.png');">Includes</a>
+<a id="imgTPython_Lib" class="tab" href="lib/TPython_Lib.png" onclick="javascript:return SetImg('Charts','lib/TPython_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTPython_Inh" src="inh/TPython_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TPython:Initialize" href="src/TPython.cxx.html#EAciv">Initialize</a>()</span><br />
+<div class="funccomm"><pre> Private initialization method: setup the python interpreter and load the
+ <a href="./ROOT.html">ROOT</a> module.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPython:LoadMacro" href="src/TPython.cxx.html#xx53TB">LoadMacro</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span><br />
+<div class="funccomm"><pre> Execute the give python script as if it were a macro (effectively an
+ execfile in __main__), and create CINT equivalents for any newly available
+ python classes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPython:ExecScript" href="src/TPython.cxx.html#O8xvIE">ExecScript</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">int</span> argc = 0, <span class="keyword">const</span> <span class="keyword">char</span>** argv = 0)</span><br />
+<div class="funccomm"><pre> Execute a python stand-alone script, with argv CLI arguments.
+
+ example of use:
+    const <a href="./ListOfTypes.html#char">char</a>* argv[] = { <span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"3"</span> };
+    <a href="./TPython.html">TPython</a>::<a href="./TPython.html#TPython:ExecScript" title="void TPython::ExecScript(const char* name,int argc=0,const char** argv=0)">ExecScript</a>( <span class="string">"test.py"</span>, sizeof(argv)/sizeof(argv[0]), argv );
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TPython:Exec" href="src/TPython.cxx.html#cWPcKE">Exec</a>(<span class="keyword">const</span> <span class="keyword">char</span>* cmd)</span><br />
+<div class="funccomm"><pre> Execute a python statement (e.g. <span class="string">"import ROOT"</span>).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <a href="./TPyReturn.html">TPyReturn</a> <a class="funcname" name="TPython:Eval" href="src/TPython.cxx.html#csh1GB">Eval</a>(<span class="keyword">const</span> <span class="keyword">char</span>* expr)</span><br />
+<div class="funccomm"><pre> Evaluate a python expression (e.g. <span class="string">"ROOT.TBrowser()"</span>).
+
+ Caution: do not hold on to the return value: either store it in a builtin
+ type (implicit casting will work), or in a pointer to a <a href="./ROOT.html">ROOT</a> object (explicit
+ casting to a <a href="./ListOfTypes.html#void">void</a>* is required).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TPython:Bind" href="src/TPython.cxx.html#uhBXZ">Bind</a>(<a href="./TObject.html">TObject</a>* object, <span class="keyword">const</span> <span class="keyword">char</span>* label)</span><br />
+<div class="funccomm"><pre> <a href="./TPython.html#TPython:Bind" title="Bool_t TPython::Bind(TObject* object,const char* label)">Bind</a> a <a href="./ROOT.html">ROOT</a> object with, at the python side, the name <span class="string">"label"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TPython:Prompt" href="src/TPython.cxx.html#d6anXD">Prompt</a>()</span><br />
+<div class="funccomm"><pre> Enter an interactive python session (exit with ^D). State is preserved
+ between successive calls.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TPython:ObjectProxy_Check" href="src/TPython.cxx.html#TdtV_C">ObjectProxy_Check</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</span><br />
+<div class="funccomm"><pre> Test whether the type of the given pyobject is of ObjectProxy type or any
+ derived type.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TPython:ObjectProxy_CheckExact" href="src/TPython.cxx.html#CL9Kg">ObjectProxy_CheckExact</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</span><br />
+<div class="funccomm"><pre> Test whether the type of the given pyobject is ObjectProxy type.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span>* <a class="funcname" name="TPython:ObjectProxy_AsVoidPtr" href="src/TPython.cxx.html#mPbpwC">ObjectProxy_AsVoidPtr</a>(<a href="./ListOfTypes.html#PyObject">PyObject</a>* pyobject)</span><br />
+<div class="funccomm"><pre> Extract the object pointer held by the ObjectProxy pyobject.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#PyObject">PyObject</a>* <a class="funcname" name="TPython:ObjectProxy_FromVoidPtr" href="src/TPython.cxx.html#KGHeHB">ObjectProxy_FromVoidPtr</a>(<span class="keyword">void</span>* addr, <span class="keyword">const</span> <span class="keyword">char</span>* classname)</span><br />
+<div class="funccomm"><pre> <a href="./TPython.html#TPython:Bind" title="Bool_t TPython::Bind(TObject* object,const char* label)">Bind</a> the addr to a python object of class defined by classname.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TPython:_TPython" href="src/TPython.h.html#KCyinC">~TPython</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/pyroot:$Id: TPython.h 23159 2008-04-11 20:13:29Z wlav $ </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

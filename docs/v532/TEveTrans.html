@@ -1,0 +1,747 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:12:58 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TEveTrans</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TEveTrans','libEve','TEveTrans.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TEveTrans.h.html">header file</a>
+<a class="descrheadentry" href="src/TEveTrans.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/eve/inc/TEveTrans.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/graf3d/eve/src/TEveTrans.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TEveTrans:description">class description</a> 
+<a class="descrheadentry" href="#TEveTrans:Function_Members">function members</a>
+<a class="descrheadentry" href="#TEveTrans:Data_Members">data members</a>
+<a class="descrheadentry" href="#TEveTrans:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_Index.html">GRAF3D</a>
+ &#187; <a class="locationlevel" href="./GRAF3D_EVE_Index.html">EVE</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TEveTrans</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TEveTrans:description"></a>class TEveTrans: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./TEveTrans.html">TEveTrans</a> is a 4x4 transformation matrix for homogeneous coordinates
+ stored internaly in a column-major order to allow direct usage by
+ GL. The element type is <a href="./ListOfTypes.html#Double32_t">Double32_t</a> as statically the floats would
+ be precise enough but continuous operations on the matrix must
+ retain precision of column vectors.
+
+ Cartan angles are stored in fA[1-3] (+z, -y, +x). They are
+ recalculated on demand.
+
+ Direct  element access (first two should be used with care):
+ operator[i]    direct access to elements,   i:0-&gt;15
+ <a href="./TEveTrans.html#TEveTrans:CM" title="Double_t TEveTrans::CM(Int_t i,Int_t j) or overloads">CM</a>(i,j)        element 4*j + i;           i,j:0-&gt;3    { <a href="./TEveTrans.html#TEveTrans:CM" title="Double_t TEveTrans::CM(Int_t i,Int_t j) or overloads">CM</a> ~ c-matrix }
+ operator(i,j)  element 4*(j-1) + i - 1    i,j:1-&gt;4
+
+ Column-vector access:
+ USet Get/<a href="./TEveTrans.html#TEveTrans:SetBaseVec" title="void TEveTrans::SetBaseVec(Int_t b,Double_t x,Double_t y,Double_t z) or overloads">SetBaseVec</a>(), Get/<a href="./TEveTrans.html#TEveTrans:SetPos" title="void TEveTrans::SetPos(Double_t x,Double_t y,Double_t z) or overloads">SetPos</a>() and Arr[XYZT]() methods.
+
+ For all methods taking the matrix indices:
+ 1-&gt;X, 2-&gt;Y, 3-&gt;Z; 4-&gt;Position (if applicable). 0 reserved for time.
+
+ Shorthands in method-names:
+ LF ~ LocalFrame; PF ~ ParentFrame; IP ~ InPlace
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TEveTrans:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEveTrans:TEveTrans">TEveTrans</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEveTrans:TEveTrans%1">TEveTrans</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEveTrans:TEveTrans%2">TEveTrans</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* arr)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TEveTrans:TEveTrans%3">TEveTrans</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* arr)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TEveTrans:_TEveTrans">~TEveTrans</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:Array">Array</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:Array%1">Array</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrT">ArrT</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrT%1">ArrT</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrX">ArrX</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrX%1">ArrX</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrY">ArrY</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrY%1">ArrY</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrZ">ArrZ</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:ArrZ%1">ArrZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:CM">CM</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;</td><td class="funcname"><a class="funcname" href="#TEveTrans:CM%1">CM</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TVector3.html">TVector3</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetBaseVec">GetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetBaseVec%1">GetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <a href="./TVector3.html">TVector3</a>&amp; v) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetEditRotation">GetEditRotation</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetEditScale">GetEditScale</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetEditTrans">GetEditTrans</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TVector3.html">TVector3</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetPos%4">GetPos</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetPos%1">GetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetPos%2">GetPos</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetPos%3">GetPos</a>(<a href="./TVector3.html">TVector3</a>&amp; v) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetPos">GetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; z) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetRotAngles">GetRotAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetScale">GetScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:GetUseTrans">GetUseTrans</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Invert">Invert</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TEveTrans:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:IsScale">IsScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> low = 0.9, <a href="./ListOfTypes.html#Double_t">Double_t</a> high = 1.1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Move">Move</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Move3">Move3</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Move3LF">Move3LF</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Move3PF">Move3PF</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MoveLF">MoveLF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MovePF">MovePF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TVector3.html">TVector3</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Multiply">Multiply</a>(<span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Multiply%1">Multiply</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* vin, <a href="./ListOfTypes.html#Double_t">Double_t</a>* vout, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MultiplyIP">MultiplyIP</a>(<a href="./TVector3.html">TVector3</a>&amp; v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MultiplyIP%1">MultiplyIP</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MultiplyIP%2">MultiplyIP</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MultLeft">MultLeft</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:MultRight">MultRight</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:operator()">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;</td><td class="funcname"><a class="funcname" href="#TEveTrans:operator()%1">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TEveTrans.html">TEveTrans</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:operator*">operator*</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:operator*_">operator*=</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TEveTrans.html">TEveTrans</a>&amp;</td><td class="funcname"><a class="funcname" href="#TEveTrans:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:operator[]">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp;</td><td class="funcname"><a class="funcname" href="#TEveTrans:operator[]%1">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:OrtoNorm3">OrtoNorm3</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TVector3.html">TVector3</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Rotate%1">Rotate</a>(<span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Rotate">Rotate</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:RotateIP">RotateIP</a>(<a href="./TVector3.html">TVector3</a>&amp; v) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:RotateIP%1">RotateIP</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* v) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:RotateIP%2">RotateIP</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* v) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:RotateLF">RotateLF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:RotatePF">RotatePF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Scale">Scale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx, <a href="./ListOfTypes.html#Double_t">Double_t</a> sy, <a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetBaseVec%1">SetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetBaseVec">SetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetBuffer3D">SetBuffer3D</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buff)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetEditRotation">SetEditRotation</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> x)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetEditScale">SetEditScale</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> x)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetEditTrans">SetEditTrans</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> v)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetFrom">SetFrom</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* carr)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetFrom%1">SetFrom</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; mat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetFromArray">SetFromArray</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* arr)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetFromArray%1">SetFromArray</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a>* arr)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetGeoHMatrix">SetGeoHMatrix</a>(<a href="./TGeoHMatrix.html">TGeoHMatrix</a>&amp; mat)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetPos%1">SetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetPos%2">SetPos</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetPos%3">SetPos</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetPos">SetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetRotByAngles">SetRotByAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> a1, <a href="./ListOfTypes.html#Float_t">Float_t</a> a2, <a href="./ListOfTypes.html#Float_t">Float_t</a> a3)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetRotByAnyAngles">SetRotByAnyAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> a1, <a href="./ListOfTypes.html#Float_t">Float_t</a> a2, <a href="./ListOfTypes.html#Float_t">Float_t</a> a3, <span class="keyword">const</span> <span class="keyword">char</span>* pat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetScale">SetScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx, <a href="./ListOfTypes.html#Double_t">Double_t</a> sy, <a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetScaleX">SetScaleX</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetScaleY">SetScaleY</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sy)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetScaleZ">SetScaleZ</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetTrans">SetTrans</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> copyAngles = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetupFromToVec">SetupFromToVec</a>(<span class="keyword">const</span> <a href="./TEveVector.html">TEveVector</a>&amp; from, <span class="keyword">const</span> <a href="./TEveVector.html">TEveVector</a>&amp; to)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetupRotation">SetupRotation</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j, <a href="./ListOfTypes.html#Double_t">Double_t</a> f)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:SetUseTrans">SetUseTrans</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> v)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:TransposeRotationPart">TransposeRotationPart</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:UnitRot">UnitRot</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:UnitTrans">UnitTrans</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Unscale">Unscale</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:Unscale%1">Unscale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sz)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TEveTrans:ZeroTrans">ZeroTrans</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.0)</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Norm3Column">Norm3Column</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> col)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TEveTrans:Orto3Column">Orto3Column</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> col, <a href="./ListOfTypes.html#Int_t">Int_t</a> ref)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TEveTrans:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TEveTrans:fA1"></a>fA1</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TEveTrans:fA2"></a>fA2</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="dataname"><a name="TEveTrans:fA3"></a>fA3</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TEveTrans:fAsOK"></a>fAsOK</td><td class="datadesc">!</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TEveTrans:fEditRotation"></a>fEditRotation</td><td class="datadesc">edit rotation</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TEveTrans:fEditScale"></a>fEditScale</td><td class="datadesc">edit scale</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TEveTrans:fEditTrans"></a>fEditTrans</td><td class="datadesc">edit transformation in TGedFrame</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double32_t">Double32_t</a></td><td class="dataname"><a name="TEveTrans:fM"></a>fM[16]</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TEveTrans:fUseTrans"></a>fUseTrans</td><td class="datadesc">use transformation matrix</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TEveTrans:Class_Charts"></a>Class Charts</h2>
+<map name="MapTEveTrans_Inh" id="MapTEveTrans_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="72,20,232,68"/>
+</map>
+<map name="MapTEveTrans_InhMem" id="MapTEveTrans_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTEveTrans_Lib" id="MapTEveTrans_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="265,371,336,397"/>
+</map>
+<div class="tabs">
+<a id="imgTEveTrans_Inh" class="tabsel" href="inh/TEveTrans_Inh.png" onclick="javascript:return SetImg('Charts','inh/TEveTrans_Inh.png');">Inheritance</a>
+<a id="imgTEveTrans_InhMem" class="tab" href="inhmem/TEveTrans_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TEveTrans_InhMem.png');">Inherited Members</a>
+<a id="imgTEveTrans_Incl" class="tab" href="incl/TEveTrans_Incl.png" onclick="javascript:return SetImg('Charts','incl/TEveTrans_Incl.png');">Includes</a>
+<a id="imgTEveTrans_Lib" class="tab" href="lib/TEveTrans_Lib.png" onclick="javascript:return SetImg('Charts','lib/TEveTrans_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTEveTrans_Inh" src="inh/TEveTrans_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEveTrans:TEveTrans" href="src/TEveTrans.cxx.html#JSrilB">TEveTrans</a>()</span><br />
+<div class="funccomm"><pre> Default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEveTrans:TEveTrans%1" href="src/TEveTrans.cxx.html#aTz0T">TEveTrans</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+<div class="funccomm"><pre> Constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEveTrans:TEveTrans" href="src/TEveTrans.cxx.html#MD3TxB">TEveTrans</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a> arr[16])</span><br />
+<div class="funccomm"><pre> Constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TEveTrans:TEveTrans" href="src/TEveTrans.cxx.html#ezMamB">TEveTrans</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a> arr[16])</span><br />
+<div class="funccomm"><pre> Constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:UnitTrans" href="src/TEveTrans.cxx.html#IOS8.D">UnitTrans</a>()</span><br />
+<div class="funccomm"><pre> Reset matrix to unity.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:ZeroTrans" href="src/TEveTrans.cxx.html#aPJLLB">ZeroTrans</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.0)</span><br />
+<div class="funccomm"><pre> Reset matrix to zero, only the perspective scaling is set to w
+ (1 by default).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:UnitRot" href="src/TEveTrans.cxx.html#I84KQ">UnitRot</a>()</span><br />
+<div class="funccomm"><pre> Reset rotation part of the matrix to unity.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetTrans" href="src/TEveTrans.cxx.html#pImRx">SetTrans</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> copyAngles = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Set matrix from another,
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetFromArray" href="src/TEveTrans.cxx.html#Qq22.">SetFromArray</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a> arr[16])</span><br />
+<div class="funccomm"><pre> Set matrix from <a href="./ListOfTypes.html#Double_t">Double_t</a> array.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetFromArray" href="src/TEveTrans.cxx.html#b.WBgC">SetFromArray</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Float_t">Float_t</a> arr[16])</span><br />
+<div class="funccomm"><pre> Set matrix from <a href="./ListOfTypes.html#Float_t">Float_t</a> array.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetupRotation" href="src/TEveTrans.cxx.html#wbrmjC">SetupRotation</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j, <a href="./ListOfTypes.html#Double_t">Double_t</a> f)</span><br />
+<div class="funccomm"><pre> Setup the matrix as an elementary rotation.
+ Optimized versions of left/right multiplication with an elementary
+ rotation matrix are implemented in <a href="./TEveTrans.html#TEveTrans:RotatePF" title="void TEveTrans::RotatePF(Int_t i1,Int_t i2,Double_t amount)">RotatePF</a>/<a href="./TEveTrans.html#TEveTrans:RotateLF" title="void TEveTrans::RotateLF(Int_t i1,Int_t i2,Double_t amount)">RotateLF</a>.
+ Expects identity matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetupFromToVec" href="src/TEveTrans.cxx.html#q60siC">SetupFromToVec</a>(<span class="keyword">const</span> <a href="./TEveVector.html">TEveVector</a>&amp; from, <span class="keyword">const</span> <a href="./TEveVector.html">TEveVector</a>&amp; to)</span><br />
+<div class="funccomm"><pre> A function for creating a rotation matrix that rotates a vector called
+ <span class="string">"from"</span> into another vector called <span class="string">"to"</span>.
+ Input : from[3], to[3] which both must be *normalized* non-zero vectors
+ Output: mtx[3][3] -- a 3x3 matrix in colum-major form
+ Authors: Tomas Möller, John Hughes
+          <span class="string">"Efficiently Building a Matrix to Rotate One Vector to Another"</span>
+          Journal of Graphics Tools, 4(4):1-4, 1999
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MultLeft" href="src/TEveTrans.cxx.html#bobCrD">MultLeft</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> from left: this = t * this.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MultRight" href="src/TEveTrans.cxx.html#pcmhwC">MultRight</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> from right: this = this * t.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TEveTrans.html">TEveTrans</a> <a class="funcname" name="TEveTrans:operator*" href="src/TEveTrans.cxx.html#HKhm1D">operator*</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Copy" title="void TObject::Copy(TObject&amp; object)">Copy</a>, multiply from right and return product.
+ Avoid unless necessary.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:TransposeRotationPart" href="src/TEveTrans.cxx.html#R91_C">TransposeRotationPart</a>()</span><br />
+<div class="funccomm"><pre> Transpose 3x3 rotation sub-matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MoveLF" href="src/TEveTrans.cxx.html#Dui.RC">MoveLF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Move" title="void TEveTrans::Move(const TEveTrans&amp; a,Int_t ai,Double_t amount)">Move</a> in local-frame along axis with index ai.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Move3LF" href="src/TEveTrans.cxx.html#uQSG">Move3LF</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> General move in local-frame.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:RotateLF" href="src/TEveTrans.cxx.html#PauZYB">RotateLF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> in local frame. Does optimised version of <a href="./TEveTrans.html#TEveTrans:MultRight" title="void TEveTrans::MultRight(const TEveTrans&amp; t)">MultRight</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MovePF" href="src/TEveTrans.cxx.html#vvi.RC">MovePF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Move" title="void TEveTrans::Move(const TEveTrans&amp; a,Int_t ai,Double_t amount)">Move</a> in parent-frame along axis index ai.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Move3PF" href="src/TEveTrans.cxx.html#ek_ZE">Move3PF</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> General move in parent-frame.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:RotatePF" href="src/TEveTrans.cxx.html#TZuZYB">RotatePF</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> in parent frame. Does optimised version of <a href="./TEveTrans.html#TEveTrans:MultLeft" title="void TEveTrans::MultLeft(const TEveTrans&amp; t)">MultLeft</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Move" href="src/TEveTrans.cxx.html#AQDsRC">Move</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Int_t">Int_t</a> ai, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Move" title="void TEveTrans::Move(const TEveTrans&amp; a,Int_t ai,Double_t amount)">Move</a> in a's coord-system along axis-index ai.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Move3" href="src/TEveTrans.cxx.html#EQL8gE">Move3</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> General move in a's coord-system.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Rotate" href="src/TEveTrans.cxx.html#X7MUx">Rotate</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; a, <a href="./ListOfTypes.html#Int_t">Int_t</a> i1, <a href="./ListOfTypes.html#Int_t">Int_t</a> i2, <a href="./ListOfTypes.html#Double_t">Double_t</a> amount)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> in a's coord-system, rotating base vector with index i1
+ into i2.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetBaseVec" href="src/TEveTrans.cxx.html#Ue9HOD">SetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> Set base-vector with index b.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetBaseVec%1" href="src/TEveTrans.cxx.html#oxeVbC">SetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v)</span><br />
+<div class="funccomm"><pre> Set base-vector with index b.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVector3.html">TVector3</a> <a class="funcname" name="TEveTrans:GetBaseVec" href="src/TEveTrans.cxx.html#Q3Bue">GetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b) const</span><br />
+<div class="funccomm"><pre> Get base-vector with index b.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetBaseVec%1" href="src/TEveTrans.cxx.html#YeCZN">GetBaseVec</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> b, <a href="./TVector3.html">TVector3</a>&amp; v) const</span><br />
+<div class="funccomm"><pre> Get base-vector with index b.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetPos" href="src/TEveTrans.cxx.html#iKb6VB">SetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</span><br />
+<div class="funccomm"><pre> Set position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetPos%1" href="src/TEveTrans.cxx.html#bTzBtE">SetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x)</span><br />
+<div class="funccomm"><pre> Set position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetPos%2" href="src/TEveTrans.cxx.html#GEQbcD">SetPos</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x)</span><br />
+<div class="funccomm"><pre> Set position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetPos%3" href="src/TEveTrans.cxx.html#TIzR0">SetPos</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+<div class="funccomm"><pre> Set position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetPos" href="src/TEveTrans.cxx.html#ebXNT">GetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; z) const</span><br />
+<div class="funccomm"><pre> Get position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetPos%1" href="src/TEveTrans.cxx.html#d83Bi">GetPos</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* x) const</span><br />
+<div class="funccomm"><pre> Get position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetPos%2" href="src/TEveTrans.cxx.html#NquUwB">GetPos</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x) const</span><br />
+<div class="funccomm"><pre> Get position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetPos%3" href="src/TEveTrans.cxx.html#rptlvC">GetPos</a>(<a href="./TVector3.html">TVector3</a>&amp; v) const</span><br />
+<div class="funccomm"><pre> Get position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVector3.html">TVector3</a> <a class="funcname" name="TEveTrans:GetPos%4" href="src/TEveTrans.cxx.html#m76KRB">GetPos</a>() const</span><br />
+<div class="funccomm"><pre> Get position (base-vec 4).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetRotByAngles" href="src/TEveTrans.cxx.html#WoVBxD">SetRotByAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> a1, <a href="./ListOfTypes.html#Float_t">Float_t</a> a2, <a href="./ListOfTypes.html#Float_t">Float_t</a> a3)</span><br />
+<div class="funccomm"><pre> Sets Rotation part as given by angles:
+ a1 around z, -a2 around y, a3 around x.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetRotByAnyAngles" href="src/TEveTrans.cxx.html#PVtvL">SetRotByAnyAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> a1, <a href="./ListOfTypes.html#Float_t">Float_t</a> a2, <a href="./ListOfTypes.html#Float_t">Float_t</a> a3, <span class="keyword">const</span> <span class="keyword">char</span>* pat)</span><br />
+<div class="funccomm"><pre> Sets Rotation part as given by angles a1, a1, a3 and pattern pat.
+ Pattern consists of <span class="string">"XxYyZz"</span> characters.
+ eg: x means rotate about x axis, X means rotate in negative direction
+ xYz -&gt; R_x(a3) * R_y(-a2) * R_z(a1); (standard Gled representation)
+ Note that angles and pattern elements have inversed order!
+
+ Implements Eulerian/Cardanian angles in a uniform way.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetRotAngles" href="src/TEveTrans.cxx.html#iu4KK">GetRotAngles</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* x) const</span><br />
+<div class="funccomm"><pre> Get Cardan rotation angles (pattern xYz above).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Scale" href="src/TEveTrans.cxx.html#ZrNN8C">Scale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx, <a href="./ListOfTypes.html#Double_t">Double_t</a> sy, <a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Scale" title="void TEveTrans::Scale(Double_t sx,Double_t sy,Double_t sz)">Scale</a> matrix. Translation part untouched.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:Unscale" href="src/TEveTrans.cxx.html#haqLoE">Unscale</a>()</span><br />
+<div class="funccomm"><pre> Remove scaling, make all base vectors of unit length.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Unscale%1" href="src/TEveTrans.cxx.html#y107XD">Unscale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sz)</span><br />
+<div class="funccomm"><pre> Remove scaling, make all base vectors of unit length.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:GetScale" href="src/TEveTrans.cxx.html#Gqkj8C">GetScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sx, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sy, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; sz) const</span><br />
+<div class="funccomm"><pre> Deduce scales from sizes of base vectors.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetScale" href="src/TEveTrans.cxx.html#cORnoD">SetScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx, <a href="./ListOfTypes.html#Double_t">Double_t</a> sy, <a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</span><br />
+<div class="funccomm"><pre> Set scaling.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetScaleX" href="src/TEveTrans.cxx.html#nEsBAD">SetScaleX</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sx)</span><br />
+<div class="funccomm"><pre> Change x scaling.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetScaleY" href="src/TEveTrans.cxx.html#r.1BAD">SetScaleY</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sy)</span><br />
+<div class="funccomm"><pre> Change y scaling.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetScaleZ" href="src/TEveTrans.cxx.html#PiYBAD">SetScaleZ</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sz)</span><br />
+<div class="funccomm"><pre> Change z scaling.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MultiplyIP" href="src/TEveTrans.cxx.html#Z8l8sD">MultiplyIP</a>(<a href="./TVector3.html">TVector3</a>&amp; v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> vector in-place.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MultiplyIP%1" href="src/TEveTrans.cxx.html#P1R.hC">MultiplyIP</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> vector in-place.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:MultiplyIP%2" href="src/TEveTrans.cxx.html#dhYaZC">MultiplyIP</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> vector in-place.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVector3.html">TVector3</a> <a class="funcname" name="TEveTrans:Multiply" href="src/TEveTrans.cxx.html#qATfMC">Multiply</a>(<span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> vector and return it.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Multiply%1" href="src/TEveTrans.cxx.html#fr6oGC">Multiply</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* vin, <a href="./ListOfTypes.html#Double_t">Double_t</a>* vout, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Multiply" title="TVector3 TEveTrans::Multiply(const TVector3&amp; v,Double_t w=1) or overloads">Multiply</a> vector and fill output array vout.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:RotateIP" href="src/TEveTrans.cxx.html#oqTjVB">RotateIP</a>(<a href="./TVector3.html">TVector3</a>&amp; v) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> vector in-place. Translation is NOT applied.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:RotateIP%1" href="src/TEveTrans.cxx.html#wR.saB">RotateIP</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* v) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> vector in-place. Translation is NOT applied.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:RotateIP%2" href="src/TEveTrans.cxx.html#wtarj">RotateIP</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a>* v) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> vector in-place. Translation is NOT applied.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVector3.html">TVector3</a> <a class="funcname" name="TEveTrans:Rotate%1" href="src/TEveTrans.cxx.html#InWQkC">Rotate</a>(<span class="keyword">const</span> <a href="./TVector3.html">TVector3</a>&amp; v) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Rotate" title="void TEveTrans::Rotate(const TEveTrans&amp; a,Int_t i1,Int_t i2,Double_t amount) or overloads">Rotate</a> vector and return the rotated vector. Translation is NOT applied.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:Norm3Column" href="src/TEveTrans.cxx.html#QP_.n">Norm3Column</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> col)</span><br />
+<div class="funccomm"><pre> Norm 3-vector in column col.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:Orto3Column" href="src/TEveTrans.cxx.html#Vlo16B">Orto3Column</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> col, <a href="./ListOfTypes.html#Int_t">Int_t</a> ref)</span><br />
+<div class="funccomm"><pre> Orto-norm 3-vector in column col with respect to column ref.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:OrtoNorm3" href="src/TEveTrans.cxx.html#E6M2LE">OrtoNorm3</a>()</span><br />
+<div class="funccomm"><pre> Orto-norm columns 1 to 3.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:Invert" href="src/TEveTrans.cxx.html#VvXM0D">Invert</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Invert" title="Double_t TEveTrans::Invert()">Invert</a> matrix.
+ Copied from <a href="./ROOT.html">ROOT</a>'s TMatrixFCramerInv.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Streamer" href="src/TEveTrans.cxx.html#z.os2D">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream an object of class <a href="./TEveTrans.html">TEveTrans</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:Print" href="src/TEveTrans.cxx.html#iRHvxE">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TEveTrans.html#TEveTrans:Print" title="void TEveTrans::Print(Option_t* option=&quot;&quot;)">Print</a> in reasonable format.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetFrom" href="src/TEveTrans.cxx.html#J0ApvB">SetFrom</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* carr)</span><br />
+<div class="funccomm"><pre> Initialize from array.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetFrom%1" href="src/TEveTrans.cxx.html#cclgKB">SetFrom</a>(<span class="keyword">const</span> <a href="./TGeoMatrix.html">TGeoMatrix</a>&amp; mat)</span><br />
+<div class="funccomm"><pre> Initialize from <a href="./TGeoMatrix.html">TGeoMatrix</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetGeoHMatrix" href="src/TEveTrans.cxx.html#AWfmj">SetGeoHMatrix</a>(<a href="./TGeoHMatrix.html">TGeoHMatrix</a>&amp; mat)</span><br />
+<div class="funccomm"><pre> Set <a href="./TGeoHMatrix.html">TGeoHMatrix</a> mat.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetBuffer3D" href="src/TEveTrans.cxx.html#AS6xRD">SetBuffer3D</a>(<a href="./TBuffer3D.html">TBuffer3D</a>&amp; buff)</span><br />
+<div class="funccomm"><pre> Fill transformation part <a href="./TBuffer3D.html">TBuffer3D</a> core section.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEveTrans:IsScale" href="src/TEveTrans.cxx.html#HzSyC">IsScale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> low = 0.9, <a href="./ListOfTypes.html#Double_t">Double_t</a> high = 1.1) const</span><br />
+<div class="funccomm"><pre> Test if the transformation is a scale.
+ To be used by <a href="./ROOT.html">ROOT</a> <a href="./TGLObject.html">TGLObject</a> descendants that potentially need to
+ use GL_NORMALIZE.
+ The low/high limits are expected to be squares of acutal limits.
+
+ Ideally this should be done by the <a href="./TGLViewer.html">TGLViewer</a> [but is not].
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TEveTrans:_TEveTrans" href="src/TEveTrans.h.html#W2LDbC">~TEveTrans</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TEveTrans.html">TEveTrans</a>&amp; <a class="funcname" name="TEveTrans:operator_" href="src/TEveTrans.h.html#pgNVSE">operator=</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:SetTrans" title="void TEveTrans::SetTrans(const TEveTrans&amp; t,Bool_t copyAngles=kTRUE)">SetTrans</a>(t); <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:operator*_" href="src/TEveTrans.h.html#OVlXEB">operator*=</a>(<span class="keyword">const</span> <a href="./TEveTrans.html">TEveTrans</a>&amp; t)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:MultRight" title="void TEveTrans::MultRight(const TEveTrans&amp; t)">MultRight</a>(t); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TEveTrans:Array" href="src/TEveTrans.h.html#EgTyqC">Array</a>()</span><br />
+<div class="funccomm"><pre> Element access
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TEveTrans:ArrX" href="src/TEveTrans.h.html#f1LOjD">ArrX</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TEveTrans:ArrY" href="src/TEveTrans.h.html#Gc1MG">ArrY</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TEveTrans:ArrZ" href="src/TEveTrans.h.html#j_SvjC">ArrZ</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>* <a class="funcname" name="TEveTrans:ArrT" href="src/TEveTrans.h.html#gg8H1D">ArrT</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:operator[]" href="src/TEveTrans.h.html#I9Kth">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[i]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; <a class="funcname" name="TEveTrans:operator[]%1" href="src/TEveTrans.h.html#C6Ht6C">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[i]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:CM" href="src/TEveTrans.h.html#kqYsXB">CM</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[4*j + i]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; <a class="funcname" name="TEveTrans:CM%1" href="src/TEveTrans.h.html#leBagE">CM</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[4*j + i]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TEveTrans:operator()" href="src/TEveTrans.h.html#dNHd4">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[4*j + i - 5]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; <a class="funcname" name="TEveTrans:operator()%1" href="src/TEveTrans.h.html#cTMVwC">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> i, <a href="./ListOfTypes.html#Int_t">Int_t</a> j)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fM" title="Double32_t TEveTrans::fM">fM</a>[4*j + i - 5]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEveTrans:GetUseTrans" href="src/TEveTrans.h.html#XwhM4C">GetUseTrans</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fUseTrans" title="Bool_t TEveTrans::fUseTrans">fUseTrans</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetUseTrans" href="src/TEveTrans.h.html#wPICME">SetUseTrans</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> v)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:fUseTrans" title="Bool_t TEveTrans::fUseTrans">fUseTrans</a> = v;    }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetEditRotation" href="src/TEveTrans.h.html#H9utv">SetEditRotation</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> x)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:fEditRotation" title="Bool_t TEveTrans::fEditRotation">fEditRotation</a> = x; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetEditScale" href="src/TEveTrans.h.html#hUgc_C">SetEditScale</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> x)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:fEditScale" title="Bool_t TEveTrans::fEditScale">fEditScale</a> = x; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEveTrans:GetEditRotation" href="src/TEveTrans.h.html#ZuGP.D">GetEditRotation</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fEditRotation" title="Bool_t TEveTrans::fEditRotation">fEditRotation</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEveTrans:GetEditScale" href="src/TEveTrans.h.html#vkWNXD">GetEditScale</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fEditScale" title="Bool_t TEveTrans::fEditScale">fEditScale</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TEveTrans:GetEditTrans" href="src/TEveTrans.h.html#zCRM1E">GetEditTrans</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TEveTrans.html#TEveTrans:fEditTrans" title="Bool_t TEveTrans::fEditTrans">fEditTrans</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TEveTrans:SetEditTrans" href="src/TEveTrans.h.html#XSWmQC">SetEditTrans</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> v)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TEveTrans.html#TEveTrans:fEditTrans" title="Bool_t TEveTrans::fEditTrans">fEditTrans</a> = v;    }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/eve:$Id: TEveTrans.h 32931 2010-04-09 16:29:40Z matevz $ </em><em>&raquo; Last generated: 2011-11-03 20:12</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

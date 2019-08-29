@@ -1,0 +1,731 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:33 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TMatrixTSparse&lt;double&gt;</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TMatrixTSparse&lt;double&gt;','libMatrix','TMatrixTSparse.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TMatrixTSparse_double_.h.html">header file</a>
+<a class="descrheadentry" href="src/TMatrixTSparse_double_.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/matrix/inc/TMatrixTSparse.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/math/matrix/src/TMatrixTSparse.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TMatrixTSparse_double_:description">class description</a> 
+<a class="descrheadentry" href="#TMatrixTSparse_double_:Function_Members">function members</a>
+<a class="descrheadentry" href="#TMatrixTSparse_double_:Data_Members">data members</a>
+<a class="descrheadentry" href="#TMatrixTSparse_double_:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="./MATH_MATRIX_Index.html">MATRIX</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TMatrixTSparse&lt;double&gt;</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TMatrixTSparse_double_:description"></a>class TMatrixTSparse&lt;double&gt;: public <a href="./TMatrixTBase_double_.html">TMatrixTBase&lt;double&gt;</a></h1>
+<div class="classdescr">
+<pre>
+
+TMatrixTSparse
+
+Template class of a general sparse matrix in the Harwell-Boeing
+format
+
+Besides the usual shape/size decsriptors of a matrix like fNrows,
+fRowLwb,fNcols and fColLwb, we also store a row index, <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a> and
+column index, <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a> only for those elements unequal zero:
+
+<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>[0,..,fNrows]:    Stores for each row the index range of
+the elements in the data and column array
+<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>[0,..,fNelems-1]: Stores the column number for each data
+element != 0
+
+As an example how to access all sparse data elements:
+
+for (<a href="./ListOfTypes.html#Int_t">Int_t</a> irow = 0; irow &lt; this-&gt;fNrows; irow++) {
+const <a href="./ListOfTypes.html#Int_t">Int_t</a> sIndex = <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>[irow];
+const <a href="./ListOfTypes.html#Int_t">Int_t</a> eIndex = <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>[irow+1];
+for (<a href="./ListOfTypes.html#Int_t">Int_t</a> index = sIndex; index &lt; eIndex; index++) {
+const <a href="./ListOfTypes.html#Int_t">Int_t</a> icol = <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>[index];
+const Element data = <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fElements" title="double* TMatrixTSparse&lt;double&gt;::fElements">fElements</a>[index];
+printf(<span class="string">"data(%d,%d) = %.4e\n"</span>,irow+this-&gt;fRowLwb,icol+
+this-&gt;fColLwb,data);
+}
+}
+
+When checking whether sparse matrices are compatible (like in an
+assigment !), not only the shape parameters are compared but also
+the sparse structure through <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a> and <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a> .
+
+Several methods exist to fill a sparse matrix with data entries.
+Most are the same like for dense matrices but some care has to be
+taken with regard to performance. In the constructor, always the
+shape of the matrix has to be specified in some form . Data can be
+entered through the following methods :
+1. constructor
+TMatrixTSparse(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb,<a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb,<a href="./ListOfTypes.html#Int_t">Int_t</a> dol_lwb,
+<a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb,<a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros,
+<a href="./ListOfTypes.html#Int_t">Int_t</a> *row, <a href="./ListOfTypes.html#Int_t">Int_t</a> *col,Element *data);
+It uses <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:SetMatrixArray" title="TMatrixTBase&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::SetMatrixArray(const double* data,Option_t* =&quot;&quot;) or overloads">SetMatrixArray</a>(..), see below
+2. copy constructors
+3. <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:SetMatrixArray" title="TMatrixTBase&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::SetMatrixArray(const double* data,Option_t* =&quot;&quot;) or overloads">SetMatrixArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nr,<a href="./ListOfTypes.html#Int_t">Int_t</a> *irow,<a href="./ListOfTypes.html#Int_t">Int_t</a> *icol,Element *data)
+where it is expected that the irow,icol and data array contain
+nr entries . Only the entries with non-zero data[i] value are
+inserted. Be aware that the input data array will be modified
+inside the routine for doing the necessary sorting of indices !
+4. TMatrixTSparse a(n,m); for(....) { a(i,j) = ....
+This is a very flexible method but expensive :
+- if no entry for slot (i,j) is found in the sparse index table
+it will be entered, which involves some memory management !
+- before invoking this method in a loop it is smart to first
+set the index table through a call to <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:SetSparseIndex" title="TMatrixTSparse&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::SetSparseIndex(Int_t nelem_new) or overloads">SetSparseIndex</a>(..)
+5. <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:SetSub" title="TMatrixTBase&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::SetSub(Int_t row_lwb,Int_t col_lwb,const TMatrixTBase&lt;double&gt;&amp; source)">SetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb,<a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb,const TMatrixTBase &amp;source)
+the matrix to be inserted at position (row_lwb,col_lwb) can be
+both dense or sparse .
+
+
+</pre><h4>This class is also known as (typedefs to this class)</h4>TMatrixTSparse&lt;<a href="./ListOfTypes.html#Double_t">Double_t</a>&gt;, <a href="./TMatrixDSparse.html">TMatrixDSparse</a></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TMatrixTSparse_double_:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_">TMatrixTSparse&lt;double&gt;</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%4">TMatrixTSparse&lt;double&gt;</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; another)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%5">TMatrixTSparse&lt;double&gt;</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; another)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%1">TMatrixTSparse&lt;double&gt;</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%6">TMatrixTSparse&lt;double&gt;</a>(TMatrixTSparse&lt;<span class="keyword">double</span>&gt;::EMatrixCreatorsOp1 op, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; prototype)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%7">TMatrixTSparse&lt;double&gt;</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, TMatrixTSparse&lt;<span class="keyword">double</span>&gt;::EMatrixCreatorsOp2 op, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%8">TMatrixTSparse&lt;double&gt;</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, TMatrixTSparse&lt;<span class="keyword">double</span>&gt;::EMatrixCreatorsOp2 op, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%9">TMatrixTSparse&lt;double&gt;</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, TMatrixTSparse&lt;<span class="keyword">double</span>&gt;::EMatrixCreatorsOp2 op, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%2">TMatrixTSparse&lt;double&gt;</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:TMatrixTSparse_double_%3">TMatrixTSparse&lt;double&gt;</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* row, <a href="./ListOfTypes.html#Int_t">Int_t</a>* col, <span class="keyword">double</span>* data)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:">~TMatrixTSparse&lt;double&gt;</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Abs"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Abs</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Apply"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Apply</a>(<span class="keyword">const</span> TElementActionT&lt;<span class="keyword">double</span>&gt;&amp; action)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Apply%1"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Apply</a>(<span class="keyword">const</span> TElementPosActionT&lt;<span class="keyword">double</span>&gt;&amp; action)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Clear">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ColNorm">ColNorm</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Determinant"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Determinant</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Determinant%1"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Determinant</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d1, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; d2) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Draw"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:E2Norm"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>E2Norm</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ExtractRow">ExtractRow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row, <a href="./ListOfTypes.html#Int_t">Int_t</a> col, <span class="keyword">double</span>* v, <a href="./ListOfTypes.html#Int_t">Int_t</a> n = -1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetColIndexArray">GetColIndexArray</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetColIndexArray%1">GetColIndexArray</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetColLwb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetColLwb</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetColUpb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetColUpb</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetMatrix2Array">GetMatrix2Array</a>(<span class="keyword">double</span>* data, <a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetMatrixArray">GetMatrixArray</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">double</span>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetMatrixArray%1">GetMatrixArray</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetNcols"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetNcols</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetNoElements"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetNoElements</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetNrows"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetNrows</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetRowIndexArray">GetRowIndexArray</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetRowIndexArray%1">GetRowIndexArray</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetRowLwb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetRowLwb</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetRowUpb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetRowUpb</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMatrixTSparse_double_.html">TMatrixTSparse&lt;double&gt;</a></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetSub%1">GetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"S"</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:GetSub">GetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; target, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"S"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:GetTol"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>GetTol</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:InsertRow">InsertRow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row, <a href="./ListOfTypes.html#Int_t">Int_t</a> col, <span class="keyword">const</span> <span class="keyword">double</span>* v, <a href="./ListOfTypes.html#Int_t">Int_t</a> n = -1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Invalidate"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Invalidate</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:IsOwner"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>IsOwner</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:IsSymmetric">IsSymmetric</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:IsValid"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>IsValid</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:MakeValid"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>MakeValid</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Max"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Max</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Min"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Min</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Mult">Mult</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:NonZeros">NonZeros</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Norm1"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Norm1</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:NormByDiag">NormByDiag</a>(<span class="keyword">const</span> TVectorT&lt;<span class="keyword">double</span>&gt;&amp;, <a href="./ListOfTypes.html#Option_t">Option_t</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:NormInf"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>NormInf</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator!_"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator!=</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator()">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown, <a href="./ListOfTypes.html#Int_t">Int_t</a> coln) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">double</span>&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator()%1">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown, <a href="./ListOfTypes.html#Int_t">Int_t</a> coln)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator*_">operator*=</a>(<span class="keyword">double</span> val)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator*_%1">operator*=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator*_%2">operator*=</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator+_">operator+=</a>(<span class="keyword">double</span> val)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator+_%1">operator+=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator+_%2">operator+=</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator-_">operator-=</a>(<span class="keyword">double</span> val)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator-_%1">operator-=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator-_%2">operator-=</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator__"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator&lt;</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator___"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator&lt;=</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator_">operator=</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator_%1">operator=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator_%2">operator=</a>(<span class="keyword">double</span> val)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator__"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator==</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator_"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator&gt;</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:operator__"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>operator&gt;=</a>(<span class="keyword">double</span> val) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <a href="./TMatrixTSparseRow_const_double_.html">TMatrixTSparseRow_const&lt;double&gt;</a></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator[]">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TMatrixTSparseRow_double_.html">TMatrixTSparseRow&lt;double&gt;</a></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:operator[]%1">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Print"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* name = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Randomize">Randomize</a>(<span class="keyword">double</span> alpha, <span class="keyword">double</span> beta, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; seed)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:RandomizePD">RandomizePD</a>(<span class="keyword">double</span> alpha, <span class="keyword">double</span> beta, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; seed)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ResizeTo%2">ResizeTo</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; m)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ResizeTo">ResizeTo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = -1)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ResizeTo%1">ResizeTo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = -1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:RowNorm">RowNorm</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetColIndexArray">SetColIndexArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetMatrixArray">SetMatrixArray</a>(<span class="keyword">const</span> <span class="keyword">double</span>* data, <a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetMatrixArray%1">SetMatrixArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* irow, <a href="./ListOfTypes.html#Int_t">Int_t</a>* icol, <span class="keyword">double</span>* data)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetRowIndexArray">SetRowIndexArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* data)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSparseIndex">SetSparseIndex</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nelem_new)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSparseIndex%1">SetSparseIndex</a>(<span class="keyword">const</span> TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; another)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSparseIndexAB">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSparseIndexAB%1">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSparseIndexAB%2">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:SetSub">SetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <span class="keyword">const</span> TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:SetTol"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>SetTol</a>(<span class="keyword">double</span> newTol)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Shift"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Shift</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_shift, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_shift)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Sqr"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Sqr</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Sqrt"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Sqrt</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">double</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:Sum"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>Sum</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:T">T</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Transpose">Transpose</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:UnitMatrix">UnitMatrix</a>()</td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use%4">Use</a>(TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use%5">Use</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use%2">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">double</span>* pData)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use%3">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">const</span> <span class="keyword">double</span>* pData) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">double</span>* pData)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Use%1">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">const</span> <span class="keyword">double</span>* pData) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp;</td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Zero">Zero</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:Allocate">Allocate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> init = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMinusB">AMinusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMinusB%1">AMinusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMinusB%2">AMinusB</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultB">AMultB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultB%1">AMultB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultB%2">AMultB</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultBt">AMultBt</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultBt%1">AMultBt</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:AMultBt%2">AMultBt</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:APlusB">APlusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:APlusB%1">APlusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TMatrixTSparse_double_:APlusB%2">APlusB</a>(<span class="keyword">const</span> TMatrixT&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b, <a href="./ListOfTypes.html#Int_t">Int_t</a> constr = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:DoubleLexSort"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>DoubleLexSort</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>* first, <a href="./ListOfTypes.html#Int_t">Int_t</a>* second, <span class="keyword">double</span>* data)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TMatrixTBase_double_.html#TMatrixTBase_double_:IndexedLexSort"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>IndexedLexSort</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a>* first, <a href="./ListOfTypes.html#Int_t">Int_t</a> swapFirst, <a href="./ListOfTypes.html#Int_t">Int_t</a>* second, <a href="./ListOfTypes.html#Int_t">Int_t</a> swapSecond, <a href="./ListOfTypes.html#Int_t">Int_t</a>* index)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TMatrixTSparse_double_:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum EMatrixCreatorsOp1 { </td><td class="dataname"><a name="TMatrixTSparse_double_:kZero"></a>kZero</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kUnit"></a>kUnit</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kTransposed"></a>kTransposed</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kAtA"></a>kAtA</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="data"><td class="datatype">enum EMatrixCreatorsOp2 { </td><td class="dataname"><a name="TMatrixTSparse_double_:kMult"></a>kMult</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kMultTranspose"></a>kMultTranspose</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kPlus"></a>kPlus</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="TMatrixTSparse_double_:kMinus"></a>kMinus</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TMatrixTBase<double>::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:kSizeMax">kSizeMax</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:kWorkMax">kWorkMax</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TMatrixTBase<double>::</span>EMatrixStatusBits { </td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:kStatus">kStatus</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMatrixTSparse_double_:fColIndex"></a>fColIndex</td><td class="datadesc">[fNelems]    column index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fColLwb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fColLwb</a></td><td class="datadesc">lower bound of the col index</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">double</span>*</td><td class="dataname"><a name="TMatrixTSparse_double_:fElements"></a>fElements</td><td class="datadesc">[fNelems]</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fIsOwner"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fIsOwner</a></td><td class="datadesc">!default kTRUE, when Use array kFALSE</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fNcols"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fNcols</a></td><td class="datadesc">number of columns</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fNelems"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fNelems</a></td><td class="datadesc">number of elements in matrix</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fNrowIndex"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fNrowIndex</a></td><td class="datadesc">length of row index array (= fNrows+1) wich is only used for sparse matrices</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fNrows"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fNrows</a></td><td class="datadesc">number of rows</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a>*</td><td class="dataname"><a name="TMatrixTSparse_double_:fRowIndex"></a>fRowIndex</td><td class="datadesc">[fNrowIndex] row index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fRowLwb"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fRowLwb</a></td><td class="datadesc">lower bound of the row index</td></tr>
+<tr class="datainh"><td class="datatype"><span class="keyword">double</span></td><td class="dataname"><a href="./TMatrixTBase_double_.html#TMatrixTBase_double_:fTol"><span class="baseclass">TMatrixTBase&lt;double&gt;::</span>fTol</a></td><td class="datadesc">sqrt(epsilon); epsilon is smallest number number so that  1+epsilon &gt; 1</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TMatrixTSparse_double_:Class_Charts"></a>Class Charts</h2>
+<map name="MapTMatrixTSparse_double__Inh" id="MapTMatrixTSparse_double__Inh">
+<area shape="rect" href="./TMatrixTBase_double_.html" title="TMatrixTBase&lt;double&gt;" alt="" coords="187,8,387,28"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="30,8,95,28"/>
+</map>
+<map name="MapTMatrixTSparse_double__InhMem" id="MapTMatrixTSparse_double__InhMem">
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="541,60,629,153"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="443,60,531,153"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="344,60,432,153"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="573,164,597,199"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="541,209,629,592"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="443,209,531,592"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" alt="" coords="344,209,432,592"/>
+<area shape="rect" href="./TMatrixTBase_double_.html" title="TMatrixTBase&lt;double&gt;" alt="" coords="333,16,640,603"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTMatrixTSparse_double__Lib" id="MapTMatrixTSparse_double__Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="465,83,593,131"/>
+</map>
+<div class="tabs">
+<a id="imgTMatrixTSparse_double__Inh" class="tabsel" href="inh/TMatrixTSparse_double__Inh.png" onclick="javascript:return SetImg('Charts','inh/TMatrixTSparse_double__Inh.png');">Inheritance</a>
+<a id="imgTMatrixTSparse_double__InhMem" class="tab" href="inhmem/TMatrixTSparse_double__InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TMatrixTSparse_double__InhMem.png');">Inherited Members</a>
+<a id="imgTMatrixTSparse_double__Incl" class="tab" href="incl/TMatrixTSparse_double__Incl.png" onclick="javascript:return SetImg('Charts','incl/TMatrixTSparse_double__Incl.png');">Includes</a>
+<a id="imgTMatrixTSparse_double__Lib" class="tab" href="lib/TMatrixTSparse_double__Lib.png" onclick="javascript:return SetImg('Charts','lib/TMatrixTSparse_double__Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTMatrixTSparse_double__Inh" src="inh/TMatrixTSparse_double__Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Allocate" href="src/TMatrixTSparse_double_.cxx.html#humzWC">Allocate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> init = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = 0)</span><br />
+<div class="funccomm"><pre> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:Allocate" title="void TMatrixTSparse&lt;double&gt;::Allocate(Int_t nrows,Int_t ncols,Int_t row_lwb=0,Int_t col_lwb=0,Int_t init=0,Int_t nr_nonzeros=0)">Allocate</a> new matrix. Arguments are number of rows, columns, row lowerbound (0 default)
+ and column lowerbound (0 default), 0 initialization flag and number of non-zero
+ elements (only relevant for sparse format).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:InsertRow" href="src/TMatrixTSparse_double_.cxx.html#vbTgUD">InsertRow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row, <a href="./ListOfTypes.html#Int_t">Int_t</a> col, <span class="keyword">const</span> <span class="keyword">double</span>* v, <a href="./ListOfTypes.html#Int_t">Int_t</a> n = -1)</span><br />
+<div class="funccomm"><pre> Insert in row rown, n elements of array v at column coln
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:ExtractRow" href="src/TMatrixTSparse_double_.cxx.html#fx5p7C">ExtractRow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row, <a href="./ListOfTypes.html#Int_t">Int_t</a> col, <span class="keyword">double</span>* v, <a href="./ListOfTypes.html#Int_t">Int_t</a> n = -1) const</span><br />
+<div class="funccomm"><pre> Store in array v, n matrix elements of row rown starting at column coln
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMultBt" href="src/TMatrixTSparse_double_.cxx.html#s.7tOE">AMultBt</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix multiplication. Create a matrix C such that C = A * B'.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMultBt" href="src/TMatrixTSparse_double_.cxx.html#ytpCCD">AMultBt</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix multiplication. Create a matrix C such that C = A * B'.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMultBt" href="src/TMatrixTSparse_double_.cxx.html#DDkVK">AMultBt</a>(<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix multiplication. Create a matrix C such that C = A * B'.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:APlusB" href="src/TMatrixTSparse_double_.cxx.html#oy1UAD">APlusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix addition. Create a matrix C such that C = A + B.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:APlusB" href="src/TMatrixTSparse_double_.cxx.html#P8gmsE">APlusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix addition. Create a matrix C such that C = A + B.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMinusB" href="src/TMatrixTSparse_double_.cxx.html#OnNPME">AMinusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix subtraction. Create a matrix C such that C = A - B.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMinusB" href="src/TMatrixTSparse_double_.cxx.html#Ik4pyB">AMinusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix subtraction. Create a matrix C such that C = A - B.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:AMinusB" href="src/TMatrixTSparse_double_.cxx.html#x4yQ3D">AMinusB</a>(<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr)</span><br />
+<div class="funccomm"><pre> General matrix subtraction. Create a matrix C such that C = A - B.
+ Note, matrix C is allocated for constr=1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetMatrix2Array" href="src/TMatrixTSparse_double_.cxx.html#Qt6S9D">GetMatrix2Array</a>(<span class="keyword">double</span>* data, <a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Copy" title="void TObject::Copy(TObject&amp; object)">Copy</a> matrix data to array . It is assumed that array is of size &gt;= fNelems
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetMatrixArray%1" href="src/TMatrixTSparse_double_.cxx.html#cT877C">SetMatrixArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* irow, <a href="./ListOfTypes.html#Int_t">Int_t</a>* icol, <span class="keyword">double</span>* data)</span><br />
+<div class="funccomm"><pre> <a href="./TObject.html#TObject:Copy" title="void TObject::Copy(TObject&amp; object)">Copy</a> nr elements from row/col index and data array to matrix . It is assumed
+ that arrays are of size &gt;= nr
+ Note that the input arrays are not passed as const since they will be modified !
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetSparseIndex" href="src/TMatrixTSparse_double_.cxx.html#W_526E">SetSparseIndex</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nelem_new)</span><br />
+<div class="funccomm"><pre> Increase/decrease the number of non-zero elements to nelems_new
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetSparseIndex%1" href="src/TMatrixTSparse_double_.cxx.html#fglZM">SetSparseIndex</a>(<span class="keyword">const</span> TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; another)</span><br />
+<div class="funccomm"><pre> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:Use" title="TMatrixTSparse&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::Use(Int_t row_lwb,Int_t row_upb,Int_t col_lwb,Int_t col_upb,Int_t nr_nonzeros,Int_t* pRowIndex,Int_t* pColIndex,double* pData) or overloads">Use</a> non-zero data of matrix source to set the sparse structure
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetSparseIndexAB" href="src/TMatrixTSparse_double_.cxx.html#L0rzfC">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b)</span><br />
+<div class="funccomm"><pre> Set the row/column indices to the <span class="string">"sum"</span> of matrices a and b
+ It is checked that enough space has been allocated
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetSparseIndexAB" href="src/TMatrixTSparse_double_.cxx.html#jfhoM">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b)</span><br />
+<div class="funccomm"><pre> Set the row/column indices to the <span class="string">"sum"</span> of matrices a and b
+ It is checked that enough space has been allocated
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:ResizeTo" href="src/TMatrixTSparse_double_.cxx.html#c7rvSD">ResizeTo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = -1)</span><br />
+<div class="funccomm"><pre> Set size of the matrix to nrows x ncols with nr_nonzeros non-zero entries
+ if nr_nonzeros &gt; 0 .
+ New dynamic elements are created, the overlapping part of the old ones are
+ copied to the new structures, then the old elements are deleted.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:ResizeTo%1" href="src/TMatrixTSparse_double_.cxx.html#xUEJYB">ResizeTo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = -1)</span><br />
+<div class="funccomm"><pre> Set size of the matrix to [row_lwb:row_upb] x [col_lwb:col_upb] with nr_nonzeros
+ non-zero entries if nr_nonzeros &gt; 0 .
+ New dynamic elemenst are created, the overlapping part of the old ones are
+ copied to the new structures, then the old elements are deleted.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Use" href="src/TMatrixTSparse_double_.cxx.html#Lsc.IE">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">double</span>* pData)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetSub" href="src/TMatrixTSparse_double_.cxx.html#GPoNlB">GetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; target, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"S"</span>) const</span><br />
+<div class="funccomm"><pre> Get submatrix [row_lwb..row_upb][col_lwb..col_upb]; The indexing range of the
+ returned matrix depends on the argument option:
+
+ option == <span class="string">"S"</span> : return [0..row_upb-row_lwb+1][0..col_upb-col_lwb+1] (default)
+ else          : return [row_lwb..row_upb][col_lwb..col_upb]
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:SetSub" href="src/TMatrixTSparse_double_.cxx.html#f9cc_B">SetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <span class="keyword">const</span> TMatrixTBase&lt;<span class="keyword">double</span>&gt;&amp; source)</span><br />
+<div class="funccomm"><pre> Insert matrix source starting at [row_lwb][col_lwb], thereby overwriting the part
+ [row_lwb..row_lwb+nrows_source-1][col_lwb..col_lwb+ncols_source-1];
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Transpose" href="src/TMatrixTSparse_double_.cxx.html#Hc49RC">Transpose</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; source)</span><br />
+<div class="funccomm"><pre> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:Transpose" title="TMatrixTSparse&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::Transpose(const TMatrixTSparse&lt;double&gt;&amp; source)">Transpose</a> a matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Zero" href="src/TMatrixTSparse_double_.cxx.html#djODwD">Zero</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:UnitMatrix" href="src/TMatrixTSparse_double_.cxx.html#XDbZDC">UnitMatrix</a>()</span><br />
+<div class="funccomm"><pre> Make a unit matrix (matrix need not be a square one).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Element TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:RowNorm" href="src/TMatrixTSparse_double_.cxx.html#bjR_9B">RowNorm</a>() const</span><br />
+<div class="funccomm"><pre> Row matrix norm, MAX{ SUM{ |M(i,j)|, over j}, over i}.
+ The norm is induced by the infinity vector norm.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Element TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:ColNorm" href="src/TMatrixTSparse_double_.cxx.html#Hc0bIC">ColNorm</a>() const</span><br />
+<div class="funccomm"><pre> Column matrix norm, MAX{ SUM{ |M(i,j)|, over i}, over j}.
+ The norm is induced by the 1 vector norm.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">Element &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator()%1" href="src/TMatrixTSparse_double_.cxx.html#KMajbD">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown, <a href="./ListOfTypes.html#Int_t">Int_t</a> coln)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">Element TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator()" href="src/TMatrixTSparse_double_.cxx.html#Fy9LX">operator()</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown, <a href="./ListOfTypes.html#Int_t">Int_t</a> coln) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator_" href="src/TMatrixTSparse_double_.cxx.html#N.9uKC">operator=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;source)</span><br />
+<div class="funccomm"><pre> Notice that the sparsity of the matrix is NOT changed : its <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>/<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>
+ are used !
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator_" href="src/TMatrixTSparse_double_.cxx.html#VavVdC">operator=</a>(<span class="keyword">const</span> TMatrixT&lt;Element&gt; &amp;source)</span><br />
+<div class="funccomm"><pre> Notice that the sparsity of the matrix is NOT changed : its <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>/<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>
+ are used !
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator_" href="src/TMatrixTSparse_double_.cxx.html#J8iiXB">operator=</a>(Element val)</span><br />
+<div class="funccomm"><pre> Assign val to every element of the matrix. Check that the row/col
+ indices are set !
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator+_" href="src/TMatrixTSparse_double_.cxx.html#F2LZGB">operator+=</a>(Element val)</span><br />
+<div class="funccomm"><pre> Add val to every element of the matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator-_" href="src/TMatrixTSparse_double_.cxx.html#N0LZGB">operator-=</a>(Element val)</span><br />
+<div class="funccomm"><pre> Subtract val from every element of the matrix.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator*_" href="src/TMatrixTSparse_double_.cxx.html#p1LZGB">operator*=</a>(Element val)</span><br />
+<div class="funccomm"><pre> Multiply every element of the matrix with val.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Randomize" href="src/TMatrixTSparse_double_.cxx.html#poW4dB">Randomize</a>(<span class="keyword">double</span> alpha, <span class="keyword">double</span> beta, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; seed)</span><br />
+<div class="funccomm"><pre> randomize matrix element values
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:RandomizePD" href="src/TMatrixTSparse_double_.cxx.html#mCUzmB">RandomizePD</a>(<span class="keyword">double</span> alpha, <span class="keyword">double</span> beta, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; seed)</span><br />
+<div class="funccomm"><pre> randomize matrix element values but keep matrix symmetric positive definite
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Streamer" href="src/TMatrixTSparse_double_.cxx.html#TQKt4">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</span><br />
+<div class="funccomm"><pre> Stream an object of class TMatrixTSparse.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span> <span class="keyword">const</span> Element *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetMatrixArray" href="src/TMatrixTSparse_double_.h.html#hVLkME">GetMatrixArray</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fElements" title="double* TMatrixTSparse&lt;double&gt;::fElements">fElements</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span>       Element *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetMatrixArray%1" href="src/TMatrixTSparse_double_.h.html#CU7.rC">GetMatrixArray</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fElements" title="double* TMatrixTSparse&lt;double&gt;::fElements">fElements</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span> <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>   *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetRowIndexArray" href="src/TMatrixTSparse_double_.h.html#UQq43C">GetRowIndexArray</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span>       <a href="./ListOfTypes.html#Int_t">Int_t</a>   *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetRowIndexArray%1" href="src/TMatrixTSparse_double_.h.html#zscUyD">GetRowIndexArray</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span> <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>   *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetColIndexArray" href="src/TMatrixTSparse_double_.h.html#AJchyE">GetColIndexArray</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">template</span> &lt;<span class="keyword">class</span> Element&gt; <span class="keyword">inline</span>       <a href="./ListOfTypes.html#Int_t">Int_t</a>   *TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetColIndexArray%1" href="src/TMatrixTSparse_double_.h.html#HDxaPD">GetColIndexArray</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Use%2" href="src/TMatrixTSparse_double_.h.html#RinE.D">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">double</span>* pData)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:Use" title="TMatrixTSparse&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::Use(Int_t row_lwb,Int_t row_upb,Int_t col_lwb,Int_t col_upb,Int_t nr_nonzeros,Int_t* pRowIndex,Int_t* pColIndex,double* pData) or overloads">Use</a>(0,nrows-1,0,ncols-1,nr_nonzeros,pRowIndex,pColIndex,pData); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Use%3" href="src/TMatrixTSparse_double_.h.html#JyWVz">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">const</span> <span class="keyword">double</span>* pData) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:Use" title="TMatrixTSparse&lt;double&gt;&amp; TMatrixTSparse&lt;double&gt;::Use(Int_t row_lwb,Int_t row_upb,Int_t col_lwb,Int_t col_upb,Int_t nr_nonzeros,Int_t* pRowIndex,Int_t* pColIndex,double* pData) or overloads">Use</a>(0,nrows-1,0,ncols-1,nr_nonzeros,pRowIndex,pColIndex,pData); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Use%4" href="src/TMatrixTSparse_double_.h.html#jvVjqB">Use</a>(TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:Use%5" href="src/TMatrixTSparse_double_.h.html#SWCHYD">Use</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt;  TMatrixTSparse&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:GetSub%1" href="src/TMatrixTSparse_double_.h.html#Sl9bpB">GetSub</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"S"</span>) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:AMultB" href="src/TMatrixTSparse_double_.h.html#nwbEvD">AMultB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr=0)</span><br />
+<div class="funccomm"><pre> Elementary constructors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:AMultB" href="src/TMatrixTSparse_double_.h.html#hTDlZB">AMultB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixT&lt;Element&gt;       &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr=0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:AMultB" href="src/TMatrixTSparse_double_.h.html#ag.3FE">AMultB</a>(<span class="keyword">const</span> TMatrixT&lt;Element&gt;       &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr=0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:APlusB" href="src/TMatrixTSparse_double_.h.html#T_Q2zD">APlusB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b,<a href="./ListOfTypes.html#Int_t">Int_t</a> constr=0)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt;   &amp; <a class="funcname" name="TMatrixTSparse_double_:SetRowIndexArray" href="src/TMatrixTSparse_double_.h.html#oSuxuD">SetRowIndexArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* data)</span><br />
+
+<div class="code"><code class="inlinecode">{ memmove(<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fRowIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fRowIndex">fRowIndex</a>,data,(<span class="keyword">this</span>-&gt;fNrows+1)*<span class="keyword">sizeof</span>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)); <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt;   &amp; <a class="funcname" name="TMatrixTSparse_double_:SetColIndexArray" href="src/TMatrixTSparse_double_.h.html#QZ4JrC">SetColIndexArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* data)</span><br />
+
+<div class="code"><code class="inlinecode">{ memmove(<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fColIndex" title="Int_t* TMatrixTSparse&lt;double&gt;::fColIndex">fColIndex</a>,data,<span class="keyword">this</span>-&gt;fNelems*<span class="keyword">sizeof</span>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)); <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:SetSparseIndexAB" href="src/TMatrixTSparse_double_.h.html#tMjcdE">SetSparseIndexAB</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;a,<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;b)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt;   &amp; <a class="funcname" name="TMatrixTSparse_double_:SetMatrixArray" href="src/TMatrixTSparse_double_.h.html#LXZtwE">SetMatrixArray</a>(<span class="keyword">const</span> <span class="keyword">double</span>* data, <a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>)</span><br />
+
+<div class="code"><code class="inlinecode">{ memcpy(<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:fElements" title="double* TMatrixTSparse&lt;double&gt;::fElements">fElements</a>,data,<span class="keyword">this</span>-&gt;fNelems*<span class="keyword">sizeof</span>(Element)); <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt;   &amp; <a class="funcname" name="TMatrixTSparse_double_:ResizeTo" href="src/TMatrixTSparse_double_.h.html#hdpkGE">ResizeTo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nrows, <a href="./ListOfTypes.html#Int_t">Int_t</a> ncols, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros = -1)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:Clear" href="src/TMatrixTSparse_double_.h.html#hCU7rC">Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>*  = <span class="string">""</span>)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:Use" href="src/TMatrixTSparse_double_.h.html#xkuvhD">Use</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> row_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> row_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_lwb, <a href="./ListOfTypes.html#Int_t">Int_t</a> col_upb, <a href="./ListOfTypes.html#Int_t">Int_t</a> nr_nonzeros, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pRowIndex, <a href="./ListOfTypes.html#Int_t">Int_t</a>* pColIndex, <span class="keyword">double</span>* pData)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TMatrixTSparse_double_:IsSymmetric" href="src/TMatrixTSparse_double_.h.html#yP3lZB">IsSymmetric</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (*<span class="keyword">this</span> == TMatrixTSparse&lt;Element&gt;(<a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:kTransposed" title="const TMatrixTSparse&lt;double&gt;::EMatrixCreatorsOp1 TMatrixTSparse&lt;double&gt;::kTransposed">kTransposed</a>,*<span class="keyword">this</span>)); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TMatrixTSparse_double_:Mult" href="src/TMatrixTSparse_double_.h.html#Fl7NT">Mult</a>(<span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; a, <span class="keyword">const</span> TMatrixTSparse&lt;<span class="keyword">double</span>&gt;&amp; b)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TMatrixTSparse_double_.html#TMatrixTSparse_double_:AMultB" title="void TMatrixTSparse&lt;double&gt;::AMultB(const TMatrixTSparse&lt;double&gt;&amp; a,const TMatrixTSparse&lt;double&gt;&amp; b,Int_t constr=0) or overloads">AMultB</a>(a,b,0); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TMatrixTSparse_double_:NonZeros" href="src/TMatrixTSparse_double_.h.html#woE5ZD">NonZeros</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <span class="keyword">this</span>-&gt;fNelems; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTBase&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:NormByDiag" href="src/TMatrixTSparse_double_.h.html#pGA1lC">NormByDiag</a>(<span class="keyword">const</span> TVectorT&lt;<span class="keyword">double</span>&gt;&amp; , <a href="./ListOfTypes.html#Option_t">Option_t</a>* )</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TObject.html#TObject:MayNotUse" title="void TObject::MayNotUse(const char* method)">MayNotUse</a>(<span class="string">"NormByDiag"</span>); <span class="keyword">return</span> *<span class="keyword">this</span>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> TMatrixTSparseRow_const&lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator[]" href="src/TMatrixTSparse_double_.h.html#kxbRZC">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown) const</span><br />
+<div class="funccomm"><pre> or as a[i][j]
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> TMatrixTSparseRow_const&lt;Element&gt;(*<span class="keyword">this</span>,rown); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparseRow      &lt;Element&gt; <a class="funcname" name="TMatrixTSparse_double_:operator[]%1" href="src/TMatrixTSparse_double_.h.html#WEET0">operator[]</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> rown)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> TMatrixTSparseRow      &lt;Element&gt;(*<span class="keyword">this</span>,rown); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator-_" href="src/TMatrixTSparse_double_.h.html#hgEYOB">operator-=</a>(Element val)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator+_" href="src/TMatrixTSparse_double_.h.html#N5rw1B">operator+=</a>(Element val)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator*_" href="src/TMatrixTSparse_double_.h.html#xMYEiB">operator*=</a>(Element val)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator+_" href="src/TMatrixTSparse_double_.h.html#rfaqEE">operator+=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;source)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator-_" href="src/TMatrixTSparse_double_.h.html#jpQ0CE">operator-=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;source)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname">TMatrixTSparse&lt;Element&gt; &amp; <a class="funcname" name="TMatrixTSparse_double_:operator*_" href="src/TMatrixTSparse_double_.h.html#HMuWEE">operator*=</a>(<span class="keyword">const</span> TMatrixTSparse&lt;Element&gt; &amp;source)</span><br />
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/matrix:$Id: TMatrixTSparse.h 32616 2010-03-15 16:56:42Z rdm $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

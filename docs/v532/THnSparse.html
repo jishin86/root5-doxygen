@@ -1,0 +1,881 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:28:23 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>THnSparse</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class THnSparse','libHist','THnSparse.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/THnSparse.h.html">header file</a>
+<a class="descrheadentry" href="src/THnSparse.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/THnSparse.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/THnSparse.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#THnSparse:description">class description</a> 
+<a class="descrheadentry" href="#THnSparse:Function_Members">function members</a>
+<a class="descrheadentry" href="#THnSparse:Data_Members">data members</a>
+<a class="descrheadentry" href="#THnSparse:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">THnSparse</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="THnSparse:description"></a>class THnSparse: public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+
+
+    Efficient multidimensional histogram.
+
+ Use a <a href="./THnSparse.html">THnSparse</a> instead of <a href="./TH1.html">TH1</a> / <a href="./TH2.html">TH2</a> / <a href="./TH3.html">TH3</a> / array for histogramming when
+ only a small fraction of bins is filled. A 10-dimensional histogram with 10
+ bins per dimension has 10^10 bins; in a naive implementation this will not
+ fit in memory. <a href="./THnSparse.html">THnSparse</a> only allocates memory for the bins that have
+ non-zero bin content instead, drastically reducing both the memory usage
+ and the access time.
+
+ To construct a <a href="./THnSparse.html">THnSparse</a> object you must use one of its templated, derived
+ classes:
+ <a href="./THnSparseD.html">THnSparseD</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayD&gt;): bin content held by a <a href="./ListOfTypes.html#Double_t">Double_t</a>,
+ <a href="./THnSparseF.html">THnSparseF</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayF&gt;): bin content held by a <a href="./ListOfTypes.html#Float_t">Float_t</a>,
+ <a href="./THnSparseL.html">THnSparseL</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayL&gt;): bin content held by a <a href="./ListOfTypes.html#Long_t">Long_t</a>,
+ <a href="./THnSparseI.html">THnSparseI</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayI&gt;): bin content held by an <a href="./ListOfTypes.html#Int_t">Int_t</a>,
+ <a href="./THnSparseS.html">THnSparseS</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayS&gt;): bin content held by a <a href="./ListOfTypes.html#Short_t">Short_t</a>,
+ <a href="./THnSparseC.html">THnSparseC</a> (typedef for <a href="./THnSparse.html">THnSparse</a>&lt;ArrayC&gt;): bin content held by a <a href="./ListOfTypes.html#Char_t">Char_t</a>,
+
+ They take name and title, the number of dimensions, and for each dimension
+ the number of bins, the minimal, and the maximal value on the dimension's
+ axis. A <a href="./TH2.html">TH2</a> h(<span class="string">"h"</span>,<span class="string">"h"</span>,10, 0., 10., 20, -5., 5.) would correspond to
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> bins[2] = {10, 20};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin[2] = {0., -5.};
+   <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax[2] = {10., 5.};
+   <a href="./THnSparse.html">THnSparse</a> hs(<span class="string">"hs"</span>, <span class="string">"hs"</span>, 2, bins, min, max);
+
+ * Filling
+ A <a href="./THnSparse.html">THnSparse</a> is filled just like a regular histogram, using
+ <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:Fill" title="Long64_t THnSparse::Fill(Long64_t bin,Double_t w) or overloads">Fill</a>(x, weight), where x is a n-dimensional <a href="./ListOfTypes.html#Double_t">Double_t</a> value.
+ To take errors into account, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a>() must be called before filling the
+ histogram.
+ Bins are allocated as needed; the status of the allocation can be observed
+ by <a href="./THnSparse.html#THnSparse:GetSparseFractionBins" title="Double_t THnSparse::GetSparseFractionBins()">GetSparseFractionBins</a>(), <a href="./THnSparse.html#THnSparse:GetSparseFractionMem" title="Double_t THnSparse::GetSparseFractionMem()">GetSparseFractionMem</a>().
+
+ * Fast Bin Content Access
+ When iterating over a <a href="./THnSparse.html">THnSparse</a> one should only look at filled bins to save
+ processing time. The number of filled bins is returned by
+ <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:GetNbins" title="Long64_t THnSparse::GetNbins()">GetNbins</a>(); the bin content for each (linear) bin number can
+ be retrieved by <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:GetBinContent" title="Double_t THnSparse::GetBinContent(const Int_t* idx) or overloads">GetBinContent</a>(linidx, (<a href="./ListOfTypes.html#Int_t">Int_t</a>*)coord).
+ After the call, coord will contain the bin coordinate of each axis for the bin
+ with linear index linidx. A possible call would be
+   <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; hs.<a href="./THnSparse.html#THnSparse:GetBinContent" title="Double_t THnSparse::GetBinContent(const Int_t* idx) or overloads">GetBinContent</a>(0, coord);
+   <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt;<span class="string">" is the content of bin [x = "</span> &lt;&lt; coord[0] <span class="string">"</span>
+        &lt;&lt; <span class="string">" | y = "</span> &lt;&lt; coord[1] &lt;&lt; <span class="string">"]"</span> &lt;&lt; endl;
+
+ * Efficiency
+ <a href="./TH1.html">TH1</a> and <a href="./TH2.html">TH2</a> are generally faster than <a href="./THnSparse.html">THnSparse</a> for one and two dimensional
+ distributions. <a href="./THnSparse.html">THnSparse</a> becomes competitive for a sparsely filled <a href="./TH3.html">TH3</a>
+ with large numbers of bins per dimension. The tutorial hist/sparsehist.C
+ shows the turning point. On a AMD64 with 8GB memory, <a href="./THnSparse.html">THnSparse</a> <span class="string">"wins"</span>
+ starting with a <a href="./TH3.html">TH3</a> with 30 bins per dimension. Using a <a href="./THnSparse.html">THnSparse</a> for a
+ one-dimensional histogram is only reasonable if it has a huge number of bins.
+
+ * Projections
+ The dimensionality of a <a href="./THnSparse.html">THnSparse</a> can be reduced by projecting it to
+ 1, 2, 3, or n dimensions, which can be represented by a <a href="./TH1.html">TH1</a>, <a href="./TH2.html">TH2</a>, <a href="./TH3.html">TH3</a>, or
+ a <a href="./THnSparse.html">THnSparse</a>. See the <a href="./THnSparse.html#THnSparse:Projection" title="TH1D* THnSparse::Projection(Int_t xDim,Option_t* option=&quot;&quot;) or overloads">Projection</a>() members. To only project parts of the
+ histogram, call
+   <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:GetAxis" title="TAxis* THnSparse::GetAxis(Int_t dim)">GetAxis</a>(12)-><a href="./TAxis.html#TAxis:SetRange" title="void TAxis::SetRange(Int_t first=0,Int_t last=0)">SetRange</a>(from_bin, to_bin);
+ See the important remark in <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:IsInRange" title="Bool_t THnSparse::IsInRange(Int_t* coord)">IsInRange</a>() when excluding under-
+ and overflow bins!
+
+ * Internal Representation
+ An entry for a filled bin consists of its n-dimensional coordinates and
+ its bin content. The coordinates are compacted to use as few bits as
+ possible; e.g. a histogram with 10 bins in x and 20 bins in y will only
+ use 4 bits for the x representation and 5 bits for the y representation.
+ This is handled by the internal class THnSparseCompactBinCoord.
+ Bin data (content and coordinates) are allocated in chunks of size
+ <a href="./THnSparse.html#THnSparse:fChunkSize" title="Int_t THnSparse::fChunkSize">fChunkSize</a>; this parameter can be set when constructing a <a href="./THnSparse.html">THnSparse</a>. Each
+ chunk is represented by an object of class <a href="./THnSparseArrayChunk.html">THnSparseArrayChunk</a>.
+
+ Translation from an n-dimensional bin coordinate to the linear index within
+ the chunks is done by <a href="./THnSparse.html#THnSparse:GetBin" title="Long64_t THnSparse::GetBin(const Int_t* idx,Bool_t allocate=kTRUE) or overloads">GetBin</a>(). It creates a hash from the compacted bin
+ coordinates (the hash of a bin coordinate is the compacted coordinate itself
+ if it takes less than 8 bytes, the size of a <a href="./ListOfTypes.html#Long64_t">Long64_t</a>.
+ This hash is used to lookup the linear index in the <a href="./TExMap.html">TExMap</a> member <a href="./THnSparse.html#THnSparse:fBins" title="TExMap THnSparse::fBins">fBins</a>;
+ the coordinates of the entry <a href="./THnSparse.html#THnSparse:fBins" title="TExMap THnSparse::fBins">fBins</a> points to is compared to the coordinates
+ passed to <a href="./THnSparse.html#THnSparse:GetBin" title="Long64_t THnSparse::GetBin(const Int_t* idx,Bool_t allocate=kTRUE) or overloads">GetBin</a>(). If they do not match, these two coordinates have the same
+ hash - which is extremely unlikely but (for the case where the compact bin
+ coordinates are larger than 4 bytes) possible. In this case, <a href="./THnSparse.html#THnSparse:fBinsContinued" title="TExMap THnSparse::fBinsContinued">fBinsContinued</a>
+ contains a chain of linear indexes with the same hash. Iterating through this
+ chain and comparing each bin coordinates with the one passed to <a href="./THnSparse.html#THnSparse:GetBin" title="Long64_t THnSparse::GetBin(const Int_t* idx,Bool_t allocate=kTRUE) or overloads">GetBin</a>() will
+ retrieve the matching bin.
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="THnSparse:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="THnSparse.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#THnSparse:_THnSparse">~THnSparse</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Add">Add</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:AddBinContent">AddBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> v = 1.)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:AddBinContent%1">AddBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> v = 1.)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Browse">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:CalculateErrors">CalculateErrors</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> calc = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:ComputeIntegral">ComputeIntegral</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./THnSparse.html">THnSparse</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:CreateSparse">CreateSparse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ChunkSize = 1024*16)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Divide">Divide</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Divide%1">Divide</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h1, <span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1., <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1., <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:Fill%1">Fill</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:Fill%2">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>** name, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="#THnSparse:Fit">Fit</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:GetAxis">GetAxis</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBin">GetBin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBin%1">GetBin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBin%2">GetBin</a>(<span class="keyword">const</span> <span class="keyword">char</span>** name, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBinContent">GetBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBinContent%1">GetBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBinError">GetBinError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBinError%1">GetBinError</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> linidx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetCalculateErrors">GetCalculateErrors</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetEntries">GetEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObjArray.html">TObjArray</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:GetListOfAxes">GetListOfAxes</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:GetListOfFunctions">GetListOfFunctions</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetNbins">GetNbins</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetNChunks">GetNChunks</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetNdimensions">GetNdimensions</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:GetRandom">GetRandom</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* rand, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subBinRandom = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSparseFractionBins">GetSparseFractionBins</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSparseFractionMem">GetSparseFractionMem</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSumw">GetSumw</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSumw2">GetSumw2</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSumwx">GetSumwx</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetSumwx2">GetSumwx2</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetWeightSum">GetWeightSum</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:IsFolder">IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:Merge">Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Multiply">Multiply</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Multiply%1">Multiply</a>(<a href="./TF1.html">TF1</a>* f, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Print">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:PrintBin%1">PrintBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* coord, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:PrintBin%2">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:PrintEntries">PrintEntries</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> from = 0, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> howmany = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Projection">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH2D.html">TH2D</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Projection%1">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> yDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THnSparse.html">THnSparse</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Projection%3">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* dim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH3D.html">TH3D</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Projection%2">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> yDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> zDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="func"><td class="funcret"><a href="./THnSparse.html">THnSparse</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Rebin">Rebin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> group) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THnSparse.html">THnSparse</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:Rebin%1">Rebin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* group) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:RebinnedAdd">RebinnedAdd</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Reset">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Scale">Scale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> c)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetBinContent">SetBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> v)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetBinContent%1">SetBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> v)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetBinEdges">SetBinEdges</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* bins)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetBinError">SetBinError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetBinError%1">SetBinError</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetEntries">SetEntries</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> entries)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:SetTitle">SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:Sumw2">Sumw2</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><a href="./THnSparseArrayChunk.html">THnSparseArrayChunk</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:AddChunk">AddChunk</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:AddInternal">AddInternal</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rebinned)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:CheckConsistency">CheckConsistency</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <span class="keyword">const</span> <span class="keyword">char</span>* tag) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./THnSparse.html">THnSparse</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:CloneEmpty">CloneEmpty</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>* axes, <a href="./ListOfTypes.html#Int_t">Int_t</a> chunksize, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> keepTargetAxis) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:CreateHist">CreateHist</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>* axes, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> keepTargetAxis) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:Fill">Fill</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#THnSparse:FillExMap">FillExMap</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TArray.html">TArray</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:GenerateArray">GenerateArray</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetBinIndexForCurrentBin">GetBinIndexForCurrentBin</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate)</td></tr>
+<tr class="func"><td class="funcret"><a href="./THnSparseArrayChunk.html">THnSparseArrayChunk</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:GetChunk">GetChunk</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:GetChunkSize">GetChunkSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">THnSparseCompactBinCoord*</td><td class="funcname"><a class="funcname" href="#THnSparse:GetCompactCoord">GetCompactCoord</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:IsInRange">IsInRange</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* coord) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#THnSparse:PrintBin">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Int_t">Int_t</a>* coord, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="#THnSparse:ProjectionAny">ProjectionAny</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* dim, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> wantSparse, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><a href="./THnSparse.html">THnSparse</a>&amp;</td><td class="funcname"><a class="funcname" href="#THnSparse:operator_">operator=</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>&amp;)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="THnSparse:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="data"><td class="datatype">enum  { </td><td class="dataname"><a name="THnSparse:kNoInt"></a>kNoInt</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="THnSparse:kValidInt"></a>kValidInt</td><td></td></tr>
+<tr class="data"><td class="datatype"></td><td class="dataname"><a name="THnSparse:kInvalidInt"></a>kInvalidInt</td><td></td></tr>
+<tr class="data"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="THnSparse:fAxes"></a>fAxes</td><td class="datadesc">axes of the histogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="THnSparse:fBinContent"></a>fBinContent</td><td class="datadesc">array of THnSparseArrayChunk</td></tr>
+<tr class="data"><td class="datatype"><a href="./TExMap.html">TExMap</a></td><td class="dataname"><a name="THnSparse:fBins"></a>fBins</td><td class="datadesc">! filled bins</td></tr>
+<tr class="data"><td class="datatype"><a href="./TExMap.html">TExMap</a></td><td class="dataname"><a name="THnSparse:fBinsContinued"></a>fBinsContinued</td><td class="datadesc">! filled bins for non-unique hashes, containing pairs of (bin index 0, bin index 1)</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="THnSparse:fBrowsables"></a>fBrowsables</td><td class="datadesc">! browser-helpers for each axis</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="THnSparse:fChunkSize"></a>fChunkSize</td><td class="datadesc">number of entries for each chunk</td></tr>
+<tr class="data"><td class="datatype">THnSparseCompactBinCoord*</td><td class="dataname"><a name="THnSparse:fCompactCoord"></a>fCompactCoord</td><td class="datadesc">! compact coordinate</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="THnSparse:fEntries"></a>fEntries</td><td class="datadesc">number of entries, spread over chunks</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="dataname"><a name="THnSparse:fFilledBins"></a>fFilledBins</td><td class="datadesc">number of filled bins</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="THnSparse:fIntegral"></a>fIntegral</td><td class="datadesc">! array with bin weight sums</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">enum</span> <a href="./THnSparse.html">THnSparse</a>::</td><td class="dataname"><a name="THnSparse:fIntegralStatus"></a>fIntegralStatus</td><td class="datadesc">! status of integral</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="THnSparse:fNdimensions"></a>fNdimensions</td><td class="datadesc">number of dimensions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="THnSparse:fTsumw"></a>fTsumw</td><td class="datadesc">total sum of weights</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="THnSparse:fTsumw2"></a>fTsumw2</td><td class="datadesc">total sum of weights squared; -1 if no errors are calculated</td></tr>
+<tr class="data"><td class="datatype"><a href="./TArrayD.html">TArrayD</a></td><td class="dataname"><a name="THnSparse:fTsumwx"></a>fTsumwx</td><td class="datadesc">total sum of weight*X for each dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./TArrayD.html">TArrayD</a></td><td class="dataname"><a name="THnSparse:fTsumwx2"></a>fTsumwx2</td><td class="datadesc">total sum of weight*X*X for each dimension</td></tr>
+
+</table></div>
+</div>
+<h2><a id="THnSparse:Class_Charts"></a>Class Charts</h2>
+<map name="MapTHnSparse_Inh" id="MapTHnSparse_Inh">
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="209,61,279,81"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="30,61,95,81"/>
+<area shape="rect" href="./THnSparseT_TArrayC_.html" title="THnSparseT&lt;TArrayC&gt;" alt="" coords="568,3,762,23"/>
+<area shape="rect" href="./THnSparseT_TArrayD_.html" title="THnSparseT&lt;TArrayD&gt;" alt="" coords="567,26,763,46"/>
+<area shape="rect" href="./THnSparseT_TArrayF_.html" title="THnSparseT&lt;TArrayF&gt;" alt="" coords="569,49,761,69"/>
+<area shape="rect" href="./THnSparseT_TArrayI_.html" title="THnSparseT&lt;TArrayI&gt;" alt="" coords="571,72,759,92"/>
+<area shape="rect" href="./THnSparseT_TArrayL_.html" title="THnSparseT&lt;TArrayL&gt;" alt="" coords="569,96,761,115"/>
+<area shape="rect" href="./THnSparseT_TArrayS_.html" title="THnSparseT&lt;TArrayS&gt;" alt="" coords="568,119,762,138"/>
+</map>
+<map name="MapTHnSparse_InhMem" id="MapTHnSparse_InhMem">
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTHnSparse_Lib" id="MapTHnSparse_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTHnSparse_Inh" class="tabsel" href="inh/THnSparse_Inh.png" onclick="javascript:return SetImg('Charts','inh/THnSparse_Inh.png');">Inheritance</a>
+<a id="imgTHnSparse_InhMem" class="tab" href="inhmem/THnSparse_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/THnSparse_InhMem.png');">Inherited Members</a>
+<a id="imgTHnSparse_Incl" class="tab" href="incl/THnSparse_Incl.png" onclick="javascript:return SetImg('Charts','incl/THnSparse_Incl.png');">Includes</a>
+<a id="imgTHnSparse_Lib" class="tab" href="lib/THnSparse_Lib.png" onclick="javascript:return SetImg('Charts','lib/THnSparse_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTHnSparse_Inh" src="inh/THnSparse_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="THnSparse:_THnSparse" href="src/THnSparse.cxx.html#psIAmD">~THnSparse</a>()</span><br />
+<div class="funccomm"><pre> Destruct a <a href="./THnSparse.html">THnSparse</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:AddBinContent" href="src/THnSparse.cxx.html#cebXQC">AddBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> v = 1.)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a> <span class="string">"v"</span> to the content of bin with coordinates <span class="string">"coord"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:AddBinContent%1" href="src/THnSparse.cxx.html#XH1Lu">AddBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> v = 1.)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a> <span class="string">"v"</span> to the content of bin with index <span class="string">"bin"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparseArrayChunk.html">THnSparseArrayChunk</a>* <a class="funcname" name="THnSparse:AddChunk" href="src/THnSparse.cxx.html#g_VepC">AddChunk</a>()</span><br />
+<div class="funccomm"><pre>Create a new chunk of bin content
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>* <a class="funcname" name="THnSparse:CloneEmpty" href="src/THnSparse.cxx.html#N4w0TB">CloneEmpty</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>* axes, <a href="./ListOfTypes.html#Int_t">Int_t</a> chunksize, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> keepTargetAxis) const</span><br />
+<div class="funccomm"><pre> Create a new <a href="./THnSparse.html">THnSparse</a> object that is of the same type as *this,
+ but with dimensions and bins given by axes.
+ If keepTargetAxis is <a href="./ListOfTypes.html#bool">true</a>, the axes will keep their original xmin / xmax,
+ else they will be restricted to the range selected (first / last).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1.html">TH1</a>* <a class="funcname" name="THnSparse:CreateHist" href="src/THnSparse.cxx.html#OvXoe">CreateHist</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TObjArray.html">TObjArray</a>* axes, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> keepTargetAxis) const</span><br />
+<div class="funccomm"><pre> Create an empty histogram with name and title with a given
+ set of axes. Create a <a href="./TH1D.html">TH1D</a>/<a href="./TH2D.html">TH2D</a>/<a href="./TH3D.html">TH3D</a>, depending on the number
+ of elements in axes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>* <a class="funcname" name="THnSparse:CreateSparse" href="src/THnSparse.cxx.html#iatyk">CreateSparse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ChunkSize = 1024*16)</span><br />
+<div class="funccomm"><pre> Create a <a href="./THnSparse.html">THnSparse</a> object from a histogram deriving from <a href="./TH1.html">TH1</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:FillExMap" href="src/THnSparse.cxx.html#TgPeRC">FillExMap</a>()</span><br />
+<div class="funccomm"><pre>We have been streamed; set up <a href="./THnSparse.html#THnSparse:fBins" title="TExMap THnSparse::fBins">fBins</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TFitResultPtr.html">TFitResultPtr</a> <a class="funcname" name="THnSparse:Fit" href="src/THnSparse.cxx.html#EF5EyB">Fit</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre>   <a href="./THnSparse.html#THnSparse:Fit" title="TFitResultPtr THnSparse::Fit(TF1* f1,Option_t* option=&quot;&quot;,Option_t* goption=&quot;&quot;)">Fit</a> a <a href="./THnSparse.html">THnSparse</a> with function f
+
+   since the data is sparse by default a likelihood fit is performed
+   merging all the regions with empty bins for betetr performance efficiency
+
+  Since the <a href="./THnSparse.html">THnSparse</a> is not drawn no graphics options are passed
+  Here is the list of possible options
+
+                = <span class="string">"I"</span>  Use integral of function in bin instead of value at bin center
+                = <span class="string">"X"</span>  Use chi2 method (default is log-likelihood method)
+                = <span class="string">"U"</span>  Use a User specified fitting algorithm (via SetFCN)
+                = <span class="string">"Q"</span>  Quiet mode (minimum printing)
+                = <span class="string">"V"</span>  Verbose mode (default is between Q and V)
+                = <span class="string">"E"</span>  Perform better Errors estimation using Minos technique
+                = <span class="string">"B"</span>  Use this option when you want to fix one or more parameters
+                       and the fitting function is like <span class="string">"gaus"</span>, <span class="string">"expo"</span>, <span class="string">"poln"</span>, <span class="string">"landau"</span>.
+                = <span class="string">"M"</span>  More. Improve fit results
+                = <span class="string">"R"</span>  Use the Range specified in the function range
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:GetBin%1" href="src/THnSparse.cxx.html#txSVAD">GetBin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Get the bin index for the n dimensional tuple x,
+ allocate one if it doesn't exist yet and <span class="string">"allocate"</span> is <a href="./ListOfTypes.html#bool">true</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:GetBin" href="src/THnSparse.cxx.html#PUCslC">GetBin</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name[], <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate <span class="comment">/* = <a href="./ListOfTypes.html#Bool_t">kTRUE</a> */</span>)</span><br />
+<div class="funccomm"><pre> Get the bin index for the n dimensional tuple addressed by <span class="string">"name"</span>,
+ allocate one if it doesn't exist yet and <span class="string">"allocate"</span> is <a href="./ListOfTypes.html#bool">true</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:GetBin" href="src/THnSparse.cxx.html#Upj4H">GetBin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Get the bin index for the n dimensional coordinates coord,
+ allocate one if it doesn't exist yet and <span class="string">"allocate"</span> is <a href="./ListOfTypes.html#bool">true</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetBinContent" href="src/THnSparse.cxx.html#nnDVFD">GetBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx) const</span><br />
+<div class="funccomm"><pre> Get content of bin with coordinates <span class="string">"coord"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetBinContent%1" href="src/THnSparse.cxx.html#Vd23yC">GetBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx = 0) const</span><br />
+<div class="funccomm"><pre> Return the content of the filled bin number <span class="string">"idx"</span>.
+ If coord is non-null, it will contain the bin's coordinates for each axis
+ that correspond to the bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetBinError" href="src/THnSparse.cxx.html#NRu46E">GetBinError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* idx) const</span><br />
+<div class="funccomm"><pre> Get error of bin with coordinates <span class="string">"coord"</span> as
+
+<span class="latex"><img class="latex" alt="#sqrt{#sum weight^{2}}" title="LATEX" src="LATEX_THnSparse_GetBinError_2_0_sqrtsumweight.gif" /></span>
+ If errors are not enabled (via <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a>() or <a href="./THnSparse.html#THnSparse:CalculateErrors" title="void THnSparse::CalculateErrors(Bool_t calc=kTRUE)">CalculateErrors</a>())
+ return sqrt(contents).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetBinError%1" href="src/THnSparse.cxx.html#hA9I3D">GetBinError</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> linidx) const</span><br />
+<div class="funccomm"><pre> Get error of bin addressed by linidx as
+
+<span class="latex"><img class="latex" alt="#sqrt{#sum weight^{2}}" title="LATEX" src="LATEX_THnSparse_GetBinError_1_0_sqrtsumweight.gif" /></span>
+ If errors are not enabled (via <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a>() or <a href="./THnSparse.html#THnSparse:CalculateErrors" title="void THnSparse::CalculateErrors(Bool_t calc=kTRUE)">CalculateErrors</a>())
+ return sqrt(contents).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:GetBinIndexForCurrentBin" href="src/THnSparse.cxx.html#uXCbLB">GetBinIndexForCurrentBin</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> allocate)</span><br />
+<div class="funccomm"><pre> Return the index for fCurrentBinIndex.
+ If it doesn't exist then return -1, or allocate a new bin if allocate is set
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">THnSparseCompactBinCoord* <a class="funcname" name="THnSparse:GetCompactCoord" href="src/THnSparse.cxx.html#e5CFhC">GetCompactCoord</a>() const</span><br />
+<div class="funccomm"><pre> Return THnSparseCompactBinCoord object.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:GetRandom" href="src/THnSparse.cxx.html#XwGoVB">GetRandom</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* rand, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> subBinRandom = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Generate an n-dimensional random tuple based on the histogrammed
+ distribution. If subBinRandom, the returned tuple will be additionally
+ randomly distributed within the randomized bin, using a flat
+ distribution.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSparseFractionBins" href="src/THnSparse.cxx.html#nlPCJE">GetSparseFractionBins</a>() const</span><br />
+<div class="funccomm"><pre> Return the amount of filled bins over all bins
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSparseFractionMem" href="src/THnSparse.cxx.html#HDjVc">GetSparseFractionMem</a>() const</span><br />
+<div class="funccomm"><pre> Return the amount of used memory over memory that would be used by a
+ non-sparse n-dimensional histogram. The value is approximate.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:IsInRange" href="src/THnSparse.cxx.html#rNPfkB">IsInRange</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>* coord) const</span><br />
+<div class="funccomm"><pre> Check whether bin coord is in range, as defined by <a href="./TAxis.html">TAxis</a>::<a href="./TAxis.html#TAxis:SetRange" title="void TAxis::SetRange(Int_t first=0,Int_t last=0)">SetRange</a>().
+ Currently, <a href="./TAxis.html">TAxis</a>::<a href="./TAxis.html#TAxis:SetRange" title="void TAxis::SetRange(Int_t first=0,Int_t last=0)">SetRange</a>() does not allow to select all but over- and
+ underflow bins (it instead resets the axis to <span class="string">"no range selected"</span>).
+ Instead, simply call
+    <a href="./TAxis.html">TAxis</a>* axis12 = hsparse.<a href="./THnSparse.html#THnSparse:GetAxis" title="TAxis* THnSparse::GetAxis(Int_t dim)">GetAxis</a>(12);
+    axis12-&gt;SetRange(1, axis12-&gt;<a href="./THnSparse.html#THnSparse:GetNbins" title="Long64_t THnSparse::GetNbins()">GetNbins</a>());
+    axis12-&gt;<a href="./TObject.html#TObject:SetBit" title="void TObject::SetBit(UInt_t f,Bool_t set) or overloads">SetBit</a>(<a href="./TAxis.html">TAxis</a>::<a href="./TAxis.html#TAxis:kAxisRange" title="const enum TAxis:: TAxis::kAxisRange">kAxisRange</a>);
+ to deselect the under- and overflow bins in the 12th dimension.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1D.html">TH1D</a>* <a class="funcname" name="THnSparse:Projection" href="src/THnSparse.cxx.html#yavW6C">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Project all bins into a 1-dimensional histogram,
+ keeping only axis <span class="string">"xDim"</span>.
+ If <span class="string">"option"</span> contains <span class="string">"E"</span> errors will be calculated.
+                      <span class="string">"A"</span> ranges of the taget axes will be ignored.
+                      <span class="string">"O"</span> original axis range of the taget axes will be
+                          kept, but only bins inside the selected range
+                          will be filled.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH2D.html">TH2D</a>* <a class="funcname" name="THnSparse:Projection%1" href="src/THnSparse.cxx.html#UK0KaE">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> yDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Project all bins into a 2-dimensional histogram,
+ keeping only axes <span class="string">"xDim"</span> and <span class="string">"yDim"</span>.
+
+ WARNING: just like <a href="./TH3.html">TH3</a>::<a href="./TH3.html#TH3:Project3D" title="TH1* TH3::Project3D(Option_t* option=&quot;x&quot;)">Project3D</a>(<span class="string">"yx"</span>) and <a href="./TTree.html">TTree</a>::<a href="./TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>(<span class="string">"y:x"</span>),
+ <a href="./THnSparse.html#THnSparse:Projection" title="TH1D* THnSparse::Projection(Int_t xDim,Option_t* option=&quot;&quot;) or overloads">Projection</a>(y,x) uses the first argument to define the y-axis and the
+ second for the x-axis!
+
+ If <span class="string">"option"</span> contains <span class="string">"E"</span> errors will be calculated.
+                      <span class="string">"A"</span> ranges of the taget axes will be ignored.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH3D.html">TH3D</a>* <a class="funcname" name="THnSparse:Projection%2" href="src/THnSparse.cxx.html#K.wr3D">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> xDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> yDim, <a href="./ListOfTypes.html#Int_t">Int_t</a> zDim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Project all bins into a 3-dimensional histogram,
+ keeping only axes <span class="string">"xDim"</span>, <span class="string">"yDim"</span>, and <span class="string">"zDim"</span>.
+ If <span class="string">"option"</span> contains <span class="string">"E"</span> errors will be calculated.
+                      <span class="string">"A"</span> ranges of the taget axes will be ignored.
+                      <span class="string">"O"</span> original axis range of the taget axes will be
+                          kept, but only bins inside the selected range
+                          will be filled.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>* <a class="funcname" name="THnSparse:Projection%3" href="src/THnSparse.cxx.html#WnlaMC">Projection</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* dim, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Project all bins into a ndim-dimensional <a href="./THnSparse.html">THnSparse</a> histogram,
+ keeping only axes in dim (specifying ndim dimensions)
+ If <span class="string">"option"</span> contains <span class="string">"E"</span> errors will be calculated.
+                      <span class="string">"A"</span> ranges of the taget axes will be ignored.
+                      <span class="string">"O"</span> original axis range of the taget axes will be
+                          kept, but only bins inside the selected range
+                          will be filled.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObject.html">TObject</a>* <a class="funcname" name="THnSparse:ProjectionAny" href="src/THnSparse.cxx.html#I03EV">ProjectionAny</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ndim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* dim, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> wantSparse, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Project all bins into a ndim-dimensional <a href="./THnSparse.html">THnSparse</a> histogram,
+ keeping only axes in dim (specifying ndim dimensions)
+ If <span class="string">"option"</span> contains <span class="string">"E"</span> errors will be calculated.
+                      <span class="string">"A"</span> ranges of the taget axes will be ignored.
+                      <span class="string">"O"</span> original axis range of the taget axes will be
+                          kept, but only bins inside the selected range
+                          will be filled.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Scale" href="src/THnSparse.cxx.html#lGrfGE">Scale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> c)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Scale" title="void THnSparse::Scale(Double_t c)">Scale</a> contents and errors of this histogram by c:
+ this = this * c
+ It does not modify the histogram's number of entries.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:AddInternal" href="src/THnSparse.cxx.html#Wt8lTE">AddInternal</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> rebinned)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a>() implementation for both rebinned histograms and those with identical
+ binning. See <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Add" href="src/THnSparse.cxx.html#egl75C">Add</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a> contents of h scaled by c to this histogram:
+ this = this + c * h
+ Note that if h has <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> set, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> is automatically called for this
+ if not already set.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:RebinnedAdd" href="src/THnSparse.cxx.html#EK.Bj">RebinnedAdd</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a> contents of h scaled by c to this histogram:
+ this = this + c * h
+ Note that if h has <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> set, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> is automatically called for this
+ if not already set.
+ In contrast to <a href="./THnSparse.html#THnSparse:Add" title="void THnSparse::Add(const THnSparse* h,Double_t c=1.)">Add</a>(), <a href="./THnSparse.html#THnSparse:RebinnedAdd" title="void THnSparse::RebinnedAdd(const THnSparse* h,Double_t c=1.)">RebinnedAdd</a>() does not require consist binning of
+ this and h; instead, each bin's center is used to determine the target bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:Merge" href="src/THnSparse.cxx.html#Mc.qWC">Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Merge" title="Long64_t THnSparse::Merge(TCollection* list)">Merge</a> this with a list of THnSparses. All THnSparses provided
+ in the list must have the same bin layout!
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Multiply" href="src/THnSparse.cxx.html#pn4VxB">Multiply</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Multiply" title="void THnSparse::Multiply(const THnSparse* h) or overloads">Multiply</a> this histogram by histogram h
+ this = this * h
+ Note that if h has <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> set, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> is automatically called for this
+ if not already set.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Multiply%1" href="src/THnSparse.cxx.html#Mbt.dD">Multiply</a>(<a href="./TF1.html">TF1</a>* f, <a href="./ListOfTypes.html#Double_t">Double_t</a> c = 1.)</span><br />
+<div class="funccomm"><pre> Performs the operation: this = this*c*f1
+ if errors are defined, errors are also recalculated.
+
+ Only bins inside the function range are recomputed.
+ IMPORTANT NOTE: If you intend to use the errors of this histogram later
+ you should call <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> before making this operation.
+ This is particularly important if you fit the histogram after <a href="./THnSparse.html">THnSparse</a>::<a href="./THnSparse.html#THnSparse:Multiply" title="void THnSparse::Multiply(const THnSparse* h) or overloads">Multiply</a>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Divide" href="src/THnSparse.cxx.html#PbQs8D">Divide</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Divide" title="void THnSparse::Divide(const THnSparse* h) or overloads">Divide</a> this histogram by h
+ this = this/(h)
+ Note that if h has <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> set, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> is automatically called for
+ this if not already set.
+ The resulting errors are calculated assuming uncorrelated content.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Divide%1" href="src/THnSparse.cxx.html#ryCNnB">Divide</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h1, <span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1., <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1., <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Replace contents of this histogram by multiplication of h1 by h2
+ this = (c1*h1)/(c2*h2)
+ Note that if h1 or h2 have <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> set, <a href="./THnSparse.html#THnSparse:Sumw2" title="void THnSparse::Sumw2()">Sumw2</a> is automatically called for
+ this if not already set.
+ The resulting errors are calculated assuming uncorrelated content.
+ However, if option =<span class="string">"B"</span> is specified, Binomial errors are computed.
+ In this case c1 and c2 do not make real sense and they are ignored.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:CheckConsistency" href="src/THnSparse.cxx.html#pAZQ4D">CheckConsistency</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>* h, <span class="keyword">const</span> <span class="keyword">char</span>* tag) const</span><br />
+<div class="funccomm"><pre> Consistency check on (some of) the parameters of two histograms (for operations).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetBinEdges" href="src/THnSparse.cxx.html#r4RxtB">SetBinEdges</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idim, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* bins)</span><br />
+<div class="funccomm"><pre> Set the axis # of bins and bin limits on dimension idim
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetBinContent" href="src/THnSparse.cxx.html#oPSh2E">SetBinContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> v)</span><br />
+<div class="funccomm"><pre> Set content of bin with coordinates <span class="string">"coord"</span> to <span class="string">"v"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetBinContent%1" href="src/THnSparse.cxx.html#d9_Uu">SetBinContent</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> v)</span><br />
+<div class="funccomm"><pre> Set content of bin with index <span class="string">"bin"</span> to <span class="string">"v"</span>
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetBinError" href="src/THnSparse.cxx.html#JoGfAB">SetBinError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</span><br />
+<div class="funccomm"><pre> Set error of bin with coordinates <span class="string">"coord"</span> to <span class="string">"e"</span>, enable errors if needed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetBinError%1" href="src/THnSparse.cxx.html#hXCFSD">SetBinError</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> e)</span><br />
+<div class="funccomm"><pre> Set error of bin with index <span class="string">"bin"</span> to <span class="string">"e"</span>, enable errors if needed
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Sumw2" href="src/THnSparse.cxx.html#hIAnDE">Sumw2</a>()</span><br />
+<div class="funccomm"><pre> Enable calculation of errors
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>* <a class="funcname" name="THnSparse:Rebin" href="src/THnSparse.cxx.html#Z.wPd">Rebin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> group) const</span><br />
+<div class="funccomm"><pre> Combine the content of <span class="string">"group"</span> neighboring bins into
+ a new bin and return the resulting <a href="./THnSparse.html">THnSparse</a>.
+ For group=2 and a 3 dimensional histogram, all <span class="string">"blocks"</span>
+ of 2*2*2 bins will be put into a bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetTitle" href="src/THnSparse.cxx.html#bI1iuB">SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</span><br />
+<div class="funccomm"><pre> Change (i.e. set) the title.
+
+ If title is in the form <span class="string">"stringt;string0;string1;string2 ..."</span>
+ the histogram title is set to stringt, the title of axis0 to string0,
+ of axis1 to string1, of axis2 to string2, etc, just like it is done
+ for <a href="./TH1.html">TH1</a>/<a href="./TH2.html">TH2</a>/<a href="./TH3.html">TH3</a>.
+ To insert the character <span class="string">";"</span> in one of the titles, one should use <span class="string">"#;"</span>
+ or <span class="string">"#semicolon"</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>* <a class="funcname" name="THnSparse:Rebin%1" href="src/THnSparse.cxx.html#j43DHC">Rebin</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Int_t">Int_t</a>* group) const</span><br />
+<div class="funccomm"><pre> Combine the content of <span class="string">"group"</span> neighboring bins for each dimension
+ into a new bin and return the resulting <a href="./THnSparse.html">THnSparse</a>.
+ For group={2,1,1} and a 3 dimensional histogram, pairs of x-bins
+ will be grouped.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Reset" href="src/THnSparse.cxx.html#o.qqvE">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Clear" title="void TNamed::Clear(Option_t* option=&quot;&quot;)">Clear</a> the histogram
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:ComputeIntegral" href="src/THnSparse.cxx.html#O9QCGC">ComputeIntegral</a>()</span><br />
+<div class="funccomm"><pre> Calculate the integral of the histogram
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:PrintBin%2" href="src/THnSparse.cxx.html#TioOhD">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) const</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Print" title="void THnSparse::Print(Option_t* option=&quot;&quot;)">Print</a> bin with linex index <span class="string">"idx"</span>.
+ For valid options see <a href="./THnSparse.html#THnSparse:PrintBin" title="Bool_t THnSparse::PrintBin(Long64_t idx,Int_t* coord,Option_t* options) or overloads">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Int_t">Int_t</a>* bin, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:PrintBin" href="src/THnSparse.cxx.html#AA1.b">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Int_t">Int_t</a>* coord, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) const</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Print" title="void THnSparse::Print(Option_t* option=&quot;&quot;)">Print</a> one bin. If <span class="string">"idx"</span> is != -1 use that to determine the bin,
+ otherwise (if <span class="string">"idx"</span> == -1) use the coordinate in <span class="string">"bin"</span>.
+ If <span class="string">"options"</span> contains:
+   <span class="string">'0'</span>: only print bins with an error or content != 0
+ Return whether the bin was printed (depends on options)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:PrintEntries" href="src/THnSparse.cxx.html#RHaNtE">PrintEntries</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> from = 0, <a href="./ListOfTypes.html#Long64_t">Long64_t</a> howmany = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options = 0) const</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Print" title="void THnSparse::Print(Option_t* option=&quot;&quot;)">Print</a> <span class="string">"howmany"</span> entries starting at <span class="string">"from"</span>. If <span class="string">"howmany"</span> is -1, print all.
+ If <span class="string">"options"</span> contains:
+   <span class="string">'x'</span>: print in the order of axis bins, i.e. (0,0,...,0), (0,0,...,1),...
+   <span class="string">'0'</span>: only print bins with content != 0
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Print" href="src/THnSparse.cxx.html#zLtzaE">Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Print" title="void THnSparse::Print(Option_t* option=&quot;&quot;)">Print</a> a <a href="./THnSparse.html">THnSparse</a>. If <span class="string">"option"</span> contains:
+   <span class="string">'a'</span>: print axis details
+   <span class="string">'m'</span>: print memory usage
+   <span class="string">'s'</span>: print statistics
+   <span class="string">'c'</span>: print its content, too (this can generate a LOT of output!)
+ Other options are forwarded to <a href="./THnSparse.html#THnSparse:PrintEntries" title="void THnSparse::PrintEntries(Long64_t from=0,Long64_t howmany=-1,Option_t* options=0)">PrintEntries</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:Browse" href="src/THnSparse.cxx.html#KwxojC">Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</span><br />
+<div class="funccomm"><pre> <a href="./THnSparse.html#THnSparse:Browse" title="void THnSparse::Browse(TBrowser* b)">Browse</a> a <a href="./THnSparse.html">THnSparse</a>: create an entry (<a href="./ROOT.html">ROOT</a>::THnSparseBrowsable) for each
+ dimension.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparse.html">THnSparse</a>&amp; <a class="funcname" name="THnSparse:operator_" href="src/THnSparse.h.html#g5d1tD">operator=</a>(<span class="keyword">const</span> <a href="./THnSparse.html">THnSparse</a>&amp; )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="THnSparse:GetChunkSize" href="src/THnSparse.h.html#UHqpWB">GetChunkSize</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fChunkSize" title="Int_t THnSparse::fChunkSize">fChunkSize</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./THnSparseArrayChunk.html">THnSparseArrayChunk</a>* <a class="funcname" name="THnSparse:GetChunk" href="src/THnSparse.h.html#uTdP0C">GetChunk</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> idx) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TArray.html">TArray</a>* <a class="funcname" name="THnSparse:GenerateArray" href="src/THnSparse.h.html#tQc9YC">GenerateArray</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:Fill" href="src/THnSparse.h.html#s8PjWB">Fill</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</span><br />
+<div class="funccomm"><pre> Increment the bin content of <span class="string">"bin"</span> by <span class="string">"w"</span>,
+ return the bin index.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:PrintBin" href="src/THnSparse.h.html#B.lb">PrintBin</a>(<a href="./ListOfTypes.html#Long64_t">Long64_t</a> idx, <a href="./ListOfTypes.html#Int_t">Int_t</a>* coord, <a href="./ListOfTypes.html#Option_t">Option_t</a>* options) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="THnSparse:GetNChunks" href="src/THnSparse.h.html#o10Y8D">GetNChunks</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fBinContent" title="TObjArray THnSparse::fBinContent">fBinContent</a>.<a href="./TObjArray.html#TObjArray:GetEntriesFast" title="Int_t TObjArray::GetEntriesFast()">GetEntriesFast</a>(); }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TObjArray.html">TObjArray</a>* <a class="funcname" name="THnSparse:GetListOfAxes" href="src/THnSparse.h.html#wcqtQE">GetListOfAxes</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> &amp;<a href="./THnSparse.html#THnSparse:fAxes" title="TObjArray THnSparse::fAxes">fAxes</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TAxis.html">TAxis</a>* <a class="funcname" name="THnSparse:GetAxis" href="src/THnSparse.h.html#aNi0rC">GetAxis</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> (<a href="./TAxis.html">TAxis</a>*)<a href="./THnSparse.html#THnSparse:fAxes" title="TObjArray THnSparse::fAxes">fAxes</a>[dim]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:Fill%1" href="src/THnSparse.h.html#UQP6PC">Fill</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">return</span> <a class="funcname" name="THnSparse:Fill%2" href="src/THnSparse.h.html#lBTm2D">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>** name, <a href="./ListOfTypes.html#Double_t">Double_t</a> w = 1.)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>* <a class="funcname" name="THnSparse:GetListOfFunctions" href="src/THnSparse.h.html#P.9qSC">GetListOfFunctions</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetEntries" href="src/THnSparse.h.html#nSsUJE">GetEntries</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fEntries" title="Double_t THnSparse::fEntries">fEntries</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetWeightSum" href="src/THnSparse.h.html#qNgqfD">GetWeightSum</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumw" title="Double_t THnSparse::fTsumw">fTsumw</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="THnSparse:GetNbins" href="src/THnSparse.h.html#IvoxHC">GetNbins</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fFilledBins" title="Long64_t THnSparse::fFilledBins">fFilledBins</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="THnSparse:GetNdimensions" href="src/THnSparse.h.html#mrFXOD">GetNdimensions</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fNdimensions" title="Int_t THnSparse::fNdimensions">fNdimensions</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:GetCalculateErrors" href="src/THnSparse.h.html#IOqp_C">GetCalculateErrors</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumw2" title="Double_t THnSparse::fTsumw2">fTsumw2</a> &gt;= 0.; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:CalculateErrors" href="src/THnSparse.h.html#XW5wLB">CalculateErrors</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> calc = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+<div class="funccomm"><pre> Calculate errors (or not if <span class="string">"calc"</span> == <a href="./ListOfTypes.html#Bool_t">kFALSE</a>)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="THnSparse:SetEntries" href="src/THnSparse.h.html#kiWdRC">SetEntries</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> entries)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./THnSparse.html#THnSparse:fEntries" title="Double_t THnSparse::fEntries">fEntries</a> = entries; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSumw" href="src/THnSparse.h.html#ptnXLB">GetSumw</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumw" title="Double_t THnSparse::fTsumw">fTsumw</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSumw2" href="src/THnSparse.h.html#IGgpLD">GetSumw2</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumw2" title="Double_t THnSparse::fTsumw2">fTsumw2</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSumwx" href="src/THnSparse.h.html#M7LqiD">GetSumwx</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumwx" title="TArrayD THnSparse::fTsumwx">fTsumwx</a>[dim]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="THnSparse:GetSumwx2" href="src/THnSparse.h.html#RyQeaD">GetSumwx2</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> dim) const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./THnSparse.html#THnSparse:fTsumwx2" title="TArrayD THnSparse::fTsumwx2">fTsumwx2</a>[dim]; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="THnSparse:IsFolder" href="src/THnSparse.h.html#zg5a.B">IsFolder</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Axel+Naumann+(2007-09-11)"> Axel Naumann (2007-09-11)</a> </em><em>&raquo; Copyright   (C) 1995-2007, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/hist:$Id: THnSparse.h 41546 2011-10-24 14:42:42Z axel $ </em><em>&raquo; Last generated: 2011-12-02 14:28</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

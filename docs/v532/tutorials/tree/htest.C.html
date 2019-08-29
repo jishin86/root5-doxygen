@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:29:35 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Example illustrating how to save histograms in Tree branches.
+</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks"><div class="descrhead"><table class="descrtitle" id="contexttitle"><tr class="descrtitle"><td id="contextheadarrow_prev"><div id="divcontextheadar_prev"><a class="contextheadarrow" href="h1chain.C.html">&lt;</a></div></td><td class="contextheadentry" id="contextheadentry_prev"><a class="contextheadentry" href="h1chain.C.html">h1chain.C: Creates a TChain to be used by the h1analysis.C class
+</a></td><td id="contextheadarrow_up"><div id="divcontextheadar_up"><a class="contextheadarrow" href="index.html">^</a></div></td><td class="contextheadentry" id="contextheadentry_up"><a class="contextheadentry" href="index.html">Trees I/O, Queries, Graphics</a></td><td class="contextheadentry" id="contextheadentry_next"><a class="contextheadentry" href="hvector.C.html">hvector.C:  This tutorials demonstrate how to store and restore simple vectors
+</a></td><td id="contextheadarrow_next"><div id="divcontextheadar_next"><a class="contextheadarrow" href="hvector.C.html">&gt;</a></div></td></tr></table></div><h1 class="convert">htest.C: Example illustrating how to save histograms in Tree branches.
+</h1></div>
+<div class="location"><h2>From <a href="http://root.cern.ch/viewvc/trunk/tutorials/tree/htest.C?view=markup">$ROOTSYS/tutorials/tree/htest.C</a></h2></div>
+<table><tr><td style="vertical-align:top;padding-right:2em;">
+<div class="listing"><pre class="listing">
+<span class="comment">//Example illustrating how to save histograms in Tree branches.</span>
+<span class="comment">//To run this example, do</span>
+<span class="comment">// root &gt; .L htest.C</span>
+<span class="comment">// root &gt; htw()</span>
+<span class="comment">// root &gt; htr1()</span>
+<span class="comment">// root &gt; htr2()</span>
+<span class="comment">// root &gt; htr3()</span>
+<span class="comment">//</span>
+<span class="comment">//Author: Rene Brun</span>
+      
+<span class="keyword">void</span> htw() {
+   <span class="comment">//create a Tree with a few branches of type histogram</span>
+   <span class="comment">//25000 entries are filled in the Tree</span>
+   <span class="comment">//For each entry, the copy of 3 histograms is written</span>
+   <span class="comment">//The data base will contain 75000 histograms.</span>
+   <a href="../../TBenchmark.html">gBenchmark</a>-><a href="../../TBenchmark.html#TBenchmark:Start" title="void TBenchmark::Start(const char* name)">Start</a>(<span class="string">"hsimple"</span>);
+   <a href="../../TFile.html">TFile</a> f(<span class="string">"ht.root"</span>,<span class="string">"recreate"</span>);
+   <a href="../../TTree.html">TTree</a> *T     = <span class="keyword">new</span> <a href="../../TTree.html">TTree</a>(<span class="string">"T"</span>,<span class="string">"test"</span>);
+   <a href="../../TH1F.html">TH1F</a> *hpx    = <span class="keyword">new</span> <a href="../../TH1F.html">TH1F</a>(<span class="string">"hpx"</span>,<span class="string">"This is the px distribution"</span>,100,-4,4);
+   <a href="../../TH2F.html">TH2F</a> *hpxpy  = <span class="keyword">new</span> <a href="../../TH2F.html">TH2F</a>(<span class="string">"hpxpy"</span>,<span class="string">"py vs px"</span>,40,-4,4,40,-4,4);
+   <a href="../../TProfile.html">TProfile</a> *hprof  = <span class="keyword">new</span> <a href="../../TProfile.html">TProfile</a>(<span class="string">"hprof"</span>,<span class="string">"Profile of pz versus px"</span>,100,-4,4,0,20);
+   T-&gt;Branch(<span class="string">"hpx"</span>,<span class="string">"TH1F"</span>,&amp;hpx,32000,0);
+   T-&gt;Branch(<span class="string">"hpxpy"</span>,<span class="string">"TH2F"</span>,&amp;hpxpy,32000,0);
+   T-&gt;Branch(<span class="string">"hprof"</span>,<span class="string">"TProfile"</span>,&amp;hprof,32000,0);
+   <a href="../../ListOfTypes.html#Float_t">Float_t</a> px, py, pz;
+   <span class="keyword">for</span> (<a href="../../ListOfTypes.html#Int_t">Int_t</a> i = 0; i &lt; 25000; i++) {
+      <span class="keyword">if</span> (i%1000 == 0) printf(<span class="string">"at entry: %d\n"</span>,i);
+      <a href="../../TRandom.html">gRandom</a>-><a href="../../TRandom.html#TRandom:Rannor" title="void TRandom::Rannor(Float_t&amp; a,Float_t&amp; b) or overloads">Rannor</a>(px,py);
+      pz = px*px + py*py;
+      hpx-&gt;Fill(px);
+      hpxpy-&gt;Fill(px,py);
+      hprof-&gt;Fill(px,pz);
+      T-&gt;Fill();
+   }
+   T-&gt;<a href="../../TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a>();
+   f.<a href="../../TObject.html#TObject:Write" title="Int_t TObject::Write(const char* name=0,Int_t option=0,Int_t bufsize=0) or overloads">Write</a>();
+   <a href="../../TBenchmark.html">gBenchmark</a>-><a href="../../TBenchmark.html#TBenchmark:Show" title="void TBenchmark::Show(const char* name)">Show</a>(<span class="string">"hsimple"</span>);
+}
+<span class="keyword">void</span> htr1() {
+   <span class="comment">//connect Tree generated by htw and show histograms for entry 12345</span>
+   <a href="../../TFile.html">TFile</a> *f = <span class="keyword">new</span> <a href="../../TFile.html">TFile</a>(<span class="string">"ht.root"</span>);
+   <a href="../../TTree.html">TTree</a> *T = (<a href="../../TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"T"</span>);
+   <a href="../../TH1F.html">TH1F</a> *hpx = 0;
+   <a href="../../TH2F.html">TH2F</a> *hpxpy = 0;
+   <a href="../../TProfile.html">TProfile</a> *hprof = 0;
+   T-&gt;SetBranchAddress(<span class="string">"hpx"</span>,&amp;hpx);
+   T-&gt;SetBranchAddress(<span class="string">"hpxpy"</span>,&amp;hpxpy);
+   T-&gt;SetBranchAddress(<span class="string">"hprof"</span>,&amp;hprof);
+   T-&gt;GetEntry(12345);
+   <a href="../../TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="../../TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"test"</span>,10,10,600,1000);
+   c1-&gt;<a href="../../TPad.html#TPad:Divide" title="void TPad::Divide(Int_t nx=1,Int_t ny=1,Float_t xmargin=0.01,Float_t ymargin=0.01,Int_t color=0)">Divide</a>(1,3);
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(1);
+   hpx-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(2);
+   hpxpy-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(3);
+   hprof-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+}
+<span class="keyword">void</span> htr2() {
+   <span class="comment">//connect Tree generated by htw and show histograms for entry 12345</span>
+   <span class="comment">// a variant of htr1</span>
+   <a href="../../TFile.html">TFile</a> *f = <span class="keyword">new</span> <a href="../../TFile.html">TFile</a>(<span class="string">"ht.root"</span>);
+   <a href="../../TTree.html">TTree</a> *T = (<a href="../../TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"T"</span>);
+   <a href="../../TCanvas.html">TCanvas</a> *c1 = <span class="keyword">new</span> <a href="../../TCanvas.html">TCanvas</a>(<span class="string">"c1"</span>,<span class="string">"test"</span>,10,10,600,1000);
+   c1-&gt;<a href="../../TPad.html#TPad:Divide" title="void TPad::Divide(Int_t nx=1,Int_t ny=1,Float_t xmargin=0.01,Float_t ymargin=0.01,Int_t color=0)">Divide</a>(1,3);
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(1);
+   T-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"hpx.Draw()"</span>,<span class="string">""</span>,<span class="string">"goff"</span>,1,12345);
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(2);
+   T-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"hpxpy.Draw()"</span>,<span class="string">""</span>,<span class="string">"goff"</span>,1,12345);
+   c1-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(3);
+   T-&gt;<a href="../../TCanvas.html#TCanvas:Draw" title="void TCanvas::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"hprof.Draw()"</span>,<span class="string">""</span>,<span class="string">"goff"</span>,1,12345);
+}
+<span class="keyword">void</span> htr3() {
+   <span class="comment">//connect Tree generated by htw</span>
+   <span class="comment">//read all histograms and plot the RMS of hpx versus the Mean of hprof</span>
+   <span class="comment">//for each of the 25000 entries</span>
+   <a href="../../TFile.html">TFile</a> *f = <span class="keyword">new</span> <a href="../../TFile.html">TFile</a>(<span class="string">"ht.root"</span>);
+   <a href="../../TTree.html">TTree</a> *T = (<a href="../../TTree.html">TTree</a>*)f-&gt;Get(<span class="string">"T"</span>);
+   T-&gt;<a href="../../TTree.html#TTree:Draw" title="void TTree::Draw(Option_t* opt) or overloads">Draw</a>(<span class="string">"hpx.GetRMS():hprof.GetMean()"</span>);
+}
+<span class="keyword">void</span> htest() {
+   htw();
+   htr1();
+   htr2();
+   htr3();
+}
+</pre></div>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">htest.C:</span><a name="87" href="#87" class="ln">87</a></div></div>
+</td><td style="vertical-align:top;">
+<table>
+<tr><td><a href="htest.C_0.png">
+<img src="htest.C_0.png" id="canv0" alt="thumb" style="border:none;width:22em;" onmouseover="javascript:canv0.style.width='auto';" />
+</a></td></tr>
+</table>
+</td></tr></table>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:29 </em><em>&raquo; Last generated: 2011-12-02 14:29</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

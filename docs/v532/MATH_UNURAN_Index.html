@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:26:13 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Index of MATH/UNURAN</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./MATH_Index.html">MATH</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">UNURAN</a>
+</div>
+<h2>Index of MATH/UNURAN</h2>
+<pre>This directory contains classes for using the UNU.RAN package in <a href="./ROOT.html">ROOT</a>
+</pre><!-- TDocHtmlDirective start --> 
+UNU.RAN, (Universal Non Uniform Random number generator for generating non uniform pseudo-random numbers) 
+is an ANSI C library licensed under GPL.<br>
+It contains universal (also called automatic or black-box) algorithms that can generate random numbers from 
+large classes of continuous or discrete distributions, and also from practically all standard distributions. 
+An extensive online documentation are available at the <a href="http://statistik.wu-wien.ac.at/unuran/">UNU.RAN Web Site</a>. </p>
+<p>New classes have been introduced to use the UNU.RAN C library from ROOT and C++ from ROOT and using C++ objects. 
+To use UNU.RAN one needs always an instance of the class <strong>TUnuran</strong>. 
+It can then be used in two distinct ways:</p>
+<ul>
+  <li>using the UNU.RAN native string API for pre-defined distributions (see<a href="http://statistik.wu-wien.ac.at/unuran/doc/unuran.html#StringAPI"> UNU.RAN documentation</a> for the string API):
+          <pre>
+          TUnuran unr;
+          //initialize unuran to generate normal random numbers using a "arou" method
+          unr.Init("normal()","method=arou");
+          //......
+          // sample distributions N times (generate N random numbers)
+          for (int i = 0; i &lt; N; ++i) 
+                double x = unr.Sample();
+           </pre>
+   
+  </li>
+  <li>
+  Using a distribution object we have the following cases: </li>
+      <ul>
+      <li>For 1D distribution the class <strong>TUnuranContDist </strong> must be used. 
+A<strong> TUnuranContDist</strong> object can be created from a function
+       providing the pdf (probability density function) and optionally one providing the derivative of the pdf. 
+If the derivative is not provided and the generation method requires it, then it is estimated numerically. 
+The user can optionally provide the cdf (cumulative distribution function) via the 
+<strong>TUnuranContDist::SetCdf </strong>me, the mode (via <strong>TUnuranContDist::SetMode</strong> ), 
+the domain (via <strong>TUnuranContDist::SetDomain(min,max) </strong>) for generating numbers in a restricted region, 
+the area below the pdf (via <strong>TUnuranContDist::SetPdfArea </strong>). 
+Some of this information is required depending on the chosen UNURAN generation method. 
+       <pre>
+       //1D case: create a distribution from two TF1 object pointers pdfFunc
+       TUnuranContDist  dist( pdfFunc);
+       //initialize unuran passing the distribution and a string defining the method
+       unr.Init(dist, "method=hinv");
+       // sample distribution  N times (generate N random numbers)
+       for (int i = 0; i &lt; N; ++i)
+          double x = unr.Sample();
+       </pre>
+      <li> For multi-dimensional distribution the class <strong>TUnuranMultiContDist</strong> must be used. 
+In this case only the multi-dimensional pdf is
+       required
+          
+        <pre>
+      //Multi-Dim case from a TF1 (or TF2 or TF3) object describing a multi-dimensional function
+      TUnuranMultiContDist  dist( pdfFuncMulti);
+      // the recommended method for multi-dimensional function is "hitro"
+      unr.Init(dist, "method=hitro");  
+      // sample distribution  N times (generate N random numbers)
+      double x[NDIM];        
+      for (int i = 0; i &lt; N; ++i)
+          unr.SampleMulti(x);
+      </pre>
+</li>
+  <li> For discrete distribution the class <strong>TUnuranDiscrDist</strong> must be used. 
+The distribution can be initialized from a TF1 or from a vector of probabilities.    
+    <pre>
+      // create distribution from a vector of probabilities
+         double pv[NSize] = {0.1,0.2,.......};
+      TUnuranDiscrDist  dist(pv, pv+NSize);	
+      // the recommended method for discrete distribution is 
+      unr.Init(dist, "method=dgt");
+      // sample N times (generate N random numbers)       
+      for (int i = 0; i &lt; N; ++i)
+         int k = unr.SampleDiscr();
+</pre>
+  </li>
+ 
+   <li> For empirical distribution the class <strong>TUnuranEmpDist</strong> must be used. 
+  In this case one can generate random numbers from a set of data (un-binned)  in one or multi-dimension or 
+  from a set of binned data in one dimension (similar to TH1::GetRandom() ). 
+<ul>
+<li>
+For unbin data the parent distribution is estimated by UNU.RAN using a gaussian kernel smoothing algorithm. 
+One can create the distribution class directly from a vector of data or from the buffer of TH1.
+     >  
+      // create distribution from a set of data 1D 
+      // vdata is an std::vector containing the data 
+      TUnuranEmpDist  dist( vdata.begin(),vdata.end());
+      unr.Init(dist);
+         // sample N times (generate N random numbers)       
+      for (int i = 0; i &lt; N; ++i)
+         double x = unr.Sample();  
+  </pre>
+  In the case of multi-dimension one needs to pass in addition to the iterators, the data dimension. It is assumed that the data are stored in the vector in this order : (x0,y0,...),(x1,y1,....). 
+</li>
+<li>For binned data (only one dimensional data are supported) one uses directly the histogram 
+     <pre>  
+      // create an empirical distribution from an histogram
+      // if the histogram has a buffer one must use TUnuranEmpDist(h1,false)
+      TH1 * h1 = ... // histogram pointer
+      TUnuranEmpDist  binDist( h1);
+      unr.Init(binDist);
+         // sample N times (generate N random numbers)       
+      for (int i = 0; i &lt; N; ++i)
+         double x = unr.Sample();
+  </pre>
+  This is equivalent to TH1::GetRandom(), but sampling is faster, therefore, since it requires some initialization time, 
+  it becomes convenient when generating a large sample of random numbers.
+</li>
+</ul>
+  </li>
+ 
+</ul>
+<p>Functionality is also provided via the C++ classes for using a different random number generator by passing a 
+TRandom pointer when constructing the TUnuran class (by default the ROOT gRandom is passed to UNURAN).
+</p>
+<p>The <a href="http://statistik.wu-wien.ac.at/unuran/doc/unuran.html#Top">UNU.RAN documentation</a> provides a detailed 
+description of all the available methods and the possible options which one can pass to UNU.RAN for the various distributions. 
+</p>
+<!-- TDocHtmlDirective end --><pre>
+
+</pre><h2>Class Index</h2>
+<ul id="indx">
+<li class="idxl0"><a href="./TUnuran.html"><span class="typename">TUnuran</span></a> </li>
+<li class="idxl1"><a href="./TUnuranBaseDist.html"><span class="typename">TUnuranBaseDist</span></a> Base class for Unuran distribution wrappers</li>
+<li class="idxl0"><a href="./TUnuranContDist.html"><span class="typename">TUnuranContDist</span></a> Wrapper class for one dimensional continuous distribution</li>
+<li class="idxl1"><a href="./TUnuranDiscrDist.html"><span class="typename">TUnuranDiscrDist</span></a> Wrapper class for one dimensional discrete distribution</li>
+<li class="idxl0"><a href="./TUnuranEmpDist.html"><span class="typename">TUnuranEmpDist</span></a> Wrapper class for empirical distribution </li>
+<li class="idxl1"><a href="./TUnuranMultiContDist.html"><span class="typename">TUnuranMultiContDist</span></a> Wrapper class for multi dimensional continuous distribution</li>
+<li class="idxl0"><a href="./TUnuranSampler.html"><span class="typename">TUnuranSampler</span></a> </li>
+</ul>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:26 </em><em>&raquo; Last generated: 2011-12-02 14:26</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

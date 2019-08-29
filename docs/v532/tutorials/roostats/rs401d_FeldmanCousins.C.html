@@ -1,0 +1,368 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Fri Dec  2 14:33:26 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title> 'Neutrino Oscillation Example from Feldman &amp; Cousins'
+</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="../../ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="../../ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<div id="toplinks"><div class="descrhead"><table class="descrtitle" id="contexttitle"><tr class="descrtitle"><td id="contextheadarrow_prev"><div id="divcontextheadar_prev"><a class="contextheadarrow" href="rs401c_FeldmanCousins.C.html">&lt;</a></div></td><td class="contextheadentry" id="contextheadentry_prev"><a class="contextheadentry" href="rs401c_FeldmanCousins.C.html">rs401c_FeldmanCousins.C:  Produces an interval on the mean signal in a number counting
+</a></td><td id="contextheadarrow_up"><div id="divcontextheadar_up"><a class="contextheadarrow" href="index.html">^</a></div></td><td class="contextheadentry" id="contextheadentry_up"><a class="contextheadentry" href="index.html">Roostats tutorials</a></td><td class="contextheadentry" id="contextheadentry_next"><a class="contextheadentry" href="rs601_HLFactoryexample.C.html">rs601_HLFactoryexample.C:  'High Level Factory Example' RooStats tutorial macro #601
+</a></td><td id="contextheadarrow_next"><div id="divcontextheadar_next"><a class="contextheadarrow" href="rs601_HLFactoryexample.C.html">&gt;</a></div></td></tr></table></div><h1 class="convert">rs401d_FeldmanCousins.C:  'Neutrino Oscillation Example from Feldman & Cousins'
+</h1></div>
+<div class="location"><h2>From <a href="http://root.cern.ch/viewvc/trunk/tutorials/roostats/rs401d_FeldmanCousins.C?view=markup">$ROOTSYS/tutorials/roostats/rs401d_FeldmanCousins.C</a></h2></div>
+<div class="listing"><pre class="listing">
+/////////////////////////////////////////////////////////////////////////
+//
+// 'Neutrino Oscillation Example from Feldman &amp; Cousins'
+// author: Kyle Cranmer
+// date March 2009
+//
+// This tutorial shows a more complex example using the FeldmanCousins utility
+// to create a confidence interval for a toy neutrino oscillation experiment.
+// The example attempts to faithfully reproduce the toy example described in Feldman &amp; Cousins' 
+// original paper, Phys.Rev.D57:3873-3889,1998. 
+//
+// to run it:
+// .x tutorials/roostats/rs401d_FeldmanCousins.C+
+/////////////////////////////////////////////////////////////////////////
+
+#include <span class="string">"RooGlobalFunc.h"</span>
+#include <span class="string">"RooStats/ConfInterval.h"</span>
+#include <span class="string">"RooStats/FeldmanCousins.h"</span>
+#include <span class="string">"RooStats/ProfileLikelihoodCalculator.h"</span>
+#include <span class="string">"RooStats/MCMCCalculator.h"</span>
+#include <span class="string">"RooStats/UniformProposal.h"</span>
+#include <span class="string">"RooStats/LikelihoodIntervalPlot.h"</span>
+#include <span class="string">"RooStats/MCMCIntervalPlot.h"</span>
+#include <span class="string">"RooStats/MCMCInterval.h"</span>
+
+#include <span class="string">"RooDataSet.h"</span>
+#include <span class="string">"RooDataHist.h"</span>
+#include <span class="string">"RooRealVar.h"</span>
+#include <span class="string">"RooConstVar.h"</span>
+#include <span class="string">"RooAddition.h"</span>
+#include <span class="string">"RooProduct.h"</span>
+#include <span class="string">"RooProdPdf.h"</span>
+#include <span class="string">"RooAddPdf.h"</span>
+
+#include <span class="string">"TROOT.h"</span>
+#include <span class="string">"RooPolynomial.h"</span>
+#include <span class="string">"RooRandom.h"</span>
+
+#include <span class="string">"RooNLLVar.h"</span>
+#include <span class="string">"RooProfileLL.h"</span>
+
+#include <span class="string">"RooPlot.h"</span>
+
+#include <span class="string">"TCanvas.h"</span>
+#include <span class="string">"TH1F.h"</span>
+#include <span class="string">"TH2F.h"</span>
+#include <span class="string">"TTree.h"</span>
+#include <span class="string">"TMarker.h"</span>
+#include <span class="string">"TStopwatch.h"</span>
+
+#include &lt;iostream&gt;
+
+// PDF class created for this macro
+#if !defined(__CINT__) || defined(__MAKECINT__)
+#include <span class="string">"../tutorials/roostats/NuMuToNuE_Oscillation.h"</span>
+#include <span class="string">"../tutorials/roostats/NuMuToNuE_Oscillation.cxx"</span> // so that it can be executed directly
+#else
+#include <span class="string">"../tutorials/roostats/NuMuToNuE_Oscillation.cxx+"</span> // so that it can be executed directly
+#endif
+
+// use this order for safety on library loading
+using namespace <a href="../../RooFit.html">RooFit</a> ;
+using namespace <a href="../../RooStats.html">RooStats</a> ;
+
+
+<a href="../../ListOfTypes.html#void">void</a> rs401d_FeldmanCousins(<a href="../../ListOfTypes.html#bool">bool</a> doFeldmanCousins=<a href="../../ListOfTypes.html#bool">false</a>, <a href="../../ListOfTypes.html#bool">bool</a> doMCMC = <a href="../../ListOfTypes.html#bool">true</a>)
+{
+
+  // to time the macro
+  <a href="../../TStopwatch.html">TStopwatch</a> t;
+  t.<a href="../../TStopwatch.html#TStopwatch:Start" title="void TStopwatch::Start(Bool_t reset=kTRUE)">Start</a>();
+
+
+  /*
+    Taken from Feldman &amp; Cousins paper, Phys.Rev.D57:3873-3889,1998. 
+    e-<a href="../../TStopwatch.html#TStopwatch:Print" title="void TStopwatch::Print(Option_t* option=&quot;&quot;)">Print</a>: physics/9711021 (see page 13.)
+
+    Quantum mechanics dictates that the probability of such a transformation is given by the formula 
+    P (νµ → ν e ) = sin^2 (2θ) sin^2 (1.27 ∆m^2 L /E )
+    where P is the probability for a νµ to transform into a νe , L is the distance in km between 
+    the creation of the neutrino from meson decay and its interaction in the detector, E is the 
+    neutrino energy in GeV, and ∆m^2 = |m^2− m^2 | in (eV/c^2 )^2 . 
+
+    To demonstrate how this works in practice, and how it compares to alternative approaches 
+    that have been used, we consider a toy model of a typical neutrino oscillation experiment. 
+    The toy model is deﬁned by the following parameters: Mesons are assumed to decay to 
+    neutrinos uniformly in a region 600 m to 1000 m from the detector. The expected background 
+    from conventional νe interactions and misidentiﬁed νµ interactions is assumed to be 100 
+    events in each of 5 energy bins which span the region from 10 to 60 GeV. We assume that 
+    the νµ ﬂux is such that if P (νµ → ν e ) = 0.01 averaged over any bin, then that bin would 
+    have an expected additional contribution of 100 events due to νµ → ν e oscillations. 
+   */</span>
+
+  // Make signal model model
+  <a href="../../RooRealVar.html">RooRealVar</a> E(<span class="string">"E"</span>,<span class="string">""</span>, 15,10,60,<span class="string">"GeV"</span>);
+  <a href="../../RooRealVar.html">RooRealVar</a> L(<span class="string">"L"</span>,<span class="string">""</span>, .800,.600, 1.0,<span class="string">"km"</span>); // need these units in formula
+  <a href="../../RooRealVar.html">RooRealVar</a> deltaMSq(<span class="string">"deltaMSq"</span>,<span class="string">"#Delta m^{2}"</span>,40,1,300,<span class="string">"eV/c^{2}"</span>);
+  <a href="../../RooRealVar.html">RooRealVar</a> sinSq2theta(<span class="string">"sinSq2theta"</span>,<span class="string">"sin^{2}(2#theta)"</span>, .006,.0,.02);
+  //<a href="../../RooRealVar.html">RooRealVar</a> deltaMSq(<span class="string">"deltaMSq"</span>,<span class="string">"#Delta m^{2}"</span>,40,20,70,<span class="string">"eV/c^{2}"</span>);
+  //  <a href="../../RooRealVar.html">RooRealVar</a> sinSq2theta(<span class="string">"sinSq2theta"</span>,<span class="string">"sin^{2}(2#theta)"</span>, .006,.001,.01);
+  // PDF for oscillation only describes deltaMSq dependence, sinSq2theta goes into sigNorm
+  // 1) The code for this PDF was created by issuing these commands
+  //    root [0] <a href="../../RooClassFactory.html">RooClassFactory</a> x
+  //    root [1] x.<a href="../../RooClassFactory.html#RooClassFactory:makePdf" title="Bool_t RooClassFactory::makePdf(const char* name,const char* realArgNames=0,const char* catArgNames=0,const char* expression=&quot;1.0&quot;,Bool_t hasAnaInt=kFALSE,Bool_t hasIntGen=kFALSE,const char* intExpression=0)">makePdf</a>(<span class="string">"NuMuToNuE_Oscillation"</span>,<span class="string">"L,E,deltaMSq"</span>,<span class="string">""</span>,<span class="string">"pow(sin(1.27*deltaMSq*L/E),2)"</span>)
+  NuMuToNuE_Oscillation PnmuTone(<span class="string">"PnmuTone"</span>,<span class="string">"P(#nu_{#mu} #rightarrow #nu_{e}"</span>,L,E,deltaMSq);
+
+  // only E is observable, so create the signal model by integrating out L 
+  <a href="../../RooAbsPdf.html">RooAbsPdf</a>* sigModel = PnmuTone.<a href="../../RooAbsPdf.html#RooAbsPdf:createProjection" title="RooAbsPdf* RooAbsPdf::createProjection(const RooArgSet&amp; iset)">createProjection</a>(L);
+
+  // create   \<a href="../../ListOfTypes.html#int">int</a> dE' dL' P(E',L' | \Delta m^2). 
+  // Given <a href="../../RooFit.html">RooFit</a> will renormalize the PDF in the range of the observables, 
+  // the average probability to oscillate in the experiment's acceptance
+  // needs to be incorporated into the extended term in the likelihood.
+  // Do this by creating a <a href="../../RooAbsReal.html">RooAbsReal</a> representing the integral and divide by 
+  // the area in the E-L plane.
+  // The integral should be over <span class="string">"primed"</span> observables, so we need
+  // an independent copy of PnmuTone not to interfere with the original.
+
+  // Independent copy for Integral
+  <a href="../../RooRealVar.html">RooRealVar</a> EPrime(<span class="string">"EPrime"</span>,<span class="string">""</span>, 15,10,60,<span class="string">"GeV"</span>);
+  <a href="../../RooRealVar.html">RooRealVar</a> LPrime(<span class="string">"LPrime"</span>,<span class="string">""</span>, .800,.600, 1.0,<span class="string">"km"</span>); // need these units in formula
+  NuMuToNuE_Oscillation PnmuTonePrime(<span class="string">"PnmuTonePrime"</span>,<span class="string">"P(#nu_{#mu} #rightarrow #nu_{e}"</span>,
+				      LPrime,EPrime,deltaMSq);
+  <a href="../../RooAbsReal.html">RooAbsReal</a>* intProbToOscInExp = PnmuTonePrime.<a href="../../RooAbsReal.html#RooAbsReal:createIntegral" title="RooAbsReal* RooAbsReal::createIntegral(const RooArgSet&amp; iset,const RooCmdArg&amp; arg1,const RooCmdArg&amp; arg2=RooCmdArg::none(),const RooCmdArg&amp; arg3=RooCmdArg::none(),const RooCmdArg&amp; arg4=RooCmdArg::none(),const RooCmdArg&amp; arg5=RooCmdArg::none(),const RooCmdArg&amp; arg6=RooCmdArg::none(),const RooCmdArg&amp; arg7=RooCmdArg::none(),const RooCmdArg&amp; arg8=RooCmdArg::none()) or overloads">createIntegral</a>(<a href="../../RooArgSet.html">RooArgSet</a>(EPrime,LPrime));
+
+  // Getting the flux is a bit tricky.  It is more celear to include a cross section term that is not
+  // explicitly refered to in the text, eg.
+  // # events in bin = flux * cross-section for nu_e interaction in E bin * average prob nu_mu osc. to nu_e in bin
+  // let maxEventsInBin = flux * cross-section for nu_e interaction in E bin 
+  // maxEventsInBin * 1% chance per bin =  100 events / bin
+  // therefore maxEventsInBin = 10,000.
+  // for 5 bins, this means maxEventsTot = 50,000   
+  <a href="../../RooConstVar.html">RooConstVar</a> maxEventsTot(<span class="string">"maxEventsTot"</span>,<span class="string">"maximum number of sinal events"</span>,50000);
+  <a href="../../RooConstVar.html">RooConstVar</a> inverseArea(<span class="string">"inverseArea"</span>,<span class="string">"1/(#Delta E #Delta L)"</span>,
+			   1./(EPrime.getMax()-EPrime.getMin())/(LPrime.getMax()-LPrime.getMin()));
+
+  // sigNorm = maxEventsTot * (\<a href="../../ListOfTypes.html#int">int</a> dE dL prob to oscillate in experiment / Area) * sin^2(2\theta)
+  <a href="../../RooProduct.html">RooProduct</a> sigNorm(<span class="string">"sigNorm"</span>, <span class="string">""</span>, <a href="../../RooArgSet.html">RooArgSet</a>(maxEventsTot, *intProbToOscInExp, inverseArea, sinSq2theta));
+  // bkg = 5 bins * 100 events / bin
+  <a href="../../RooConstVar.html">RooConstVar</a> bkgNorm(<span class="string">"bkgNorm"</span>,<span class="string">"normalization for background"</span>,500);
+
+  // flat background (0th order polynomial, so no arguments for coefficients)
+  <a href="../../RooPolynomial.html">RooPolynomial</a> bkgEShape(<span class="string">"bkgEShape"</span>,<span class="string">"flat bkg shape"</span>, E);
+
+  // total model
+  <a href="../../RooAddPdf.html">RooAddPdf</a> model(<span class="string">"model"</span>,<span class="string">""</span>,<a href="../../RooArgList.html">RooArgList</a>(*sigModel,bkgEShape),
+		  <a href="../../RooArgList.html">RooArgList</a>(sigNorm,bkgNorm));
+
+  // for debugging, check model tree
+  //  model.printCompactTree();
+  //  model.graphVizTree(<span class="string">"model.dot"</span>);
+
+
+  // turn off some messages
+  <a href="../../RooMsgService.html">RooMsgService</a>::<a href="../../RooMsgService.html#RooMsgService:instance" title="RooMsgService&amp; RooMsgService::instance()">instance</a>().<a href="../../RooMsgService.html#RooMsgService:setStreamStatus" title="void RooMsgService::setStreamStatus(Int_t id,Bool_t active)">setStreamStatus</a>(0,<a href="../../ListOfTypes.html#Bool_t">kFALSE</a>);
+  <a href="../../RooMsgService.html">RooMsgService</a>::<a href="../../RooMsgService.html#RooMsgService:instance" title="RooMsgService&amp; RooMsgService::instance()">instance</a>().<a href="../../RooMsgService.html#RooMsgService:setStreamStatus" title="void RooMsgService::setStreamStatus(Int_t id,Bool_t active)">setStreamStatus</a>(1,<a href="../../ListOfTypes.html#Bool_t">kFALSE</a>);
+  <a href="../../RooMsgService.html">RooMsgService</a>::<a href="../../RooMsgService.html#RooMsgService:instance" title="RooMsgService&amp; RooMsgService::instance()">instance</a>().<a href="../../RooMsgService.html#RooMsgService:setStreamStatus" title="void RooMsgService::setStreamStatus(Int_t id,Bool_t active)">setStreamStatus</a>(2,<a href="../../ListOfTypes.html#Bool_t">kFALSE</a>);
+
+
+  //////////////////////////////////////////////
+  // n events in data to data, simply sum of sig+bkg
+  <a href="../../ListOfTypes.html#Int_t">Int_t</a> nEventsData = bkgNorm.getVal()+sigNorm.getVal(); 
+  <a href="../../ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"generate toy data with nEvents = "</span> &lt;&lt; nEventsData &lt;&lt; endl;
+  // adjust random seed to get a toy dataset similar to one in paper. 
+  // Found by trial and error (3 trials, so not very <span class="string">"fine tuned"</span>)
+  <a href="../../RooRandom.html">RooRandom</a>::<a href="../../RooRandom.html#RooRandom:randomGenerator" title="TRandom* RooRandom::randomGenerator()">randomGenerator</a>()-><a href="../../TRandom.html#TRandom:SetSeed" title="void TRandom::SetSeed(UInt_t seed=0)">SetSeed</a>(3); 
+  // create a toy dataset
+  <a href="../../RooDataSet.html">RooDataSet</a>* data = model.generate(<a href="../../RooArgSet.html">RooArgSet</a>(E), nEventsData);
+  
+  /////////////////////////////////////////////
+  // make some plots
+  <a href="../../TCanvas.html">TCanvas</a>* dataCanvas = new <a href="../../TCanvas.html">TCanvas</a>(<span class="string">"dataCanvas"</span>);
+  dataCanvas-&gt;<a href="../../TPad.html#TPad:Divide" title="void TPad::Divide(Int_t nx=1,Int_t ny=1,Float_t xmargin=0.01,Float_t ymargin=0.01,Int_t color=0)">Divide</a>(2,2);
+
+  // plot the PDF
+  dataCanvas-&gt;<a href="../../TCanvas.html#TCanvas:cd" title="TVirtualPad* TCanvas::cd(Int_t subpadnumber=0)">cd</a>(1);
+  <a href="../../TH1.html">TH1</a>* hh = PnmuTone.createHistogram(<span class="string">"hh"</span>,E,Binning(40),YVar(L,Binning(40)),Scaling(<a href="../../ListOfTypes.html#Bool_t">kFALSE</a>)) ;
+  hh-&gt;<a href="../../TAttLine.html#TAttLine:SetLineColor" title="void TAttLine::SetLineColor(Color_t lcolor)">SetLineColor</a>(kBlue) ;
+  hh-&gt;<a href="../../TH1.html#TH1:SetTitle" title="void TH1::SetTitle(const char* title)">SetTitle</a>(<span class="string">"True Signal Model"</span>);
+  hh-&gt;<a href="../../TH1.html#TH1:Draw" title="void TH1::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf"</span>);
+
+  // plot the data with the best fit
+  dataCanvas-&gt;cd(2);
+  <a href="../../RooPlot.html">RooPlot</a>* Eframe = E.frame();
+  data-&gt;plotOn(Eframe);
+  model.fitTo(*data, Extended());
+  model.plotOn(Eframe);
+  model.plotOn(Eframe,Components(*sigModel),LineColor(kRed));
+  model.plotOn(Eframe,Components(bkgEShape),LineColor(kGreen));
+  model.plotOn(Eframe);
+  Eframe-&gt;<a href="../../RooPlot.html#RooPlot:SetTitle" title="void RooPlot::SetTitle(const char* name)">SetTitle</a>(<span class="string">"toy data with best fit model (and sig+bkg components)"</span>);
+  Eframe-&gt;<a href="../../RooPlot.html#RooPlot:Draw" title="void RooPlot::Draw(Option_t* options=0)">Draw</a>();
+
+  // plot the likelihood function
+  dataCanvas-&gt;cd(3);
+  <a href="../../RooNLLVar.html">RooNLLVar</a> nll(<span class="string">"nll"</span>, <span class="string">"nll"</span>, model, *<a href="../../RooAbsOptTestStatistic.html#RooAbsOptTestStatistic:data" title="RooAbsData&amp; RooAbsOptTestStatistic::data() or overloads">data</a>, Extended());
+  <a href="../../RooProfileLL.html">RooProfileLL</a> pll(<span class="string">"pll"</span>, <span class="string">""</span>, <a href="../../RooProfileLL.html#RooProfileLL:nll" title="RooAbsReal&amp; RooProfileLL::nll()">nll</a>, <a href="../../RooArgSet.html">RooArgSet</a>(deltaMSq, sinSq2theta));
+  //  <a href="../../TH1.html">TH1</a>* hhh = nll.createHistogram(<span class="string">"hhh"</span>,sinSq2theta,Binning(40),YVar(deltaMSq,Binning(40))) ;
+  <a href="../../TH1.html">TH1</a>* hhh = pll.createHistogram(<span class="string">"hhh"</span>,sinSq2theta,Binning(40),YVar(deltaMSq,Binning(40)),Scaling(<a href="../../ListOfTypes.html#Bool_t">kFALSE</a>)) ;
+  hhh-&gt;<a href="../../TAttLine.html#TAttLine:SetLineColor" title="void TAttLine::SetLineColor(Color_t lcolor)">SetLineColor</a>(kBlue) ;
+  hhh-&gt;<a href="../../TH1.html#TH1:SetTitle" title="void TH1::SetTitle(const char* title)">SetTitle</a>(<span class="string">"Likelihood Function"</span>);
+  hhh-&gt;<a href="../../TH1.html#TH1:Draw" title="void TH1::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"surf"</span>);
+
+  dataCanvas-&gt;Update();
+
+
+
+  //////////////////////////////////////////////////////////
+  //////// show use of Feldman-Cousins utility in <a href="../../RooStats.html">RooStats</a>
+  // set the distribution creator, which encodes the test statistic
+  <a href="../../RooArgSet.html">RooArgSet</a> parameters(deltaMSq, sinSq2theta);
+  <a href="../../RooWorkspace.html">RooWorkspace</a>* w = new <a href="../../RooWorkspace.html">RooWorkspace</a>();
+
+  ModelConfig modelConfig;
+  modelConfig.SetWorkspace(*w);
+  modelConfig.SetPdf(model);
+  modelConfig.SetParametersOfInterest(parameters);
+
+  <a href="../../RooStats.html">RooStats</a>::<a href="../../RooStats__FeldmanCousins.html">FeldmanCousins</a> fc(*data, modelConfig);
+  fc.<a href="../../RooStats__FeldmanCousins.html#RooStats__FeldmanCousins:SetTestSize" title="void RooStats::FeldmanCousins::SetTestSize(Double_t size)">SetTestSize</a>(.1); // set size of test
+  fc.<a href="../../RooStats__FeldmanCousins.html#RooStats__FeldmanCousins:UseAdaptiveSampling" title="void RooStats::FeldmanCousins::UseAdaptiveSampling(bool flag=true)">UseAdaptiveSampling</a>(<a href="../../ListOfTypes.html#bool">true</a>);
+  fc.<a href="../../RooStats__FeldmanCousins.html#RooStats__FeldmanCousins:SetNBins" title="void RooStats::FeldmanCousins::SetNBins(Int_t bins)">SetNBins</a>(10); // number of points to test per parameter
+
+  // use the Feldman-Cousins tool
+  ConfInterval* interval = 0;
+  if(doFeldmanCousins)
+    interval = fc.<a href="../../RooStats__FeldmanCousins.html#RooStats__FeldmanCousins:GetInterval" title="RooStats::PointSetInterval* RooStats::FeldmanCousins::GetInterval()">GetInterval</a>();
+
+
+  ///////////////////////////////////////////////////////////////////
+  ///////// show use of ProfileLikeihoodCalculator utility in <a href="../../RooStats.html">RooStats</a>
+  <a href="../../RooStats.html">RooStats</a>::<a href="../../RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a> plc(*data, modelConfig);
+  plc.<a href="../../RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetTestSize" title="void RooStats::CombinedCalculator::SetTestSize(Double_t size)">SetTestSize</a>(.1);
+  
+  ConfInterval* plcInterval = plc.<a href="../../RooStats__ProfileLikelihoodCalculator.html#RooStats__ProfileLikelihoodCalculator:GetInterval" title="RooStats::LikelihoodInterval* RooStats::ProfileLikelihoodCalculator::GetInterval()">GetInterval</a>();
+
+  ///////////////////////////////////////////////////////////////////
+  ///////// show use of MCMCCalculator utility in <a href="../../RooStats.html">RooStats</a>
+  MCMCInterval* mcInt = NULL;
+
+  if (doMCMC) {
+      // turn some messages back on
+      <a href="../../RooMsgService.html">RooMsgService</a>::<a href="../../RooMsgService.html#RooMsgService:instance" title="RooMsgService&amp; RooMsgService::instance()">instance</a>().<a href="../../RooMsgService.html#RooMsgService:setStreamStatus" title="void RooMsgService::setStreamStatus(Int_t id,Bool_t active)">setStreamStatus</a>(0,<a href="../../ListOfTypes.html#Bool_t">kTRUE</a>);
+      <a href="../../RooMsgService.html">RooMsgService</a>::<a href="../../RooMsgService.html#RooMsgService:instance" title="RooMsgService&amp; RooMsgService::instance()">instance</a>().<a href="../../RooMsgService.html#RooMsgService:setStreamStatus" title="void RooMsgService::setStreamStatus(Int_t id,Bool_t active)">setStreamStatus</a>(1,<a href="../../ListOfTypes.html#Bool_t">kTRUE</a>);
+
+      <a href="../../TStopwatch.html">TStopwatch</a> mcmcWatch;
+      mcmcWatch.<a href="../../TStopwatch.html#TStopwatch:Start" title="void TStopwatch::Start(Bool_t reset=kTRUE)">Start</a>();
+
+      <a href="../../RooArgList.html">RooArgList</a> axisList(deltaMSq, sinSq2theta);
+      MCMCCalculator mc(*data, modelConfig);
+      mc.SetNumIters(5000);
+      mc.SetNumBurnInSteps(100);
+      mc.SetUseKeys(<a href="../../ListOfTypes.html#bool">true</a>);
+      mc.SetTestSize(.1);
+      mc.SetAxes(axisList); // set which is x and y axis in posterior histogram
+      //mc.SetNumBins(50);
+      mcInt = (MCMCInterval*)mc.GetInterval();
+
+      mcmcWatch.Stop();
+      mcmcWatch.<a href="../../RooAbsCollection.html#RooAbsCollection:Print" title="void RooAbsCollection::Print(Option_t* options=0)">Print</a>();
+  }
+  ////////////////////////////////////////////
+  // make plot of resulting interval
+
+  dataCanvas-&gt;cd(4);
+
+  // <a href="../../RooAbsCollection.html#RooAbsCollection:first" title="RooAbsArg* RooAbsCollection::first()">first</a> plot a small dot for every point tested
+  if (doFeldmanCousins) {
+     <a href="../../RooDataHist.html">RooDataHist</a>* parameterScan = (<a href="../../RooDataHist.html">RooDataHist</a>*) fc.GetPointsToScan();
+     <a href="../../TH2F.html">TH2F</a>* hist = (<a href="../../TH2F.html">TH2F</a>*) parameterScan-&gt;createHistogram(<span class="string">"sinSq2theta:deltaMSq"</span>,30,30);
+     //  hist-&gt;<a href="../../TH1.html#TH1:Draw" title="void TH1::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+     <a href="../../TH2F.html">TH2F</a>* forContour = (<a href="../../TH2F.html">TH2F</a>*)hist-&gt;<a href="../../TNamed.html#TNamed:Clone" title="TObject* TNamed::Clone(const char* newname=&quot;&quot;)">Clone</a>();
+
+     // now loop through the points and put a marker if it's in the interval
+     <a href="../../RooArgSet.html">RooArgSet</a>* tmpPoint;
+     // loop over points to test
+     for(<a href="../../ListOfTypes.html#Int_t">Int_t</a> i=0; i&lt;parameterScan-&gt;numEntries(); ++i){
+        // get a parameter point from the list of points to test.
+        tmpPoint = (<a href="../../RooArgSet.html">RooArgSet</a>*) parameterScan-&gt;get(i)-&gt;<a href="../../RooArgSet.html#RooArgSet:clone" title="TObject* RooArgSet::clone(const char* newname)">clone</a>(<span class="string">"temp"</span>);
+
+        if (interval){
+           if (interval-&gt;IsInInterval( *tmpPoint ) ) {
+              forContour-&gt;SetBinContent( hist-&gt;FindBin(tmpPoint-&gt;<a href="../../RooArgSet.html#RooArgSet:getRealValue" title="Double_t RooArgSet::getRealValue(const char* name,Double_t defVal=0,Bool_t verbose=kFALSE)">getRealValue</a>(<span class="string">"sinSq2theta"</span>), 
+                       tmpPoint-&gt;<a href="../../RooArgSet.html#RooArgSet:getRealValue" title="Double_t RooArgSet::getRealValue(const char* name,Double_t defVal=0,Bool_t verbose=kFALSE)">getRealValue</a>(<span class="string">"deltaMSq"</span>)),	 1);
+           }else{
+              forContour-&gt;SetBinContent( hist-&gt;FindBin(tmpPoint-&gt;<a href="../../RooArgSet.html#RooArgSet:getRealValue" title="Double_t RooArgSet::getRealValue(const char* name,Double_t defVal=0,Bool_t verbose=kFALSE)">getRealValue</a>(<span class="string">"sinSq2theta"</span>), 
+                       tmpPoint-&gt;<a href="../../RooArgSet.html#RooArgSet:getRealValue" title="Double_t RooArgSet::getRealValue(const char* name,Double_t defVal=0,Bool_t verbose=kFALSE)">getRealValue</a>(<span class="string">"deltaMSq"</span>)),	 0);
+           }
+        }
+
+
+        delete tmpPoint;
+     }
+
+     if (interval){
+        <a href="../../ListOfTypes.html#Double_t">Double_t</a> level=0.5;
+        forContour-&gt;SetContour(1,&amp;level);
+        forContour-&gt;SetLineWidth(2);
+        forContour-&gt;SetLineColor(kRed);
+        forContour-&gt;<a href="../../TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"cont2,same"</span>);
+     }
+  }
+
+  MCMCIntervalPlot* mcPlot = NULL;
+  if (mcInt) {
+     <a href="../../ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"MCMC actual confidence level: "</span>
+        &lt;&lt; mcInt-&gt;GetActualConfidenceLevel() &lt;&lt; endl;
+     mcPlot = new MCMCIntervalPlot(*mcInt);
+     mcPlot-&gt;SetLineColor(kMagenta);
+     mcPlot-&gt;<a href="../../TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+  }
+  dataCanvas-&gt;Update();
+  
+  LikelihoodIntervalPlot plotInt((LikelihoodInterval*)plcInterval);
+  plotInt.SetTitle(<span class="string">"90% Confidence Intervals"</span>);
+  if (mcInt)
+     plotInt.<a href="../../TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"same"</span>);
+  else
+     plotInt.<a href="../../TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>();
+  dataCanvas-&gt;Update();
+
+  /// print timing info
+  t.Stop();
+  t.<a href="../../RooAbsCollection.html#RooAbsCollection:Print" title="void RooAbsCollection::Print(Option_t* options=0)">Print</a>();
+    
+
+}
+
+</pre></div>
+<div id="linenums"><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="1" href="#1" class="ln">1</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="2" href="#2" class="ln">2</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="3" href="#3" class="ln">3</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="4" href="#4" class="ln">4</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="5" href="#5" class="ln">5</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="6" href="#6" class="ln">6</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="7" href="#7" class="ln">7</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="8" href="#8" class="ln">8</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="9" href="#9" class="ln">9</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="10" href="#10" class="ln">10</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="11" href="#11" class="ln">11</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="12" href="#12" class="ln">12</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="13" href="#13" class="ln">13</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="14" href="#14" class="ln">14</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="15" href="#15" class="ln">15</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="16" href="#16" class="ln">16</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="17" href="#17" class="ln">17</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="18" href="#18" class="ln">18</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="19" href="#19" class="ln">19</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="20" href="#20" class="ln">20</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="21" href="#21" class="ln">21</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="22" href="#22" class="ln">22</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="23" href="#23" class="ln">23</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="24" href="#24" class="ln">24</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="25" href="#25" class="ln">25</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="26" href="#26" class="ln">26</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="27" href="#27" class="ln">27</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="28" href="#28" class="ln">28</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="29" href="#29" class="ln">29</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="30" href="#30" class="ln">30</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="31" href="#31" class="ln">31</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="32" href="#32" class="ln">32</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="33" href="#33" class="ln">33</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="34" href="#34" class="ln">34</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="35" href="#35" class="ln">35</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="36" href="#36" class="ln">36</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="37" href="#37" class="ln">37</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="38" href="#38" class="ln">38</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="39" href="#39" class="ln">39</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="40" href="#40" class="ln">40</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="41" href="#41" class="ln">41</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="42" href="#42" class="ln">42</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="43" href="#43" class="ln">43</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="44" href="#44" class="ln">44</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="45" href="#45" class="ln">45</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="46" href="#46" class="ln">46</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="47" href="#47" class="ln">47</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="48" href="#48" class="ln">48</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="49" href="#49" class="ln">49</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="50" href="#50" class="ln">50</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="51" href="#51" class="ln">51</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="52" href="#52" class="ln">52</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="53" href="#53" class="ln">53</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="54" href="#54" class="ln">54</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="55" href="#55" class="ln">55</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="56" href="#56" class="ln">56</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="57" href="#57" class="ln">57</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="58" href="#58" class="ln">58</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="59" href="#59" class="ln">59</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="60" href="#60" class="ln">60</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="61" href="#61" class="ln">61</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="62" href="#62" class="ln">62</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="63" href="#63" class="ln">63</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="64" href="#64" class="ln">64</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="65" href="#65" class="ln">65</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="66" href="#66" class="ln">66</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="67" href="#67" class="ln">67</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="68" href="#68" class="ln">68</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="69" href="#69" class="ln">69</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="70" href="#70" class="ln">70</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="71" href="#71" class="ln">71</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="72" href="#72" class="ln">72</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="73" href="#73" class="ln">73</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="74" href="#74" class="ln">74</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="75" href="#75" class="ln">75</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="76" href="#76" class="ln">76</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="77" href="#77" class="ln">77</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="78" href="#78" class="ln">78</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="79" href="#79" class="ln">79</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="80" href="#80" class="ln">80</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="81" href="#81" class="ln">81</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="82" href="#82" class="ln">82</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="83" href="#83" class="ln">83</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="84" href="#84" class="ln">84</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="85" href="#85" class="ln">85</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="86" href="#86" class="ln">86</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="87" href="#87" class="ln">87</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="88" href="#88" class="ln">88</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="89" href="#89" class="ln">89</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="90" href="#90" class="ln">90</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="91" href="#91" class="ln">91</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="92" href="#92" class="ln">92</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="93" href="#93" class="ln">93</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="94" href="#94" class="ln">94</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="95" href="#95" class="ln">95</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="96" href="#96" class="ln">96</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="97" href="#97" class="ln">97</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="98" href="#98" class="ln">98</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="99" href="#99" class="ln">99</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="100" href="#100" class="ln">100</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="101" href="#101" class="ln">101</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="102" href="#102" class="ln">102</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="103" href="#103" class="ln">103</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="104" href="#104" class="ln">104</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="105" href="#105" class="ln">105</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="106" href="#106" class="ln">106</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="107" href="#107" class="ln">107</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="108" href="#108" class="ln">108</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="109" href="#109" class="ln">109</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="110" href="#110" class="ln">110</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="111" href="#111" class="ln">111</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="112" href="#112" class="ln">112</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="113" href="#113" class="ln">113</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="114" href="#114" class="ln">114</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="115" href="#115" class="ln">115</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="116" href="#116" class="ln">116</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="117" href="#117" class="ln">117</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="118" href="#118" class="ln">118</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="119" href="#119" class="ln">119</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="120" href="#120" class="ln">120</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="121" href="#121" class="ln">121</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="122" href="#122" class="ln">122</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="123" href="#123" class="ln">123</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="124" href="#124" class="ln">124</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="125" href="#125" class="ln">125</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="126" href="#126" class="ln">126</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="127" href="#127" class="ln">127</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="128" href="#128" class="ln">128</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="129" href="#129" class="ln">129</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="130" href="#130" class="ln">130</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="131" href="#131" class="ln">131</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="132" href="#132" class="ln">132</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="133" href="#133" class="ln">133</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="134" href="#134" class="ln">134</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="135" href="#135" class="ln">135</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="136" href="#136" class="ln">136</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="137" href="#137" class="ln">137</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="138" href="#138" class="ln">138</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="139" href="#139" class="ln">139</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="140" href="#140" class="ln">140</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="141" href="#141" class="ln">141</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="142" href="#142" class="ln">142</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="143" href="#143" class="ln">143</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="144" href="#144" class="ln">144</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="145" href="#145" class="ln">145</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="146" href="#146" class="ln">146</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="147" href="#147" class="ln">147</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="148" href="#148" class="ln">148</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="149" href="#149" class="ln">149</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="150" href="#150" class="ln">150</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="151" href="#151" class="ln">151</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="152" href="#152" class="ln">152</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="153" href="#153" class="ln">153</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="154" href="#154" class="ln">154</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="155" href="#155" class="ln">155</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="156" href="#156" class="ln">156</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="157" href="#157" class="ln">157</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="158" href="#158" class="ln">158</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="159" href="#159" class="ln">159</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="160" href="#160" class="ln">160</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="161" href="#161" class="ln">161</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="162" href="#162" class="ln">162</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="163" href="#163" class="ln">163</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="164" href="#164" class="ln">164</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="165" href="#165" class="ln">165</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="166" href="#166" class="ln">166</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="167" href="#167" class="ln">167</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="168" href="#168" class="ln">168</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="169" href="#169" class="ln">169</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="170" href="#170" class="ln">170</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="171" href="#171" class="ln">171</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="172" href="#172" class="ln">172</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="173" href="#173" class="ln">173</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="174" href="#174" class="ln">174</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="175" href="#175" class="ln">175</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="176" href="#176" class="ln">176</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="177" href="#177" class="ln">177</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="178" href="#178" class="ln">178</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="179" href="#179" class="ln">179</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="180" href="#180" class="ln">180</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="181" href="#181" class="ln">181</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="182" href="#182" class="ln">182</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="183" href="#183" class="ln">183</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="184" href="#184" class="ln">184</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="185" href="#185" class="ln">185</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="186" href="#186" class="ln">186</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="187" href="#187" class="ln">187</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="188" href="#188" class="ln">188</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="189" href="#189" class="ln">189</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="190" href="#190" class="ln">190</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="191" href="#191" class="ln">191</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="192" href="#192" class="ln">192</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="193" href="#193" class="ln">193</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="194" href="#194" class="ln">194</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="195" href="#195" class="ln">195</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="196" href="#196" class="ln">196</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="197" href="#197" class="ln">197</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="198" href="#198" class="ln">198</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="199" href="#199" class="ln">199</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="200" href="#200" class="ln">200</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="201" href="#201" class="ln">201</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="202" href="#202" class="ln">202</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="203" href="#203" class="ln">203</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="204" href="#204" class="ln">204</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="205" href="#205" class="ln">205</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="206" href="#206" class="ln">206</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="207" href="#207" class="ln">207</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="208" href="#208" class="ln">208</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="209" href="#209" class="ln">209</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="210" href="#210" class="ln">210</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="211" href="#211" class="ln">211</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="212" href="#212" class="ln">212</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="213" href="#213" class="ln">213</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="214" href="#214" class="ln">214</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="215" href="#215" class="ln">215</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="216" href="#216" class="ln">216</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="217" href="#217" class="ln">217</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="218" href="#218" class="ln">218</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="219" href="#219" class="ln">219</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="220" href="#220" class="ln">220</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="221" href="#221" class="ln">221</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="222" href="#222" class="ln">222</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="223" href="#223" class="ln">223</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="224" href="#224" class="ln">224</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="225" href="#225" class="ln">225</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="226" href="#226" class="ln">226</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="227" href="#227" class="ln">227</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="228" href="#228" class="ln">228</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="229" href="#229" class="ln">229</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="230" href="#230" class="ln">230</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="231" href="#231" class="ln">231</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="232" href="#232" class="ln">232</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="233" href="#233" class="ln">233</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="234" href="#234" class="ln">234</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="235" href="#235" class="ln">235</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="236" href="#236" class="ln">236</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="237" href="#237" class="ln">237</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="238" href="#238" class="ln">238</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="239" href="#239" class="ln">239</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="240" href="#240" class="ln">240</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="241" href="#241" class="ln">241</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="242" href="#242" class="ln">242</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="243" href="#243" class="ln">243</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="244" href="#244" class="ln">244</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="245" href="#245" class="ln">245</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="246" href="#246" class="ln">246</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="247" href="#247" class="ln">247</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="248" href="#248" class="ln">248</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="249" href="#249" class="ln">249</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="250" href="#250" class="ln">250</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="251" href="#251" class="ln">251</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="252" href="#252" class="ln">252</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="253" href="#253" class="ln">253</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="254" href="#254" class="ln">254</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="255" href="#255" class="ln">255</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="256" href="#256" class="ln">256</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="257" href="#257" class="ln">257</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="258" href="#258" class="ln">258</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="259" href="#259" class="ln">259</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="260" href="#260" class="ln">260</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="261" href="#261" class="ln">261</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="262" href="#262" class="ln">262</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="263" href="#263" class="ln">263</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="264" href="#264" class="ln">264</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="265" href="#265" class="ln">265</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="266" href="#266" class="ln">266</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="267" href="#267" class="ln">267</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="268" href="#268" class="ln">268</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="269" href="#269" class="ln">269</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="270" href="#270" class="ln">270</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="271" href="#271" class="ln">271</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="272" href="#272" class="ln">272</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="273" href="#273" class="ln">273</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="274" href="#274" class="ln">274</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="275" href="#275" class="ln">275</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="276" href="#276" class="ln">276</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="277" href="#277" class="ln">277</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="278" href="#278" class="ln">278</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="279" href="#279" class="ln">279</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="280" href="#280" class="ln">280</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="281" href="#281" class="ln">281</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="282" href="#282" class="ln">282</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="283" href="#283" class="ln">283</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="284" href="#284" class="ln">284</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="285" href="#285" class="ln">285</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="286" href="#286" class="ln">286</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="287" href="#287" class="ln">287</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="288" href="#288" class="ln">288</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="289" href="#289" class="ln">289</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="290" href="#290" class="ln">290</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="291" href="#291" class="ln">291</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="292" href="#292" class="ln">292</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="293" href="#293" class="ln">293</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="294" href="#294" class="ln">294</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="295" href="#295" class="ln">295</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="296" href="#296" class="ln">296</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="297" href="#297" class="ln">297</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="298" href="#298" class="ln">298</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="299" href="#299" class="ln">299</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="300" href="#300" class="ln">300</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="301" href="#301" class="ln">301</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="302" href="#302" class="ln">302</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="303" href="#303" class="ln">303</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="304" href="#304" class="ln">304</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="305" href="#305" class="ln">305</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="306" href="#306" class="ln">306</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="307" href="#307" class="ln">307</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="308" href="#308" class="ln">308</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="309" href="#309" class="ln">309</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="310" href="#310" class="ln">310</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="311" href="#311" class="ln">311</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="312" href="#312" class="ln">312</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="313" href="#313" class="ln">313</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="314" href="#314" class="ln">314</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="315" href="#315" class="ln">315</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="316" href="#316" class="ln">316</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="317" href="#317" class="ln">317</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="318" href="#318" class="ln">318</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="319" href="#319" class="ln">319</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="320" href="#320" class="ln">320</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="321" href="#321" class="ln">321</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="322" href="#322" class="ln">322</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="323" href="#323" class="ln">323</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="324" href="#324" class="ln">324</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="325" href="#325" class="ln">325</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="326" href="#326" class="ln">326</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="327" href="#327" class="ln">327</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="328" href="#328" class="ln">328</a></div><div class="ln">&nbsp;<span class="lnfile">rs401d_FeldmanCousins.C:</span><a name="329" href="#329" class="ln">329</a></div></div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: 2011-12-02 14:33 </em><em>&raquo; Last generated: 2011-12-02 14:33</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

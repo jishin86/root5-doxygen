@@ -1,0 +1,996 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:18:28 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TH2Poly</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TH2Poly','libHist','TH2Poly.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TH2Poly.h.html">header file</a>
+<a class="descrheadentry" href="src/TH2Poly.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TH2Poly.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TH2Poly.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TH2Poly:description">class description</a> 
+<a class="descrheadentry" href="#TH2Poly:Function_Members">function members</a>
+<a class="descrheadentry" href="#TH2Poly:Data_Members">data members</a>
+<a class="descrheadentry" href="#TH2Poly:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TH2Poly</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TH2Poly:description"></a>class TH2Poly: public <a href="./TH2.html">TH2</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><center><h2>TH2Poly: 2D Histogram with Polygonal Bins</h2></center>
+<h3>Overview</h3>
+<tt>TH2Poly</tt> is a 2D Histogram class (TH2) allowing to define polygonal
+bins of arbitary shape.
+<p>
+Each bin in the <tt>TH2Poly</tt> histogram is a <tt>TH2PolyBin</tt> object.
+<tt>TH2PolyBin</tt> is a very simple class containing the vertices (stored
+as <tt>TGraph</tt>s or <tt>TMultiGraph</tt>s ) and contents of the polygonal
+bin as well as several related functions.
+<p>
+Essentially, a <tt>TH2Poly</tt> is a TList of <tt>TH2PolyBin</tt> objects
+with methods to manipulate them.
+<p>
+Bins are defined using one of the <tt>AddBin()</tt> methods. The bin definition
+should be done before filling.
+<p>
+The histogram can be filled with <tt>Fill(Double_t x, Double_t y, Double_t w)
+</tt>. <tt>w</tt> is the weight.
+If no weight is specified, it is assumed to be 1.
+<p>
+Not all histogram's area need to be binned. Filling an area without bins,
+will falls into the overflows. Adding a bin is not retroactive; it doesn't
+affect previous fillings. A <tt>Fill()</tt> call, that
+was previously ignored due to the lack of a bin at the specified location, is
+not reconsidered when that location is binned later.
+<p>
+If there are two overlapping bins, the first one in the list will be incremented
+by <tt>Fill()</tt>.
+<p>
+The histogram may automatically extends its limits if a bin outside the
+histogram limits is added. This is done when the default constructor (with no
+arguments) is used. It generates a histogram with no limits along the X and Y
+axis. Adding bins to it will extend it up to a proper size.
+<p>
+<tt>TH2Poly</tt> implements a partitioning algorithm to speed up bins' filling.
+The partitioning algorithm divides the histogram into regions called cells.
+The bins that each cell intersects are recorded in an array of <tt>TList</tt>s.
+When a coordinate in the histogram is to be filled; the method (quickly) finds
+which cell the coordinate belongs.  It then only loops over the bins
+intersecting that cell to find the bin the input coordinate corresponds to.
+The partitioning of the histogram is updated continuously as each bin is added.
+The default number of cells on each axis is 25. This number could be set to
+another value in the constructor or adjusted later by calling the
+<tt>ChangePartition(Int_t, Int_t)</tt> method. The partitioning algorithm is
+considerably faster than the brute force algorithm (i.e. checking if each bin
+contains the input coordinates), especially if the histogram is to be filled
+many times.
+<p>
+The following very simple macro shows how to build and fill a <tt>TH2Poly</tt>:
+<pre>
+{
+   TH2Poly *h2p = new TH2Poly();
+   Double_t x1[] = {0, 5, 5};
+   Double_t y1[] = {0, 0, 5};
+   Double_t x2[] = {0, -1, -1, 0};
+   Double_t y2[] = {0, 0, -1, -1};
+   Double_t x3[] = {4, 3, 0, 1, 2.4};
+   Double_t y3[] = {4, 3.7, 1, 4.7, 3.5};
+   h2p->AddBin(3, x1, y1);
+   h2p->AddBin(3, x2, y2);
+   h2p->AddBin(3, x3, y3);
+   h2p->Fill(   3,    1, 3); // fill bin 1
+   h2p->Fill(-0.5, -0.5, 7); // fill bin 2
+   h2p->Fill(-0.7, -0.5, 1); // fill bin 2
+   h2p->Fill(   1,    3, 5); // fill bin 3
+}
+</pre>
+More examples can bin found in <tt>$ROOTSYS/tutorials/hist/th2poly*.C</tt>
+<h3>Partitioning Algorithm</h3>
+The partitioning algorithm forms an essential part of the <tt>TH2Poly</tt>
+class. It is implemented to speed up the filling of bins.
+<p>
+With the brute force approach, the filling is done in the following way:  An
+iterator loops over all bins in the <tt>TH2Poly</tt> and invokes the
+method <tt>IsInside()</tt> for each of them.
+This method checks if the input location is in that bin. If the filling
+coordinate is inside, the bin is filled. Looping over all the bin is
+very slow.
+<p>
+The alternative is to divide the histogram into virtual rectangular regions
+called "cells". Each cell stores the pointers of the bins intersecting it.
+When a coordinate is to be filled, the method finds which cell the coordinate
+falls into. Since the cells are rectangular, this can be done very quickly.
+It then only loops over the bins associated with that cell.
+<p>
+The addition of bins to the appropriate cells is done when the bin is added
+to the histogram. To do this, <tt>AddBin()</tt> calls the
+<tt>AddBinToPartition()</tt> method.
+This method adds the input bin to the partitioning matrix.
+<p>
+The number of partition cells per axis can be specified in the constructor.
+If it is not specified, the default value of 25 along each axis will be
+assigned. This value was chosen because it is small enough to avoid slowing
+down AddBin(), while being large enough to enhance Fill() by a considerable
+amount. Regardless of how it is initialized at construction time, it can be
+changed later with the <tt>ChangePartition()</tt> method.
+<tt>ChangePartition()</tt> deletes the
+old partition matrix and generates a new one with the specified number of cells
+on each axis.
+<p>
+The optimum number of partition cells per axis changes with the number of
+times <tt>Fill()</tt> will be called.  Although partitioning greatly speeds up
+filling, it also adds a constant time delay into the code. When <tt>Fill()</tt>
+is to be called many times, it is more efficient to divide the histogram into
+a large number cells. However, if the histogram is to be filled only a few
+times, it is better to divide into a small number of cells.
+<!-- TDocHtmlDirective end --><pre> 
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TH2Poly:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TH2Poly:TH2Poly">TH2Poly</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TH2Poly:TH2Poly%3">TH2Poly</a>(<span class="keyword">const</span> <a href="./TH2Poly.html">TH2Poly</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TH2Poly:TH2Poly%1">TH2Poly</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup)</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TH2Poly:TH2Poly%2">TH2Poly</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Int_t">Int_t</a> nX, <a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Int_t">Int_t</a> nY, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TH2Poly:_TH2Poly">~TH2Poly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Add">Add</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Add%2">Add</a>(<a href="./TF1.html">TF1</a>* h1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Add%1">Add</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:AddBin">AddBin</a>(<a href="./TObject.html">TObject</a>* poly)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:AddBin%1">AddBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:AddBin%2">AddBin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:AddBinContent"><span class="baseclass">TH1::</span>AddBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:AddBinContent%1"><span class="baseclass">TH1::</span>AddBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:AddDirectory"><span class="baseclass">TH1::</span>AddDirectory</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> add = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:AddDirectoryStatus"><span class="baseclass">TH1::</span>AddDirectoryStatus</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Browse"><span class="baseclass">TH1::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:BufferEmpty"><span class="baseclass">TH2::</span>BufferEmpty</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> action = 0)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:ChangePartition">ChangePartition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> m)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Chi2Test"><span class="baseclass">TH1::</span>Chi2Test</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"UU"</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a>* res = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Chi2TestX"><span class="baseclass">TH1::</span>Chi2TestX</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; chi2, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; ndf, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; igood, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"UU"</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a>* res = 0) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:ClearBinContents">ClearBinContents</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:ComputeIntegral"><span class="baseclass">TH1::</span>ComputeIntegral</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Copy"><span class="baseclass">TH2::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; hnew) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:DirectoryAutoAdd"><span class="baseclass">TH1::</span>DirectoryAutoAdd</a>(<a href="./TDirectory.html">TDirectory</a>*)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:DistancetoLine"><span class="baseclass">TAttLine::</span>DistancetoLine</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp1, <a href="./ListOfTypes.html#Double_t">Double_t</a> xp2, <a href="./ListOfTypes.html#Double_t">Double_t</a> yp2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:DistancetoPrimitive"><span class="baseclass">TH1::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Divide%1"><span class="baseclass">TH1::</span>Divide</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Divide"><span class="baseclass">TH1::</span>Divide</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Divide%2"><span class="baseclass">TH1::</span>Divide</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Draw"><span class="baseclass">TH1::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:DrawCopy">DrawCopy</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:DrawNormalized"><span class="baseclass">TH1::</span>DrawNormalized</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> norm = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:DrawPanel"><span class="baseclass">TH1::</span>DrawPanel</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Eval"><span class="baseclass">TH1::</span>Eval</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:ExecuteEvent"><span class="baseclass">TH1::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FFT"><span class="baseclass">TH1::</span>FFT</a>(<a href="./TH1.html">TH1</a>* h_output, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%3">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%2">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%1">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%4">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>, <span class="keyword">const</span> <span class="keyword">char</span>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%5">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Fill%6">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">const</span> <span class="keyword">char</span>*, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:FillN%1">FillN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:FillN">FillN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* w, <a href="./ListOfTypes.html#Int_t">Int_t</a> stride = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FillRandom"><span class="baseclass">TH2::</span>FillRandom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* fname, <a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes = 5000)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FillRandom%1"><span class="baseclass">TH2::</span>FillRandom</a>(<a href="./TH1.html">TH1</a>* h, <a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes = 5000)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:FindBin">FindBin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FindFirstBinAbove"><span class="baseclass">TH2::</span>FindFirstBinAbove</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> threshold = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FindFixBin"><span class="baseclass">TH1::</span>FindFixBin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FindLastBinAbove"><span class="baseclass">TH2::</span>FindLastBinAbove</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> threshold = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FindObject"><span class="baseclass">TH1::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FindObject%1"><span class="baseclass">TH1::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Fit"><span class="baseclass">TH1::</span>Fit</a>(<span class="keyword">const</span> <span class="keyword">char</span>* formula, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TFitResultPtr.html">TFitResultPtr</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Fit%1"><span class="baseclass">TH1::</span>Fit</a>(<a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* goption = <span class="string">""</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FitOptionsMake"><span class="baseclass">TH1::</span>FitOptionsMake</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./Foption_t.html">Foption_t</a>&amp; Foption)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FitPanel"><span class="baseclass">TH1::</span>FitPanel</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FitSlicesX"><span class="baseclass">TH2::</span>FitSlicesX</a>(<a href="./TF1.html">TF1</a>* f1 = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstybin = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastybin = -1, <a href="./ListOfTypes.html#Int_t">Int_t</a> cut = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"QNR"</span>, <a href="./TObjArray.html">TObjArray</a>* arr = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:FitSlicesY"><span class="baseclass">TH2::</span>FitSlicesY</a>(<a href="./TF1.html">TF1</a>* f1 = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstxbin = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastxbin = -1, <a href="./ListOfTypes.html#Int_t">Int_t</a> cut = 0, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"QNR"</span>, <a href="./TObjArray.html">TObjArray</a>* arr = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetAsymmetry"><span class="baseclass">TH1::</span>GetAsymmetry</a>(<a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> dc2 = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetAxisColor"><span class="baseclass">TH1::</span>GetAxisColor</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBarOffset"><span class="baseclass">TH1::</span>GetBarOffset</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBarWidth"><span class="baseclass">TH1::</span>GetBarWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBin"><span class="baseclass">TH1::</span>GetBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> binz = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBinCenter"><span class="baseclass">TH1::</span>GetBinCenter</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinContent">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinContent%1">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinContent%2">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinContentChanged">GetBinContentChanged</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinError">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinError%1">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinError%2">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBinLowEdge"><span class="baseclass">TH1::</span>GetBinLowEdge</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinName">GetBinName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBins">GetBins</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:GetBinTitle">GetBinTitle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBinWidth"><span class="baseclass">TH1::</span>GetBinWidth</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBinWithContent"><span class="baseclass">TH1::</span>GetBinWithContent</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> c, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstx = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastx = 0, <a href="./ListOfTypes.html#Double_t">Double_t</a> maxdiff = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:GetBinWithContent2"><span class="baseclass">TH2::</span>GetBinWithContent2</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> c, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; binx, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; biny, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstxbin = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastxbin = -1, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstybin = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastybin = -1, <a href="./ListOfTypes.html#Double_t">Double_t</a> maxdiff = 0) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBinXYZ"><span class="baseclass">TH1::</span>GetBinXYZ</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binglobal, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; binx, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; biny, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; binz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBuffer"><span class="baseclass">TH1::</span>GetBuffer</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBufferLength"><span class="baseclass">TH1::</span>GetBufferLength</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetBufferSize"><span class="baseclass">TH1::</span>GetBufferSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetCellContent"><span class="baseclass">TH1::</span>GetCellContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetCellError"><span class="baseclass">TH1::</span>GetCellError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetCenter"><span class="baseclass">TH1::</span>GetCenter</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* center) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetContour"><span class="baseclass">TH1::</span>GetContour</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* levels = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetContourLevel"><span class="baseclass">TH1::</span>GetContourLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetContourLevelPad"><span class="baseclass">TH1::</span>GetContourLevelPad</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:GetCorrelationFactor"><span class="baseclass">TH2::</span>GetCorrelationFactor</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis1 = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> axis2 = 2) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:GetCovariance"><span class="baseclass">TH2::</span>GetCovariance</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis1 = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> axis2 = 2) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetDefaultBufferSize"><span class="baseclass">TH1::</span>GetDefaultBufferSize</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetDefaultSumw2"><span class="baseclass">TH1::</span>GetDefaultSumw2</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetDimension"><span class="baseclass">TH1::</span>GetDimension</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TDirectory.html">TDirectory</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetDirectory"><span class="baseclass">TH1::</span>GetDirectory</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetEffectiveEntries"><span class="baseclass">TH1::</span>GetEffectiveEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetEntries"><span class="baseclass">TH1::</span>GetEntries</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillColor"><span class="baseclass">TAttFill::</span>GetFillColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:GetFillStyle"><span class="baseclass">TAttFill::</span>GetFillStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetFloat">GetFloat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TF1.html">TF1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetFunction"><span class="baseclass">TH1::</span>GetFunction</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetIntegral"><span class="baseclass">TH1::</span>GetIntegral</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetKurtosis"><span class="baseclass">TH1::</span>GetKurtosis</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetLabelColor"><span class="baseclass">TH1::</span>GetLabelColor</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetLabelFont"><span class="baseclass">TH1::</span>GetLabelFont</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetLabelOffset"><span class="baseclass">TH1::</span>GetLabelOffset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetLabelSize"><span class="baseclass">TH1::</span>GetLabelSize</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineColor"><span class="baseclass">TAttLine::</span>GetLineColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineStyle"><span class="baseclass">TAttLine::</span>GetLineStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:GetLineWidth"><span class="baseclass">TAttLine::</span>GetLineWidth</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TList.html">TList</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetListOfFunctions"><span class="baseclass">TH1::</span>GetListOfFunctions</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetLowEdge"><span class="baseclass">TH1::</span>GetLowEdge</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* edge) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerColor"><span class="baseclass">TAttMarker::</span>GetMarkerColor</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerSize"><span class="baseclass">TAttMarker::</span>GetMarkerSize</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:GetMarkerStyle"><span class="baseclass">TAttMarker::</span>GetMarkerStyle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetMaximum">GetMaximum</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetMaximum%1">GetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maxval) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMaximumBin"><span class="baseclass">TH1::</span>GetMaximumBin</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMaximumBin%1"><span class="baseclass">TH1::</span>GetMaximumBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmax, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmay, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmaz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMaximumStored"><span class="baseclass">TH1::</span>GetMaximumStored</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMean"><span class="baseclass">TH1::</span>GetMean</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMeanError"><span class="baseclass">TH1::</span>GetMeanError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetMinimum">GetMinimum</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetMinimum%1">GetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minval) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMinimumBin"><span class="baseclass">TH1::</span>GetMinimumBin</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMinimumBin%1"><span class="baseclass">TH1::</span>GetMinimumBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmix, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmiy, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; locmiz) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetMinimumStored"><span class="baseclass">TH1::</span>GetMinimumStored</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetNbinsX"><span class="baseclass">TH1::</span>GetNbinsX</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetNbinsY"><span class="baseclass">TH1::</span>GetNbinsY</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetNbinsZ"><span class="baseclass">TH1::</span>GetNbinsZ</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetNdivisions"><span class="baseclass">TH1::</span>GetNdivisions</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetNewBinAdded">GetNewBinAdded</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetNormFactor"><span class="baseclass">TH1::</span>GetNormFactor</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:GetNumberOfBins">GetNumberOfBins</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetObjectInfo"><span class="baseclass">TH1::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetOption"><span class="baseclass">TH1::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TVirtualHistPainter.html">TVirtualHistPainter</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetPainter"><span class="baseclass">TH1::</span>GetPainter</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetQuantiles"><span class="baseclass">TH1::</span>GetQuantiles</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nprobSum, <a href="./ListOfTypes.html#Double_t">Double_t</a>* q, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* probSum = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetRandom"><span class="baseclass">TH1::</span>GetRandom</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:GetRandom2"><span class="baseclass">TH2::</span>GetRandom2</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; x, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; y)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetRMS"><span class="baseclass">TH1::</span>GetRMS</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetRMSError"><span class="baseclass">TH1::</span>GetRMSError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetSkewness"><span class="baseclass">TH1::</span>GetSkewness</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> axis = 1) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:GetStats"><span class="baseclass">TH2::</span>GetStats</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* stats) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetSumOfWeights"><span class="baseclass">TH1::</span>GetSumOfWeights</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TArrayD.html">TArrayD</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetSumw2"><span class="baseclass">TH1::</span>GetSumw2</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <a href="./TArrayD.html">TArrayD</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetSumw2%1"><span class="baseclass">TH1::</span>GetSumw2</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetSumw2N"><span class="baseclass">TH1::</span>GetSumw2N</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetTickLength"><span class="baseclass">TH1::</span>GetTickLength</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetTitleFont"><span class="baseclass">TH1::</span>GetTitleFont</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetTitleOffset"><span class="baseclass">TH1::</span>GetTitleOffset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Float_t">Float_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetTitleSize"><span class="baseclass">TH1::</span>GetTitleSize</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetXaxis"><span class="baseclass">TH1::</span>GetXaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetYaxis"><span class="baseclass">TH1::</span>GetYaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TAxis.html">TAxis</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:GetZaxis"><span class="baseclass">TH1::</span>GetZaxis</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Honeycomb">Honeycomb</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xstart, <a href="./ListOfTypes.html#Double_t">Double_t</a> ystart, <a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./ListOfTypes.html#Int_t">Int_t</a> s)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Integral">Integral</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Integral%1">Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Option_t">Option_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Integral%2">Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Option_t">Option_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:Integral%3">Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Option_t">Option_t</a>*) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:IntegralAndError"><span class="baseclass">TH2::</span>IntegralAndError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx1, <a href="./ListOfTypes.html#Int_t">Int_t</a> binx2, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny1, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Interpolate"><span class="baseclass">TH2::</span>Interpolate</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Interpolate%1"><span class="baseclass">TH2::</span>Interpolate</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Interpolate%2"><span class="baseclass">TH2::</span>Interpolate</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TH2Poly:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:IsBinOverflow"><span class="baseclass">TH1::</span>IsBinOverflow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:IsBinUnderflow"><span class="baseclass">TH1::</span>IsBinUnderflow</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:IsTransparent"><span class="baseclass">TAttFill::</span>IsTransparent</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:KolmogorovTest"><span class="baseclass">TH2::</span>KolmogorovTest</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:LabelsDeflate"><span class="baseclass">TH1::</span>LabelsDeflate</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:LabelsInflate"><span class="baseclass">TH1::</span>LabelsInflate</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:LabelsOption"><span class="baseclass">TH1::</span>LabelsOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"h"</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Merge"><span class="baseclass">TH2::</span>Merge</a>(<a href="./TCollection.html">TCollection</a>* list)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:Modify"><span class="baseclass">TAttLine::</span>Modify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Multiply%1"><span class="baseclass">TH1::</span>Multiply</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Multiply"><span class="baseclass">TH1::</span>Multiply</a>(<a href="./TF1.html">TF1</a>* h1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Multiply%2"><span class="baseclass">TH1::</span>Multiply</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TNamed.html">TNamed</a>&amp;</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:operator_"><span class="baseclass">TNamed::</span>operator=</a>(<span class="keyword">const</span> <a href="./TNamed.html">TNamed</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Paint"><span class="baseclass">TH1::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Print"><span class="baseclass">TH1::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TProfile.html">TProfile</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ProfileX"><span class="baseclass">TH2::</span>ProfileX</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"_pfx"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstybin = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastybin = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TProfile.html">TProfile</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ProfileY"><span class="baseclass">TH2::</span>ProfileY</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"_pfy"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstxbin = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastxbin = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ProjectionX"><span class="baseclass">TH2::</span>ProjectionX</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"_px"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstybin = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastybin = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ProjectionY"><span class="baseclass">TH2::</span>ProjectionY</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = <span class="string">"_py"</span>, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstxbin = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastxbin = -1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:PutStats"><span class="baseclass">TH2::</span>PutStats</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>* stats)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Rebin"><span class="baseclass">TH1::</span>Rebin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ngroup = 2, <span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* xbins = 0)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH2.html">TH2</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Rebin2D"><span class="baseclass">TH2::</span>Rebin2D</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nxgroup = 2, <a href="./ListOfTypes.html#Int_t">Int_t</a> nygroup = 2, <span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:RebinAxis"><span class="baseclass">TH1::</span>RebinAxis</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./TAxis.html">TAxis</a>* axis)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH2.html">TH2</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:RebinX"><span class="baseclass">TH2::</span>RebinX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ngroup = 2, <span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH2.html">TH2</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:RebinY"><span class="baseclass">TH2::</span>RebinY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ngroup = 2, <span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Rebuild"><span class="baseclass">TH1::</span>Rebuild</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:RecursiveRemove"><span class="baseclass">TH1::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Reset">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:ResetAttFill"><span class="baseclass">TAttFill::</span>ResetAttFill</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:ResetAttLine"><span class="baseclass">TAttLine::</span>ResetAttLine</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:ResetAttMarker"><span class="baseclass">TAttMarker::</span>ResetAttMarker</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* toption = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:ResetStats"><span class="baseclass">TH1::</span>ResetStats</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SaveFillAttributes"><span class="baseclass">TAttFill::</span>SaveFillAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1001)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SaveLineAttributes"><span class="baseclass">TAttLine::</span>SaveLineAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> widdef = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SaveMarkerAttributes"><span class="baseclass">TAttMarker::</span>SaveMarkerAttributes</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> coldef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> stydef = 1, <a href="./ListOfTypes.html#Int_t">Int_t</a> sizdef = 1)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SavePrimitive">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Scale"><span class="baseclass">TH1::</span>Scale</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetAxisColor"><span class="baseclass">TH1::</span>SetAxisColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> color = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetAxisRange"><span class="baseclass">TH1::</span>SetAxisRange</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xmin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBarOffset"><span class="baseclass">TH1::</span>SetBarOffset</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> offset = 0.25)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBarWidth"><span class="baseclass">TH1::</span>SetBarWidth</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> width = 0.5)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetBinContent">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> content)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetBinContent%1">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetBinContent%2">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetBinContentChanged">SetBinContentChanged</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBinError"><span class="baseclass">TH1::</span>SetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> error)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBinError%1"><span class="baseclass">TH1::</span>SetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny, <a href="./ListOfTypes.html#Double_t">Double_t</a> error)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBinError%2"><span class="baseclass">TH1::</span>SetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny, <a href="./ListOfTypes.html#Int_t">Int_t</a> binz, <a href="./ListOfTypes.html#Double_t">Double_t</a> error)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins%1"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* xBins)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins%3"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* xBins, <a href="./ListOfTypes.html#Int_t">Int_t</a> ny, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* yBins)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins%2"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax, <a href="./ListOfTypes.html#Int_t">Int_t</a> ny, <a href="./ListOfTypes.html#Double_t">Double_t</a> ymin, <a href="./ListOfTypes.html#Double_t">Double_t</a> ymax)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins%5"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* xBins, <a href="./ListOfTypes.html#Int_t">Int_t</a> ny, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* yBins, <a href="./ListOfTypes.html#Int_t">Int_t</a> nz, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* zBins)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBins%4"><span class="baseclass">TH1::</span>SetBins</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nx, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xmax, <a href="./ListOfTypes.html#Int_t">Int_t</a> ny, <a href="./ListOfTypes.html#Double_t">Double_t</a> ymin, <a href="./ListOfTypes.html#Double_t">Double_t</a> ymax, <a href="./ListOfTypes.html#Int_t">Int_t</a> nz, <a href="./ListOfTypes.html#Double_t">Double_t</a> zmin, <a href="./ListOfTypes.html#Double_t">Double_t</a> zmax)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBinsLength"><span class="baseclass">TH1::</span>SetBinsLength</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> = -1)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetBuffer"><span class="baseclass">TH1::</span>SetBuffer</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> buffersize, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetCellContent"><span class="baseclass">TH1::</span>SetCellContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny, <a href="./ListOfTypes.html#Double_t">Double_t</a> content)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetCellError"><span class="baseclass">TH1::</span>SetCellError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> binx, <a href="./ListOfTypes.html#Int_t">Int_t</a> biny, <a href="./ListOfTypes.html#Double_t">Double_t</a> content)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetContent"><span class="baseclass">TH1::</span>SetContent</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* content)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetContour"><span class="baseclass">TH1::</span>SetContour</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nlevels, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* levels = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetContourLevel"><span class="baseclass">TH1::</span>SetContourLevel</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> level, <a href="./ListOfTypes.html#Double_t">Double_t</a> value)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetDefaultBufferSize"><span class="baseclass">TH1::</span>SetDefaultBufferSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> buffersize = 1000)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetDefaultSumw2"><span class="baseclass">TH1::</span>SetDefaultSumw2</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> sumw2 = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetDirectory"><span class="baseclass">TH1::</span>SetDirectory</a>(<a href="./TDirectory.html">TDirectory</a>* dir)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetEntries"><span class="baseclass">TH1::</span>SetEntries</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> n)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetError"><span class="baseclass">TH1::</span>SetError</a>(<span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* error)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillAttributes"><span class="baseclass">TAttFill::</span>SetFillAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillColor"><span class="baseclass">TAttFill::</span>SetFillColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> fcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttFill.html#TAttFill:SetFillStyle"><span class="baseclass">TAttFill::</span>SetFillStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> fstyle)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetFloat">SetFloat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <span class="keyword">true</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetLabelColor"><span class="baseclass">TH1::</span>SetLabelColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> color = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetLabelFont"><span class="baseclass">TH1::</span>SetLabelFont</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> font = 62, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetLabelOffset"><span class="baseclass">TH1::</span>SetLabelOffset</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> offset = 0.005, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetLabelSize"><span class="baseclass">TH1::</span>SetLabelSize</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> size = 0.02, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineAttributes"><span class="baseclass">TAttLine::</span>SetLineAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineColor"><span class="baseclass">TAttLine::</span>SetLineColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> lcolor)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineStyle"><span class="baseclass">TAttLine::</span>SetLineStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> lstyle)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttLine.html#TAttLine:SetLineWidth"><span class="baseclass">TAttLine::</span>SetLineWidth</a>(<a href="./ListOfTypes.html#Width_t">Width_t</a> lwidth)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerAttributes"><span class="baseclass">TAttMarker::</span>SetMarkerAttributes</a>()<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerColor"><span class="baseclass">TAttMarker::</span>SetMarkerColor</a>(<a href="./ListOfTypes.html#Color_t">Color_t</a> tcolor = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerSize"><span class="baseclass">TAttMarker::</span>SetMarkerSize</a>(<a href="./ListOfTypes.html#Size_t">Size_t</a> msize = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TAttMarker.html#TAttMarker:SetMarkerStyle"><span class="baseclass">TAttMarker::</span>SetMarkerStyle</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> mstyle = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetMaximum"><span class="baseclass">TH1::</span>SetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maximum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetMinimum"><span class="baseclass">TH1::</span>SetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minimum = -1111)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetName"><span class="baseclass">TH1::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetNameTitle"><span class="baseclass">TH1::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetNdivisions"><span class="baseclass">TH1::</span>SetNdivisions</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n = 510, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:SetNewBinAdded">SetNewBinAdded</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetNormFactor"><span class="baseclass">TH1::</span>SetNormFactor</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> factor = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetOption"><span class="baseclass">TH1::</span>SetOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">" "</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:SetShowProjectionX"><span class="baseclass">TH2::</span>SetShowProjectionX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbins)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:SetShowProjectionY"><span class="baseclass">TH2::</span>SetShowProjectionY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> nbins)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetStats"><span class="baseclass">TH1::</span>SetStats</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stats = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetTickLength"><span class="baseclass">TH1::</span>SetTickLength</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> length = 0.02, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetTitle"><span class="baseclass">TH1::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetTitleFont"><span class="baseclass">TH1::</span>SetTitleFont</a>(<a href="./ListOfTypes.html#Style_t">Style_t</a> font = 62, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetTitleOffset"><span class="baseclass">TH1::</span>SetTitleOffset</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> offset = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetTitleSize"><span class="baseclass">TH1::</span>SetTitleSize</a>(<a href="./ListOfTypes.html#Float_t">Float_t</a> size = 0.02, <a href="./ListOfTypes.html#Option_t">Option_t</a>* axis = <span class="string">"X"</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetXTitle"><span class="baseclass">TH1::</span>SetXTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetYTitle"><span class="baseclass">TH1::</span>SetYTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SetZTitle"><span class="baseclass">TH1::</span>SetZTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ShowBackground"><span class="baseclass">TH2::</span>ShowBackground</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> niter = 20, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">"same"</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:ShowPeaks"><span class="baseclass">TH2::</span>ShowPeaks</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> sigma = 2, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>, <a href="./ListOfTypes.html#Double_t">Double_t</a> threshold = 0.05)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:Smooth"><span class="baseclass">TH2::</span>Smooth</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SmoothArray"><span class="baseclass">TH1::</span>SmoothArray</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> NN, <a href="./ListOfTypes.html#Double_t">Double_t</a>* XX, <a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes = 1)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:StatOverflows"><span class="baseclass">TH1::</span>StatOverflows</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:Sumw2"><span class="baseclass">TH1::</span>Sumw2</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:TransformHisto"><span class="baseclass">TH1::</span>TransformHisto</a>(<a href="./TVirtualFFT.html">TVirtualFFT</a>* fft, <a href="./TH1.html">TH1</a>* h_output, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:UseCurrentStyle"><span class="baseclass">TH1::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:AddBinToPartition">AddBinToPartition</a>(<a href="./TH2PolyBin.html">TH2PolyBin</a>* bin)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:BufferFill"><span class="baseclass">TH2::</span>BufferFill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:BufferFill%1"><span class="baseclass">TH2::</span>BufferFill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:CheckAxisLimits"><span class="baseclass">TH1::</span>CheckAxisLimits</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a1, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a2)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:CheckBinLimits"><span class="baseclass">TH1::</span>CheckBinLimits</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a1, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a2)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:CheckConsistency"><span class="baseclass">TH1::</span>CheckConsistency</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:CheckConsistentSubAxes"><span class="baseclass">TH1::</span>CheckConsistentSubAxes</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a1, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstBin1, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastBin1, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a2, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstBin2 = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastBin2 = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:CheckEqualAxes"><span class="baseclass">TH1::</span>CheckEqualAxes</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a1, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* a2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:DoFitSlices"><span class="baseclass">TH2::</span>DoFitSlices</a>(<span class="keyword">bool</span> onX, <a href="./TF1.html">TF1</a>* f1, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstbin, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastbin, <a href="./ListOfTypes.html#Int_t">Int_t</a> cut, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option, <a href="./TObjArray.html">TObjArray</a>* arr)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:DoIntegral"><span class="baseclass">TH1::</span>DoIntegral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ix1, <a href="./ListOfTypes.html#Int_t">Int_t</a> ix2, <a href="./ListOfTypes.html#Int_t">Int_t</a> iy1, <a href="./ListOfTypes.html#Int_t">Int_t</a> iy2, <a href="./ListOfTypes.html#Int_t">Int_t</a> iz1, <a href="./ListOfTypes.html#Int_t">Int_t</a> iz2, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; err, <a href="./ListOfTypes.html#Option_t">Option_t</a>* opt, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> doerr = <a href="./ListOfTypes.html#Bool_t">kFALSE</a>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TProfile.html">TProfile</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:DoProfile"><span class="baseclass">TH2::</span>DoProfile</a>(<span class="keyword">bool</span> onX, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstbin, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastbin, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TH1D.html">TH1D</a>*</td><td class="funcname"><a class="funcname" href="./TH2.html#TH2:DoProjection"><span class="baseclass">TH2::</span>DoProjection</a>(<span class="keyword">bool</span> onX, <span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Int_t">Int_t</a> firstbin, <a href="./ListOfTypes.html#Int_t">Int_t</a> lastbin, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:FindNewAxisLimits"><span class="baseclass">TH1::</span>FindNewAxisLimits</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>* axis, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a> point, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; newMin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; newMax)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TH2Poly:Initialize">Initialize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> m)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:IsIntersecting">IsIntersecting</a>(<a href="./TH2PolyBin.html">TH2PolyBin</a>* bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipr, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipb, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipt)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TH2Poly:IsIntersectingPolygon">IsIntersectingPolygon</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bn, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipr, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipb, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipt)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:RecomputeAxisLimits"><span class="baseclass">TH1::</span>RecomputeAxisLimits</a>(<a href="./TAxis.html">TAxis</a>&amp; destAxis, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>&amp; anAxis)</td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SameLimitsAndNBins"><span class="baseclass">TH1::</span>SameLimitsAndNBins</a>(<span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>&amp; axis1, <span class="keyword">const</span> <a href="./TAxis.html">TAxis</a>&amp; axis2)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TH1.html#TH1:SavePrimitiveHelp"><span class="baseclass">TH1::</span>SavePrimitiveHelp</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <span class="keyword">const</span> <span class="keyword">char</span>* hname, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TH2Poly:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TH1::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TH1.html#TH1:kNoStats">kNoStats</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kUserContour">kUserContour</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kCanRebin">kCanRebin</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kLogX">kLogX</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kIsZoomed">kIsZoomed</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kNoTitle">kNoTitle</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kIsAverage">kIsAverage</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TH1.html#TH1:kNstat">kNstat</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fBarOffset"><span class="baseclass">TH1::</span>fBarOffset</a></td><td class="datadesc">(1000*offset) for bar charts or legos</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Short_t">Short_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fBarWidth"><span class="baseclass">TH1::</span>fBarWidth</a></td><td class="datadesc">(1000*width) for bar charts or legos</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TH2Poly:fBinContentChanged"></a>fBinContentChanged</td><td class="datadesc">!For the 3D Painter</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TH2Poly:fBins"></a>fBins</td><td class="datadesc">List of bins.</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a href="./TH1.html#TH1:fBuffer"><span class="baseclass">TH1::</span>fBuffer</a></td><td class="datadesc">[fBufferSize] entry buffer</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fBufferSize"><span class="baseclass">TH1::</span>fBufferSize</a></td><td class="datadesc">fBuffer size</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TH2Poly:fCellX"></a>fCellX</td><td class="datadesc">Number of partition cells in the x-direction of the histogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TH2Poly:fCellY"></a>fCellY</td><td class="datadesc">Number of partition cells in the y-direction of the histogram</td></tr>
+<tr class="data"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a name="TH2Poly:fCells"></a>fCells</td><td class="datadesc">[fNCells] The array of TLists that store the bins that intersect with each cell</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a>*</td><td class="dataname"><a name="TH2Poly:fCompletelyInside"></a>fCompletelyInside</td><td class="datadesc">[fNCells] The array that returns true if the cell at the given coordinate is completely inside a bin</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TArrayD.html">TArrayD</a></td><td class="dataname"><a href="./TH1.html#TH1:fContour"><span class="baseclass">TH1::</span>fContour</a></td><td class="datadesc">Array to display contour levels</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fDimension"><span class="baseclass">TH1::</span>fDimension</a></td><td class="datadesc">!Histogram dimension (1, 2 or 3 dim)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TDirectory.html">TDirectory</a>*</td><td class="dataname"><a href="./TH1.html#TH1:fDirectory"><span class="baseclass">TH1::</span>fDirectory</a></td><td class="datadesc">!Pointer to directory holding this histogram</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fEntries"><span class="baseclass">TH1::</span>fEntries</a></td><td class="datadesc">Number of entries</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillColor"><span class="baseclass">TAttFill::</span>fFillColor</a></td><td class="datadesc">fill area color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttFill.html#TAttFill:fFillStyle"><span class="baseclass">TAttFill::</span>fFillStyle</a></td><td class="datadesc">fill area style</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TH2Poly:fFloat"></a>fFloat</td><td class="datadesc">When set to kTRUE, allows the histogram to expand if a bin outside the limits is added.</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TList.html">TList</a>*</td><td class="dataname"><a href="./TH1.html#TH1:fFunctions"><span class="baseclass">TH1::</span>fFunctions</a></td><td class="datadesc">-&gt;Pointer to list of functions (fits and user)</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a href="./TH1.html#TH1:fIntegral"><span class="baseclass">TH1::</span>fIntegral</a></td><td class="datadesc">!Integral of bins used by GetRandom</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a>*</td><td class="dataname"><a name="TH2Poly:fIsEmpty"></a>fIsEmpty</td><td class="datadesc">[fNCells] The array that returns true if the cell at the given coordinate is empty</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineColor"><span class="baseclass">TAttLine::</span>fLineColor</a></td><td class="datadesc">line color</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineStyle"><span class="baseclass">TAttLine::</span>fLineStyle</a></td><td class="datadesc">line style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Width_t">Width_t</a></td><td class="dataname"><a href="./TAttLine.html#TAttLine:fLineWidth"><span class="baseclass">TAttLine::</span>fLineWidth</a></td><td class="datadesc">line width</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Color_t">Color_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerColor"><span class="baseclass">TAttMarker::</span>fMarkerColor</a></td><td class="datadesc">Marker color index</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Size_t">Size_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerSize"><span class="baseclass">TAttMarker::</span>fMarkerSize</a></td><td class="datadesc">Marker size</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Style_t">Style_t</a></td><td class="dataname"><a href="./TAttMarker.html#TAttMarker:fMarkerStyle"><span class="baseclass">TAttMarker::</span>fMarkerStyle</a></td><td class="datadesc">Marker style</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fMaximum"><span class="baseclass">TH1::</span>fMaximum</a></td><td class="datadesc">Maximum value for plotting</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fMinimum"><span class="baseclass">TH1::</span>fMinimum</a></td><td class="datadesc">Minimum value for plotting</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TH2Poly:fNCells"></a>fNCells</td><td class="datadesc">Number of partition cells: fCellX*fCellY</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fNcells"><span class="baseclass">TH1::</span>fNcells</a></td><td class="datadesc">number of bins(1D), cells (2D) +U/Overflows</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TH2Poly:fNewBinAdded"></a>fNewBinAdded</td><td class="datadesc">!For the 3D Painter</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fNormFactor"><span class="baseclass">TH1::</span>fNormFactor</a></td><td class="datadesc">Normalization factor</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TH1.html#TH1:fOption"><span class="baseclass">TH1::</span>fOption</a></td><td class="datadesc">histogram options</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TH2Poly:fOverflow"></a>fOverflow[9]</td><td class="datadesc">Overflow bins</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TVirtualHistPainter.html">TVirtualHistPainter</a>*</td><td class="dataname"><a href="./TH1.html#TH1:fPainter"><span class="baseclass">TH1::</span>fPainter</a></td><td class="datadesc">!pointer to histogram painter</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH2.html#TH2:fScalefactor"><span class="baseclass">TH2::</span>fScalefactor</a></td><td class="datadesc">Scale factor</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TH2Poly:fStepX"></a>fStepX</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TH2Poly:fStepY"></a>fStepY</td><td class="datadesc">Dimensions of a partition cell</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TArrayD.html">TArrayD</a></td><td class="dataname"><a href="./TH1.html#TH1:fSumw2"><span class="baseclass">TH1::</span>fSumw2</a></td><td class="datadesc">Array of sum of squares of weights</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fTsumw"><span class="baseclass">TH1::</span>fTsumw</a></td><td class="datadesc">Total Sum of weights</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fTsumw2"><span class="baseclass">TH1::</span>fTsumw2</a></td><td class="datadesc">Total Sum of squares of weights</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fTsumwx"><span class="baseclass">TH1::</span>fTsumwx</a></td><td class="datadesc">Total Sum of weight*X</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fTsumwx2"><span class="baseclass">TH1::</span>fTsumwx2</a></td><td class="datadesc">Total Sum of weight*X*X</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH2.html#TH2:fTsumwxy"><span class="baseclass">TH2::</span>fTsumwxy</a></td><td class="datadesc">Total Sum of weight*X*Y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH2.html#TH2:fTsumwy"><span class="baseclass">TH2::</span>fTsumwy</a></td><td class="datadesc">Total Sum of weight*Y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./TH2.html#TH2:fTsumwy2"><span class="baseclass">TH2::</span>fTsumwy2</a></td><td class="datadesc">Total Sum of weight*Y*Y</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TAxis.html">TAxis</a></td><td class="dataname"><a href="./TH1.html#TH1:fXaxis"><span class="baseclass">TH1::</span>fXaxis</a></td><td class="datadesc">X axis descriptor</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TAxis.html">TAxis</a></td><td class="dataname"><a href="./TH1.html#TH1:fYaxis"><span class="baseclass">TH1::</span>fYaxis</a></td><td class="datadesc">Y axis descriptor</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TAxis.html">TAxis</a></td><td class="dataname"><a href="./TH1.html#TH1:fZaxis"><span class="baseclass">TH1::</span>fZaxis</a></td><td class="datadesc">Z axis descriptor</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fgAddDirectory"><span class="baseclass">TH1::</span>fgAddDirectory</a></td><td class="datadesc">!flag to add histograms to the directory</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fgBufferSize"><span class="baseclass">TH1::</span>fgBufferSize</a></td><td class="datadesc">!default buffer size for automatic histograms</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fgDefaultSumw2"><span class="baseclass">TH1::</span>fgDefaultSumw2</a></td><td class="datadesc">!flag to call TH1::Sumw2 automatically at histogram creation time</td></tr>
+<tr class="datainh"><td class="datatype">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a href="./TH1.html#TH1:fgStatOverflows"><span class="baseclass">TH1::</span>fgStatOverflows</a></td><td class="datadesc">!flag to use under/overflows in statistics</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TH2Poly:Class_Charts"></a>Class Charts</h2>
+<map name="MapTH2Poly_Inh" id="MapTH2Poly_Inh">
+<area shape="rect" href="./TH2.html" title="TH2" alt="" coords="533,34,563,52"/>
+<area shape="rect" href="./TH1.html" title="TH1" alt="" coords="369,34,399,52"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="188,3,252,21"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="189,24,251,42"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="195,45,245,62"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="179,65,261,83"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="27,3,86,21"/>
+</map>
+<map name="MapTH2Poly_InhMem" id="MapTH2Poly_InhMem">
+<area shape="rect" href="./TH2.html" alt="" coords="1176,60,1264,109"/>
+<area shape="rect" href="./TH2.html" alt="" coords="1077,60,1165,124"/>
+<area shape="rect" href="./TH2.html" alt="" coords="979,60,1067,124"/>
+<area shape="rect" href="./TH2.html" alt="" coords="1208,120,1232,155"/>
+<area shape="rect" href="./TH2.html" alt="" coords="1176,165,1264,445"/>
+<area shape="rect" href="./TH2.html" alt="" coords="1077,165,1165,445"/>
+<area shape="rect" href="./TH2.html" alt="" coords="979,165,1067,445"/>
+<area shape="rect" href="./TH2.html" title="TH2" alt="" coords="968,16,1275,456"/>
+<area shape="rect" href="./TH1.html" alt="" coords="859,60,947,256"/>
+<area shape="rect" href="./TH1.html" alt="" coords="760,60,848,285"/>
+<area shape="rect" href="./TH1.html" alt="" coords="661,60,749,285"/>
+<area shape="rect" href="./TH1.html" alt="" coords="891,267,915,301"/>
+<area shape="rect" href="./TH1.html" alt="" coords="859,312,947,1281"/>
+<area shape="rect" href="./TH1.html" alt="" coords="760,296,848,1295"/>
+<area shape="rect" href="./TH1.html" alt="" coords="661,296,749,1295"/>
+<area shape="rect" href="./TH1.html" title="TH1" alt="" coords="651,16,957,1305"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,60,629,109"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,120,629,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,120,531,297"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,120,432,297"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,16,640,308"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,376,629,440"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,376,531,440"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="376,376,400,411"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="541,451,629,613"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="443,451,531,613"/>
+<area shape="rect" href="./TAttLine.html" alt="" coords="344,451,432,613"/>
+<area shape="rect" href="./TAttLine.html" title="TAttLine" alt="" coords="333,332,640,624"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,704,629,753"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="541,764,629,897"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="443,764,531,927"/>
+<area shape="rect" href="./TAttFill.html" alt="" coords="344,764,432,927"/>
+<area shape="rect" href="./TAttFill.html" title="TAttFill" alt="" coords="333,660,640,937"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,1044,629,1108"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,1044,531,1108"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="376,1044,400,1079"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="541,1119,629,1267"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="443,1119,531,1281"/>
+<area shape="rect" href="./TAttMarker.html" alt="" coords="344,1119,432,1281"/>
+<area shape="rect" href="./TAttMarker.html" title="TAttMarker" alt="" coords="333,1000,640,1292"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTH2Poly_Lib" id="MapTH2Poly_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTH2Poly_Inh" class="tabsel" href="inh/TH2Poly_Inh.png" onclick="javascript:return SetImg('Charts','inh/TH2Poly_Inh.png');">Inheritance</a>
+<a id="imgTH2Poly_InhMem" class="tab" href="inhmem/TH2Poly_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TH2Poly_InhMem.png');">Inherited Members</a>
+<a id="imgTH2Poly_Incl" class="tab" href="incl/TH2Poly_Incl.png" onclick="javascript:return SetImg('Charts','incl/TH2Poly_Incl.png');">Includes</a>
+<a id="imgTH2Poly_Lib" class="tab" href="lib/TH2Poly_Lib.png" onclick="javascript:return SetImg('Charts','lib/TH2Poly_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTH2Poly_Inh" src="inh/TH2Poly_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TH2Poly:TH2Poly" href="src/TH2Poly.cxx.html#bT1Ei">TH2Poly</a>()</span><br />
+<div class="funccomm"><pre> Default Constructor. No boundaries specified.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TH2Poly:TH2Poly%1" href="src/TH2Poly.cxx.html#CRO2vC">TH2Poly</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup)</span><br />
+<div class="funccomm"><pre> Constructor with specified name and boundaries,
+ but no partition cell number.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TH2Poly:TH2Poly%2" href="src/TH2Poly.cxx.html#I5FI4E">TH2Poly</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title, <a href="./ListOfTypes.html#Int_t">Int_t</a> nX, <a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Int_t">Int_t</a> nY, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup)</span><br />
+<div class="funccomm"><pre> Constructor with specified name and boundaries and partition cell number.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TH2Poly:_TH2Poly" href="src/TH2Poly.cxx.html#Nkag3D">~TH2Poly</a>()</span><br />
+<div class="funccomm"><pre> Destructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:AddBin" href="src/TH2Poly.cxx.html#tG1aeD">AddBin</a>(<a href="./TObject.html">TObject</a>* poly)</span><br />
+<div class="funccomm"><pre> Adds a new bin to the histogram. It can be any object having the method
+ IsInside(). It returns the bin number in the histogram. It returns 0 if
+ it failed to add. To allow the histogram limits to expand when a bin
+ outside the limits is added, call <a href="./TH2Poly.html#TH2Poly:SetFloat" title="void TH2Poly::SetFloat(Bool_t flag=true)">SetFloat</a>() before adding the bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:AddBin%1" href="src/TH2Poly.cxx.html#M3wioD">AddBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y)</span><br />
+<div class="funccomm"><pre> Adds a new bin to the histogram. The number of vertices and their (x,y)
+ coordinates are required as input. It returns the bin number in the
+ histogram.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:AddBin%2" href="src/TH2Poly.cxx.html#AUkqmC">AddBin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x1, <a href="./ListOfTypes.html#Double_t">Double_t</a> y1, <a href="./ListOfTypes.html#Double_t">Double_t</a> x2, <a href="./ListOfTypes.html#Double_t">Double_t</a> y2)</span><br />
+<div class="funccomm"><pre> <a href="./TH2Poly.html#TH2Poly:Add" title="void TH2Poly::Add(const TH1* h1,Double_t c1) or overloads">Add</a> a new bin to the histogram. The bin shape is a rectangle.
+ It returns the bin number of the bin in the histogram.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Add" href="src/TH2Poly.cxx.html#u_7iBB">Add</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1)</span><br />
+<div class="funccomm"><pre> Performs the operation: this = this + c1*h1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Add%2" href="src/TH2Poly.cxx.html#ZJtLkC">Add</a>(<a href="./TF1.html">TF1</a>* h1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Performs the operation: this = this + c1*f1.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Add%1" href="src/TH2Poly.cxx.html#akd.IC">Add</a>(<span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h1, <span class="keyword">const</span> <a href="./TH1.html">TH1</a>* h2, <a href="./ListOfTypes.html#Double_t">Double_t</a> c1 = 1, <a href="./ListOfTypes.html#Double_t">Double_t</a> c2 = 1)</span><br />
+<div class="funccomm"><pre> Replace contents of this histogram by the addition of h1 and h2.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:AddBinToPartition" href="src/TH2Poly.cxx.html#ragErE">AddBinToPartition</a>(<a href="./TH2PolyBin.html">TH2PolyBin</a>* bin)</span><br />
+<div class="funccomm"><pre> Adds the input bin into the partition cell matrix. This method is called
+ in <a href="./TH2Poly.html#TH2Poly:AddBin" title="Int_t TH2Poly::AddBin(TObject* poly) or overloads">AddBin</a>() and <a href="./TH2Poly.html#TH2Poly:ChangePartition" title="void TH2Poly::ChangePartition(Int_t n,Int_t m)">ChangePartition</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:ChangePartition" href="src/TH2Poly.cxx.html#tYzz1C">ChangePartition</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> m)</span><br />
+<div class="funccomm"><pre> Changes the number of partition cells in the histogram.
+ Deletes the old partition and constructs a new one.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:ClearBinContents" href="src/TH2Poly.cxx.html#rQ5TsE">ClearBinContents</a>()</span><br />
+<div class="funccomm"><pre> Clears the contents of all bins in the histogram.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Reset" href="src/TH2Poly.cxx.html#rNk7vC">Reset</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option)</span><br />
+<div class="funccomm"><pre> <a href="./TH2Poly.html#TH2Poly:Reset" title="void TH2Poly::Reset(Option_t* option)">Reset</a> this histogram: contents, errors, etc.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1.html">TH1</a> * <a class="funcname" name="TH2Poly:DrawCopy" href="src/TH2Poly.cxx.html#y5a7IC">DrawCopy</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> <a href="./TH1.html#TH1:Draw" title="void TH1::Draw(Option_t* option=&quot;&quot;)">Draw</a> copy.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:FindBin" href="src/TH2Poly.cxx.html#elsox">FindBin</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> z = 0)</span><br />
+<div class="funccomm"><pre> Returns the bin number of the bin at the given coordinate. -1 to -9 are
+ the overflow and underflow bins.  overflow bin -5 is the unbinned areas in
+ the histogram (also called <span class="string">"the sea"</span>). The third parameter can be left
+ blank.
+ The overflow/underflow bins are:
+
+ -1 | -2 | -3
+
+ -4 | -5 | -6
+
+ -7 | -8 | -9
+
+ where -5 means is the <span class="string">"sea"</span> bin (i.e. unbinned areas)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill" href="src/TH2Poly.cxx.html#T9I8dC">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</span><br />
+<div class="funccomm"><pre> Increment the bin containing (x,y) by 1.
+ Uses the partitioning algorithm.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill%1" href="src/TH2Poly.cxx.html#Vnk.YE">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</span><br />
+<div class="funccomm"><pre> Increment the bin containing (x,y) by w.
+ Uses the partitioning algorithm.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill%2" href="src/TH2Poly.cxx.html#wEPaFE">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</span><br />
+<div class="funccomm"><pre> Increment the bin named <span class="string">"name"</span> by w.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:FillN" href="src/TH2Poly.cxx.html#qbZTwB">FillN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* w, <a href="./ListOfTypes.html#Int_t">Int_t</a> stride = 1)</span><br />
+<div class="funccomm"><pre> Fills a 2-D histogram with an array of values and weights.
+
+ ntimes:  number of entries in arrays x and w
+          (array size must be ntimes*stride)
+ x:       array of x values to be histogrammed
+ y:       array of y values to be histogrammed
+ w:       array of weights
+ stride:  step size through arrays x, y and w
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:Integral" href="src/TH2Poly.cxx.html#KSe7oE">Integral</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+<div class="funccomm"><pre> Returns the integral of bin contents.
+ By default the integral is computed as the sum of bin contents.
+ If option <span class="string">"width"</span> or <span class="string">"area"</span> is specified, the integral is the sum of
+ the bin contents multiplied by the area of the bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinContent" href="src/TH2Poly.cxx.html#D0QKYD">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> Returns the content of the input bin
+ For the overflow/underflow/sea bins:
+
+ -1 | -2 | -3
+ ---+----+----
+ -4 | -5 | -6
+ ---+----+----
+ -7 | -8 | -9
+
+ where -5 is the <span class="string">"sea"</span> bin (i.e. unbinned areas)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinError" href="src/TH2Poly.cxx.html#eK1UIE">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> Returns the value of error associated to bin number bin.
+ If the sum of squares of weights has been defined (via <a href="./TH1.html#TH1:Sumw2" title="void TH1::Sumw2()">Sumw2</a>),
+ this function returns the sqrt(sum of w2).
+ otherwise it returns the sqrt(contents) for this bin.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TH2Poly:GetBinName" href="src/TH2Poly.cxx.html#fF1KsD">GetBinName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> Returns the bin name.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TH2Poly:GetBinTitle" href="src/TH2Poly.cxx.html#o5fzKC">GetBinTitle</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> Returns the bin title.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetMaximum" href="src/TH2Poly.cxx.html#yUgYmD">GetMaximum</a>() const</span><br />
+<div class="funccomm"><pre> Returns the maximum value of the histogram.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetMaximum%1" href="src/TH2Poly.cxx.html#kPThBD">GetMaximum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> maxval) const</span><br />
+<div class="funccomm"><pre> Returns the maximum value of the histogram that is less than maxval.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetMinimum" href="src/TH2Poly.cxx.html#KLhYmD">GetMinimum</a>() const</span><br />
+<div class="funccomm"><pre> Returns the minimum value of the histogram.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetMinimum%1" href="src/TH2Poly.cxx.html#sF5_3">GetMinimum</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> minval) const</span><br />
+<div class="funccomm"><pre> Returns the minimum value of the histogram that is greater than minval.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Honeycomb" href="src/TH2Poly.cxx.html#scTqQB">Honeycomb</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xstart, <a href="./ListOfTypes.html#Double_t">Double_t</a> ystart, <a href="./ListOfTypes.html#Double_t">Double_t</a> a, <a href="./ListOfTypes.html#Int_t">Int_t</a> k, <a href="./ListOfTypes.html#Int_t">Int_t</a> s)</span><br />
+<div class="funccomm"><pre> Bins the histogram using a honeycomb structure
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Initialize" href="src/TH2Poly.cxx.html#ggLukD">Initialize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> xlow, <a href="./ListOfTypes.html#Double_t">Double_t</a> xup, <a href="./ListOfTypes.html#Double_t">Double_t</a> ylow, <a href="./ListOfTypes.html#Double_t">Double_t</a> yup, <a href="./ListOfTypes.html#Int_t">Int_t</a> n, <a href="./ListOfTypes.html#Int_t">Int_t</a> m)</span><br />
+<div class="funccomm"><pre> Initializes the <a href="./TH2Poly.html">TH2Poly</a> object.  This method is called by the constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TH2Poly:IsIntersecting" href="src/TH2Poly.cxx.html#XaZ4IB">IsIntersecting</a>(<a href="./TH2PolyBin.html">TH2PolyBin</a>* bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipr, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipb, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipt)</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> if the input bin is intersecting with the
+ input rectangle (xclipl, xclipr, yclipb, yclipt)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TH2Poly:IsIntersectingPolygon" href="src/TH2Poly.cxx.html#J3WUdD">IsIntersectingPolygon</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bn, <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipl, <a href="./ListOfTypes.html#Double_t">Double_t</a> xclipr, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipb, <a href="./ListOfTypes.html#Double_t">Double_t</a> yclipt)</span><br />
+<div class="funccomm"><pre> Returns <a href="./ListOfTypes.html#Bool_t">kTRUE</a> if the input polygon (bn, x, y) is intersecting with the
+ input rectangle (xclipl, xclipr, yclipb, yclipt)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SavePrimitive" href="src/TH2Poly.cxx.html#E7xPEB">SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> Save primitive as a C++ statement(s) on output stream out
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetBinContent" href="src/TH2Poly.cxx.html#C3XviD">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> content)</span><br />
+<div class="funccomm"><pre> Sets the contents of the input bin to the input content
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetFloat" href="src/TH2Poly.cxx.html#gXZppE">SetFloat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> When set to <a href="./ListOfTypes.html#Bool_t">kTRUE</a>, allows the histogram to expand if a bin outside the
+ limits is added.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:Fill%3" href="src/TH2Poly.h.html#WawxMC">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{fContent = fContent+w; SetChanged(<span class="keyword">true</span>);}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TH2Poly:TH2Poly" href="src/TH2Poly.h.html#O0XvzD">TH2Poly</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill" href="src/TH2Poly.h.html#mBZ.WB">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill%1" href="src/TH2Poly.h.html#LePai">Fill</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> x, <a href="./ListOfTypes.html#Double_t">Double_t</a> y, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:Fill%2" href="src/TH2Poly.h.html#D9KpPD">Fill</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <a href="./ListOfTypes.html#Double_t">Double_t</a> w)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:FillN" href="src/TH2Poly.h.html#Cc8VBC">FillN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> ntimes, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* x, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* y, <span class="keyword">const</span> <a href="./ListOfTypes.html#Double_t">Double_t</a>* w, <a href="./ListOfTypes.html#Int_t">Int_t</a> stride = 1)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TList.html">TList</a>       * <a class="funcname" name="TH2Poly:GetBins" href="src/TH2Poly.h.html#aLxnUC">GetBins</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TH2Poly.html#TH2Poly:fBins" title="TList* TH2Poly::fBins">fBins</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinContent" href="src/TH2Poly.h.html#vRwDG">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinContent%1" href="src/TH2Poly.h.html#nfeLeB">GetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TH2Poly:GetBinContentChanged" href="src/TH2Poly.h.html#hU4VjD">GetBinContentChanged</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TH2Poly.html#TH2Poly:fBinContentChanged" title="Bool_t TH2Poly::fBinContentChanged">fBinContentChanged</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinError" href="src/TH2Poly.h.html#UJQfDE">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:GetBinError%1" href="src/TH2Poly.h.html#xBo4E">GetBinError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TH2Poly:GetFloat" href="src/TH2Poly.h.html#l_qtTB">GetFloat</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TH2Poly.html#TH2Poly:fFloat" title="Bool_t TH2Poly::fFloat">fFloat</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TH2Poly:GetNewBinAdded" href="src/TH2Poly.h.html#lE2Cy">GetNewBinAdded</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./TH2Poly.html#TH2Poly:fNewBinAdded" title="Bool_t TH2Poly::fNewBinAdded">fNewBinAdded</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TH2Poly:GetNumberOfBins" href="src/TH2Poly.h.html#dJWDaD">GetNumberOfBins</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> fNcells;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:Integral" href="src/TH2Poly.h.html#PEe57C">Integral</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:Integral%1" href="src/TH2Poly.h.html#K_tsJE">Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Option_t">Option_t</a>* ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TH2Poly:Integral%2" href="src/TH2Poly.h.html#vo8KyD">Integral</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Option_t">Option_t</a>* ) const</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 0;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetBinContent" href="src/TH2Poly.h.html#sK4BAD">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin, <a href="./ListOfTypes.html#Double_t">Double_t</a> content)</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetBinContent%1" href="src/TH2Poly.h.html#G6JZv">SetBinContent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetBinContentChanged" href="src/TH2Poly.h.html#ctonKD">SetBinContentChanged</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TH2Poly.html#TH2Poly:fBinContentChanged" title="Bool_t TH2Poly::fBinContentChanged">fBinContentChanged</a> = flag;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TH2Poly:SetNewBinAdded" href="src/TH2Poly.h.html#RdVpGB">SetNewBinAdded</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> flag)</span><br />
+
+<div class="code"><code class="inlinecode">{<a href="./TH2Poly.html#TH2Poly:fNewBinAdded" title="Bool_t TH2Poly::fNewBinAdded">fNewBinAdded</a> = flag;}</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Olivier+Couet"> Olivier Couet</a>, <a href="http://consult.cern.ch/xwho/people?Deniz+Gunceler"> Deniz Gunceler</a> </em><em>&raquo; Copyright   (C) 1995-2000, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/hist:$Id: TH2Poly.h 37945 2011-02-02 15:35:05Z couet $ </em><em>&raquo; Last generated: 2011-11-03 20:18</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

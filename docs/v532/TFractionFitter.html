@@ -1,0 +1,617 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:13:34 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TFractionFitter</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TFractionFitter','libHist','TFractionFitter.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TFractionFitter.h.html">header file</a>
+<a class="descrheadentry" href="src/TFractionFitter.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/inc/TFractionFitter.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/hist/hist/src/TFractionFitter.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TFractionFitter:description">class description</a> 
+<a class="descrheadentry" href="#TFractionFitter:Function_Members">function members</a>
+<a class="descrheadentry" href="#TFractionFitter:Data_Members">data members</a>
+<a class="descrheadentry" href="#TFractionFitter:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="./HIST_HIST_Index.html">HIST</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TFractionFitter</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TFractionFitter:description"></a>class TFractionFitter: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+ Fits MC fractions to data histogram (a la HMCMLL, see R. Barlow and C. Beeston,
+ Comp. Phys. Comm. 77 (1993) 219-228, and http://www.hep.man.ac.uk/~roger/hfrac.f).
+
+ The virtue of this fit is that it takes into account both data and Monte Carlo
+ statistical uncertainties. The way in which this is done is through a standard
+ likelihood fit using Poisson statistics; however, the template (MC) predictions
+ are also varied within statistics, leading to additional contributions to the
+ overall likelihood. This leads to many more fit parameters (one per bin per
+ template), but the minimisation with respect to these additional parameters is
+ done analytically rather than introducing them as formal fit parameters. Some
+ special care needs to be taken in the case of bins with zero content. For more
+ details please see the original publication cited above.
+
+ An example application of this fit is given below. For a <a href="./TH1.html">TH1</a>* histogram
+ (<span class="string">"data"</span>) fitted as the sum of three Monte Carlo sources (<span class="string">"mc"</span>):
+
+ {
+   <a href="./TH1F.html">TH1F</a> *data;                              //data histogram
+   <a href="./TH1F.html">TH1F</a> *mc0;                               // first MC histogram
+   <a href="./TH1F.html">TH1F</a> *mc1;                               // second MC histogram
+   <a href="./TH1F.html">TH1F</a> *mc2;                               // third MC histogram
+   ....                                     // retrieve histograms
+   <a href="./TObjArray.html">TObjArray</a> *mc = new <a href="./TObjArray.html">TObjArray</a>(3);        // MC histograms are put in this array
+   mc-&gt;Add(mc0);
+   mc-&gt;Add(mc1);
+   mc-&gt;Add(mc2);
+   <a href="./TFractionFitter.html">TFractionFitter</a>* fit = new <a href="./TFractionFitter.html">TFractionFitter</a>(data, mc); // initialise
+   fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:Constrain" title="void TFractionFitter::Constrain(Int_t parm,Double_t low,Double_t high)">Constrain</a>(1,0.0,1.0);               // constrain fraction 1 to be between 0 and 1
+   fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetRangeX" title="void TFractionFitter::SetRangeX(Int_t low,Int_t high)">SetRangeX</a>(1,15);                    // use only the first 15 bins in the fit
+   <a href="./ListOfTypes.html#Int_t">Int_t</a> status = fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:Fit" title="Int_t TFractionFitter::Fit()">Fit</a>();               // perform the fit
+   <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"fit status: "</span> &lt;&lt; status &lt;&lt; endl;
+   if (status == 0) {                       // check on fit status
+     <a href="./TH1F.html">TH1F</a>* result = (<a href="./TH1F.html">TH1F</a>*) fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:GetPlot" title="TH1* TFractionFitter::GetPlot()">GetPlot</a>();
+     data-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"Ep"</span>);
+     result-&gt;<a href="./TObject.html#TObject:Draw" title="void TObject::Draw(Option_t* option=&quot;&quot;)">Draw</a>(<span class="string">"same"</span>);
+   }
+ }
+
+
+ Assumptions
+
+ A few assumptions need to be made for the fit procedure to be carried out:
+
+ (1) The total number of events in each template is not too small
+     (so that its Poisson uncertainty can be neglected).
+ (2) The number of events in each bin is much smaller than the total
+     number of events in each template (so that multinomial
+     uncertainties can be replaced with Poisson uncertainties).
+
+ Biased fit uncertainties may result if these conditions are not fulfilled
+ (see e.g. arXiv:0803.2711).
+
+ Instantiation
+
+ A fit object is instantiated through
+     <a href="./TFractionFitter.html">TFractionFitter</a>* fit = new <a href="./TFractionFitter.html">TFractionFitter</a>(data, mc);
+ A number of basic checks (intended to ensure that the template histograms
+ represent the same <span class="string">"kind"</span> of distribution as the data one) are carried out.
+ The <a href="./TVirtualFitter.html">TVirtualFitter</a> object is then addressed and all fit parameters (the
+ template fractions) declared (initially unbounded).
+
+ Applying constraints
+
+ <a href="./TFractionFitter.html#TFractionFitter:Fit" title="Int_t TFractionFitter::Fit()">Fit</a> parameters can be constrained through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:Constrain" title="void TFractionFitter::Constrain(Int_t parm,Double_t low,Double_t high)">Constrain</a>(parameter #, lower bound, upper bound);
+ Setting lower bound = upper bound = 0 removes the constraint (a la Minuit);
+ however, a function
+     fit-&gt;Unconstrain(parameter #)
+ is also provided to simplify this.
+
+ Setting parameter values
+
+ The function
+     <a href="./TVirtualFitter.html">TVirtualFitter</a>* vFit = fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:GetFitter" title="TVirtualFitter* TFractionFitter::GetFitter()">GetFitter</a>();
+ is provided for direct access to the <a href="./TVirtualFitter.html">TVirtualFitter</a> object. This allows to
+ set and fix parameter values, and set step sizes directly.
+
+ Restricting the fit range
+
+ The fit range can be restricted through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetRangeX" title="void TFractionFitter::SetRangeX(Int_t low,Int_t high)">SetRangeX</a>(first bin #, last bin #);
+ and freed using
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeX" title="void TFractionFitter::ReleaseRangeX()">ReleaseRangeX</a>();
+ For 2D histograms the Y range can be similarly restricted using
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetRangeY" title="void TFractionFitter::SetRangeY(Int_t low,Int_t high)">SetRangeY</a>(first bin #, last bin #);
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeY" title="void TFractionFitter::ReleaseRangeY()">ReleaseRangeY</a>();
+ and for 3D histograms also
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetRangeZ" title="void TFractionFitter::SetRangeZ(Int_t low,Int_t high)">SetRangeZ</a>(first bin #, last bin #);
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeZ" title="void TFractionFitter::ReleaseRangeZ()">ReleaseRangeZ</a>();
+ It is also possible to exclude individual bins from the fit through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:ExcludeBin" title="void TFractionFitter::ExcludeBin(Int_t bin)">ExcludeBin</a>(bin #);
+ where the given bin number is assumed to follow the <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:GetBin" title="Int_t TH1::GetBin(Int_t binx,Int_t biny=0,Int_t binz=0)">GetBin</a>() numbering.
+ Any bins excluded in this way can be included again using the corresponding
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:IncludeBin" title="void TFractionFitter::IncludeBin(Int_t bin)">IncludeBin</a>(bin #);
+
+ Weights histograms
+
+ Weights histograms (for a motivation see the above publication) can be specified
+ for the individual MC sources through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetWeight" title="void TFractionFitter::SetWeight(Int_t parm,TH1* weight)">SetWeight</a>(parameter #, pointer to weights histogram);
+ and unset by specifying a null pointer.
+
+ Obtaining fit results
+
+ The fit is carried out through
+     <a href="./ListOfTypes.html#Int_t">Int_t</a> status = fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:Fit" title="Int_t TFractionFitter::Fit()">Fit</a>();
+ where  status  is the code returned from the <span class="string">"MINIMIZE"</span> command. For fits
+ that converged, parameter values and errors can be obtained through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:GetResult" title="void TFractionFitter::GetResult(Int_t parm,Double_t&amp; value,Double_t&amp; error)">GetResult</a>(parameter #, value, error);
+ and the histogram corresponding to the total Monte Carlo prediction (which
+ is not the same as a simple weighted sum of the input Monte Carlo distributions)
+ can be obtained by
+     <a href="./TH1.html">TH1</a>* result = fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:GetPlot" title="TH1* TFractionFitter::GetPlot()">GetPlot</a>();
+
+ Using different histograms
+
+ It is possible to change the histogram being fitted through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetData" title="void TFractionFitter::SetData(TH1* data)">SetData</a>(<a href="./TH1.html">TH1</a>* data);
+ and to change the template histogram for a given parameter number through
+     fit-&gt;<a href="./TFractionFitter.html#TFractionFitter:SetMC" title="void TFractionFitter::SetMC(Int_t parm,TH1* MC)">SetMC</a>(parameter #, <a href="./TH1.html">TH1</a>* MC);
+ This can speed up code in case of multiple data or template histograms;
+ however, it should be done with care as any settings are taken over from
+ the previous fit. In addition, neither the dimensionality nor the numbers of
+ bins of the histograms should change (in that case it is better to instantiate
+ a new <a href="./TFractionFitter.html">TFractionFitter</a> object).
+
+ Errors
+
+ Any serious inconsistency results in an error.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TFractionFitter:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFractionFitter:TFractionFitter">TFractionFitter</a>()</td></tr>
+<tr class="func"><td class="funcret"></td><td class="funcname"><a class="funcname" href="#TFractionFitter:TFractionFitter%1">TFractionFitter</a>(<a href="./TH1.html">TH1</a>* data, <a href="./TObjArray.html">TObjArray</a>* MCs, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TFractionFitter:_TFractionFitter">~TFractionFitter</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFractionFitter:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:Constrain">Constrain</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./ListOfTypes.html#Double_t">Double_t</a> low, <a href="./ListOfTypes.html#Double_t">Double_t</a> high)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ErrorAnalysis">ErrorAnalysis</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> UP)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ExcludeBin">ExcludeBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFractionFitter:Fit">Fit</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetChisquare">GetChisquare</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./TVirtualFitter.html">TVirtualFitter</a>*</td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetFitter">GetFitter</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetMCPrediction">GetMCPrediction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetNDF">GetNDF</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./TH1.html">TH1</a>*</td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetPlot">GetPlot</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetProb">GetProb</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetResult">GetResult</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; value, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; error) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:IncludeBin">IncludeBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TFractionFitter:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./TObject.html">TObject</a>&amp;</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_"><span class="baseclass">TObject::</span>operator=</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>&amp; rhs)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ReleaseRangeX">ReleaseRangeX</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ReleaseRangeY">ReleaseRangeY</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ReleaseRangeZ">ReleaseRangeZ</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetData">SetData</a>(<a href="./TH1.html">TH1</a>* data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetMC">SetMC</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./TH1.html">TH1</a>* MC)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetRangeX">SetRangeX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetRangeY">SetRangeY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetRangeZ">SetRangeZ</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:SetWeight">SetWeight</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./TH1.html">TH1</a>* weight)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:UnConstrain">UnConstrain</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:CheckConsistency">CheckConsistency</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:CheckParNo">CheckParNo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ComputeChisquareLambda">ComputeChisquareLambda</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:ComputeFCN">ComputeFCN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npar, <a href="./ListOfTypes.html#Double_t">Double_t</a>* gin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; f, <a href="./ListOfTypes.html#Double_t">Double_t</a>* par, <a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:FindPrediction">FindPrediction</a>(<span class="keyword">int</span> bin, <span class="keyword">double</span>* fractions, <span class="keyword">double</span>&amp; Ti, <span class="keyword">int</span>&amp; k0, <span class="keyword">double</span>&amp; Aki) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:GetRanges">GetRanges</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minX, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxX, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minY, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxY, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minZ, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxZ) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="#TFractionFitter:IsExcluded">IsExcluded</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TFractionFitter:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TFractionFitter:fAji"></a>fAji</td><td class="datadesc">array of pointers to predictions of real template distributions</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TFractionFitter:fChisquare"></a>fChisquare</td><td class="datadesc">Template fit chisquare</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1.html">TH1</a>*</td><td class="dataname"><a name="TFractionFitter:fData"></a>fData</td><td class="datadesc">pointer to the "data" histogram to be fitted to</td></tr>
+<tr class="data"><td class="datatype">vector&lt;<a href="./ListOfTypes.html#Int_t">Int_t</a>&gt;</td><td class="dataname"><a name="TFractionFitter:fExcludedBins"></a>fExcludedBins</td><td class="datadesc">bins excluded from the fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TFractionFitter:fFitDone"></a>fFitDone</td><td class="datadesc">flags whether a valid fit has been performed</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TFractionFitter:fFractions"></a>fFractions</td><td class="datadesc">template fractions scaled to the "data" histogram statistics</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fHighLimitX"></a>fHighLimitX</td><td class="datadesc">last  bin in X dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fHighLimitY"></a>fHighLimitY</td><td class="datadesc">last  bin in Y dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fHighLimitZ"></a>fHighLimitZ</td><td class="datadesc">last  bin in Z dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="TFractionFitter:fIntegralData"></a>fIntegralData</td><td class="datadesc">"data" histogram content integral over allowed fit range</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a>*</td><td class="dataname"><a name="TFractionFitter:fIntegralMCs"></a>fIntegralMCs</td><td class="datadesc">same for template histograms (weights not taken into account)</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fLowLimitX"></a>fLowLimitX</td><td class="datadesc">first bin in X dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fLowLimitY"></a>fLowLimitY</td><td class="datadesc">first bin in Y dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fLowLimitZ"></a>fLowLimitZ</td><td class="datadesc">first bin in Z dimension</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TFractionFitter:fMCs"></a>fMCs</td><td class="datadesc">array of pointers to template histograms</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fNDF"></a>fNDF</td><td class="datadesc">Number of degrees of freedom in the fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fNpar"></a>fNpar</td><td class="datadesc">number of fit parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TFractionFitter:fNpfits"></a>fNpfits</td><td class="datadesc">Number of points used in the fit</td></tr>
+<tr class="data"><td class="datatype"><a href="./TH1.html">TH1</a>*</td><td class="dataname"><a name="TFractionFitter:fPlot"></a>fPlot</td><td class="datadesc">pointer to histogram containing summed template predictions</td></tr>
+<tr class="data"><td class="datatype"><a href="./TObjArray.html">TObjArray</a></td><td class="dataname"><a name="TFractionFitter:fWeights"></a>fWeights</td><td class="datadesc">array of pointers to corresponding weight factors (may be null)</td></tr>
+
+</table></div>
+</div>
+<h2><a id="TFractionFitter:Class_Charts"></a>Class Charts</h2>
+<map name="MapTFractionFitter_Inh" id="MapTFractionFitter_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="62,17,200,59"/>
+</map>
+<map name="MapTFractionFitter_InhMem" id="MapTFractionFitter_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTFractionFitter_Lib" id="MapTFractionFitter_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="433,121,561,169"/>
+</map>
+<div class="tabs">
+<a id="imgTFractionFitter_Inh" class="tabsel" href="inh/TFractionFitter_Inh.png" onclick="javascript:return SetImg('Charts','inh/TFractionFitter_Inh.png');">Inheritance</a>
+<a id="imgTFractionFitter_InhMem" class="tab" href="inhmem/TFractionFitter_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TFractionFitter_InhMem.png');">Inherited Members</a>
+<a id="imgTFractionFitter_Incl" class="tab" href="incl/TFractionFitter_Incl.png" onclick="javascript:return SetImg('Charts','incl/TFractionFitter_Incl.png');">Includes</a>
+<a id="imgTFractionFitter_Lib" class="tab" href="lib/TFractionFitter_Lib.png" onclick="javascript:return SetImg('Charts','lib/TFractionFitter_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTFractionFitter_Inh" src="inh/TFractionFitter_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFractionFitter:TFractionFitter" href="src/TFractionFitter.cxx.html#jJju3B">TFractionFitter</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TFractionFitter.html">TFractionFitter</a> default constructor.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFractionFitter:TFractionFitter%1" href="src/TFractionFitter.cxx.html#imgUsE">TFractionFitter</a>(<a href="./TH1.html">TH1</a>* data, <a href="./TObjArray.html">TObjArray</a>* MCs, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</span><br />
+<div class="funccomm"><pre> <a href="./TFractionFitter.html">TFractionFitter</a> constructor. Does a complete initialisation (including
+ consistency checks, default fit range as the whole histogram but without
+ under- and overflows, and declaration of the fit parameters). Note that
+ the histograms are not copied, only references are used.
+ Arguments:
+     data: histogram to be fitted
+     MCs:  array of <a href="./TH1.html">TH1</a>* corresponding template distributions
+    Option:  can be used to control the print level of the minimization algorithm
+             option = <span class="string">"Q"</span>  : quite - no message is printed
+             option = <span class="string">"V"</span>  : verbose - max print out
+             option = <span class="string">""</span>   : default: print initial fraction values and result
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="TFractionFitter:_TFractionFitter" href="src/TFractionFitter.cxx.html#sPg4O">~TFractionFitter</a>()</span><br />
+<div class="funccomm"><pre> <a href="./TFractionFitter.html">TFractionFitter</a> default destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetData" href="src/TFractionFitter.cxx.html#afTs6D">SetData</a>(<a href="./TH1.html">TH1</a>* data)</span><br />
+<div class="funccomm"><pre> Change the histogram to be fitted to. Notes:
+ - Parameter constraints and settings are retained from a possible previous fit.
+ - Modifying the dimension or number of bins results in an error (in this case
+   rather instantiate a new <a href="./TFractionFitter.html">TFractionFitter</a> object)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetMC" href="src/TFractionFitter.cxx.html#aqIBMB">SetMC</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./TH1.html">TH1</a>* MC)</span><br />
+<div class="funccomm"><pre> Change the histogram for template number &lt;parm&gt;. Notes:
+ - Parameter constraints and settings are retained from a possible previous fit.
+ - Modifying the dimension or number of bins results in an error (in this case
+   rather instantiate a new <a href="./TFractionFitter.html">TFractionFitter</a> object)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetWeight" href="src/TFractionFitter.cxx.html#Ebm7FB">SetWeight</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./TH1.html">TH1</a>* weight)</span><br />
+<div class="funccomm"><pre> Set bin by bin weights for template number &lt;parm&gt; (the parameter numbering
+ follows that of the input template vector).
+ Weights can be <span class="string">"unset"</span> by passing a null pointer.
+ Consistency of the weights histogram with the data histogram is checked at
+ this point, and an error in case of problems.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TVirtualFitter.html">TVirtualFitter</a>* <a class="funcname" name="TFractionFitter:GetFitter" href="src/TFractionFitter.cxx.html#QnvkHB">GetFitter</a>() const</span><br />
+<div class="funccomm"><pre> Give direct access to the underlying minimisation class. This can be
+ used e.g. to modify parameter values or step sizes.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:CheckParNo" href="src/TFractionFitter.cxx.html#TnrZ2">CheckParNo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm) const</span><br />
+<div class="funccomm"><pre> Function for internal use, checking parameter validity
+ An invalid parameter results in an error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetRangeX" href="src/TFractionFitter.cxx.html#yLYWgE">SetRangeX</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</span><br />
+<div class="funccomm"><pre> Set the X range of the histogram to be used in the fit.
+ Use <a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeX" title="void TFractionFitter::ReleaseRangeX()">ReleaseRangeX</a>() to go back to fitting the full histogram.
+ The consistency check ensures that no empty fit range occurs (and also
+ recomputes the bin content integrals).
+ Arguments:
+     low:  lower X bin number
+     high: upper X bin number
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ReleaseRangeX" href="src/TFractionFitter.cxx.html#fZG6tC">ReleaseRangeX</a>()</span><br />
+<div class="funccomm"><pre> Release restrictions on the X range of the histogram to be used in the fit.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetRangeY" href="src/TFractionFitter.cxx.html#CHdWgE">SetRangeY</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</span><br />
+<div class="funccomm"><pre> Set the Y range of the histogram to be used in the fit (2D or 3D histograms only).
+ Use <a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeY" title="void TFractionFitter::ReleaseRangeY()">ReleaseRangeY</a>() to go back to fitting the full histogram.
+ The consistency check ensures that no empty fit range occurs (and also
+ recomputes the bin content integrals).
+ Arguments:
+     low:  lower Y bin number
+     high: upper Y bin number
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ReleaseRangeY" href="src/TFractionFitter.cxx.html#Xj8DuC">ReleaseRangeY</a>()</span><br />
+<div class="funccomm"><pre> Release restrictions on the Y range of the histogram to be used in the fit.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:SetRangeZ" href="src/TFractionFitter.cxx.html#qVOWgE">SetRangeZ</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> low, <a href="./ListOfTypes.html#Int_t">Int_t</a> high)</span><br />
+<div class="funccomm"><pre> Set the Z range of the histogram to be used in the fit (3D histograms only).
+ Use <a href="./TFractionFitter.html#TFractionFitter:ReleaseRangeY" title="void TFractionFitter::ReleaseRangeY()">ReleaseRangeY</a>() to go back to fitting the full histogram.
+ The consistency check ensures that no empty fit range occurs (and also
+ recomputes the bin content integrals).
+ Arguments:
+     low:  lower Y bin number
+     high: upper Y bin number
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ReleaseRangeZ" href="src/TFractionFitter.cxx.html#vFamtC">ReleaseRangeZ</a>()</span><br />
+<div class="funccomm"><pre> Release restrictions on the Z range of the histogram to be used in the fit.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ExcludeBin" href="src/TFractionFitter.cxx.html#qQV.nD">ExcludeBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin)</span><br />
+<div class="funccomm"><pre> Exclude the given bin from the fit. The bin numbering to be used is that
+ of <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:GetBin" title="Int_t TH1::GetBin(Int_t binx,Int_t biny=0,Int_t binz=0)">GetBin</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:IncludeBin" href="src/TFractionFitter.cxx.html#K4t6kD">IncludeBin</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin)</span><br />
+<div class="funccomm"><pre> Include the given bin in the fit, if it was excluded before using <a href="./TFractionFitter.html#TFractionFitter:ExcludeBin" title="void TFractionFitter::ExcludeBin(Int_t bin)">ExcludeBin</a>().
+ The bin numbering to be used is that of <a href="./TH1.html">TH1</a>::<a href="./TH1.html#TH1:GetBin" title="Int_t TH1::GetBin(Int_t binx,Int_t biny=0,Int_t binz=0)">GetBin</a>().
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">bool</span> <a class="funcname" name="TFractionFitter:IsExcluded" href="src/TFractionFitter.cxx.html#GpXetB">IsExcluded</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> bin) const</span><br />
+<div class="funccomm"><pre> Function for internal use, checking whether the given bin is
+ excluded from the fit or not.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:Constrain" href="src/TFractionFitter.cxx.html#Xz0dzB">Constrain</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./ListOfTypes.html#Double_t">Double_t</a> low, <a href="./ListOfTypes.html#Double_t">Double_t</a> high)</span><br />
+<div class="funccomm"><pre> <a href="./TFractionFitter.html#TFractionFitter:Constrain" title="void TFractionFitter::Constrain(Int_t parm,Double_t low,Double_t high)">Constrain</a> the values of parameter number &lt;parm&gt; (the parameter numbering
+ follows that of the input template vector).
+ Use <a href="./TFractionFitter.html#TFractionFitter:UnConstrain" title="void TFractionFitter::UnConstrain(Int_t parm)">UnConstrain</a>() to remove this constraint.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:UnConstrain" href="src/TFractionFitter.cxx.html#IJwi1C">UnConstrain</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm)</span><br />
+<div class="funccomm"><pre> Remove the constraints on the possible values of parameter &lt;parm&gt;.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:CheckConsistency" href="src/TFractionFitter.cxx.html#CLfWH">CheckConsistency</a>()</span><br />
+<div class="funccomm"><pre> Function used internally to check the consistency between the
+ various histograms. Checks are performed on nonexistent or empty
+ histograms, the precise histogram class, and the number of bins.
+ In addition, integrals over the <span class="string">"allowed"</span> bin ranges are computed.
+ Any inconsistency results in a error.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFractionFitter:Fit" href="src/TFractionFitter.cxx.html#zzoMT">Fit</a>()</span><br />
+<div class="funccomm"><pre> Perform the fit with the default UP value.
+ The value returned is the minimisation status.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ErrorAnalysis" href="src/TFractionFitter.cxx.html#s88q0E">ErrorAnalysis</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> UP)</span><br />
+<div class="funccomm"><pre> Set UP to the given value (see class <a href="./TMinuit.html">TMinuit</a>), and perform a MINOS minimisation.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:GetResult" href="src/TFractionFitter.cxx.html#EYDe2E">GetResult</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; value, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; error) const</span><br />
+<div class="funccomm"><pre> Obtain the fit result for parameter &lt;parm&gt; (the parameter numbering
+ follows that of the input template vector).
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1.html">TH1</a>* <a class="funcname" name="TFractionFitter:GetPlot" href="src/TFractionFitter.cxx.html#L0A2aB">GetPlot</a>()</span><br />
+<div class="funccomm"><pre> Return the <span class="string">"template prediction"</span> corresponding to the fit result (this is not
+ the same as the weighted sum of template distributions, as template statistical
+ uncertainties are taken into account).
+ Note that the name of this histogram will simply be the same as that of the
+ <span class="string">"data"</span> histogram, prefixed with the string <span class="string">"Fraction fit to hist: "</span>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:GetRanges" href="src/TFractionFitter.cxx.html#jzZQnE">GetRanges</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minX, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxX, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minY, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxY, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; minZ, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; maxZ) const</span><br />
+<div class="funccomm"><pre> Used internally to obtain the bin ranges according to the dimensionality of
+ the histogram and the limits set by hand.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ComputeFCN" href="src/TFractionFitter.cxx.html#pl5UvD">ComputeFCN</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; npar, <a href="./ListOfTypes.html#Double_t">Double_t</a>* gin, <a href="./ListOfTypes.html#Double_t">Double_t</a>&amp; f, <a href="./ListOfTypes.html#Double_t">Double_t</a>* par, <a href="./ListOfTypes.html#Int_t">Int_t</a> flag)</span><br />
+<div class="funccomm"><pre> Used internally to compute the likelihood value.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:FindPrediction" href="src/TFractionFitter.cxx.html#LVUbgE">FindPrediction</a>(<span class="keyword">int</span> bin, <span class="keyword">double</span>* fractions, <span class="keyword">double</span>&amp; Ti, <span class="keyword">int</span>&amp; k0, <span class="keyword">double</span>&amp; Aki) const</span><br />
+<div class="funccomm"><pre> Function used internally to obtain the template prediction in the individual bins
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFractionFitter:GetChisquare" href="src/TFractionFitter.cxx.html#UFMZPD">GetChisquare</a>() const</span><br />
+<div class="funccomm"><pre> Return the likelihood ratio Chi-squared (chi2) for the fit.
+ The value is computed when the fit is executed successfully.
+ Chi2 calculation is based on the <span class="string">"likelihood ratio"</span> lambda,
+ lambda = L(y;n) / L(m;n),
+ where L(y;n) is the likelihood of the fit result &lt;y&gt; describing the data &lt;n&gt;
+ and L(m;n) is the likelihood of an unknown <span class="string">"true"</span> underlying distribution
+ &lt;m&gt; describing the data &lt;n&gt;. Since &lt;m&gt; is unknown, the data distribution is
+ used instead,
+ lambda = L(y;n) / L(n;n).
+ Note that this ratio is 1 if the fit is perfect. The chi2 value is then
+ computed according to
+ chi2 = -2*ln(lambda).
+ This parameter can be shown to follow a Chi-square distribution. See for
+ example S. Baker and R. Cousins, <span class="string">"Clarification of the use of chi-square</span>
+ and likelihood functions in fits to histograms<span class="string">", Nucl. Instr. Meth. A221, </span>
+ pp. 437-442 (1984)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TFractionFitter:GetNDF" href="src/TFractionFitter.cxx.html#DZxSVD">GetNDF</a>() const</span><br />
+<div class="funccomm"><pre> return the number of degrees of freedom in the fit
+ the <a href="./TFractionFitter.html#TFractionFitter:fNDF" title="Int_t TFractionFitter::fNDF">fNDF</a> parameter has been previously computed during a fit.
+ The number of degrees of freedom corresponds to the number of points
+ used in the fit minus the number of templates.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TFractionFitter:GetProb" href="src/TFractionFitter.cxx.html#kY5mFB">GetProb</a>() const</span><br />
+<div class="funccomm"><pre> return the fit probability
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TFractionFitter:ComputeChisquareLambda" href="src/TFractionFitter.cxx.html#EZh8dC">ComputeChisquareLambda</a>()</span><br />
+<div class="funccomm"><pre> Method used internally to compute the likelihood ratio chi2
+ See the function <a href="./TFractionFitter.html#TFractionFitter:GetChisquare" title="Double_t TFractionFitter::GetChisquare()">GetChisquare</a>() for details
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TH1.html">TH1</a>* <a class="funcname" name="TFractionFitter:GetMCPrediction" href="src/TFractionFitter.cxx.html#dz_yVE">GetMCPrediction</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> parm) const</span><br />
+<div class="funccomm"><pre> Return the adjusted MC template (Aji) for template (parm).
+ Note that the (Aji) times fractions only sum to the total prediction
+ of the fit if all weights are 1.
+</pre></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/hist:$Id: TFractionFitter.h 38775 2011-04-08 08:27:27Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:13</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

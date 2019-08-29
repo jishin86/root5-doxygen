@@ -1,0 +1,497 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:29 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooStats::HybridCalculatorOriginal</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooStats::HybridCalculatorOriginal','libRooStats','RooStats/HybridCalculatorOriginal.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooStats__HybridCalculatorOriginal.h.html">header file</a>
+<a class="descrheadentry" href="src/RooStats__HybridCalculatorOriginal.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/inc/RooStats/HybridCalculatorOriginal.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/src/HybridCalculatorOriginal.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooStats__HybridCalculatorOriginal:description">class description</a> 
+<a class="descrheadentry" href="#RooStats__HybridCalculatorOriginal:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooStats__HybridCalculatorOriginal:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooStats__HybridCalculatorOriginal:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOSTATS_Index.html">ROOSTATS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooStats::HybridCalculatorOriginal</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooStats__HybridCalculatorOriginal:description"></a>class RooStats::HybridCalculatorOriginal: public <a href="./RooStats__HypoTestCalculator.html">RooStats::HypoTestCalculator</a>, public <a href="./TNamed.html">TNamed</a></h1>
+<div class="classdescr">
+<pre>
+
+<a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" title="RooStats::HybridCalculatorOriginal RooStats::HybridCalculatorOriginal::HybridCalculatorOriginal(const char* name=0) or overloads">HybridCalculatorOriginal</a> class: this class is a fresh rewrite in <a href="./RooStats.html">RooStats</a> of
+	RooStatsCms/LimitCalculator developped by D. Piparo and G. Schott
+Authors: D. Piparo, G. Schott - Universitaet Karlsruhe
+
+The class is born from the need to have an implementation of the CLs
+method that could take advantage from the <a href="./RooFit.html">RooFit</a> Package.
+The basic idea is the following:
+- Instantiate an object specifying a signal+background model, a background model and a dataset.
+- Perform toy MC experiments to know the distributions of -2lnQ
+- <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:Calculate" title="RooStats::HybridResult* RooStats::HybridCalculatorOriginal::Calculate(TH1&amp; data,unsigned int nToys,bool usePriors) or overloads">Calculate</a> the CLsb and CLs values as <span class="string">"integrals"</span> of these distributions.
+
+The class allows the user to input models as <a href="./RooAbsPdf.html">RooAbsPdf</a> ( <a href="./TH1.html">TH1</a> object could be used
+by using the <a href="./RooHistPdf.html">RooHistPdf</a> class)
+The pdfs must be <span class="string">"extended"</span>: for more information please refer to
+http://roofit.sourceforge.net). The dataset can be entered as a
+<a href="./RooAbsData.html">RooAbsData</a> objects.
+
+Unlike the <a href="./TLimit.html">TLimit</a> <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:Class" title="TClass* RooStats::HybridCalculatorOriginal::Class()">Class</a> a complete MC generation is performed at each step
+and not a simple Poisson fluctuation of the contents of the bins.
+Another innovation is the treatment of the nuisance parameters. The user
+can input in the constructor nuisance parameters.
+To include the information that we have about the nuisance parameters a prior
+PDF (<a href="./RooAbsPdf.html">RooAbsPdf</a>) should be specified
+
+Different test statistic can be used (likelihood ratio, number of events or
+profile likelihood ratio. The default is the likelihood ratio.
+See the method <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:SetTestStatistic" title="void RooStats::HybridCalculatorOriginal::SetTestStatistic(int index)">SetTestStatistic</a>.
+
+The number of toys to be generated is controlled by <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:SetNumberOfToys" title="void RooStats::HybridCalculatorOriginal::SetNumberOfToys(unsigned int ntoys)">SetNumberOfToys</a>(n).
+
+The result of the calculations is returned as a HybridResult object pointer.
+
+see also the following interesting references:
+- Alex <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a>, <span class="string">"Presentation of search results: the CLs technique"</span>,
+  Journal of Physics G: Nucl. Part. Phys. 28 2693-2704 (2002).
+  see http://www.iop.org/EJ/abstract/0954-3899/28/10/313/
+
+- Alex <a href="./TObject.html#TObject:Read" title="Int_t TObject::Read(const char* name)">Read</a>, <span class="string">"Modified Frequentist Analysis of Search Results (The CLs Method)"</span> CERN 2000-005 (30 May 2000)
+
+- V. Bartsch, G.Quast, <span class="string">"Expected signal observability at future experiments"</span> CMS NOTE 2005/004
+
+- http://root.cern.ch/root/html/src/<a href="./TLimit.html">TLimit</a>.html
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooStats__HybridCalculatorOriginal:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:_HybridCalculatorOriginal">~HybridCalculatorOriginal</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridResult.html">HybridResult</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:Calculate%2">Calculate</a>(<span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridResult.html">HybridResult</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:Calculate">Calculate</a>(<a href="./TH1.html">TH1</a>&amp; data, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridResult.html">HybridResult</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:Calculate%1">Calculate</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clear"><span class="baseclass">TNamed::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Clone"><span class="baseclass">TNamed::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Compare"><span class="baseclass">TNamed::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Copy"><span class="baseclass">TNamed::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; named) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:FillBuffer"><span class="baseclass">TNamed::</span>FillBuffer</a>(<span class="keyword">char</span>*&amp; buffer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridResult.html">HybridResult</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:GetHypoTest">GetHypoTest</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetName"><span class="baseclass">TNamed::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">unsigned</span> <span class="keyword">int</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:GetNumberOfToys">GetNumberOfToys</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:GetTitle"><span class="baseclass">TNamed::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Hash"><span class="baseclass">TNamed::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal">HybridCalculatorOriginal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%4">HybridCalculatorOriginal</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%3">HybridCalculatorOriginal</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; sb_model, <span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; b_model, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%1">HybridCalculatorOriginal</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; sb_model, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; b_model, <a href="./RooArgList.html">RooArgList</a>&amp; observables, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisance_parameters = 0, <a href="./RooAbsPdf.html">RooAbsPdf</a>* prior_pdf = 0, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HybridCalculatorOriginal.html">HybridCalculatorOriginal</a></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%2">HybridCalculatorOriginal</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; sb_model, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; b_model, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisance_parameters = 0, <a href="./RooAbsPdf.html">RooAbsPdf</a>* prior_pdf = 0, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:IsSortable"><span class="baseclass">TNamed::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:ls"><span class="baseclass">TNamed::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HypoTestCalculator.html">HypoTestCalculator</a>&amp;</td><td class="funcname"><a class="funcname" href="./RooStats__HypoTestCalculator.html#RooStats__HypoTestCalculator:operator_"><span class="baseclass">RooStats::HypoTestCalculator::</span>operator=</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HypoTestCalculator.html">HypoTestCalculator</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:PatchSetExtended">PatchSetExtended</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Print"><span class="baseclass">TNamed::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:PrintMore">PrintMore</a>(<span class="keyword">const</span> <span class="keyword">char</span>* options) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetAlternateModel">SetAlternateModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetAlternateParameters">SetAlternateParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetAlternatePdf">SetAlternatePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__HypoTestCalculator.html#RooStats__HypoTestCalculator:SetCommonModel"><span class="baseclass">RooStats::HypoTestCalculator::</span>SetCommonModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetCommonPdf">SetCommonPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetData">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetGenerateBinned">SetGenerateBinned</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetName"><span class="baseclass">TNamed::</span>SetName</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetNameTitle"><span class="baseclass">TNamed::</span>SetNameTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* title)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNuisanceParameters">SetNuisanceParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; params)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNuisancePdf">SetNuisancePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; prior_pdf)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNullModel">SetNullModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNullParameters">SetNullParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNullPdf">SetNullPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetNumberOfToys">SetNumberOfToys</a>(<span class="keyword">unsigned</span> <span class="keyword">int</span> ntoys)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:SetTestStatistic">SetTestStatistic</a>(<span class="keyword">int</span> index)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:SetTitle"><span class="baseclass">TNamed::</span>SetTitle</a>(<span class="keyword">const</span> <span class="keyword">char</span>* title = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TNamed.html#TNamed:Sizeof"><span class="baseclass">TNamed::</span>Sizeof</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:UseNuisance">UseNuisance</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+
+</table></div>
+<div class="access" id="funcpriv"><b>private:</b>
+<table class="func" id="tabfuncpriv" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">bool</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:DoCheckInputs">DoCheckInputs</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__HybridCalculatorOriginal:RunToys">RunToys</a>(vector&lt;<span class="keyword">double</span>&gt;&amp; bVals, vector&lt;<span class="keyword">double</span>&gt;&amp; sbVals, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooStats__HybridCalculatorOriginal:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fName"><span class="baseclass">TNamed::</span>fName</a></td><td class="datadesc">object identifier</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a href="./TNamed.html#TNamed:fTitle"><span class="baseclass">TNamed::</span>fTitle</a></td><td class="datadesc">object title</td></tr>
+
+</table></div>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fBModel"></a>fBModel</td><td class="datadesc">The pdf of the background model</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsData.html">RooAbsData</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fData"></a>fData</td><td class="datadesc">pointer to the data sets </td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fGenerateBinned"></a>fGenerateBinned</td><td class="datadesc">Flag to control binned generation</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">unsigned</span> <span class="keyword">int</span></td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fNToys"></a>fNToys</td><td class="datadesc">number of Toys MC</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fNuisanceParameters"></a>fNuisanceParameters</td><td class="datadesc">Collection of the nuisance parameters in the model</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooArgList.html">RooArgList</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fObservables"></a>fObservables</td><td class="datadesc">Collection of the observables of the model</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fPriorPdf"></a>fPriorPdf</td><td class="datadesc">Prior PDF of the nuisance parameters</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fSbModel"></a>fSbModel</td><td class="datadesc">The pdf of the signal+background model</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">unsigned</span> <span class="keyword">int</span></td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fTestStatisticsIdx"></a>fTestStatisticsIdx</td><td class="datadesc">Index of the test statistics to use</td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fTmpDoExtended"></a>fTmpDoExtended</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__HybridCalculatorOriginal:fUsePriorPdf"></a>fUsePriorPdf</td><td class="datadesc">use a prior for nuisance parameters  </td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooStats__HybridCalculatorOriginal:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooStats__HybridCalculatorOriginal_Inh" id="MapRooStats__HybridCalculatorOriginal_Inh">
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" title="RooStats::HypoTestCalculator" alt="" coords="156,3,361,19"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="229,22,288,38"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="25,22,79,38"/>
+</map>
+<map name="MapRooStats__HybridCalculatorOriginal_InhMem" id="MapRooStats__HybridCalculatorOriginal_InhMem">
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="376,60,629,109"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="541,120,629,224"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="443,120,531,253"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="344,120,432,253"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" title="RooStats::HypoTestCalculator" alt="" coords="333,16,640,264"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,319,629,368"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="541,379,629,556"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="443,379,531,556"/>
+<area shape="rect" href="./TNamed.html" alt="" coords="344,379,432,556"/>
+<area shape="rect" href="./TNamed.html" title="TNamed" alt="" coords="333,275,640,567"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,319,312,441"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,319,213,456"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,319,115,456"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,452,280,487"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,497,312,924"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,483,213,924"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,483,115,924"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,275,323,935"/>
+</map>
+<map name="MapRooStats__HybridCalculatorOriginal_Lib" id="MapRooStats__HybridCalculatorOriginal_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="371,367,463,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooStats__HybridCalculatorOriginal_Inh" class="tabsel" href="inh/RooStats__HybridCalculatorOriginal_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooStats__HybridCalculatorOriginal_Inh.png');">Inheritance</a>
+<a id="imgRooStats__HybridCalculatorOriginal_InhMem" class="tab" href="inhmem/RooStats__HybridCalculatorOriginal_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooStats__HybridCalculatorOriginal_InhMem.png');">Inherited Members</a>
+<a id="imgRooStats__HybridCalculatorOriginal_Incl" class="tab" href="incl/RooStats__HybridCalculatorOriginal_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooStats__HybridCalculatorOriginal_Incl.png');">Includes</a>
+<a id="imgRooStats__HybridCalculatorOriginal_Lib" class="tab" href="lib/RooStats__HybridCalculatorOriginal_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooStats__HybridCalculatorOriginal_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooStats__HybridCalculatorOriginal_Inh" src="inh/RooStats__HybridCalculatorOriginal_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" href="src/RooStats__HybridCalculatorOriginal.cxx.html#HcHbxB">HybridCalculatorOriginal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</span><br />
+<div class="funccomm"><pre> constructor with name and title
+ set default parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%1" href="src/RooStats__HybridCalculatorOriginal.cxx.html#MJmG5D">HybridCalculatorOriginal</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; sb_model, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; b_model, <a href="./RooArgList.html">RooArgList</a>&amp; observables, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisance_parameters = 0, <a href="./RooAbsPdf.html">RooAbsPdf</a>* prior_pdf = 0, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</span><br />
+<div class="funccomm"><pre> <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" title="RooStats::HybridCalculatorOriginal RooStats::HybridCalculatorOriginal::HybridCalculatorOriginal(const char* name=0) or overloads">HybridCalculatorOriginal</a> constructor without specifying a data set
+ the user need to specify the models in the S+B case and B-only case,
+ the list of observables of the model(s) (for MC-generation), the list of parameters
+ that are marginalised and the prior distribution of those parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%2" href="src/RooStats__HybridCalculatorOriginal.cxx.html#c4Ol_D">HybridCalculatorOriginal</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; sb_model, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; b_model, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nuisance_parameters = 0, <a href="./RooAbsPdf.html">RooAbsPdf</a>* prior_pdf = 0, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</span><br />
+<div class="funccomm"><pre> <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" title="RooStats::HybridCalculatorOriginal RooStats::HybridCalculatorOriginal::HybridCalculatorOriginal(const char* name=0) or overloads">HybridCalculatorOriginal</a> constructor for performing hypotesis test
+ the user need to specify the data set, the models in the S+B case and B-only case.
+ In case of treatment of nuisance parameter, the user need to specify the
+ the list of parameters  that are marginalised and the prior distribution of those parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal%3" href="src/RooStats__HybridCalculatorOriginal.cxx.html#e6xRUC">HybridCalculatorOriginal</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; sb_model, <span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; b_model, <span class="keyword">bool</span> GenerateBinned = <span class="keyword">false</span>, <span class="keyword">int</span> testStatistics = 1, <span class="keyword">int</span> ntoys = 1000)</span><br />
+<div class="funccomm"><pre> Constructor with a ModelConfig object representing the signal + background model and
+ another model config representig the background only model
+ a Prior pdf for the nuiscane parameter of the signal and background can be specified in
+ the s+b model or the b model. If it is specified in the s+b model, the one of the s+b model will be used
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__HybridCalculatorOriginal:_HybridCalculatorOriginal" href="src/RooStats__HybridCalculatorOriginal.cxx.html#a.p3WC">~HybridCalculatorOriginal</a>()</span><br />
+<div class="funccomm"><pre> <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" title="RooStats::HybridCalculatorOriginal RooStats::HybridCalculatorOriginal::HybridCalculatorOriginal(const char* name=0) or overloads">HybridCalculatorOriginal</a> destructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNullModel" href="src/RooStats__HybridCalculatorOriginal.cxx.html#iW2xqE">SetNullModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; )</span><br />
+<div class="funccomm"><pre> Set the model describing the null hypothesis
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetAlternateModel" href="src/RooStats__HybridCalculatorOriginal.cxx.html#FX_SvD">SetAlternateModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; )</span><br />
+<div class="funccomm"><pre> Set the model describing the alternate hypothesis
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetTestStatistic" href="src/RooStats__HybridCalculatorOriginal.cxx.html#vSvpuD">SetTestStatistic</a>(<span class="keyword">int</span> index)</span><br />
+<div class="funccomm"><pre> set the desired test statistics:
+ index=1 : likelihood ratio: 2 * log( L_sb / L_b )  (DEFAULT)
+ index=2 : number of generated events
+ index=3 : profiled likelihood ratio
+ if the index is different to any of those values, the default is used
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">HybridResult* <a class="funcname" name="RooStats__HybridCalculatorOriginal:Calculate" href="src/RooStats__HybridCalculatorOriginal.cxx.html#GJeri">Calculate</a>(<a href="./TH1.html">TH1</a>&amp; data, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) const</span><br />
+<div class="funccomm"><pre> first compute the test statistics for data and then prepare and run the toy-MC experiments
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">HybridResult* <a class="funcname" name="RooStats__HybridCalculatorOriginal:Calculate%1" href="src/RooStats__HybridCalculatorOriginal.cxx.html#CVXwC">Calculate</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) const</span><br />
+<div class="funccomm"><pre> first compute the test statistics for data and then prepare and run the toy-MC experiments
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">HybridResult* <a class="funcname" name="RooStats__HybridCalculatorOriginal:Calculate%2" href="src/RooStats__HybridCalculatorOriginal.cxx.html#sNBYDD">Calculate</a>(<span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:RunToys" href="src/RooStats__HybridCalculatorOriginal.cxx.html#lbAAS">RunToys</a>(vector&lt;<span class="keyword">double</span>&gt;&amp; bVals, vector&lt;<span class="keyword">double</span>&gt;&amp; sbVals, <span class="keyword">unsigned</span> <span class="keyword">int</span> nToys, <span class="keyword">bool</span> usePriors) const</span><br />
+<div class="funccomm"><pre> do the actual run-MC processing
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:PrintMore" href="src/RooStats__HybridCalculatorOriginal.cxx.html#IK3g.D">PrintMore</a>(<span class="keyword">const</span> <span class="keyword">char</span>* options) const</span><br />
+<div class="funccomm"><pre> <a href="./TNamed.html#TNamed:Print" title="void TNamed::Print(Option_t* option=&quot;&quot;)">Print</a> out some information about the input models
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">HybridResult* <a class="funcname" name="RooStats__HybridCalculatorOriginal:GetHypoTest" href="src/RooStats__HybridCalculatorOriginal.cxx.html#mCH.BE">GetHypoTest</a>() const</span><br />
+<div class="funccomm"><pre> perform the hypothesis test and return result of hypothesis test
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">bool</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:DoCheckInputs" href="src/RooStats__HybridCalculatorOriginal.cxx.html#rwaYIC">DoCheckInputs</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">explicit</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:HybridCalculatorOriginal" href="src/RooStats__HybridCalculatorOriginal.h.html#JTHNR">HybridCalculatorOriginal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0)</span><br />
+<div class="funccomm"><pre> Dummy Constructor with only name
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetCommonPdf" href="src/RooStats__HybridCalculatorOriginal.h.html#pPeoTB">SetCommonPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</span><br />
+<div class="funccomm"><pre> Set a common PDF for both the null and alternate
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fSbModel" title="RooAbsPdf* RooStats::HybridCalculatorOriginal::fSbModel">fSbModel</a> = &amp;pdf; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNullPdf" href="src/RooStats__HybridCalculatorOriginal.h.html#yQKdHD">SetNullPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</span><br />
+<div class="funccomm"><pre> Set the PDF for the null (only B)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fBModel" title="RooAbsPdf* RooStats::HybridCalculatorOriginal::fBModel">fBModel</a> = &amp;pdf; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetAlternatePdf" href="src/RooStats__HybridCalculatorOriginal.h.html#xh8IyD">SetAlternatePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</span><br />
+<div class="funccomm"><pre> Set the PDF for the alternate hypothesis ( i.e. S+B)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fSbModel" title="RooAbsPdf* RooStats::HybridCalculatorOriginal::fSbModel">fSbModel</a> = &amp;pdf;  }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetData" href="src/RooStats__HybridCalculatorOriginal.h.html#II0eED">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</span><br />
+<div class="funccomm"><pre> Set the DataSet
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fData" title="RooAbsData* RooStats::HybridCalculatorOriginal::fData">fData</a> = &amp;data; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNullParameters" href="src/RooStats__HybridCalculatorOriginal.h.html#XJWP8">SetNullParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; )</span><br />
+<div class="funccomm"><pre> set parameter values for the null if using a common PDF
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetAlternateParameters" href="src/RooStats__HybridCalculatorOriginal.h.html#x9HtkE">SetAlternateParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; )</span><br />
+<div class="funccomm"><pre> set parameter values for the alternate if using a common PDF
+</pre></div>
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNuisancePdf" href="src/RooStats__HybridCalculatorOriginal.h.html#YAOs.C">SetNuisancePdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; prior_pdf)</span><br />
+<div class="funccomm"><pre> additional methods specific for HybridCalculator
+ set a  prior pdf for the nuisance parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNuisanceParameters" href="src/RooStats__HybridCalculatorOriginal.h.html#nEOeiE">SetNuisanceParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; params)</span><br />
+<div class="funccomm"><pre> set the nuisance parameters to be marginalized
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fNuisanceParameters" title="const RooArgSet* RooStats::HybridCalculatorOriginal::fNuisanceParameters">fNuisanceParameters</a> = &amp;params; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetNumberOfToys" href="src/RooStats__HybridCalculatorOriginal.h.html#F5x4EB">SetNumberOfToys</a>(<span class="keyword">unsigned</span> <span class="keyword">int</span> ntoys)</span><br />
+<div class="funccomm"><pre> set number of toy MC (Default is 1000)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fNToys" title="unsigned int RooStats::HybridCalculatorOriginal::fNToys">fNToys</a> = ntoys; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">unsigned</span> <span class="keyword">int</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:GetNumberOfToys" href="src/RooStats__HybridCalculatorOriginal.h.html#AlrWEC">GetNumberOfToys</a>() const</span><br />
+<div class="funccomm"><pre> return number of toys used
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fNToys" title="unsigned int RooStats::HybridCalculatorOriginal::fNToys">fNToys</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:UseNuisance" href="src/RooStats__HybridCalculatorOriginal.h.html#m37MkE">UseNuisance</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> control use of the pdf for the nuisance parameter and marginalize them
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fUsePriorPdf" title="bool RooStats::HybridCalculatorOriginal::fUsePriorPdf">fUsePriorPdf</a> = on; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:SetGenerateBinned" href="src/RooStats__HybridCalculatorOriginal.h.html#V.zV5E">SetGenerateBinned</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> control to use bin data generation
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fGenerateBinned" title="bool RooStats::HybridCalculatorOriginal::fGenerateBinned">fGenerateBinned</a> = on; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__HybridCalculatorOriginal:PatchSetExtended" href="src/RooStats__HybridCalculatorOriginal.h.html#CeXkCC">PatchSetExtended</a>(<span class="keyword">bool</span> on = <span class="keyword">true</span>)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__HybridCalculatorOriginal.html#RooStats__HybridCalculatorOriginal:fTmpDoExtended" title="bool RooStats::HybridCalculatorOriginal::fTmpDoExtended">fTmpDoExtended</a> = on; std::<a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"extended patch set to "</span> &lt;&lt; on &lt;&lt; endl; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+
+<em>&raquo; Last changed: root/roostats:$Id: HybridCalculatorOriginal.h 39391 2011-05-26 09:51:59Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

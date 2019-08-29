@@ -1,0 +1,326 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:40 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooStats::NeymanConstruction</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooStats::NeymanConstruction','libRooStats','RooStats/NeymanConstruction.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooStats__NeymanConstruction.h.html">header file</a>
+<a class="descrheadentry" href="src/RooStats__NeymanConstruction.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/inc/RooStats/NeymanConstruction.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/src/NeymanConstruction.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooStats__NeymanConstruction:description">class description</a> 
+<a class="descrheadentry" href="#RooStats__NeymanConstruction:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooStats__NeymanConstruction:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooStats__NeymanConstruction:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOSTATS_Index.html">ROOSTATS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooStats::NeymanConstruction</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooStats__NeymanConstruction:description"></a>class RooStats::NeymanConstruction: public <a href="./RooStats__IntervalCalculator.html">RooStats::IntervalCalculator</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><p>
+NeymanConstruction is a concrete implementation of the NeymanConstruction interface that, as the name suggests,
+performs a NeymanConstruction.  
+It produces a RooStats::PointSetInterval, which is a concrete implementation of the ConfInterval interface.  
+</p>
+<p>
+The Neyman Construction is not a uniquely defined statistical technique, it requires that one specify an ordering rule 
+or ordering principle, which is usually incoded by choosing a specific test statistic and limits of integration 
+(corresponding to upper/lower/central limits).  As a result, this class must be configured with the corresponding
+information before it can produce an interval.  Common configurations, such as the Feldman-Cousins approach, can be 
+enforced by other light weight classes.
+</p>
+<p>
+The Neyman Construction considers every point in the parameter space independently, no assumptions are 
+made that the interval is connected or of a particular shape.  As a result, the PointSetInterval class is used to 
+represent the result.  The user indicate which points in the parameter space to perform the constrution by providing
+a PointSetInterval instance with the desired points.
+</p>
+<p>
+This class is fairly light weight, because the choice of parameter points to be considered is factorized and so is the 
+creation of the sampling distribution of the test statistic (which is done by a concrete class implementing the DistributionCreator interface).  As a result, this class basically just drives the construction by:
+<ul>
+<li> using a DistributionCreator to create the SamplingDistribution of a user-defined test statistic for each parameter point of interest,</li>
+<li>defining the acceptance region in the data by finding the thresholds on the test statistic such that the integral of the sampling distribution is of the appropriate size and consistent with the limits of integration (eg. upper/lower/central limits), </li>
+<li> and finally updating the PointSetInterval based on whether the value of the test statistic evaluated on the data are in the acceptance region.</li>
+</p>
+<!-- TDocHtmlDirective end --><pre>
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooStats__NeymanConstruction:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:_NeymanConstruction">~NeymanConstruction</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:AdditionalNToysFactor">AdditionalNToysFactor</a>(<span class="keyword">double</span> fact)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:Class">Class</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:ConfidenceLevel">ConfidenceLevel</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:CreateConfBelt">CreateConfBelt</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ConfidenceBelt.html">ConfidenceBelt</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:GetConfidenceBelt">GetConfidenceBelt</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__PointSetInterval.html">PointSetInterval</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:GetInterval">GetInterval</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__TestStatSampler.html">TestStatSampler</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:GetTestStatSampler">GetTestStatSampler</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__NeymanConstruction.html">NeymanConstruction</a></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:NeymanConstruction%1">NeymanConstruction</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__NeymanConstruction.html">NeymanConstruction</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__NeymanConstruction.html">NeymanConstruction</a></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:NeymanConstruction">NeymanConstruction</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__IntervalCalculator.html">IntervalCalculator</a>&amp;</td><td class="funcname"><a class="funcname" href="./RooStats__IntervalCalculator.html#RooStats__IntervalCalculator:operator_"><span class="baseclass">RooStats::IntervalCalculator::</span>operator=</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__IntervalCalculator.html">IntervalCalculator</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SaveBeltToFile">SaveBeltToFile</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetConfidenceLevel">SetConfidenceLevel</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cl)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetData">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetLeftSideTailFraction">SetLeftSideTailFraction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> leftSideFraction = 0.)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetModel">SetModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetNuisanceParameters">SetNuisanceParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetParameterPointsToTest">SetParameterPointsToTest</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; pointsToTest)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetParameters">SetParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetPdf">SetPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetTestSize">SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:SetTestStatSampler">SetTestStatSampler</a>(<a href="./RooStats.html">RooStats</a>::<a href="./RooStats__TestStatSampler.html">TestStatSampler</a>&amp; sampler)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:Size">Size</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__NeymanConstruction:UseAdaptiveSampling">UseAdaptiveSampling</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooStats__NeymanConstruction:Data_Members"></a>Data Members</h2>
+<div class="access" id="datapriv"><b>private:</b>
+<table class="data" id="tabdatapriv" cellspacing="0">
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__NeymanConstruction:fAdaptiveSampling"></a>fAdaptiveSampling</td><td class="datadesc">controls use of adaptive sampling algorithm</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__NeymanConstruction:fAdditionalNToysFactor"></a>fAdditionalNToysFactor</td><td class="datadesc">give user ability to ask for more toys</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ConfidenceBelt.html">ConfidenceBelt</a>*</td><td class="dataname"><a name="RooStats__NeymanConstruction:fConfBelt"></a>fConfBelt</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__NeymanConstruction:fCreateBelt"></a>fCreateBelt</td><td class="datadesc">controls use if ConfidenceBelt should be saved to a TFile</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsData.html">RooAbsData</a>&amp;</td><td class="dataname"><a name="RooStats__NeymanConstruction:fData"></a>fData</td><td class="datadesc">data set </td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__NeymanConstruction:fLeftSideFraction"></a>fLeftSideFraction</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp;</td><td class="dataname"><a name="RooStats__NeymanConstruction:fModel"></a>fModel</td><td></td></tr>
+<tr class="data"><td class="datatype"><a href="./RooAbsData.html">RooAbsData</a>*</td><td class="dataname"><a name="RooStats__NeymanConstruction:fPointsToTest"></a>fPointsToTest</td><td></td></tr>
+<tr class="data"><td class="datatype"><span class="keyword">bool</span></td><td class="dataname"><a name="RooStats__NeymanConstruction:fSaveBeltToFile"></a>fSaveBeltToFile</td><td class="datadesc">controls use if ConfidenceBelt should be saved to a TFile</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a name="RooStats__NeymanConstruction:fSize"></a>fSize</td><td class="datadesc">size of the test (eg. specified rate of Type I error)</td></tr>
+<tr class="data"><td class="datatype"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__TestStatSampler.html">TestStatSampler</a>*</td><td class="dataname"><a name="RooStats__NeymanConstruction:fTestStatSampler"></a>fTestStatSampler</td><td></td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooStats__NeymanConstruction:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooStats__NeymanConstruction_Inh" id="MapRooStats__NeymanConstruction_Inh">
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="6,9,268,31"/>
+</map>
+<map name="MapRooStats__NeymanConstruction_InhMem" id="MapRooStats__NeymanConstruction_InhMem">
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="59,60,312,109"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="224,120,312,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="125,120,213,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="27,120,115,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="16,16,323,264"/>
+</map>
+<map name="MapRooStats__NeymanConstruction_Lib" id="MapRooStats__NeymanConstruction_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="371,367,463,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooStats__NeymanConstruction_Inh" class="tabsel" href="inh/RooStats__NeymanConstruction_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooStats__NeymanConstruction_Inh.png');">Inheritance</a>
+<a id="imgRooStats__NeymanConstruction_InhMem" class="tab" href="inhmem/RooStats__NeymanConstruction_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooStats__NeymanConstruction_InhMem.png');">Inherited Members</a>
+<a id="imgRooStats__NeymanConstruction_Incl" class="tab" href="incl/RooStats__NeymanConstruction_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooStats__NeymanConstruction_Incl.png');">Includes</a>
+<a id="imgRooStats__NeymanConstruction_Lib" class="tab" href="lib/RooStats__NeymanConstruction_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooStats__NeymanConstruction_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooStats__NeymanConstruction_Inh" src="inh/RooStats__NeymanConstruction_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__NeymanConstruction:NeymanConstruction" href="src/RooStats__NeymanConstruction.cxx.html#D3TwdC">NeymanConstruction</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</span><br />
+<div class="funccomm"><pre> default constructor
+   fWS = new <a href="./RooWorkspace.html">RooWorkspace</a>();
+   fOwnsWorkspace = <a href="./ListOfTypes.html#bool">true</a>;
+   fDataName = <span class="string">""</span>;
+   fPdfName = <span class="string">""</span>;
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__NeymanConstruction:_NeymanConstruction" href="src/RooStats__NeymanConstruction.cxx.html#TM6ltD">~NeymanConstruction</a>()</span><br />
+<div class="funccomm"><pre> default constructor
+  if(fOwnsWorkspace &amp;&amp; fWS) delete fWS;
+  if(<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fConfBelt" title="RooStats::ConfidenceBelt* RooStats::NeymanConstruction::fConfBelt">fConfBelt</a>) delete <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fConfBelt" title="RooStats::ConfidenceBelt* RooStats::NeymanConstruction::fConfBelt">fConfBelt</a>;
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">PointSetInterval* <a class="funcname" name="RooStats__NeymanConstruction:GetInterval" href="src/RooStats__NeymanConstruction.cxx.html#bkvEQ">GetInterval</a>() const</span><br />
+<div class="funccomm"><pre> Main interface to get a <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ConfInterval.html">ConfInterval</a>.
+ It constructs a <a href="./RooStats.html">RooStats</a>::SetInterval.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__NeymanConstruction:NeymanConstruction" href="src/RooStats__NeymanConstruction.h.html#rImBmE">NeymanConstruction</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</span><br />
+<div class="funccomm"><pre>     <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:NeymanConstruction" title="RooStats::NeymanConstruction RooStats::NeymanConstruction::NeymanConstruction(RooAbsData&amp; data,RooStats::ModelConfig&amp; model) or overloads">NeymanConstruction</a>();
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetTestStatSampler" href="src/RooStats__NeymanConstruction.h.html#EIEURC">SetTestStatSampler</a>(<a href="./RooStats.html">RooStats</a>::<a href="./RooStats__TestStatSampler.html">TestStatSampler</a>&amp; sampler)</span><br />
+<div class="funccomm"><pre> in addition to interface we also need:
+ Set the TestStatSampler (eg. ToyMC or FFT, includes choice of TestStatistic)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fTestStatSampler" title="RooStats::TestStatSampler* RooStats::NeymanConstruction::fTestStatSampler">fTestStatSampler</a> = &amp;sampler;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetLeftSideTailFraction" href="src/RooStats__NeymanConstruction.h.html#Y6bHuE">SetLeftSideTailFraction</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> leftSideFraction = 0.)</span><br />
+<div class="funccomm"><pre> fLeftSideTailFraction*<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fSize" title="Double_t RooStats::NeymanConstruction::fSize">fSize</a> defines lower edge of acceptance region.
+ Unified limits use 0, central limits use 0.5,
+ for upper/lower limits it is 0/1 depends on sign of test statistic w.r.t. parameter
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fLeftSideFraction" title="Double_t RooStats::NeymanConstruction::fLeftSideFraction">fLeftSideFraction</a> = leftSideFraction;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetParameterPointsToTest" href="src/RooStats__NeymanConstruction.h.html#Ch76XB">SetParameterPointsToTest</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; pointsToTest)</span><br />
+<div class="funccomm"><pre> User-defined set of points to test
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="RooStats__NeymanConstruction:Size" href="src/RooStats__NeymanConstruction.h.html#a.1mK">Size</a>() const</span><br />
+<div class="funccomm"><pre> This class can make regularly spaced scans based on range stored in RooRealVars.
+ Choose number of steps for a rastor scan (common for each dimension)
+      <a href="./ListOfTypes.html#void">void</a> SetNumSteps(<a href="./ListOfTypes.html#Int_t">Int_t</a>);
+ This class can make regularly spaced scans based on range stored in RooRealVars.
+ Choose number of steps for a rastor scan (specific for each dimension)
+      <a href="./ListOfTypes.html#void">void</a> SetNumSteps(map&lt;<a href="./RooAbsArg.html">RooAbsArg</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>&gt;)
+ Get the size of the test (eg. rate of Type I error)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fSize" title="Double_t RooStats::NeymanConstruction::fSize">fSize</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="RooStats__NeymanConstruction:ConfidenceLevel" href="src/RooStats__NeymanConstruction.h.html#QtJC7D">ConfidenceLevel</a>() const</span><br />
+<div class="funccomm"><pre> Get the Confidence level for the test
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> 1.-<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fSize" title="Double_t RooStats::NeymanConstruction::fSize">fSize</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetModel" href="src/RooStats__NeymanConstruction.h.html#Y15aYE">SetModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</span><br />
+<div class="funccomm"><pre> Set ModelConfig
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fModel" title="RooStats::ModelConfig&amp; RooStats::NeymanConstruction::fModel">fModel</a> = model;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetData" href="src/RooStats__NeymanConstruction.h.html#FRYEkB">SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</span><br />
+<div class="funccomm"><pre> Set the DataSet
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fData" title="RooAbsData&amp; RooStats::NeymanConstruction::fData">fData</a> = data; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetPdf" href="src/RooStats__NeymanConstruction.h.html#cLF_dE">SetPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; )</span><br />
+<div class="funccomm"><pre> Set the Pdf, add to the the workspace if not already there
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetParameters" href="src/RooStats__NeymanConstruction.h.html#RIJkI">SetParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; )</span><br />
+<div class="funccomm"><pre> specify the parameters of interest in the interval
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetNuisanceParameters" href="src/RooStats__NeymanConstruction.h.html#m1UPX">SetNuisanceParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; )</span><br />
+<div class="funccomm"><pre> specify the nuisance parameters (eg. the rest of the parameters)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetTestSize" href="src/RooStats__NeymanConstruction.h.html#ULiUOD">SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size)</span><br />
+<div class="funccomm"><pre> set the size of the test (rate of Type I error) ( Eg. 0.05 for a 95% Confidence Interval)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fSize" title="Double_t RooStats::NeymanConstruction::fSize">fSize</a> = size;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SetConfidenceLevel" href="src/RooStats__NeymanConstruction.h.html#vMnfdC">SetConfidenceLevel</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cl)</span><br />
+<div class="funccomm"><pre> set the confidence level for the interval (eg. 0.95 for a 95% Confidence Interval)
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fSize" title="Double_t RooStats::NeymanConstruction::fSize">fSize</a> = 1.-cl;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">ConfidenceBelt* <a class="funcname" name="RooStats__NeymanConstruction:GetConfidenceBelt" href="src/RooStats__NeymanConstruction.h.html#bF1urB">GetConfidenceBelt</a>()</span><br />
+<div class="funccomm"><pre> get confidence belt
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<span class="keyword">return</span> <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fConfBelt" title="RooStats::ConfidenceBelt* RooStats::NeymanConstruction::fConfBelt">fConfBelt</a>;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:UseAdaptiveSampling" href="src/RooStats__NeymanConstruction.h.html#zHdhVC">UseAdaptiveSampling</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> adaptive sampling algorithm to speed up interval caculation
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fAdaptiveSampling" title="bool RooStats::NeymanConstruction::fAdaptiveSampling">fAdaptiveSampling</a>=flag;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:AdditionalNToysFactor" href="src/RooStats__NeymanConstruction.h.html#eZOkVE">AdditionalNToysFactor</a>(<span class="keyword">double</span> fact)</span><br />
+<div class="funccomm"><pre> give user ability to ask for more toys
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fAdditionalNToysFactor" title="Double_t RooStats::NeymanConstruction::fAdditionalNToysFactor">fAdditionalNToysFactor</a> = fact;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:SaveBeltToFile" href="src/RooStats__NeymanConstruction.h.html#FtQFBD">SaveBeltToFile</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> save teh confidence belt to a file
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__NeymanConstruction:CreateConfBelt" href="src/RooStats__NeymanConstruction.h.html#cG5gAB">CreateConfBelt</a>(<span class="keyword">bool</span> flag = <span class="keyword">true</span>)</span><br />
+<div class="funccomm"><pre> should create confidence belt
+</pre></div>
+
+<div class="code"><code class="inlinecode">{<a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fCreateBelt" title="bool RooStats::NeymanConstruction::fCreateBelt">fCreateBelt</a> = flag;}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname">TestStatSampler* <a class="funcname" name="RooStats__NeymanConstruction:GetTestStatSampler" href="src/RooStats__NeymanConstruction.h.html#ddbqtB">GetTestStatSampler</a>(<span class="keyword">void</span>)</span><br />
+<div class="funccomm"><pre> Returns instance of TestStatSampler. Use to change properties of
+ TestStatSampler, e.g. <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:GetTestStatSampler" title="RooStats::TestStatSampler* RooStats::NeymanConstruction::GetTestStatSampler()">GetTestStatSampler</a>.<a href="./RooStats__TestStatSampler.html#RooStats__TestStatSampler:SetTestSize" title="void RooStats::TestStatSampler::SetTestSize(Double_t size)">SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size);
+</pre></div>
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./RooStats__NeymanConstruction.html#RooStats__NeymanConstruction:fTestStatSampler" title="RooStats::TestStatSampler* RooStats::NeymanConstruction::fTestStatSampler">fTestStatSampler</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Kyle+Cranmer"> Kyle Cranmer</a>, <a href="http://consult.cern.ch/xwho/people?Lorenzo+Moneta"> Lorenzo Moneta</a>, <a href="http://consult.cern.ch/xwho/people?Gregory+Schott"> Gregory Schott</a>, <a href="http://consult.cern.ch/xwho/people?Wouter+Verkerke"> Wouter Verkerke</a> </em><em>&raquo; Copyright   (C) 1995-2008, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/roostats:$Id: NeymanConstruction.h 39391 2011-05-26 09:51:59Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

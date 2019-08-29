@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:09:43 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>RooStats::ProfileLikelihoodCalculator</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class RooStats::ProfileLikelihoodCalculator','libRooStats','RooStats/ProfileLikelihoodCalculator.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/RooStats__ProfileLikelihoodCalculator.h.html">header file</a>
+<a class="descrheadentry" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/inc/RooStats/ProfileLikelihoodCalculator.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/roofit/roostats/src/ProfileLikelihoodCalculator.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#RooStats__ProfileLikelihoodCalculator:description">class description</a> 
+<a class="descrheadentry" href="#RooStats__ProfileLikelihoodCalculator:Function_Members">function members</a>
+<a class="descrheadentry" href="#RooStats__ProfileLikelihoodCalculator:Data_Members">data members</a>
+<a class="descrheadentry" href="#RooStats__ProfileLikelihoodCalculator:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_Index.html">ROOFIT</a>
+ &#187; <a class="locationlevel" href="./ROOFIT_ROOSTATS_Index.html">ROOSTATS</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">RooStats::ProfileLikelihoodCalculator</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="RooStats__ProfileLikelihoodCalculator:description"></a>class RooStats::ProfileLikelihoodCalculator: public <a href="./RooStats__CombinedCalculator.html">RooStats::CombinedCalculator</a></h1>
+<div class="classdescr">
+<pre>
+
+</pre><!-- TDocHtmlDirective start --><p>
+ProfileLikelihoodCalculator is a concrete implementation of CombinedCalculator 
+(the interface class for a tools which can produce both RooStats HypoTestResults and ConfIntervals).  
+The tool uses the profile likelihood ratio as a test statistic, and assumes that Wilks' theorem is valid.  
+Wilks' theorem states that -2* log (profile likelihood ratio) is asymptotically distributed as a chi^2 distribution 
+with N-dof, where N is the number of degrees of freedom.  Thus, p-values can be constructed and the profile likelihood ratio
+can be used to construct a LikelihoodInterval.
+(In the future, this class could be extended to use toy Monte Carlo to calibrate the distribution of the test statistic).
+</p>
+<p> Usage: It uses the interface of the CombinedCalculator, so that it can be configured by specifying:
+<ul>
+ <li>a model common model (eg. a family of specific models which includes both the null and alternate),</li>
+ <li>a data set, </li>
+ <li>a set of parameters of interest. The nuisance parameters will be all other parameters of the model </li>
+ <li>a set of parameters of which specify the null hypothesis (including values and const/non-const status)  </li>
+</ul>
+The interface allows one to pass the model, data, and parameters either directly or via a ModelConfig class.
+The alternate hypothesis leaves the parameter free to take any value other than those specified by the null hypotesis. There is therefore no need to 
+specify the alternate parameters. 
+</p>
+<p>
+After configuring the calculator, one only needs to ask GetHypoTest() (which will return a HypoTestResult pointer) or GetInterval() (which will return an ConfInterval pointer).
+</p>
+<p>
+The concrete implementations of this interface should deal with the details of how the nuisance parameters are
+dealt with (eg. integration vs. profiling) and which test-statistic is used (perhaps this should be added to the interface).
+</p>
+<p>
+The motivation for this interface is that we hope to be able to specify the problem in a common way for several concrete calculators.
+</p>
+<!-- TDocHtmlDirective end --><pre>
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="RooStats__ProfileLikelihoodCalculator:Function_Members"></a>Function Members (Methods)</h2>
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:_ProfileLikelihoodCalculator">~ProfileLikelihoodCalculator</a>()</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:ConfidenceLevel"><span class="baseclass">RooStats::CombinedCalculator::</span>ConfidenceLevel</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__HypoTestResult.html">HypoTestResult</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:GetHypoTest">GetHypoTest</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__LikelihoodInterval.html">LikelihoodInterval</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:GetInterval">GetInterval</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a>&amp;</td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:operator_">operator=</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator">ProfileLikelihoodCalculator</a>()</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator%3">ProfileLikelihoodCalculator</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator%2">ProfileLikelihoodCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model, <a href="./ListOfTypes.html#Double_t">Double_t</a> size = 0.05)</td></tr>
+<tr class="func"><td class="funcret"><a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ProfileLikelihoodCalculator.html">ProfileLikelihoodCalculator</a></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator%1">ProfileLikelihoodCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; paramsOfInterest, <a href="./ListOfTypes.html#Double_t">Double_t</a> size = 0.05, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nullParams = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetAlternateModel"><span class="baseclass">RooStats::CombinedCalculator::</span>SetAlternateModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetAlternateParameters"><span class="baseclass">RooStats::CombinedCalculator::</span>SetAlternateParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__HypoTestCalculator.html#RooStats__HypoTestCalculator:SetCommonModel"><span class="baseclass">RooStats::HypoTestCalculator::</span>SetCommonModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetConfidenceLevel"><span class="baseclass">RooStats::CombinedCalculator::</span>SetConfidenceLevel</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> cl)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetData"><span class="baseclass">RooStats::CombinedCalculator::</span>SetData</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetModel"><span class="baseclass">RooStats::CombinedCalculator::</span>SetModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetNuisanceParameters"><span class="baseclass">RooStats::CombinedCalculator::</span>SetNuisanceParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetNullModel"><span class="baseclass">RooStats::CombinedCalculator::</span>SetNullModel</a>(<span class="keyword">const</span> <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetNullParameters"><span class="baseclass">RooStats::CombinedCalculator::</span>SetNullParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetParameters"><span class="baseclass">RooStats::CombinedCalculator::</span>SetParameters</a>(<span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; set)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetPdf"><span class="baseclass">RooStats::CombinedCalculator::</span>SetPdf</a>(<a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:SetTestSize"><span class="baseclass">RooStats::CombinedCalculator::</span>SetTestSize</a>(<a href="./ListOfTypes.html#Double_t">Double_t</a> size)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:Size"><span class="baseclass">RooStats::CombinedCalculator::</span>Size</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:DoGlobalFit">DoGlobalFit</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#RooStats__ProfileLikelihoodCalculator:DoReset">DoReset</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsData.html">RooAbsData</a>*</td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:GetData"><span class="baseclass">RooStats::CombinedCalculator::</span>GetData</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="funcname"><a class="funcname" href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:GetPdf"><span class="baseclass">RooStats::CombinedCalculator::</span>GetPdf</a>() <span class="keyword">const</span></td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="RooStats__ProfileLikelihoodCalculator:Data_Members"></a>Data Members</h2>
+<div class="access" id="datapubl"><b>public:</b>
+<table class="data" id="tabdatapubl" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./RooFitResult.html">RooFitResult</a>*</td><td class="dataname"><a name="RooStats__ProfileLikelihoodCalculator:fFitResult"></a>fFitResult</td><td class="datadesc">internal  result of gloabl fit </td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="datainh"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fAlternateParams"><span class="baseclass">RooStats::CombinedCalculator::</span>fAlternateParams</a></td><td class="datadesc">RooArgSet specifying alternate parameters for hypothesis test       // Is it used ????</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooAbsData.html">RooAbsData</a>*</td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fData"><span class="baseclass">RooStats::CombinedCalculator::</span>fData</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fNuisParams"><span class="baseclass">RooStats::CombinedCalculator::</span>fNuisParams</a></td><td class="datadesc">RooArgSet specifying  nuisance parameters for interval</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fNullParams"><span class="baseclass">RooStats::CombinedCalculator::</span>fNullParams</a></td><td class="datadesc">RooArgSet specifying null parameters for hypothesis test</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooArgSet.html">RooArgSet</a></td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fPOI"><span class="baseclass">RooStats::CombinedCalculator::</span>fPOI</a></td><td class="datadesc">RooArgSet specifying  parameters of interest for interval</td></tr>
+<tr class="datainh"><td class="datatype"><a href="./RooAbsPdf.html">RooAbsPdf</a>*</td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fPdf"><span class="baseclass">RooStats::CombinedCalculator::</span>fPdf</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"><a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="dataname"><a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:fSize"><span class="baseclass">RooStats::CombinedCalculator::</span>fSize</a></td><td class="datadesc">size of the test (eg. specified rate of Type I error)</td></tr>
+
+</table></div>
+</div>
+<h2><a id="RooStats__ProfileLikelihoodCalculator:Class_Charts"></a>Class Charts</h2>
+<map name="MapRooStats__ProfileLikelihoodCalculator_Inh" id="MapRooStats__ProfileLikelihoodCalculator_Inh">
+<area shape="rect" href="./RooStats__CombinedCalculator.html" title="RooStats::CombinedCalculator" alt="" coords="226,11,407,25"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="8,2,174,16"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" title="RooStats::HypoTestCalculator" alt="" coords="4,19,178,33"/>
+</map>
+<map name="MapRooStats__ProfileLikelihoodCalculator_InhMem" id="MapRooStats__ProfileLikelihoodCalculator_InhMem">
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="541,60,629,124"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="443,60,531,139"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="344,60,432,139"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="573,135,597,169"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="541,180,629,343"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="443,151,531,343"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" alt="" coords="344,151,432,343"/>
+<area shape="rect" href="./RooStats__CombinedCalculator.html" title="RooStats::CombinedCalculator" alt="" coords="333,16,640,353"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="59,60,312,109"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="224,120,312,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="125,120,213,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" alt="" coords="27,120,115,253"/>
+<area shape="rect" href="./RooStats__IntervalCalculator.html" title="RooStats::IntervalCalculator" alt="" coords="16,16,323,264"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="59,319,312,368"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="224,379,312,483"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="125,379,213,512"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" alt="" coords="27,379,115,512"/>
+<area shape="rect" href="./RooStats__HypoTestCalculator.html" title="RooStats::HypoTestCalculator" alt="" coords="16,275,323,523"/>
+</map>
+<map name="MapRooStats__ProfileLikelihoodCalculator_Lib" id="MapRooStats__ProfileLikelihoodCalculator_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="371,367,463,401"/>
+</map>
+<div class="tabs">
+<a id="imgRooStats__ProfileLikelihoodCalculator_Inh" class="tabsel" href="inh/RooStats__ProfileLikelihoodCalculator_Inh.png" onclick="javascript:return SetImg('Charts','inh/RooStats__ProfileLikelihoodCalculator_Inh.png');">Inheritance</a>
+<a id="imgRooStats__ProfileLikelihoodCalculator_InhMem" class="tab" href="inhmem/RooStats__ProfileLikelihoodCalculator_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/RooStats__ProfileLikelihoodCalculator_InhMem.png');">Inherited Members</a>
+<a id="imgRooStats__ProfileLikelihoodCalculator_Incl" class="tab" href="incl/RooStats__ProfileLikelihoodCalculator_Incl.png" onclick="javascript:return SetImg('Charts','incl/RooStats__ProfileLikelihoodCalculator_Incl.png');">Includes</a>
+<a id="imgRooStats__ProfileLikelihoodCalculator_Lib" class="tab" href="lib/RooStats__ProfileLikelihoodCalculator_Lib.png" onclick="javascript:return SetImg('Charts','lib/RooStats__ProfileLikelihoodCalculator_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapRooStats__ProfileLikelihoodCalculator_Inh" src="inh/RooStats__ProfileLikelihoodCalculator_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#nHiVUD">ProfileLikelihoodCalculator</a>()</span><br />
+<div class="funccomm"><pre> default constructor
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator%1" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#R7QJhE">ProfileLikelihoodCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooAbsPdf.html">RooAbsPdf</a>&amp; pdf, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>&amp; paramsOfInterest, <a href="./ListOfTypes.html#Double_t">Double_t</a> size = 0.05, <span class="keyword">const</span> <a href="./RooArgSet.html">RooArgSet</a>* nullParams = 0)</span><br />
+<div class="funccomm"><pre> constructor from pdf and parameters
+ the pdf must contain eventually the nuisance parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator%2" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#mJmzcE">ProfileLikelihoodCalculator</a>(<a href="./RooAbsData.html">RooAbsData</a>&amp; data, <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ModelConfig.html">ModelConfig</a>&amp; model, <a href="./ListOfTypes.html#Double_t">Double_t</a> size = 0.05)</span><br />
+<div class="funccomm"><pre> construct from a ModelConfig. Assume data model.<a href="./RooStats__CombinedCalculator.html#RooStats__CombinedCalculator:GetPdf" title="RooAbsPdf* RooStats::CombinedCalculator::GetPdf()">GetPdf</a>() will provide full description of model including
+ constraint term on the nuisances parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:_ProfileLikelihoodCalculator" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#ZHYEIB">~ProfileLikelihoodCalculator</a>()</span><br />
+<div class="funccomm"><pre> destructor
+ cannot delete prod pdf because it will delete all the composing pdf's
+    if (fOwnPdf) delete fPdf;
+    fPdf = 0;
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:DoReset" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#RTqcQE">DoReset</a>() const</span><br />
+<div class="funccomm"><pre> reset and clear fit result
+ to be called when a new model or data are set in the calculator
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:DoGlobalFit" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#uvW3jC">DoGlobalFit</a>() const</span><br />
+<div class="funccomm"><pre> perform a global fit of the likelihood letting with all parameter of interest and
+ nuisance parameters
+ keep the list of fitted parameters
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">LikelihoodInterval* <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:GetInterval" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#Vx8j2E">GetInterval</a>() const</span><br />
+<div class="funccomm"><pre> Main interface to get a <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__ConfInterval.html">ConfInterval</a>.
+ It constructs a profile likelihood ratio and uses that to construct a <a href="./RooStats.html">RooStats</a>::<a href="./RooStats__LikelihoodInterval.html">LikelihoodInterval</a>.
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname">HypoTestResult* <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:GetHypoTest" href="src/RooStats__ProfileLikelihoodCalculator.cxx.html#KR.8nD">GetHypoTest</a>() const</span><br />
+<div class="funccomm"><pre> Main interface to get a HypoTestResult.
+ It does two fits:
+ the first lets the null parameters <a href="./ListOfTypes.html#float">float</a>, so it's a maximum likelihood estimate
+ the second is to the null (fixing null parameters to their specified values): eg. a conditional maximum likelihood
+ the ratio of the likelihood at the conditional MLE to the MLE is the profile likelihood ratio.
+ Wilks' theorem is used to get p-values
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"> <a class="funcname" name="RooStats__ProfileLikelihoodCalculator:ProfileLikelihoodCalculator" href="src/RooStats__ProfileLikelihoodCalculator.h.html#ygVuz">ProfileLikelihoodCalculator</a>()</span><br />
+<div class="funccomm"><pre> default constructor (needed for I/O)
+</pre></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Kyle+Cranmer"> Kyle Cranmer</a>, <a href="http://consult.cern.ch/xwho/people?Lorenzo+Moneta"> Lorenzo Moneta</a>, <a href="http://consult.cern.ch/xwho/people?Gregory+Schott"> Gregory Schott</a>, <a href="http://consult.cern.ch/xwho/people?Wouter+Verkerke"> Wouter Verkerke</a> </em><em>&raquo; Copyright   (C) 1995-2008, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/roostats:$Id: ProfileLikelihoodCalculator.h 39391 2011-05-26 09:51:59Z moneta $ </em><em>&raquo; Last generated: 2011-11-03 20:09</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>

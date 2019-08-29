@@ -1,0 +1,721 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--                                             -->
+<!-- Author: ROOT team (rootdev@pcroot.cern.ch)  -->
+<!--                                             -->
+<!--   Date: Thu Nov  3 20:22:46 2011            -->
+<!--                                             -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>TSQLStatement</title>
+<meta name="rating" content="General" />
+<meta name="objecttype" content="Manual" />
+<meta name="keywords" content="software development, oo, object oriented, unix, x11, windows, c++, html, rene brun, fons rademakers, cern" />
+<meta name="description" content="ROOT - An Object Oriented Framework For Large Scale Data Analysis." />
+<link rel="stylesheet" type="text/css" href="ROOT.css" id="ROOTstyle" />
+<script type="text/javascript" src="ROOT.js"></script>
+</head>
+<body  onload="javascript:SetValuesFromCookie();"><div id="body_content">
+<div id="root_header"><img src="http://root.cern.ch/drupal/sites/default/files/rootdrawing-logo.png" alt="ROOT logo"/></div>
+<a name="TopOfPage"></a>
+<script type="text/javascript">WriteFollowPageBox('class TSQLStatement','libNet','TSQLStatement.h');</script>
+<div id="toplinks">
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Quick Links:</span>
+<a class="descrheadentry" href="http://root.cern.ch">ROOT Homepage</a>
+<a class="descrheadentry" href="./ClassIndex.html">Class Index</a>
+<a class="descrheadentry" href="./ClassHierarchy.html">Class Hierarchy</a></div>
+<script type="text/javascript">
+function onSearch() {
+var s='http://www.google.com/search?q=%s+site%3A%u+-site%3A%u%2Fsrc%2F+-site%3A%u%2Fexamples%2F';
+var ref=String(document.location.href).replace(/https?:\/\//,'').replace(/\/[^\/]*$/,'').replace(/\//g,'%2F');
+window.location.href=s.replace(/%u/ig,ref).replace(/%s/ig,escape(document.searchform.t.value));
+return false;}
+</script>
+<form id="searchform" name="searchform" onsubmit="return onSearch()" action="javascript:onSearch();" method="post">
+<input name="t" size="30" value="Search documentation..." onfocus="if (document.searchform.t.value=='Search documentation...') document.searchform.t.value='';"></input>
+<a id="searchlink"  title="www.google.com"  href="javascript:onSearch();" onclick="return onSearch()">Search</a></form>
+</div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Source:</span>
+<a class="descrheadentry" href="src/TSQLStatement.h.html">header file</a>
+<a class="descrheadentry" href="src/TSQLStatement.cxx.html">source file</a>
+<a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/net/net/inc/TSQLStatement.h?view=log">viewVC header</a> <a class="descrheadentry" href="http://root.cern.ch/viewcvs/trunk/net/net/src/TSQLStatement.cxx?view=log">viewVC source</a> 
+</div></div>
+<div class="descrhead"><div class="descrheadcontent">
+<span class="descrtitle">Sections:</span>
+<a class="descrheadentry" href="#TSQLStatement:description">class description</a> 
+<a class="descrheadentry" href="#TSQLStatement:Function_Members">function members</a>
+<a class="descrheadentry" href="#TSQLStatement:Data_Members">data members</a>
+<a class="descrheadentry" href="#TSQLStatement:Class_Charts">class charts</a>
+</div></div>
+</div>
+<div class="location">
+<a class="locationlevel" href="index.html">ROOT</a>
+ &#187; <a class="locationlevel" href="./NET_Index.html">NET</a>
+ &#187; <a class="locationlevel" href="./NET_NET_Index.html">NET</a>
+ &#187; <a class="locationlevel" href="#TopOfPage">TSQLStatement</a>
+</div>
+<div class="dropshadow"><div class="withshadow"><h1><a name="TSQLStatement:description"></a>class TSQLStatement: public <a href="./TObject.html">TObject</a></h1>
+<div class="classdescr">
+<pre>
+
+ <a href="./TSQLStatement.html">TSQLStatement</a>
+
+ Abstract base class defining SQL statements, which can be submitted
+ in bulk to DB server.
+
+ This is alternative to <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Query" title="TSQLResult* TSQLServer::Query(const char* sql)">Query</a>() method, which allows only pure
+ text queries and pure text result in <a href="./TSQLResult.html">TSQLResult</a> classes.
+ <a href="./TSQLStatement.html">TSQLStatement</a> is designed to support following features:
+   - usage of basic data type (like <a href="./ListOfTypes.html#int">int</a> or <a href="./ListOfTypes.html#double">double</a>) as parameters
+     in SQL statements
+   - bulk operation when inserting/updating/selecting data in data base
+   - uasge of basic data types when accessing result set of executed query
+
+
+ 1. Creation of statement
+
+ To create instance of <a href="./TSQLStatement.html">TSQLStatement</a> class, <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Statement" title="TSQLStatement* TSQLServer::Statement(const char* ,Int_t =100)">Statement</a>() method
+ should be used. Depending of the driver, used for connection to ODBC,
+ appropriate object instance will be created. For the moment there are
+ three different implementation of <a href="./TSQLStatement.html">TSQLStatement</a> class: for MySQL,
+ Oracle and ODBC. Hopefully, support of ODBC will allows usage of
+ statements for most existing RDBMS.
+
+   // first connect to data base
+   <a href="./TSQLServer.html">TSQLServer</a>* serv = <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Connect" title="TSQLServer* TSQLServer::Connect(const char* db,const char* uid,const char* pw)">Connect</a>(<span class="string">"mysql://hostname.domain:3306/test"</span>,
+                                          <span class="string">"user"</span>, <span class="string">"pass"</span>);
+   // check if connection is ok
+   if ((serv!=0) &amp;&amp; serv-&gt;IsConnected()) {
+       // create statement instance
+       <a href="./TSQLStatement.html">TSQLStatement</a>* stmt = serv-&gt;Statement(<span class="string">"CREATE TABLE TESTTABLE (ID1 INT, ID2 INT, FFIELD VARCHAR(255), FVALUE VARCHAR(255))"</span>;
+       // process statement
+       stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:Process" title="Bool_t TSQLStatement::Process()">Process</a>();
+       // destroy object
+       delete stmt;
+   }
+   delete serv;
+
+
+ 2. Insert data to data base
+
+ There is a special syntax of SQL queries, which allow to use values,
+ provided as parameters. For instance, insert one row in TESTTABLE, created
+ with previous example, one can simply execute query like:
+
+    serv-&gt;Query(<span class="string">"INSERT INTO TESTTABLE VALUES (1, 2, \"name1\", \"value1\""</span>);
+
+ But when many (100-1000) rows should be inserted, each call of
+ <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Query" title="TSQLResult* TSQLServer::Query(const char* sql)">Query</a>() method will cause communication loop with database
+ server. As a result, insertion of data will takes too much time.
+
+ <a href="./TSQLStatement.html">TSQLStatement</a> provides a mechanism to insert many rows at once. First of all,
+ appropriate statement should be created:
+
+    <a href="./TSQLStatement.html">TSQLStatement</a>* stmt = serv-&gt;Statement(<span class="string">"INSERT INTO TESTTABLE (ID1, ID2, FFIELD, FVALUE) VALUES (?, ?, ?, ?)"</span>, 100);
+
+ Here question marks <span class="string">"?"</span> indicates where statement parameters can be inserted.
+ To specify values of parameters, <a href="./TSQLStatement.html#TSQLStatement:SetInt" title="Bool_t TSQLStatement::SetInt(Int_t ,Int_t )">SetInt</a>(), <a href="./TSQLStatement.html#TSQLStatement:SetDouble" title="Bool_t TSQLStatement::SetDouble(Int_t ,Double_t )">SetDouble</a>(), <a href="./TSQLStatement.html#TSQLStatement:SetString" title="Bool_t TSQLStatement::SetString(Int_t ,const char* ,Int_t =256)">SetString</a>() and other
+ methods of <a href="./TSQLStatement.html">TSQLStatement</a> class should be used. Before parameters values
+ can be specified, <a href="./TSQLStatement.html#TSQLStatement:NextIteration" title="Bool_t TSQLStatement::NextIteration()">NextIteration</a>() method of statement class should be called.
+ For each new row first, <a href="./TSQLStatement.html#TSQLStatement:NextIteration" title="Bool_t TSQLStatement::NextIteration()">NextIteration</a>() called, that parameters values are
+ specified. There is one limitation - once parameter set as integer via
+ <a href="./TSQLStatement.html#TSQLStatement:SetInt" title="Bool_t TSQLStatement::SetInt(Int_t ,Int_t )">SetInt</a>(), for all other rows should be specified as integer. At the end,
+ <a href="./TSQLStatement.html">TSQLStatement</a>::<a href="./TSQLStatement.html#TSQLStatement:Process" title="Bool_t TSQLStatement::Process()">Process</a>() should be called. Here a small example:
+
+    // first, create statement
+    <a href="./TSQLStatement.html">TSQLStatement</a>* stmt = serv-&gt;Statement(<span class="string">"INSERT INTO TESTTABLE (ID1, ID2, FFIELD, FVALUE) VALUES (?, ?, ?, ?)"</span>, 100);
+
+    for (<a href="./ListOfTypes.html#int">int</a> n=0;n&lt;357;n++)
+       if (stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:NextIteration" title="Bool_t TSQLStatement::NextIteration()">NextIteration</a>()) {
+          stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:SetInt" title="Bool_t TSQLStatement::SetInt(Int_t ,Int_t )">SetInt</a>(0, 123);
+          stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:SetUInt" title="Bool_t TSQLStatement::SetUInt(Int_t ,UInt_t )">SetUInt</a>(1, n+10);
+          stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:SetString" title="Bool_t TSQLStatement::SetString(Int_t ,const char* ,Int_t =256)">SetString</a>(2, Form(<span class="string">"name %d"</span>,n), 200);
+          stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:SetString" title="Bool_t TSQLStatement::SetString(Int_t ,const char* ,Int_t =256)">SetString</a>(3, Form(<span class="string">"value %d"</span>, n+10), 200);
+      }
+
+     stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:Process" title="Bool_t TSQLStatement::Process()">Process</a>();
+     delete stmt;
+
+ Second argument in <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Statement" title="TSQLStatement* TSQLServer::Statement(const char* ,Int_t =100)">Statement</a>() method specifies depth of
+ of buffers, used to keep parameter values (100 in example). It is not
+ a limitation of rows number, which can be inserted with the statement.
+ When buffers are filled, they will be submitted to database and can be
+ reused again. This happens transparent to the user in <a href="./TSQLStatement.html#TSQLStatement:NextIteration" title="Bool_t TSQLStatement::NextIteration()">NextIteration</a>()
+ method.
+
+ Oracle and some ODBC drivers support buffering of parameter values and,
+ as a result, bulk insert (update) operation. MySQL (native driver and
+ MyODBC 3)  does not support such mode of operation, therefore adding
+ new rows will result in communication loop to database.
+
+ One should also mention difference between Oracle and ODBC SQL syntax for
+ parameters. ODBC (and MySQL) uses question marks to specify position,
+ where parameters should be inserted (as shown in the example). Oracle uses
+ :1, :2 and so on marks for specify position of parameter 0, 1, and so on.
+ Therefore, similar to example query will look like:
+
+    <a href="./TSQLStatement.html">TSQLStatement</a>* stmt = serv-&gt;Statement(<span class="string">"INSERT INTO TESTTABLE (ID1, ID2, FFIELD, FVALUE) VALUES (:1, :2, :3, :4)"</span>, 100);
+
+ There is a possibility to set parameter value to NULL with <a href="./TSQLStatement.html#TSQLStatement:SetNull" title="Bool_t TSQLStatement::SetNull(Int_t )">SetNull</a>() method.
+ If this method called for first iteration, before one should call other Set...
+ to identify actual parameter type, which will be used for parameter later.
+
+
+ 3. Getting data from database
+
+ To request data from data base, SELECT statement should be used.
+ After SELECT statement is created, it must be processed
+ (with <a href="./TSQLStatement.html">TSQLStatement</a>::<a href="./TSQLStatement.html#TSQLStatement:Process" title="Bool_t TSQLStatement::Process()">Process</a>()) method and result of statement
+ should be stored in internal buffers with <a href="./TSQLStatement.html">TSQLStatement</a>::<a href="./TSQLStatement.html#TSQLStatement:StoreResult" title="Bool_t TSQLStatement::StoreResult()">StoreResult</a>()
+ method. Information about selected fields (columns)
+ can be obtained with <a href="./TSQLStatement.html#TSQLStatement:GetNumFields" title="Int_t TSQLStatement::GetNumFields()">GetNumFields</a>() and <a href="./TSQLStatement.html#TSQLStatement:GetFieldName" title="const char* TSQLStatement::GetFieldName(Int_t )">GetFieldName</a>() methods.
+ To recieve data for next result row, <a href="./TSQLStatement.html#TSQLStatement:NextResultRow" title="Bool_t TSQLStatement::NextResultRow()">NextResultRow</a>() method should be called.
+ Value from each column can be taken with the <a href="./TSQLStatement.html#TSQLStatement:GetInt" title="Int_t TSQLStatement::GetInt(Int_t )">GetInt</a>(), <a href="./TSQLStatement.html#TSQLStatement:GetDouble" title="Double_t TSQLStatement::GetDouble(Int_t )">GetDouble</a>(),
+ <a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>() and other methods.
+
+ There are no strict limitation which method should be used
+ to get column values. <a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>() can be used as generic method,
+ which should always return correct result, but also convertion between most
+ basic data types are supported. For instance, if column contains integer
+ values, <a href="./TSQLStatement.html#TSQLStatement:GetInt" title="Int_t TSQLStatement::GetInt(Int_t )">GetInt</a>(), <a href="./TSQLStatement.html#TSQLStatement:GetLong64" title="Long64_t TSQLStatement::GetLong64(Int_t )">GetLong64</a>(), <a href="./TSQLStatement.html#TSQLStatement:GetDouble" title="Double_t TSQLStatement::GetDouble(Int_t )">GetDouble</a>() and <a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>() methods can be used.
+ If column has <a href="./ListOfTypes.html#float">float</a> point format, <a href="./TSQLStatement.html#TSQLStatement:GetDouble" title="Double_t TSQLStatement::GetDouble(Int_t )">GetDouble</a>() and <a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>() methods can
+ be used without loss of precision while <a href="./TSQLStatement.html#TSQLStatement:GetInt" title="Int_t TSQLStatement::GetInt(Int_t )">GetInt</a>() or <a href="./TSQLStatement.html#TSQLStatement:GetLong64" title="Long64_t TSQLStatement::GetLong64(Int_t )">GetLong64</a>() will return
+ integer part of the value. One also can test, if value is NULL with <a href="./TSQLStatement.html#TSQLStatement:IsNull" title="Bool_t TSQLStatement::IsNull(Int_t )">IsNull</a>()
+ method.
+
+ Buffer length, specified for statement in <a href="./TSQLServer.html">TSQLServer</a>::<a href="./TSQLServer.html#TSQLServer:Statement" title="TSQLStatement* TSQLServer::Statement(const char* ,Int_t =100)">Statement</a>() call,
+ will also be used to allocate buffers for column values. Usage of these
+ buffers is transparent for users and does not limit number of rows,
+ which can be accessed with  one statement. Example of select query:
+
+    stmt = serv-&gt;Statement(<span class="string">"SELECT * FROM TESTTABLE"</span>, 100);
+    // process statement
+    if (stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:Process" title="Bool_t TSQLStatement::Process()">Process</a>()) {
+       // store result of statement in buffer
+       stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:StoreResult" title="Bool_t TSQLStatement::StoreResult()">StoreResult</a>();
+
+       // display info about selected field
+       <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"NumFields = "</span> &lt;&lt; stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetNumFields" title="Int_t TSQLStatement::GetNumFields()">GetNumFields</a>() &lt;&lt; endl;
+       for (<a href="./ListOfTypes.html#int">int</a> n=0;n&lt;stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetNumFields" title="Int_t TSQLStatement::GetNumFields()">GetNumFields</a>();n++)
+          <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; <span class="string">"Field "</span> &lt;&lt; n &lt;&lt; <span class="string">"  = "</span> &lt;&lt; stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetFieldName" title="const char* TSQLStatement::GetFieldName(Int_t )">GetFieldName</a>(n) &lt;&lt; endl;
+
+       // extract rows one after another
+       while (stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:NextResultRow" title="Bool_t TSQLStatement::NextResultRow()">NextResultRow</a>()) {
+          <a href="./ListOfTypes.html#Double_t">Double_t</a> id1 = stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetDouble" title="Double_t TSQLStatement::GetDouble(Int_t )">GetDouble</a>(0);
+          <a href="./ListOfTypes.html#UInt_t">UInt_t</a> id2 = stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetUInt" title="UInt_t TSQLStatement::GetUInt(Int_t )">GetUInt</a>(1);
+          const <a href="./ListOfTypes.html#char">char</a>* name1 = stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>(2);
+          const <a href="./ListOfTypes.html#char">char</a>* name2 = stmt-&gt;<a href="./TSQLStatement.html#TSQLStatement:GetString" title="const char* TSQLStatement::GetString(Int_t )">GetString</a>(3);
+          <a href="./ListOfTypes.html#ostream">cout</a> &lt;&lt; id1 &lt;&lt; <span class="string">" - "</span> &lt;&lt; id2 &lt;&lt; <span class="string">"  "</span> &lt;&lt; name1 &lt;&lt; <span class="string">"  "</span> &lt;&lt; name2 &lt;&lt; endl;
+       }
+    }
+
+ 4. Working with date/time parameters
+
+ Current implementation supports date, time, date&amp;time and timestamp
+ data (all time intervals not supported yet). To set or get date/time values,
+ following methods should be used:
+   <a href="./TSQLStatement.html#TSQLStatement:SetTime" title="Bool_t TSQLStatement::SetTime(Int_t ,Int_t ,Int_t ,Int_t ) or overloads">SetTime</a>()/<a href="./TSQLStatement.html#TSQLStatement:GetTime" title="Bool_t TSQLStatement::GetTime(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; )">GetTime</a>() - only time (hour:min:sec),
+   <a href="./TSQLStatement.html#TSQLStatement:SetDate" title="Bool_t TSQLStatement::SetDate(Int_t ,Int_t ,Int_t ,Int_t ) or overloads">SetDate</a>()/<a href="./TSQLStatement.html#TSQLStatement:GetDate" title="Bool_t TSQLStatement::GetDate(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; )">GetDate</a>() - only date (year-month-day),
+   <a href="./TSQLStatement.html#TSQLStatement:SetDatime" title="Bool_t TSQLStatement::SetDatime(Int_t ,Int_t ,Int_t ,Int_t ,Int_t ,Int_t ,Int_t ) or overloads">SetDatime</a>()/<a href="./TSQLStatement.html#TSQLStatement:GetDatime" title="Bool_t TSQLStatement::GetDatime(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ) or overloads">GetDatime</a>() - date and time
+   <a href="./TSQLStatement.html#TSQLStatement:SetTimestamp" title="Bool_t TSQLStatement::SetTimestamp(Int_t ,Int_t ,Int_t ,Int_t ,Int_t ,Int_t ,Int_t ,Int_t =0) or overloads">SetTimestamp</a>()/<a href="./TSQLStatement.html#TSQLStatement:GetTimestamp" title="Bool_t TSQLStatement::GetTimestamp(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ) or overloads">GetTimestamp</a>() - timestamp with seconds fraction
+ For some of these methods <a href="./TDatime.html">TDatime</a> type can be used as parameter / return value.
+ Be aware, that <a href="./TDatime.html">TDatime</a> supports only dates after 1995-01-01.
+ There are also methods to get separately year, month, day, hour, minutes and seconds.
+
+ Different SQL databases has different treatement of date/time types.
+ For instance, MySQL has all correspondent types (TIME, DATE, DATETIME and TIMESTAMP),
+ Oracle native driver supports only DATE (which is actually date and time) and TIMESTAMP
+ ODBC interface provides access for time, date and timestamps.
+ Therefore, one should use correct methods to access such data.
+ For instance, in MySQL SQL type 'DATE' is only date (one should use <a href="./TSQLStatement.html#TSQLStatement:GetDate" title="Bool_t TSQLStatement::GetDate(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; )">GetDate</a>() to
+ access such data), while in Oracle it is date and time. Therefore,
+ to get complete data from 'DATE' column in Oracle, one should use <a href="./TSQLStatement.html#TSQLStatement:GetDatime" title="Bool_t TSQLStatement::GetDatime(Int_t ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ,Int_t&amp; ) or overloads">GetDatime</a>() method.
+
+ The only difference of timestamp from date/time, that it has fractional
+ seconds part. Be aware, that fractional part can has different meaning
+ (actual value) in different SQL plugins.
+
+ 5. Binary data
+
+ Most of modern data bases support just binary data, which is
+ typically has SQL type name 'BLOB'. To access data in such
+ columns, <a href="./TSQLStatement.html#TSQLStatement:GetBinary" title="Bool_t TSQLStatement::GetBinary(Int_t ,void*&amp; ,Long_t&amp; )">GetBinary</a>()/<a href="./TSQLStatement.html#TSQLStatement:SetBinary" title="Bool_t TSQLStatement::SetBinary(Int_t ,void* ,Long_t ,Long_t =0x1000)">SetBinary</a>() methods should be used.
+ Current implementation supposed, that complete content of the
+ column must be retrieved at once. Therefore very big data of
+ gigabytes size may cause a problem.
+
+
+</pre></div>
+</div></div>
+
+<div id="functions">
+<h2><a id="TSQLStatement:Function_Members"></a>Function Members (Methods)</h2>
+&nbsp;<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;This is an abstract class, constructors will not be documented.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Look at the <a href="TSQLStatement.h">header</a> to check for available constructors.</b><br />
+<div class="access" id="funcpubl"><b>public:</b>
+<table class="func" id="tabfuncpubl" cellspacing="0">
+<tr class="func"><td class="funcret"> virtual</td><td class="funcname"><a class="funcname" href="#TSQLStatement:_TSQLStatement">~TSQLStatement</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AbstractMethod"><span class="baseclass">TObject::</span>AbstractMethod</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:AppendPad"><span class="baseclass">TObject::</span>AppendPad</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Browse"><span class="baseclass">TObject::</span>Browse</a>(<a href="./TBrowser.html">TBrowser</a>* b)</td></tr>
+<tr class="func"><td class="funcret">static <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TSQLStatement:Class">Class</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ClassName"><span class="baseclass">TObject::</span>ClassName</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clear"><span class="baseclass">TObject::</span>Clear</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Clone"><span class="baseclass">TObject::</span>Clone</a>(<span class="keyword">const</span> <span class="keyword">char</span>* newname = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Compare"><span class="baseclass">TObject::</span>Compare</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Copy"><span class="baseclass">TObject::</span>Copy</a>(<a href="./TObject.html">TObject</a>&amp; object) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Delete"><span class="baseclass">TObject::</span>Delete</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DistancetoPrimitive"><span class="baseclass">TObject::</span>DistancetoPrimitive</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Draw"><span class="baseclass">TObject::</span>Draw</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClass"><span class="baseclass">TObject::</span>DrawClass</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DrawClone"><span class="baseclass">TObject::</span>DrawClone</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Dump"><span class="baseclass">TObject::</span>Dump</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:EnableErrorOutput">EnableErrorOutput</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> on = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Error"><span class="baseclass">TObject::</span>Error</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute"><span class="baseclass">TObject::</span>Execute</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Execute%1"><span class="baseclass">TObject::</span>Execute</a>(<a href="./TMethod.html">TMethod</a>* method, <a href="./TObjArray.html">TObjArray</a>* params, <a href="./ListOfTypes.html#Int_t">Int_t</a>* error = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ExecuteEvent"><span class="baseclass">TObject::</span>ExecuteEvent</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> event, <a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Fatal"><span class="baseclass">TObject::</span>Fatal</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./TObject.html">TObject</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:FindObject%1"><span class="baseclass">TObject::</span>FindObject</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetBinary">GetBinary</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">void</span>*&amp;, <a href="./ListOfTypes.html#Long_t">Long_t</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetBufferLength">GetBufferLength</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetDate">GetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDatime.html">TDatime</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetDatime%1">GetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetDatime">GetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetDay">GetDay</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Double_t">Double_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetDouble">GetDouble</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDrawOption"><span class="baseclass">TObject::</span>GetDrawOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetDtorOnly"><span class="baseclass">TObject::</span>GetDtorOnly</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetErrorCode">GetErrorCode</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetErrorMsg">GetErrorMsg</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetFieldName">GetFieldName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetHour">GetHour</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetIconName"><span class="baseclass">TObject::</span>GetIconName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetInt">GetInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Long_t">Long_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetLong">GetLong</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Long64_t">Long64_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetLong64">GetLong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetMinute">GetMinute</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetMonth">GetMonth</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetName"><span class="baseclass">TObject::</span>GetName</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetNumAffectedRows">GetNumAffectedRows</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetNumFields">GetNumFields</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetNumParameters">GetNumParameters</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectInfo"><span class="baseclass">TObject::</span>GetObjectInfo</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> px, <a href="./ListOfTypes.html#Int_t">Int_t</a> py) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetObjectStat"><span class="baseclass">TObject::</span>GetObjectStat</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Option_t">Option_t</a>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetOption"><span class="baseclass">TObject::</span>GetOption</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetSecond">GetSecond</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetString">GetString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetTime">GetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TDatime.html">TDatime</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetTimestamp%1">GetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetTimestamp">GetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;, <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">const</span> <span class="keyword">char</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetTitle"><span class="baseclass">TObject::</span>GetTitle</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetUInt">GetUInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetULong64">GetULong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#UInt_t">UInt_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:GetUniqueID"><span class="baseclass">TObject::</span>GetUniqueID</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:GetYear">GetYear</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:HandleTimer"><span class="baseclass">TObject::</span>HandleTimer</a>(<a href="./TTimer.html">TTimer</a>* timer)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#ULong_t">ULong_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Hash"><span class="baseclass">TObject::</span>Hash</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Info"><span class="baseclass">TObject::</span>Info</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <span class="keyword">char</span>* classname) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InheritsFrom%1"><span class="baseclass">TObject::</span>InheritsFrom</a>(<span class="keyword">const</span> <a href="./TClass.html">TClass</a>* cl) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Inspect"><span class="baseclass">TObject::</span>Inspect</a>() <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:InvertBit"><span class="baseclass">TObject::</span>InvertBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./TClass.html">TClass</a>*</td><td class="funcname"><a class="funcname" href="#TSQLStatement:IsA">IsA</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsEqual"><span class="baseclass">TObject::</span>IsEqual</a>(<span class="keyword">const</span> <a href="./TObject.html">TObject</a>* obj) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:IsError">IsError</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsFolder"><span class="baseclass">TObject::</span>IsFolder</a>() <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:IsNull">IsNull</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsOnHeap"><span class="baseclass">TObject::</span>IsOnHeap</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsSortable"><span class="baseclass">TObject::</span>IsSortable</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:IsZombie"><span class="baseclass">TObject::</span>IsZombie</a>() <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ls"><span class="baseclass">TObject::</span>ls</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MayNotUse"><span class="baseclass">TObject::</span>MayNotUse</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:NextIteration">NextIteration</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:NextResultRow">NextResultRow</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Notify"><span class="baseclass">TObject::</span>Notify</a>()</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Obsolete"><span class="baseclass">TObject::</span>Obsolete</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* asOfVers, <span class="keyword">const</span> <span class="keyword">char</span>* removedFromVers) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete%1"><span class="baseclass">TObject::</span>operator delete</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_delete[]%1"><span class="baseclass">TObject::</span>operator delete[]</a>(<span class="keyword">void</span>* ptr, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new%1"><span class="baseclass">TObject::</span>operator new</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span>*</td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:operator_new[]%1"><span class="baseclass">TObject::</span>operator new[]</a>(<a href="./ListOfTypes.html#size_t">size_t</a> sz, <span class="keyword">void</span>* vp)</td></tr>
+<tr class="func"><td class="funcret"><a href="./TSQLStatement.html">TSQLStatement</a>&amp;</td><td class="funcname"><a class="funcname" href="#TSQLStatement:operator_">operator=</a>(<span class="keyword">const</span> <a href="./TSQLStatement.html">TSQLStatement</a>&amp;)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Paint"><span class="baseclass">TObject::</span>Paint</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Pop"><span class="baseclass">TObject::</span>Pop</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Print"><span class="baseclass">TObject::</span>Print</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span></td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:Process">Process</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Read"><span class="baseclass">TObject::</span>Read</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:RecursiveRemove"><span class="baseclass">TObject::</span>RecursiveRemove</a>(<a href="./TObject.html">TObject</a>* obj)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:ResetBit"><span class="baseclass">TObject::</span>ResetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SaveAs"><span class="baseclass">TObject::</span>SaveAs</a>(<span class="keyword">const</span> <span class="keyword">char</span>* filename = <span class="string">""</span>, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>) <span class="keyword">const</span><span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SavePrimitive"><span class="baseclass">TObject::</span>SavePrimitive</a>(<a href="./ListOfTypes.html#ostream">ostream</a>&amp; out, <a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetBinary">SetBinary</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">void</span>*, <a href="./ListOfTypes.html#Long_t">Long_t</a>, <a href="./ListOfTypes.html#Long_t">Long_t</a> = 0x1000)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit%1"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f)</td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetBit"><span class="baseclass">TObject::</span>SetBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f, <a href="./ListOfTypes.html#Bool_t">Bool_t</a> set)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetDate%1">SetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetDate">SetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetDatime%1">SetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetDatime">SetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetDouble">SetDouble</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Double_t">Double_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDrawOption"><span class="baseclass">TObject::</span>SetDrawOption</a>(<a href="./ListOfTypes.html#Option_t">Option_t</a>* option = <span class="string">""</span>)<span class="funcprop"><abbr title="has a popup menu entry">MENU</abbr> </span></td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetDtorOnly"><span class="baseclass">TObject::</span>SetDtorOnly</a>(<span class="keyword">void</span>* obj)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetInt">SetInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetLong">SetLong</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Long_t">Long_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetLong64">SetLong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Long64_t">Long64_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetMaxFieldSize">SetMaxFieldSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Long_t">Long_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetNull">SetNull</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">static <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetObjectStat"><span class="baseclass">TObject::</span>SetObjectStat</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> stat)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetString">SetString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <span class="keyword">char</span>*, <a href="./ListOfTypes.html#Int_t">Int_t</a> = 256)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetTime%1">SetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetTime">SetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetTimeFormating">SetTimeFormating</a>(<span class="keyword">const</span> <span class="keyword">char</span>*)</td></tr>
+<tr class="func"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetTimestamp%1">SetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp;)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetTimestamp">SetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#Int_t">Int_t</a> = 0)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetUInt">SetUInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#UInt_t">UInt_t</a>)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetULong64">SetULong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a>, <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a>)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SetUniqueID"><span class="baseclass">TObject::</span>SetUniqueID</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> uid)</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:ShowMembers">ShowMembers</a>(<a href="./TMemberInspector.html">TMemberInspector</a>&amp; insp)</td></tr>
+<tr class="func"><td class="funcret">virtual <a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="#TSQLStatement:StoreResult">StoreResult</a>()</td></tr>
+<tr class="func"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:Streamer">Streamer</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:StreamerNVirtual">StreamerNVirtual</a>(<a href="./TBuffer.html">TBuffer</a>&amp; b)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:SysError"><span class="baseclass">TObject::</span>SysError</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBit"><span class="baseclass">TObject::</span>TestBit</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:TestBits"><span class="baseclass">TObject::</span>TestBits</a>(<a href="./ListOfTypes.html#UInt_t">UInt_t</a> f) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:UseCurrentStyle"><span class="baseclass">TObject::</span>UseCurrentStyle</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Warning"><span class="baseclass">TObject::</span>Warning</a>(<span class="keyword">const</span> <span class="keyword">char</span>* method, <span class="keyword">const</span> <span class="keyword">char</span>* msgfmt) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0)</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:Write%1"><span class="baseclass">TObject::</span>Write</a>(<span class="keyword">const</span> <span class="keyword">char</span>* name = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> option = 0, <a href="./ListOfTypes.html#Int_t">Int_t</a> bufsize = 0) <span class="keyword">const</span></td></tr>
+
+</table></div>
+<div class="access" id="funcprot"><b>protected:</b>
+<table class="func" id="tabfuncprot" cellspacing="0">
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:ClearError">ClearError</a>()</td></tr>
+<tr class="funcinh"><td class="funcret">virtual <span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:DoError"><span class="baseclass">TObject::</span>DoError</a>(<span class="keyword">int</span> level, <span class="keyword">const</span> <span class="keyword">char</span>* location, <span class="keyword">const</span> <span class="keyword">char</span>* fmt, va_list va) <span class="keyword">const</span></td></tr>
+<tr class="funcinh"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="./TObject.html#TObject:MakeZombie"><span class="baseclass">TObject::</span>MakeZombie</a>()</td></tr>
+<tr class="func"><td class="funcret"><span class="keyword">void</span></td><td class="funcname"><a class="funcname" href="#TSQLStatement:SetError">SetError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <span class="keyword">const</span> <span class="keyword">char</span>* msg, <span class="keyword">const</span> <span class="keyword">char</span>* method = 0)</td></tr>
+
+</table></div>
+</div>
+
+<div id="datamembers">
+<h2><a name="TSQLStatement:Data_Members"></a>Data Members</h2>
+<div class="access" id="enumpubl"><b>public:</b>
+<table class="data" id="tabenumpubl" cellspacing="0">
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span>EStatusBits { </td><td class="dataname"><a href="./TObject.html#TObject:kCanDelete">kCanDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kMustCleanup">kMustCleanup</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kObjInCanvas">kObjInCanvas</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kIsReferenced">kIsReferenced</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kHasUUID">kHasUUID</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kCannotPick">kCannotPick</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNoContextMenu">kNoContextMenu</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kInvalidObject">kInvalidObject</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+<tr class="datainh"><td class="datatype">enum <span class="baseclass">TObject::</span><i>[unnamed]</i> { </td><td class="dataname"><a href="./TObject.html#TObject:kIsOnHeap">kIsOnHeap</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kNotDeleted">kNotDeleted</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kZombie">kZombie</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kBitMask">kBitMask</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kSingleKey">kSingleKey</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kOverwrite">kOverwrite</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype"></td><td class="dataname"><a href="./TObject.html#TObject:kWriteDelete">kWriteDelete</a></td><td></td></tr>
+<tr class="datainh"><td class="datatype">};</td><td></td><td></td></tr>
+
+</table></div>
+<div class="access" id="dataprot"><b>protected:</b>
+<table class="data" id="tabdataprot" cellspacing="0">
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Int_t">Int_t</a></td><td class="dataname"><a name="TSQLStatement:fErrorCode"></a>fErrorCode</td><td class="datadesc">error code of last operation</td></tr>
+<tr class="data"><td class="datatype"><a href="./TString.html">TString</a></td><td class="dataname"><a name="TSQLStatement:fErrorMsg"></a>fErrorMsg</td><td class="datadesc">error message of last operation</td></tr>
+<tr class="data"><td class="datatype"><a href="./ListOfTypes.html#Bool_t">Bool_t</a></td><td class="dataname"><a name="TSQLStatement:fErrorOut"></a>fErrorOut</td><td class="datadesc">enable error output </td></tr>
+
+</table></div>
+</div>
+<h2><a id="TSQLStatement:Class_Charts"></a>Class Charts</h2>
+<map name="MapTSQLStatement_Inh" id="MapTSQLStatement_Inh">
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="38,10,120,35"/>
+<area shape="rect" href="./TMySQLStatement.html" title="TMySQLStatement" alt="" coords="563,10,762,35"/>
+</map>
+<map name="MapTSQLStatement_InhMem" id="MapTSQLStatement_InhMem">
+<area shape="rect" href="./TObject.html" alt="" coords="224,60,312,183"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,60,213,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,60,115,197"/>
+<area shape="rect" href="./TObject.html" alt="" coords="256,193,280,228"/>
+<area shape="rect" href="./TObject.html" alt="" coords="224,239,312,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="125,224,213,665"/>
+<area shape="rect" href="./TObject.html" alt="" coords="27,224,115,665"/>
+<area shape="rect" href="./TObject.html" title="TObject" alt="" coords="16,16,323,676"/>
+</map>
+<map name="MapTSQLStatement_Lib" id="MapTSQLStatement_Lib">
+<area shape="rect" href="LibraryDependencies.html" title="All Libraries" alt="" coords="431,121,559,169"/>
+</map>
+<div class="tabs">
+<a id="imgTSQLStatement_Inh" class="tabsel" href="inh/TSQLStatement_Inh.png" onclick="javascript:return SetImg('Charts','inh/TSQLStatement_Inh.png');">Inheritance</a>
+<a id="imgTSQLStatement_InhMem" class="tab" href="inhmem/TSQLStatement_InhMem.png" onclick="javascript:return SetImg('Charts','inhmem/TSQLStatement_InhMem.png');">Inherited Members</a>
+<a id="imgTSQLStatement_Incl" class="tab" href="incl/TSQLStatement_Incl.png" onclick="javascript:return SetImg('Charts','incl/TSQLStatement_Incl.png');">Includes</a>
+<a id="imgTSQLStatement_Lib" class="tab" href="lib/TSQLStatement_Lib.png" onclick="javascript:return SetImg('Charts','lib/TSQLStatement_Lib.png');">Libraries</a><br/>
+</div><div class="classcharts"><div class="classchartswidth"></div>
+<img id="Charts" alt="Class Charts" class="classcharts" usemap="#MapTSQLStatement_Inh" src="inh/TSQLStatement_Inh.png"/></div>
+<h2>Function documentation</h2>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetErrorCode" href="src/TSQLStatement.cxx.html#lBND.B">GetErrorCode</a>() const</span><br />
+<div class="funccomm"><pre> returns error code of last operation
+ if res==0, no error
+ Each specific implementation of <a href="./TSQLStatement.html">TSQLStatement</a> provides its own error coding
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span>* <a class="funcname" name="TSQLStatement:GetErrorMsg" href="src/TSQLStatement.cxx.html#lkX8vD">GetErrorMsg</a>() const</span><br />
+<div class="funccomm"><pre>  returns error message of last operation
+ if no errors, return 0
+ Each specific implementation of <a href="./TSQLStatement.html">TSQLStatement</a> provides its own error messages
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSQLStatement:ClearError" href="src/TSQLStatement.cxx.html#KCsr7">ClearError</a>()</span><br />
+<div class="funccomm"><pre> reset error fields
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSQLStatement:SetError" href="src/TSQLStatement.cxx.html#tWsWpC">SetError</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> code, <span class="keyword">const</span> <span class="keyword">char</span>* msg, <span class="keyword">const</span> <span class="keyword">char</span>* method = 0)</span><br />
+<div class="funccomm"><pre> set new values for error fields
+ if method specified, displays error message
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetDate%1" href="src/TSQLStatement.cxx.html#MIJNlB">SetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp; )</span><br />
+<div class="funccomm"><pre> set only date value for specified parameter from <a href="./TDatime.html">TDatime</a> object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetTime%1" href="src/TSQLStatement.cxx.html#h5X_uB">SetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp; )</span><br />
+<div class="funccomm"><pre> set only time value for specified parameter from <a href="./TDatime.html">TDatime</a> object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetDatime%1" href="src/TSQLStatement.cxx.html#oCTp4B">SetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp; )</span><br />
+<div class="funccomm"><pre> set date &amp; time value for specified parameter from <a href="./TDatime.html">TDatime</a> object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetTimestamp%1" href="src/TSQLStatement.cxx.html#NcMj3D">SetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <a href="./TDatime.html">TDatime</a>&amp; )</span><br />
+<div class="funccomm"><pre> set timestamp value for specified parameter from <a href="./TDatime.html">TDatime</a> object
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDatime.html">TDatime</a> <a class="funcname" name="TSQLStatement:GetDatime%1" href="src/TSQLStatement.cxx.html#SrdzeB">GetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return value of parameter in form of <a href="./TDatime.html">TDatime</a>
+ Be aware, that <a href="./TDatime.html">TDatime</a> does not allow dates before 1995-01-01
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetYear" href="src/TSQLStatement.cxx.html#aw.IdC">GetYear</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return year value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetMonth" href="src/TSQLStatement.cxx.html#X4hbHE">GetMonth</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return month value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetDay" href="src/TSQLStatement.cxx.html#AQAmuE">GetDay</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return day value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetHour" href="src/TSQLStatement.cxx.html#I618WC">GetHour</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return hours value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetMinute" href="src/TSQLStatement.cxx.html#BplHTE">GetMinute</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return minutes value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetSecond" href="src/TSQLStatement.cxx.html#FgPBm">GetSecond</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return seconds value for parameter (if applicable)
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./TDatime.html">TDatime</a> <a class="funcname" name="TSQLStatement:GetTimestamp%1" href="src/TSQLStatement.cxx.html#lj5D8">GetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+<div class="funccomm"><pre> return value of parameter in form of <a href="./TDatime.html">TDatime</a>
+ Be aware, that <a href="./TDatime.html">TDatime</a> does not allow dates before 1995-01-01
+</pre></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">virtual</span> <a class="funcname" name="TSQLStatement:_TSQLStatement" href="src/TSQLStatement.h.html#RJ7ZpC">~TSQLStatement</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetBufferLength" href="src/TSQLStatement.h.html#k.RDjE">GetBufferLength</a>() const</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetNumParameters" href="src/TSQLStatement.h.html#VNiezD">GetNumParameters</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:NextIteration" href="src/TSQLStatement.h.html#OPjIsD">NextIteration</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetNull" href="src/TSQLStatement.h.html#SJL61B">SetNull</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetInt" href="src/TSQLStatement.h.html#d.vV5">SetInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetUInt" href="src/TSQLStatement.h.html#kHOdBE">SetUInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#UInt_t">UInt_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetLong" href="src/TSQLStatement.h.html#Tq3ryE">SetLong</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Long_t">Long_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetLong64" href="src/TSQLStatement.h.html#M0O5hB">SetLong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Long64_t">Long64_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetULong64" href="src/TSQLStatement.h.html#OXH_SE">SetULong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetDouble" href="src/TSQLStatement.h.html#Vxk2mD">SetDouble</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Double_t">Double_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetString" href="src/TSQLStatement.h.html#fB2BWD">SetString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">const</span> <span class="keyword">char</span>* , <a href="./ListOfTypes.html#Int_t">Int_t</a>  = 256)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetDate" href="src/TSQLStatement.h.html#dovPiD">SetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetTime" href="src/TSQLStatement.h.html#lqqUd">SetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetDatime" href="src/TSQLStatement.h.html#dQ6k0D">SetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetTimestamp" href="src/TSQLStatement.h.html#oSrBz">SetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a>  = 0)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSQLStatement:SetTimeFormating" href="src/TSQLStatement.h.html#HZyQ3E">SetTimeFormating</a>(<span class="keyword">const</span> <span class="keyword">char</span>* )</span><br />
+
+<div class="code"><code class="inlinecode">{}</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetBinary" href="src/TSQLStatement.h.html#uShqgE">SetBinary</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">void</span>* , <a href="./ListOfTypes.html#Long_t">Long_t</a> , <a href="./ListOfTypes.html#Long_t">Long_t</a>  = 0x1000)</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:Process" href="src/TSQLStatement.h.html#q1Spt">Process</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetNumAffectedRows" href="src/TSQLStatement.h.html#YQqVcD">GetNumAffectedRows</a>()</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:StoreResult" href="src/TSQLStatement.h.html#hs9joE">StoreResult</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetNumFields" href="src/TSQLStatement.h.html#lqy7yD">GetNumFields</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TSQLStatement:GetFieldName" href="src/TSQLStatement.h.html#Wyp6hD">GetFieldName</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:SetMaxFieldSize" href="src/TSQLStatement.h.html#zUPNQB">SetMaxFieldSize</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Long_t">Long_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:NextResultRow" href="src/TSQLStatement.h.html#JSnawB">NextResultRow</a>()</span><br />
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:IsNull" href="src/TSQLStatement.h.html#VDUH9">IsNull</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kTRUE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Int_t">Int_t</a> <a class="funcname" name="TSQLStatement:GetInt" href="src/TSQLStatement.h.html#VwkWJC">GetInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#UInt_t">UInt_t</a> <a class="funcname" name="TSQLStatement:GetUInt" href="src/TSQLStatement.h.html#sKZVjC">GetUInt</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long_t">Long_t</a> <a class="funcname" name="TSQLStatement:GetLong" href="src/TSQLStatement.h.html#cGK44D">GetLong</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Long64_t">Long64_t</a> <a class="funcname" name="TSQLStatement:GetLong64" href="src/TSQLStatement.h.html#K7yif">GetLong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#ULong64_t">ULong64_t</a> <a class="funcname" name="TSQLStatement:GetULong64" href="src/TSQLStatement.h.html#Heb36C">GetULong64</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Double_t">Double_t</a> <a class="funcname" name="TSQLStatement:GetDouble" href="src/TSQLStatement.h.html#a0idXB">GetDouble</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0.; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">const</span> <span class="keyword">char</span> * <a class="funcname" name="TSQLStatement:GetString" href="src/TSQLStatement.h.html#hHKVY">GetString</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> 0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:GetBinary" href="src/TSQLStatement.h.html#fEwLLB">GetBinary</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <span class="keyword">void</span>*&amp; , <a href="./ListOfTypes.html#Long_t">Long_t</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:GetDate" href="src/TSQLStatement.h.html#dwQJ.C">GetDate</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:GetTime" href="src/TSQLStatement.h.html#pISJ.C">GetTime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:GetDatime" href="src/TSQLStatement.h.html#rwmzhB">GetDatime</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:GetTimestamp" href="src/TSQLStatement.h.html#n8XERC">GetTimestamp</a>(<a href="./ListOfTypes.html#Int_t">Int_t</a> , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; , <a href="./ListOfTypes.html#Int_t">Int_t</a>&amp; )</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./ListOfTypes.html#Bool_t">kFALSE</a>; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><a href="./ListOfTypes.html#Bool_t">Bool_t</a> <a class="funcname" name="TSQLStatement:IsError" href="src/TSQLStatement.h.html#vgb.E">IsError</a>() const</span><br />
+
+<div class="code"><code class="inlinecode">{ <span class="keyword">return</span> <a href="./TSQLStatement.html#TSQLStatement:GetErrorCode" title="Int_t TSQLStatement::GetErrorCode()">GetErrorCode</a>()!=0; }</code></div>
+<div style="clear:both;"></div>
+</div>
+<div class="funcdoc"><span class="funcname"><span class="keyword">void</span> <a class="funcname" name="TSQLStatement:EnableErrorOutput" href="src/TSQLStatement.h.html#hkGvGE">EnableErrorOutput</a>(<a href="./ListOfTypes.html#Bool_t">Bool_t</a> on = <a href="./ListOfTypes.html#Bool_t">kTRUE</a>)</span><br />
+
+<div class="code"><code class="inlinecode">{ <a href="./TSQLStatement.html#TSQLStatement:fErrorOut" title="Bool_t TSQLStatement::fErrorOut">fErrorOut</a> = on; }</code></div>
+<div style="clear:both;"></div>
+</div>
+
+<br />
+<!--SIGNATURE-->
+<div id="footer">
+<em>&raquo; Author: <a href="http://consult.cern.ch/xwho/people?Sergey+Linev"> Sergey Linev   6/02/2006</a> </em><em>&raquo; Copyright   (C) 1995-2006, Rene Brun and Fons Rademakers.               *</em><br />
+<em>&raquo; Last changed: root/net:$Id: TSQLStatement.h 28011 2009-03-31 15:54:10Z pcanal $ </em><em>&raquo; Last generated: 2011-11-03 20:22</em><br />
+<em>This page has been automatically generated. For comments or suggestions regarding the documentation or ROOT in general please send a mail to <a href="mailto:rootdev@root.cern.ch">ROOT support</a>.</em>
+</div>
+</div>
+</body>
+</html>
